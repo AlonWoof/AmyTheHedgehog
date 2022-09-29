@@ -42,6 +42,7 @@ namespace Amy
         public float playerVelocity = 0.0f;
         public bool playerIsCrouched = false;
 
+
         private void Awake()
         {
 			vCam = gameObject.AddComponent<CinemachineVirtualCamera>();
@@ -152,11 +153,22 @@ namespace Amy
         {
 
             if (playerIsCrouched)
-                heightOffset = Mathf.Lerp(heightOffset, crouchedHeightOffset, 0.2f);
+                heightOffset = Mathf.Lerp(heightOffset, crouchedHeightOffset, 0.12f);
             else
                 heightOffset = Mathf.Lerp(heightOffset, defaultHeightOffset, 0.2f);
 
             lookPosition = playerTransform.position + (heightOffset * Vector3.up);
+
+            if (!mPlayer)
+                return;
+
+            if (!mPlayer.headBoneTransform || !mPlayer.hipBoneTransform)
+                return;
+
+            if(mPlayer.currentMode == PlayerModes.HANGING)
+            {
+                lookPosition = Vector3.Lerp(mPlayer.headBoneTransform.position, mPlayer.hipBoneTransform.position, 0.5f);
+            }
         }
 
 		void updateDesiredPosition()
@@ -167,7 +179,7 @@ namespace Amy
             currentFOV *= Mathf.Lerp(0.8f, 1.2f, currentAngle.x.Remap(-maxPitch, maxPitch, 0, 1));
 
             if (playerIsCrouched)
-                currentFOV *= 0.95f;
+                currentFOV *= 0.8f;
 
             vCam.m_Lens.FieldOfView = Mathf.Lerp(vCam.m_Lens.FieldOfView,currentFOV,0.1f);
 

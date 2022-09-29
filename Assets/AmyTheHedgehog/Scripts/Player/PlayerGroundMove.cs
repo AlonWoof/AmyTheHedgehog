@@ -12,34 +12,43 @@ namespace Amy
         float verticalVelocity = 0.0f;
         float forwardVelocity = 0.0f;
 
-        const float maxGravity = 53.0f;
-        const float hangTime = 1.5f;
+        const float vertSpeedCap = 16.0f;
+        const float maxGravity = 30.0f;
+        
+
+        const float baseJumpPower = 8.0f;
+        const float baseJumpHangTime = 1.5f;
         const float holdJumpPower = 0.15f;
+        const float baseTopRunSpeed = 4.3f;
 
-        float topRunSpeed = 3.0f;
         float slopeRunTime = 1.0f;
-
-        const float accelFactor = 0.1f;
-        const float deccelFactor = 0.2f;
 
         int framesAirborne = 0;
         float jumpTimeLeft = 0.0f;
 
         
-
         Vector3 groundPos;
         Vector3 relativeMovement = Vector3.zero;
         public float slopeAmount;
         public bool isSteepSlope = false;
 
-        public AnimationCurve runCurve;
-
         public bool isCrouching;
+
+        float DBG_topVerticalVelocity = 0.0f;
 
         // Start is called before the first frame update
         void Start()
         {
             getBaseComponents();
+        }
+
+        private void OnEnable()
+        {
+
+            if (mPlayer.currentMode != PlayerModes.GROUNDMOVE)
+                return;
+
+            mRigidBody.isKinematic = false;
         }
 
         void Update()
@@ -111,8 +120,12 @@ namespace Amy
                 if(mPlayer.mDesiredMovement.magnitude > 0.2f)
                     mPlayer.mDirection = mPlayer.mDesiredMovement.normalized;
 
-               // mPlayer.mCurrentMovement = Vector3.Lerp(mPlayer.mCurrentMovement, mPlayer.mDesiredMovement, Time.deltaTime * 3.0f);
+                transform.rotation = (Quaternion.Lerp(transform.rotation, Quaternion.LookRotation(mPlayer.mDirection, Vector3.up), Time.fixedDeltaTime * (mPlayer.rotationSpeed * mPlayer.mCurrentMovement.magnitude)));
+                mPlayer.turnRatio = (1.0f - Vector3.Dot(transform.forward, mPlayer.mDirection));
+
+                // mPlayer.mCurrentMovement = Vector3.Lerp(mPlayer.mCurrentMovement, mPlayer.mDesiredMovement, Time.deltaTime * 3.0f);
             }
+
 
 
             mPlayer.mCurrentMovement = Vector3.Lerp(mPlayer.mCurrentMovement, mPlayer.mDesiredMovement, (Time.deltaTime * 8.0f));
@@ -120,7 +133,7 @@ namespace Amy
 
         float getCurrentSpeed()
         {
-            float baseRunSpeed = 4.0f;
+            float baseRunSpeed = 4.5f;
 
             float finalSpeed = (baseRunSpeed + PlayerManager.Instance.status.speedBonus);
 
@@ -141,6 +154,10 @@ namespace Amy
 
             if (mPlayer.isGrounded && mRigidBody.velocity.y < 0.01f)
                 mRigidBody.MovePosition(groundPos);
+
+
+            if (jumpTimeLeft > 0.0f)
+                jumpTimeLeft -= Time.deltaTime;
 
             if (mPlayer.mDesiredMovement.magnitude > 0.1f && mPlayer.mCurrentMovement.magnitude > 0.1f)
                 forwardVelocity = Mathf.Lerp(forwardVelocity, 1, Time.deltaTime * 1.0f);
@@ -178,13 +195,12 @@ namespace Amy
 
         void calculateVerticalVelocity()
         {
-            float vertLimit = maxGravity;
 
+            float vertLimit = vertSpeedCap;
 
-            if (!mPlayer.isGrounded)
+            if(!mPlayer.isGrounded)
             {
-
-                float extraJumpPower = (holdJumpPower * (jumpTimeLeft / (1.0f + PlayerManager.Instance.status.jumpTimeBonus)));
+                float extraJumpPower = (holdJumpPower * (jumpTimeLeft / baseJumpHangTime));
 
                 float gravityMult = 1.0f;
 
@@ -194,11 +210,11 @@ namespace Amy
                     slopeRunTime = Mathf.Lerp(slopeRunTime, 0.0f, Time.deltaTime);
                 }
 
-                verticalVelocity = Mathf.Clamp(Mathf.Lerp(mRigidBody.velocity.y + extraJumpPower, -(40 * gravityMult), 0.73f * Time.fixedDeltaTime * gravityMult), -(vertLimit * gravityMult), vertLimit);
+                verticalVelocity = Mathf.Clamp(Mathf.Lerp(mRigidBody.velocity.y + extraJumpPower, -(40 * gravityMult), 0.83f * Time.fixedDeltaTime * gravityMult), -(maxGravity * gravityMult), vertLimit);
+
             }
             else
             {
-
                 if (jumpTimeLeft <= 0)
                     vertLimit = 0;
 
@@ -319,14 +335,13 @@ namespace Amy
 
             float slopeMult = Vector3.Dot(Vector3.up, mPlayer.groundNormal);
 
-            float jumpPower = 8.0f + PlayerManager.Instance.status.jumpPowerBonus;
+            float jumpPower = baseJumpPower + PlayerManager.Instance.status.jumpPowerBonus + (mPlayer.mCurrentMovement.magnitude * 1.2f);
 
             mRigidBody.velocity = (jumpPower * Vector3.up);
+                
+            jumpTimeLeft = baseJumpHangTime + PlayerManager.Instance.status.jumpTimeBonus;
 
-            jumpTimeLeft = hangTime + PlayerManager.Instance.status.jumpTimeBonus;
-            //mAnimator.Play("Jump");
-
-            mAnimator.Play("Airborne");
+            mAnimator.Play("Jump");
         }
     }
 

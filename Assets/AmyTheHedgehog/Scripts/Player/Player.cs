@@ -1,15 +1,26 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System.IO;
+using System.Runtime.Serialization.Formatters.Binary;
+using System;
 
 namespace Amy
 {
 
-	public class Player : MonoBehaviour
+    public enum PlayerModes
+    {
+        GROUNDMOVE,
+        HANGING
+    }
+
+
+
+    public class Player : MonoBehaviour
 	{
 
 
-        const float rotationSpeed = 10.0f;
+        public float rotationSpeed = 10.0f;
 
         Animator mAnimator;
         CapsuleCollider mCollider;
@@ -30,12 +41,48 @@ namespace Amy
         public float stealthIndex = 0.0f;
 
         //Modes
+        public PlayerModes currentMode;
+        public PlayerModes lastMode;
+
         PlayerGroundMove modeGroundMove;
+        PlayerHanging modeHanging;
+
+        public Transform hipBoneTransform;
+        public Transform headBoneTransform;
+
+        void readPositionFromFile()
+        {
+            string dataPath = Application.persistentDataPath + "\\SADX_DATA.dat";
+            Debug.Log(dataPath);
+
+            TextAsset textAsset = Resources.Load(dataPath) as TextAsset;
+
+            FileStream file = File.OpenRead(dataPath);
+
+            BinaryReader reader = new BinaryReader(file);
+
+            reader.ReadInt16();
+            reader.ReadInt32();
+            Vector3 pos = Vector3.zero;
+            
+
+            pos.x = -reader.ReadSingle();
+            pos.y = reader.ReadSingle();
+            pos.z = reader.ReadSingle();
+
+            float ang = ((360.0f / 65535.0f) * reader.ReadInt32());
+
+
+            reader.Close();
+
+            transform.position = pos * 0.1f;
+            transform.rotation = Quaternion.Euler(0, ang - 90.0f, 0);
+        }
 
         private void Awake()
         {
             mColMask = LayerMask.GetMask("Collision");
-
+            
         }
 
         public static Player Spawn(Vector3 pos, Vector3 dir)
@@ -54,6 +101,17 @@ namespace Amy
             col.radius = 0.25f;
             col.height = amy_height * 0.85f;
             col.center = (Vector3.up * amy_height) * 0.5f;
+
+
+            // A super slippery physic material for platformer gameplay
+            PhysicMaterial playerMat = new PhysicMaterial();
+            playerMat.frictionCombine = PhysicMaterialCombine.Minimum;
+            playerMat.dynamicFriction = 0;
+            playerMat.staticFriction = 0;
+            playerMat.bounciness = 0;
+            playerMat.bounceCombine = PhysicMaterialCombine.Minimum;
+
+            col.material = playerMat;
 
             Rigidbody body = inst.AddComponent<Rigidbody>();
             body.mass = amy_weight;
@@ -78,6 +136,24 @@ namespace Amy
             return newPlayer;
         }
 
+        void getPlayerBones()
+        {
+            hipBoneTransform = getBoneByName("hips");
+            headBoneTransform = getBoneByName("head");
+
+        }
+
+        Transform getBoneByName(string name)
+        {
+            foreach(Transform t in GetComponentsInChildren<Transform>())
+            {
+                if (t.gameObject.name.ToLower() == name.ToLower())
+                    return t;
+            }
+
+            return null;
+        }
+
         void getBaseComponents()
         {
             mAnimator = GetComponent<Animator>();
@@ -92,28 +168,50 @@ namespace Amy
         void addAllModes()
         {
             modeGroundMove = gameObject.AddComponent<PlayerGroundMove>();
+            modeHanging = gameObject.AddComponent<PlayerHanging>();
+        }
 
+        void disableAllModes()
+        {
+            modeGroundMove.enabled = false;
+            modeHanging.enabled = false;
         }
 
     	// Start is called before the first frame update
     	void Start()
     	{
             getBaseComponents();
+            getPlayerBones();
             addAllModes();
+            disableAllModes();
+
+            updateCurrentMode();
         }
 
     	// Update is called once per frame
     	void Update()
     	{
             Debug.DrawLine(transform.position, transform.position + groundNormal, Color.red, 1.0f);
+
+            if (Input.GetKeyDown(KeyCode.F4))
+                changeCurrentMode(PlayerModes.HANGING);
+
+            if (Input.GetKeyDown(KeyCode.F3))
+                changeCurrentMode(PlayerModes.GROUNDMOVE);
+
+            
+        }
+
+        private void LateUpdate()
+        {
+            //readPositionFromFile();
         }
 
 
         void updateDirection()
         {
 
-            transform.rotation = (Quaternion.Lerp(transform.rotation, Quaternion.LookRotation(mDirection, Vector3.up), Time.fixedDeltaTime * rotationSpeed));
-            turnRatio = (1.0f - Vector3.Dot(transform.forward, mDirection));
+
 
         }
 
@@ -122,6 +220,40 @@ namespace Amy
         {
             updateDirection();
         }
+
+
+
+        void updateCurrentMode()
+        {
+            disableAllModes();
+
+            switch(currentMode)
+            {
+                case PlayerModes.GROUNDMOVE:
+                    modeGroundMove.enabled = true;
+                    break;
+
+                case PlayerModes.HANGING:
+                    modeHanging.enabled = true;
+                    break;
+
+                default:
+                    break;
+            }
+        }
+
+        public void changeCurrentMode(PlayerModes newMode)
+        {
+            if (currentMode == newMode)
+                return;
+
+            lastMode = currentMode;
+            currentMode = newMode;
+
+            updateCurrentMode();
+        }
+
+
     }
 
 }
