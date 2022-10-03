@@ -176,7 +176,7 @@ namespace Amy
 
             //Adjust FOV
             float currentFOV = GameManager.Instance.config.desiredFOV;
-            currentFOV *= Mathf.Lerp(0.8f, 1.2f, currentAngle.x.Remap(-maxPitch, maxPitch, 0, 1));
+            //currentFOV *= Mathf.Lerp(0.8f, 1.2f, currentAngle.x.Remap(-maxPitch, maxPitch, 0, 1));
 
             if (playerIsCrouched)
                 currentFOV *= 0.8f;
@@ -229,7 +229,7 @@ namespace Amy
                 return;
 
             //The crouched state is part of the GroundMove component.
-            playerIsCrouched = mPlayer.GetComponent<PlayerGroundMove>().isCrouching;
+           // playerIsCrouched = mPlayer.GetComponent<PlayerBasicMove>().isCrouching;
 
 
         }

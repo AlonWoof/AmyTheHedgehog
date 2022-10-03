@@ -10,7 +10,7 @@ namespace Amy
 
     public enum PlayerModes
     {
-        GROUNDMOVE,
+        BASIC_MOVE,
         HANGING
     }
 
@@ -19,16 +19,18 @@ namespace Amy
     public class Player : MonoBehaviour
 	{
 
-
-        public float rotationSpeed = 10.0f;
-
         Animator mAnimator;
         CapsuleCollider mCollider;
         Rigidbody mRigidBody;
 
+        BallModeModel mBallModel;
+
+        const float turningSpeed = 10.0f;
+
         //This vector must always be normalized.
         public Vector3 mDirection = Vector3.forward;
 
+        public float mForwardVelocity = 0.0f;
         public Vector3 mCurrentMovement = Vector3.zero;
         public Vector3 mDesiredMovement = Vector3.zero;
 
@@ -37,47 +39,17 @@ namespace Amy
 
         public LayerMask mColMask;
 
-        public float turnRatio = 0.0f;
-        public float stealthIndex = 0.0f;
-
         //Modes
         public PlayerModes currentMode;
         public PlayerModes lastMode;
 
-        PlayerGroundMove modeGroundMove;
+        PlayerBasicMove modeBasicMove;
         PlayerHanging modeHanging;
 
         public Transform hipBoneTransform;
         public Transform headBoneTransform;
 
-        void readPositionFromFile()
-        {
-            string dataPath = Application.persistentDataPath + "\\SADX_DATA.dat";
-            Debug.Log(dataPath);
-
-            TextAsset textAsset = Resources.Load(dataPath) as TextAsset;
-
-            FileStream file = File.OpenRead(dataPath);
-
-            BinaryReader reader = new BinaryReader(file);
-
-            reader.ReadInt16();
-            reader.ReadInt32();
-            Vector3 pos = Vector3.zero;
-            
-
-            pos.x = -reader.ReadSingle();
-            pos.y = reader.ReadSingle();
-            pos.z = reader.ReadSingle();
-
-            float ang = ((360.0f / 65535.0f) * reader.ReadInt32());
-
-
-            reader.Close();
-
-            transform.position = pos * 0.1f;
-            transform.rotation = Quaternion.Euler(0, ang - 90.0f, 0);
-        }
+        public bool isBallMode = false;
 
         private void Awake()
         {
@@ -159,6 +131,8 @@ namespace Amy
             mAnimator = GetComponent<Animator>();
             mCollider = GetComponent<CapsuleCollider>();
             mRigidBody = GetComponent<Rigidbody>();
+            mBallModel = GetComponent<BallModeModel>();
+
 
             //Add a dummy animator to prevent problems later.
             if (!mAnimator)
@@ -167,13 +141,13 @@ namespace Amy
 
         void addAllModes()
         {
-            modeGroundMove = gameObject.AddComponent<PlayerGroundMove>();
+            modeBasicMove = gameObject.AddComponent<PlayerBasicMove>();
             modeHanging = gameObject.AddComponent<PlayerHanging>();
         }
 
         void disableAllModes()
         {
-            modeGroundMove.enabled = false;
+            modeBasicMove.enabled = false;
             modeHanging.enabled = false;
         }
 
@@ -197,28 +171,27 @@ namespace Amy
                 changeCurrentMode(PlayerModes.HANGING);
 
             if (Input.GetKeyDown(KeyCode.F3))
-                changeCurrentMode(PlayerModes.GROUNDMOVE);
+                changeCurrentMode(PlayerModes.BASIC_MOVE);
 
-            
+            if(Vector3.Angle(Vector3.up,groundNormal) < 60.0f)
+                transform.rotation = Quaternion.Lerp(transform.rotation,Quaternion.FromToRotation(Vector3.up, groundNormal) * Quaternion.LookRotation(mDirection, Vector3.up), Time.deltaTime * turningSpeed);
+            else
+                transform.rotation = Quaternion.Lerp(transform.rotation, Quaternion.LookRotation(mDirection, Vector3.up), Time.deltaTime * turningSpeed);
+
+
+            if(mBallModel)
+            {
+                mBallModel.isBallMode = isBallMode;
+            }
         }
 
         private void LateUpdate()
         {
-            //readPositionFromFile();
-        }
-
-
-        void updateDirection()
-        {
-
-
 
         }
-
 
         private void FixedUpdate()
         {
-            updateDirection();
         }
 
 
@@ -229,8 +202,8 @@ namespace Amy
 
             switch(currentMode)
             {
-                case PlayerModes.GROUNDMOVE:
-                    modeGroundMove.enabled = true;
+                case PlayerModes.BASIC_MOVE:
+                    modeBasicMove.enabled = true;
                     break;
 
                 case PlayerModes.HANGING:
@@ -252,7 +225,6 @@ namespace Amy
 
             updateCurrentMode();
         }
-
 
     }
 

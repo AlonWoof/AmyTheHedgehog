@@ -29,11 +29,19 @@ namespace Amy
         public PlayerStatus status;
 
         //This will be placed at the last safe place/exit
-        public Transform mLastCheckPoint;
+        public Transform playerCheckpoint;
+
+        public int lastExit = 0;
+
+        public float playerDirtiness = 0.0f;
 
         private void Awake()
         {
             status = new PlayerStatus();
+
+            GameObject inst = new GameObject("CHECKPOINT");
+            DontDestroyOnLoad(inst);
+            playerCheckpoint = inst.transform;
         }
 
         public void Init()
@@ -52,6 +60,77 @@ namespace Amy
     	{
     	    
     	}
-	}
+
+        public Player getPlayer(bool search = true)
+        {
+            if (mPlayerInstance != null)
+                return mPlayerInstance;
+
+            if (search)
+                mPlayerInstance = FindObjectOfType<Player>();
+
+            if (mPlayerInstance == null)
+            {
+                //Debug.LogWarning("    WARNING: No Player Found! ");
+                return null;
+            }
+
+            return mPlayerInstance;
+        }
+
+        public void spawnPlayerAtExit()
+        {
+            Exit mExit = null;
+
+            foreach (Exit e in FindObjectsOfType<Exit>())
+            {
+                if (e.exitNumber == lastExit)
+                    mExit = e;
+            }
+
+            if (mExit == null)
+            {
+                GameObject inst = new GameObject();
+                inst.transform.position = Vector3.up;
+                mExit = inst.AddComponent<Exit>();
+            }
+
+            playerCheckpoint.transform.position = mExit.transform.position;
+            playerCheckpoint.transform.rotation = mExit.transform.rotation;
+
+
+            spawnPlayerAtCheckpoint();
+
+            if (mExit.altCheckpoint)
+            {
+                playerCheckpoint.transform.position = mExit.altCheckpoint.transform.position;
+                playerCheckpoint.transform.rotation = mExit.transform.rotation;
+            }
+        }
+
+        public Player spawnPlayerAtCheckpoint()
+        {
+            Debug.Log("Respawning Player...");
+
+            //getDOFObjects();
+
+            if (mPlayerInstance != null)
+            {
+                // Debug.Log("Destroying duplicate player...");
+                // Destroy(mPlayerInstance.gameObject);
+                mPlayerInstance.transform.position = playerCheckpoint.transform.position;
+                mPlayerInstance.mDirection = playerCheckpoint.transform.forward;
+                return mPlayerInstance;
+            }
+
+
+            mPlayerInstance = Player.Spawn(playerCheckpoint.transform.position, playerCheckpoint.transform.forward);
+            //saveGame.lastScene = SceneManager.GetActiveScene().name;
+            // saveGame.lastExit = lastExit;
+
+            return mPlayerInstance;
+        }
+
+    }
 
 }

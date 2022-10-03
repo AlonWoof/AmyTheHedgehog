@@ -14,10 +14,11 @@ namespace Amy
         public CapsuleCollider mCollider;
         public Rigidbody mRigidBody;
         public Animator mAnimator;
+        public PlayerVoice mVoice;
 
         public GrounderFBBIK grounderIK;
         
-
+        
         public void getBaseComponents()
         {
             mPlayer = GetComponent<Player>();
@@ -25,6 +26,7 @@ namespace Amy
             mRigidBody = GetComponent<Rigidbody>();
             mAnimator = GetComponent<Animator>();
             grounderIK = GetComponent<GrounderFBBIK>();
+            mVoice = GetComponent<PlayerVoice>();
         }
 
         public void onStartMode()

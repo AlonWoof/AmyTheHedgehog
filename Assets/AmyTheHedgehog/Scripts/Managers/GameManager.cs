@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using MEC;
 
 /* Copyright 2021 Jason Haden */
 namespace Amy
@@ -39,12 +40,18 @@ namespace Amy
         public bool cameraInputDisabled = false;
         public bool playerInputDisabled = false;
 
+        public bool isLoading = false;
+        public bool cutsceneMode = false;
+
         public GameConfig config;
         public SystemData systemData;
 
         bool[] analogStickState;
         bool[] analogStickFirstFrame;
 
+        AudioSource bgmSource;
+        AudioSource systemSoundSource;
+        public float gameSFXVolume;
 
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
         static void OnAfterSceneLoadRuntimeMethod()
@@ -198,6 +205,152 @@ namespace Amy
             if (v < deadZone)
                 analogStickState[(int)AnalogStickDirection.leftStick_Up] = false;
         }
+
+        public void playSystemSound(AudioClip snd, float volume = 1.0f)
+        {
+            //systemSoundSource.volume = volume;
+            //systemSoundSource.PlayOneShot(snd);
+        }
+
+        #region Scene Transition
+
+        public void loadTitleScreen()
+        {
+            loadScene("Title");
+        }
+
+        public void loadScene(string sceneName, bool whiteFade = false, float delayBeforeLoading = 0.0f)
+        {
+            Timing.RunCoroutine(loadSceneRoutine(sceneName, whiteFade, delayBeforeLoading), Segment.RealtimeUpdate);
+        }
+
+
+
+        IEnumerator<float> loadSceneRoutine(string sceneName, bool whiteFade, float delay = 0.0f)
+        {
+            yield return Timing.WaitForSeconds(delay);
+
+            playerInputDisabled = true;
+            cameraInputDisabled = true;
+            isLoading = true;
+            cutsceneMode = true;
+            Time.timeScale = 1.0f;
+
+
+            //Not relevant yet.
+            /*
+            if (UIManager.Instance.gamePaused)
+            {
+
+                UIManager.Instance.mIngameMenu.gameObject.SetActive(false);
+                UIManager.Instance.gamePaused = false;
+            }
+            */
+
+            UIManager.Instance.fadeScreen(false, 0.75f, whiteFade);
+
+
+            while (gameSFXVolume > -80.0f)
+            {
+                gameSFXVolume = Mathf.Lerp(gameSFXVolume, -81.0f, Time.unscaledDeltaTime * 3);
+
+                yield return 0f;
+            }
+
+            gameSFXVolume = -80.0f;
+
+
+
+            yield return Timing.WaitForSeconds(0.5f);
+
+            //UIManager.Instance.hideGameOverScreen();
+
+
+            AsyncOperation load = UnityEngine.SceneManagement.SceneManager.LoadSceneAsync(sceneName);
+
+            if (load == null)
+            {
+                load = UnityEngine.SceneManagement.SceneManager.LoadSceneAsync("default");
+            }
+
+
+            while (!load.isDone)
+            {
+                yield return 0f;
+            }
+
+            //preloadAssets();
+
+            //SceneManager.SetActiveScene(SceneManager.GetSceneByName(sceneName));
+
+
+            bool playerShouldSpawn = true;
+
+            SceneInfo scn = FindObjectOfType<SceneInfo>();
+
+            if (scn != null)
+            {
+                MusicManager.Instance.changeSongs(scn.bgmData);
+
+                if (scn.dontSpawnPlayer)
+                    playerShouldSpawn = false;
+
+                //PlayerManager.Instance.isOutdoors = scn.isOutdoors;
+
+
+
+            }
+            else
+            {
+                GameObject inst = new GameObject("MISSING SCENE INFO");
+                scn = inst.AddComponent<SceneInfo>();
+                playerShouldSpawn = false;
+            }
+
+            float waitTime = 0.1f;
+
+            if (playerShouldSpawn)
+            {
+                PlayerManager.Instance.spawnPlayerAtExit();
+                waitTime = 1.0f;
+            }
+
+
+            yield return Timing.WaitForSeconds(waitTime);
+
+            /*
+            while (gameSFXVolume < 0.0f)
+            {
+                gameSFXVolume = Mathf.Lerp(gameSFXVolume, 0.1f, Time.unscaledDeltaTime * 3);
+
+                yield return 0f;
+            }
+
+            gameSFXVolume = 0.0f;
+            */
+
+            yield return Timing.WaitForSeconds(waitTime * 0.5f);
+
+            UIManager.Instance.fadeScreen(true, 0.75f);
+            yield return Timing.WaitForSeconds(0.75f);
+
+            if (scn.showTitleCard)
+            {
+
+               // if (PlayerManager.Instance.saveGame.getCutsceneFlag(scn.titleCardStoryFlagHash) || scn.titleCardStoryFlagHash == -1)
+               //     FindObjectOfType<TitleCard>().showTitleCard(scn.areaName, 2, 0.5f);
+            }
+
+            playerInputDisabled = false;
+            cameraInputDisabled = false;
+            cutsceneMode = false;
+
+            isLoading = false;
+        }
+
+
+
+        #endregion
 
     }
 

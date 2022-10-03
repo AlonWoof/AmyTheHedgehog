@@ -113,7 +113,7 @@ namespace Amy
 
             mAnimator.CrossFade("Idle_Base", 0.15f);
 
-            mPlayer.changeCurrentMode(PlayerModes.GROUNDMOVE);
+            mPlayer.changeCurrentMode(PlayerModes.BASIC_MOVE);
 
             yield return Timing.WaitForSeconds(0.2f);
 

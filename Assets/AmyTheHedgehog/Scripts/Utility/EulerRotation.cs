@@ -14,13 +14,13 @@ public class EulerRotation : MonoBehaviour
 	// Use this for initialization
 	void Start ()
     {
-	    
-	}
+        myRotation = transform.localRotation.eulerAngles;
+    }
 	
 	// Update is called once per frame
 	void Update ()
     {
-        myRotation = transform.localRotation.eulerAngles;
+        
 
         myRotation += rotation * (Time.deltaTime * speed);
 

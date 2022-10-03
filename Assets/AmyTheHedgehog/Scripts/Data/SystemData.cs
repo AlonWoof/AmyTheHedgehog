@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Audio;
 
 namespace Amy
 {
@@ -11,6 +12,14 @@ namespace Amy
         public GameObject RES_AmyIngameModel;
         public RuntimeAnimatorController RES_AmyIngameAnimator;
 
+        public GameObject RES_userInterface;
         public GameObject RES_mainCamera;
+        public FootstepFXRes RES_footstepFX;
+
+        [Header("Audio")]
+
+        public AudioMixer AUDIO_GameSFXMixer;
+        public AudioMixer AUDIO_MenuSFXMixer;
+        public AudioMixer AUDIO_MusicMixer;
     }
 }
