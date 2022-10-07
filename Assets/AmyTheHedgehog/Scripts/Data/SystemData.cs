@@ -14,7 +14,9 @@ namespace Amy
 
         public GameObject RES_userInterface;
         public GameObject RES_mainCamera;
+        public AmyFXRes RES_AmyPlayerFX;
         public FootstepFXRes RES_footstepFX;
+
 
         [Header("Audio")]
 

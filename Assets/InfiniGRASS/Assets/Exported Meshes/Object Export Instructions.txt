@@ -1,0 +1,15 @@
+1. Paint grass in editor or in real time
+
+2. Choose a big static group members count so all grass will go in the same group
+
+3. After the grass patch is painted, while in play mode select the batched mesh (or meshes if it was split in 64K vertices) 
+
+4. Goto file - expoort wavefront object and click to save to the selected directory
+
+5. Exit play mode, insert object in scene, rotate the root of the object 180 degress and it will move to the proper place
+
+6. Apply the relevant material the grass had and now the grass patch can be used independetly of the InfiniGRASS system
+
+7. NOTE: The grass area should be kept low, so a LOD system can be applied to the patches (a simple cutoff based on camera distance for example) 
+
+8. NOTE 2: The fading based on camera will still work, so the LOD cutoff may fade for a smooth grass vannishing

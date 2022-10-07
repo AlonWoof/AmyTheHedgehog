@@ -17,7 +17,7 @@ namespace Amy
         public PlayerVoice mVoice;
 
         public GrounderFBBIK grounderIK;
-        
+        public FootstepFX footStepFX;
         
         public void getBaseComponents()
         {
@@ -27,6 +27,7 @@ namespace Amy
             mAnimator = GetComponent<Animator>();
             grounderIK = GetComponent<GrounderFBBIK>();
             mVoice = GetComponent<PlayerVoice>();
+            footStepFX = GetComponent<FootstepFX>();
         }
 
         public void onStartMode()

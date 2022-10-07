@@ -8,15 +8,15 @@ namespace Amy
 	public class PlayerBasicMove : PlayerMode
 	{
 
-        const float baseRunSpeed = 4.0f;
-        const float baseWalkSpeed = 1.5f;
+        public const float baseRunSpeed = 4.0f;
+        public const float baseWalkSpeed = 0.75f;
 
-        const float runSpeedAccel = 2.0f;
-        const float runSpeedDeccel = 5.0f;
-        const float slopeInfluence = 0.5f;
+        public const float runSpeedAccel = 3.0f;
+        public const float runSpeedDeccel = 5.0f;
+        public const float slopeInfluence = 0.5f;
 
         //Max slope when standing still.
-        const float baseMaxSlope = 45.0f;
+        public const float baseMaxSlope = 45.0f;
 
         //Amount of slope tolerance when running full speed.
         const float slopeVariance = 20.0f;
@@ -53,45 +53,59 @@ namespace Amy
         void Update()
     	{
             handleInput();
-            lerpValues();
+            
         }
 
         private void FixedUpdate()
         {
-            updateIsGrounded();
+            
             calculateGravity();
             handleMovement();
-            
+            lerpValues();
+        }
+
+        private void LateUpdate()
+        {
             updateIKSolver();
+            updateIsGrounded();
         }
 
         void lerpValues()
         {
-
-            if (mPlayer.mForwardVelocity > 0.0f)
+            
+            if (mPlayer.mForwardVelocity > 0.0f && mPlayer.mDesiredMovement.magnitude <= 0.05f)
             {
-                mPlayer.mForwardVelocity -= (runSpeedDeccel * Time.deltaTime);
+                mPlayer.mForwardVelocity -= (runSpeedDeccel * Time.fixedDeltaTime);
             }
 
-            if (mPlayer.mForwardVelocity < 0.0f)
+            if (mPlayer.mForwardVelocity < 0.0f && mPlayer.mDesiredMovement.magnitude <= 0.05f)
             {
-                mPlayer.mForwardVelocity += (runSpeedDeccel * Time.deltaTime);
+                mPlayer.mForwardVelocity += (runSpeedDeccel * Time.fixedDeltaTime);
             }
 
-            if (Mathf.Abs(mPlayer.mForwardVelocity) < ((runSpeedDeccel * Time.deltaTime)))
-                mPlayer.mForwardVelocity = Mathf.Lerp(mPlayer.mForwardVelocity, 0, Time.deltaTime * 3.0f);
+            //if (mPlayer.mForwardVelocity <= 0.0f)
+              //  mPlayer.mForwardVelocity = 0.0f;
 
-            if (Mathf.Abs(mPlayer.mForwardVelocity) < 0.01f)
-                mPlayer.mForwardVelocity = 0.0f;
-
-
-            if (jumpTimer > 0.0f)
-                jumpTimer -= Time.deltaTime;
-
+            if (Mathf.Abs(mPlayer.mForwardVelocity) < ((runSpeedDeccel * Time.fixedDeltaTime)))
+                mPlayer.mForwardVelocity = Mathf.Lerp(mPlayer.mForwardVelocity, 0, Time.fixedDeltaTime * 3.0f);
 
             float animSpeedMult = Mathf.Clamp((mPlayer.mForwardVelocity / baseRunSpeed), 0.5f, 8.0f);
 
             mAnimator.SetFloat("animSpeedMult", animSpeedMult);
+
+            if (footStepFX)
+            {
+                if (jumpTimer > 0.0f || !mPlayer.isGrounded)
+                {
+                    footStepFX.globalVolume = 1.0f;
+                }
+                else
+                {
+                    float power = Helper.remapRange(mPlayer.mForwardVelocity, baseWalkSpeed, baseRunSpeed, 0, 1.0f);
+                    power = Mathf.Clamp(power, 0.35f, 1.0f);
+                    footStepFX.globalVolume = power;
+                }
+            }
 
         }
 
@@ -144,6 +158,7 @@ namespace Amy
                 mPlayer.mForwardVelocity += (runSpeedAccel * (1.0f + (slopeAmount * slopeInfluence)) * Time.fixedDeltaTime);
 
             //Debug.Log("NORMAL DOT: " + slopeAmount + " ANGLE: " + Vector3.Angle(Vector3.up, mPlayer.groundNormal));
+
 
 
             mPlayer.mForwardVelocity *= dirChange;
@@ -212,7 +227,6 @@ namespace Amy
                 runSpeedTotal = baseRunSpeed * 2.0f;
             }
 
-            Debug.Log(slopeAmount);
 
             if (power < 0.4f)
                 return walkSpeedTotal;
@@ -361,7 +375,8 @@ namespace Amy
             verticalVelocity = jumpPower;
             jumpTimer = baseJumpHangTime * slopeMult;
             mAnimator.Play("Jump");
-            mVoice.playVoice(mVoice.jumping);
+            mVoice.playVoiceDelayed(Random.Range(0.05f,0.1f),mVoice.jumping);
+            mPlayer.spawnFX(GameManager.Instance.systemData.RES_AmyPlayerFX.fx_basicJump, transform.position);
            // mPlayer.isBallMode = true;
         }
 

@@ -34,6 +34,8 @@ namespace Amy
         public int lastExit = 0;
 
         public float playerDirtiness = 0.0f;
+        public int ringCount = 0;
+
 
         private void Awake()
         {

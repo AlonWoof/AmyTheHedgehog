@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using MEC;
 
 /* Copyright 2021 Jason Haden */
 namespace Amy
@@ -41,9 +42,21 @@ namespace Amy
             if (!canInterrupt && voiceSource.isPlaying)
                 return;
 
-            voiceSource.clip = voices[Random.Range(0, voices.Length - 1)];
+            voiceSource.clip = voices[Random.Range(0, voices.Length)];
             voiceSource.pitch = Random.Range(pitchMin, pitchMax);
             voiceSource.Play();
+        }
+
+        public void playVoiceDelayed(float delay, AudioClip[] voices, bool canInterrupt = false)
+        {
+            Timing.RunCoroutine(doDelayedVoice(delay, voices, canInterrupt));
+        }
+
+        IEnumerator<float> doDelayedVoice(float delay, AudioClip[] voices, bool canInterrupt = false)
+        {
+            yield return Timing.WaitForSeconds(delay);
+
+            playVoice(voices, canInterrupt);
         }
 	}
 

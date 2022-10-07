@@ -7,14 +7,18 @@ using System;
 
 namespace Amy
 {
+    [System.Serializable]
+    public class AmyFXRes
+    {
+        public GameObject fx_basicJump;
+    }
 
     public enum PlayerModes
     {
         BASIC_MOVE,
+        DEBUG_MOVE,
         HANGING
     }
-
-
 
     public class Player : MonoBehaviour
 	{
@@ -25,7 +29,7 @@ namespace Amy
 
         BallModeModel mBallModel;
 
-        const float turningSpeed = 10.0f;
+        float turningSpeed = 10.0f;
 
         //This vector must always be normalized.
         public Vector3 mDirection = Vector3.forward;
@@ -45,6 +49,7 @@ namespace Amy
 
         PlayerBasicMove modeBasicMove;
         PlayerHanging modeHanging;
+        PlayerDebugMove modeDebugMove;
 
         public Transform hipBoneTransform;
         public Transform headBoneTransform;
@@ -143,12 +148,14 @@ namespace Amy
         {
             modeBasicMove = gameObject.AddComponent<PlayerBasicMove>();
             modeHanging = gameObject.AddComponent<PlayerHanging>();
+            modeDebugMove = gameObject.AddComponent<PlayerDebugMove>();
         }
 
         void disableAllModes()
         {
             modeBasicMove.enabled = false;
             modeHanging.enabled = false;
+            modeDebugMove.enabled = false;
         }
 
     	// Start is called before the first frame update
@@ -165,13 +172,8 @@ namespace Amy
     	// Update is called once per frame
     	void Update()
     	{
-            Debug.DrawLine(transform.position, transform.position + groundNormal, Color.red, 1.0f);
+            //Debug.DrawLine(transform.position, transform.position + groundNormal, Color.red, 1.0f);
 
-            if (Input.GetKeyDown(KeyCode.F4))
-                changeCurrentMode(PlayerModes.HANGING);
-
-            if (Input.GetKeyDown(KeyCode.F3))
-                changeCurrentMode(PlayerModes.BASIC_MOVE);
 
             if(Vector3.Angle(Vector3.up,groundNormal) < 60.0f)
                 transform.rotation = Quaternion.Lerp(transform.rotation,Quaternion.FromToRotation(Vector3.up, groundNormal) * Quaternion.LookRotation(mDirection, Vector3.up), Time.deltaTime * turningSpeed);
@@ -183,18 +185,31 @@ namespace Amy
             {
                 mBallModel.isBallMode = isBallMode;
             }
+
+            debugControls();
         }
 
         private void LateUpdate()
         {
-
+           // Debug.Log("Delta Timestep: " + Time.deltaTime);
         }
 
         private void FixedUpdate()
         {
+            //Debug.Log("Fixed Timestep: " + Time.fixedDeltaTime);
+
         }
 
+        public GameObject spawnFX(GameObject prefab, Vector3 position, bool parent = false)
+        {
+            GameObject inst = GameObject.Instantiate(prefab);
+            inst.transform.position = position;
 
+            if (parent)
+                inst.transform.SetParent(transform);
+
+            return inst;
+        }
 
         void updateCurrentMode()
         {
@@ -208,6 +223,10 @@ namespace Amy
 
                 case PlayerModes.HANGING:
                     modeHanging.enabled = true;
+                    break;
+
+                case PlayerModes.DEBUG_MOVE:
+                    modeDebugMove.enabled = true;
                     break;
 
                 default:
@@ -224,6 +243,24 @@ namespace Amy
             currentMode = newMode;
 
             updateCurrentMode();
+        }
+
+        void debugControls()
+        {
+
+            if (Input.GetKeyDown(KeyCode.Keypad5))
+            {
+                
+                if (currentMode == PlayerModes.DEBUG_MOVE)
+                {
+                    changeCurrentMode(PlayerModes.BASIC_MOVE);
+                }
+                else
+                {
+                    changeCurrentMode(PlayerModes.DEBUG_MOVE);
+                }
+            }
+
         }
 
     }
