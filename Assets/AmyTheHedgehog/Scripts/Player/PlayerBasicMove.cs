@@ -8,11 +8,11 @@ namespace Amy
 	public class PlayerBasicMove : PlayerMode
 	{
 
-        public const float baseRunSpeed = 4.0f;
+        public const float baseRunSpeed = 5.0f;
         public const float baseWalkSpeed = 0.75f;
 
-        public const float runSpeedAccel = 3.0f;
-        public const float runSpeedDeccel = 5.0f;
+        public const float runSpeedAccel = 4.0f;
+        public const float runSpeedDeccel = 6.0f;
         public const float slopeInfluence = 0.5f;
 
         //Max slope when standing still.
@@ -21,7 +21,7 @@ namespace Amy
         //Amount of slope tolerance when running full speed.
         const float slopeVariance = 20.0f;
 
-        const float baseJumpPower = 6.0f;
+        const float baseJumpPower = 4.5f;
         const float baseJumpHangTime = 1.5f;
 
         public float slopeAmount = 0.0f;
@@ -30,7 +30,8 @@ namespace Amy
 
         int framesAirborne = 0;
         bool isSliding = false;
-
+        bool isSkidding = false;
+        float skidTimeout = 0.0f;
 
         // Start is called before the first frame update
         void Start()
@@ -47,6 +48,8 @@ namespace Amy
                 return;
 
             mRigidBody.isKinematic = false;
+            verticalVelocity = 0.0f;
+            mPlayer.groundNormal = Vector3.up;
         }
 
         // Update is called once per frame
@@ -83,6 +86,11 @@ namespace Amy
                 mPlayer.mForwardVelocity += (runSpeedDeccel * Time.fixedDeltaTime);
             }
 
+            if(mPlayer.mForwardVelocity > baseRunSpeed)
+            {
+                mPlayer.mForwardVelocity -= ((runSpeedDeccel * 0.5f) * Time.fixedDeltaTime);
+            }
+
             //if (mPlayer.mForwardVelocity <= 0.0f)
               //  mPlayer.mForwardVelocity = 0.0f;
 
@@ -112,14 +120,34 @@ namespace Amy
         void updateIKSolver()
         {
 
+            if (!grounderIK)
+                return;
+
             if (!mPlayer.isGrounded || mRigidBody.isKinematic)
                 grounderIK.weight = Mathf.Lerp(grounderIK.weight, 0.0f, 0.5f);
-            else
+            else if(Mathf.Abs(mPlayer.mForwardVelocity) < 0.15f)
                 grounderIK.weight = Mathf.Lerp(grounderIK.weight, 1.0f, 0.5f);
         }
 
         void handleInput()
         {
+
+
+            if (skidTimeout > 0.0f)
+            {
+                mPlayer.mForwardVelocity = Mathf.Lerp(0.0f, baseRunSpeed, skidTimeout);
+
+                if (skidTimeout - Time.fixedDeltaTime <= 0.0f)
+                    mPlayer.mForwardVelocity = 0.0f;
+
+
+                skidTimeout -= Time.fixedDeltaTime;
+            }
+
+               
+
+            if (GameManager.Instance.playerInputDisabled)
+                return;
 
             if (Input.GetButtonDown("Jump"))
                 Jump();
@@ -131,7 +159,7 @@ namespace Amy
             float v = InputFunctions.getLeftAnalogY();
 
             //DEBUG
-            if (Input.GetButtonDown("Attack"))
+            if (Input.GetKeyDown(KeyCode.Alpha9))
                 mPlayer.mForwardVelocity += baseRunSpeed * 3.0f;
 
             if (Mathf.Abs(h) == 0 && Mathf.Abs(v) == 0)
@@ -152,16 +180,24 @@ namespace Amy
             //Direction change penalty
             float dirChange = Vector3.Dot(mPlayer.mDirection, mPlayer.mDesiredMovement.normalized);
 
-            mPlayer.mDirection = mPlayer.mDesiredMovement.normalized;
+            if (mPlayer.mForwardVelocity > (baseRunSpeed * 0.9f) && dirChange < -0.5f && skidTimeout <= 0.0f)
+            {
+                skidTimeout = 1.0f;
+                mAnimator.Play("Skid");
+            }
+
+            if (skidTimeout > 0.0f)
+                return;
 
             if (mPlayer.mForwardVelocity < getRunSpeed(mPlayer.mDesiredMovement.magnitude))
                 mPlayer.mForwardVelocity += (runSpeedAccel * (1.0f + (slopeAmount * slopeInfluence)) * Time.fixedDeltaTime);
 
             //Debug.Log("NORMAL DOT: " + slopeAmount + " ANGLE: " + Vector3.Angle(Vector3.up, mPlayer.groundNormal));
 
+            mPlayer.mDirection = mPlayer.mDesiredMovement.normalized;
 
-
-            mPlayer.mForwardVelocity *= dirChange;
+            if(skidTimeout <= 0.0f)
+                mPlayer.mForwardVelocity *= dirChange;
 
             if (dirChange < -0.5f)
                 mPlayer.mForwardVelocity = Mathf.Lerp(mPlayer.mForwardVelocity, 0, 0.5f);
@@ -184,6 +220,8 @@ namespace Amy
 
             if (jumpTimer > 0.0f)
                 jumpTimer -= Time.fixedDeltaTime;
+
+
         }
 
         void calculateGravity()
@@ -375,6 +413,7 @@ namespace Amy
             verticalVelocity = jumpPower;
             jumpTimer = baseJumpHangTime * slopeMult;
             mAnimator.Play("Jump");
+            mAnimator.Play("Mouth_Jumping");
             mVoice.playVoiceDelayed(Random.Range(0.05f,0.1f),mVoice.jumping);
             mPlayer.spawnFX(GameManager.Instance.systemData.RES_AmyPlayerFX.fx_basicJump, transform.position);
            // mPlayer.isBallMode = true;

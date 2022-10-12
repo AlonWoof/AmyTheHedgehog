@@ -2,8 +2,10 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using MEC;
+using UnityEngine.Audio;
+using UnityEngine.SceneManagement;
 
-/* Copyright 2021 Jason Haden */
+/* Copyright 2022 Jason Haden */
 namespace Amy
 {
 
@@ -53,11 +55,13 @@ namespace Amy
         AudioSource systemSoundSource;
         public float gameSFXVolume;
 
+        
+
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
         static void OnAfterSceneLoadRuntimeMethod()
         {
             GameManager.Instance.Init();
-           // UIManager.Instance.Init();
+            UIManager.Instance.Init();
             PlayerManager.Instance.Init();
            //TimeManager.Instance.Init();
            // MusicManager.Instance.Init();
@@ -129,9 +133,45 @@ namespace Amy
     	void Update()
     	{
             checkController();
-
+            debugFunctions();
         }
 
+        void debugFunctions()
+        {
+            if (Input.GetKeyDown(KeyCode.F1))
+                loadScene(UnityEngine.SceneManagement.SceneManager.GetActiveScene().name);
+
+            if (Input.GetKeyDown(KeyCode.F3))
+            {
+               // PlayerManager.Instance.loadSavedGame(0, true);
+               // PlayerManager.Instance.reloadCurrentSave();
+            }
+
+            //ZA WARUDO!
+            if (Input.GetKey(KeyCode.F5))
+                Time.timeScale = Mathf.Lerp(Time.timeScale, 0.01f, Time.unscaledDeltaTime * 3.0f);
+
+            //Toki wo ugoki dasu
+            if (Input.GetKey(KeyCode.F6))
+                Time.timeScale = Mathf.Lerp(Time.timeScale, 1.0f, Time.unscaledDeltaTime * 3.0f);
+
+
+            if (Input.GetKeyDown(KeyCode.F2))
+            {
+                Timing.KillCoroutines();
+                SceneManager.LoadScene("MapSelect");
+            }
+
+            //Emergency exit key
+            if (Input.GetButton("RightBumper") && Input.GetButton("LeftBumper") && Input.GetButtonDown("Action"))
+            {
+                Timing.KillCoroutines();
+                SceneManager.LoadScene("MapSelect");
+            }
+
+            //if(Input.GetButtonDown())
+
+        }
         void checkController()
         {
 
@@ -204,6 +244,14 @@ namespace Amy
 
             if (v < deadZone)
                 analogStickState[(int)AnalogStickDirection.leftStick_Up] = false;
+        }
+
+
+        public bool isAnalogDown(AnalogStickDirection dir)
+        {
+            // Debug.Log("State " + (int)dir + " is " + analogStickFirstFrame[(int)dir]);
+            return analogStickFirstFrame[(int)dir];
+
         }
 
         public void playSystemSound(AudioClip snd, float volume = 1.0f)
@@ -330,6 +378,9 @@ namespace Amy
             */
 
             yield return Timing.WaitForSeconds(waitTime * 0.5f);
+
+            if (PlayerManager.Instance.mPlayerInstance)
+                PlayerManager.Instance.mPlayerInstance.tpc.centerBehindPlayer();
 
             UIManager.Instance.fadeScreen(true, 0.75f);
             yield return Timing.WaitForSeconds(0.75f);

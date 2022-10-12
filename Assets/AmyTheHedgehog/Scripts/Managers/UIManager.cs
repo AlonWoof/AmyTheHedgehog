@@ -34,6 +34,8 @@ namespace Amy
             //mIngameHUD = inst.GetComponentInChildren<IngameHUD>();
             mainCanvas = inst.GetComponent<Canvas>();
             mHudGroup = inst.GetComponentInChildren<CanvasGroup>();
+
+            DontDestroyOnLoad(inst.gameObject);
         }
 
     	// Update is called once per frame

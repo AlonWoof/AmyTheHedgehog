@@ -16,6 +16,9 @@ namespace Amy
         private void OnDrawGizmosSelected()
         {
             gameObject.name = "Exit #" + exitNumber;
+
+            Gizmos.color = Color.blue;
+            Gizmos.DrawLine(transform.position + Vector3.up * 0.5f, transform.position + Vector3.up * 0.5f + transform.forward);
         }
 
         // Start is called before the first frame update

@@ -28,7 +28,16 @@ namespace Amy
     	// Start is called before the first frame update
     	void Start()
     	{
-    	    
+    	    if(!voiceSource)
+            {
+                GameObject inst = new GameObject("Voice");
+                inst.transform.SetParent(gameObject.transform);
+                inst.transform.position = transform.position + Vector3.up * 0.65f;
+
+                voiceSource = inst.AddComponent<AudioSource>();
+                voiceSource.outputAudioMixerGroup = GameManager.Instance.systemData.AUDIO_Group_Voice;
+                voiceSource.spatialBlend = 0.0f;
+            }
     	}
 
     	// Update is called once per frame

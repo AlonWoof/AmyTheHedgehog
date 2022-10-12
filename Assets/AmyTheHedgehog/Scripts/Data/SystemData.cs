@@ -11,6 +11,7 @@ namespace Amy
     {
         public GameObject RES_AmyIngameModel;
         public RuntimeAnimatorController RES_AmyIngameAnimator;
+        public CharacterPhysicsData RES_AmyJiggleData;
 
         public GameObject RES_userInterface;
         public GameObject RES_mainCamera;
@@ -23,5 +24,6 @@ namespace Amy
         public AudioMixer AUDIO_GameSFXMixer;
         public AudioMixer AUDIO_MenuSFXMixer;
         public AudioMixer AUDIO_MusicMixer;
+        public AudioMixerGroup AUDIO_Group_Voice;
     }
 }

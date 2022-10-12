@@ -28,6 +28,8 @@ namespace Amy
         //The player's current status. Not sure how much of this should be on the player instance.
         public PlayerStatus status;
 
+        
+
         //This will be placed at the last safe place/exit
         public Transform playerCheckpoint;
 
@@ -127,6 +129,7 @@ namespace Amy
 
 
             mPlayerInstance = Player.Spawn(playerCheckpoint.transform.position, playerCheckpoint.transform.forward);
+            
             //saveGame.lastScene = SceneManager.GetActiveScene().name;
             // saveGame.lastExit = lastExit;
 

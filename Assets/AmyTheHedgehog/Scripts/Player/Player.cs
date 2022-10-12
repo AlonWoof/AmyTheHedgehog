@@ -16,8 +16,9 @@ namespace Amy
     public enum PlayerModes
     {
         BASIC_MOVE,
-        DEBUG_MOVE,
-        HANGING
+        SPRING,
+        HANGING,
+        DEBUG_MOVE
     }
 
     public class Player : MonoBehaviour
@@ -43,11 +44,14 @@ namespace Amy
 
         public LayerMask mColMask;
 
+        public ThirdPersonCamera tpc;
+
         //Modes
         public PlayerModes currentMode;
         public PlayerModes lastMode;
 
         PlayerBasicMove modeBasicMove;
+        PlayerSpringBounce modeSpring;
         PlayerHanging modeHanging;
         PlayerDebugMove modeDebugMove;
 
@@ -97,8 +101,18 @@ namespace Amy
             body.freezeRotation = true;
             body.collisionDetectionMode = CollisionDetectionMode.ContinuousDynamic;
 
-            //Animator anim = inst.AddComponent<Animator>();
-            //anim.runtimeAnimatorController = GameManager.Instance.systemData.RES_AmyIngameAnimator;
+            Animator anim = inst.GetComponent<Animator>();
+
+            if(!anim)
+                inst.AddComponent<Animator>();
+
+            anim.runtimeAnimatorController = GameManager.Instance.systemData.RES_AmyIngameAnimator;
+
+            CharacterPhysics jiggles = inst.AddComponent<CharacterPhysics>();
+            jiggles.mData = GameManager.Instance.systemData.RES_AmyJiggleData;
+
+            FootstepFX footsteps = inst.AddComponent<FootstepFX>();
+            footsteps.isPlayer = true;
 
             Player newPlayer = inst.AddComponent<Player>();
 
@@ -106,7 +120,9 @@ namespace Amy
             ThirdPersonCamera tpc = camInst.AddComponent<ThirdPersonCamera>();
 
             tpc.setPlayerTransform(inst.transform);
+            tpc.centerBehindPlayer();
 
+            newPlayer.tpc = tpc;
             
             newPlayer.mDirection = dir;
 
@@ -148,6 +164,7 @@ namespace Amy
         {
             modeBasicMove = gameObject.AddComponent<PlayerBasicMove>();
             modeHanging = gameObject.AddComponent<PlayerHanging>();
+            modeSpring = gameObject.AddComponent<PlayerSpringBounce>();
             modeDebugMove = gameObject.AddComponent<PlayerDebugMove>();
         }
 
@@ -155,6 +172,7 @@ namespace Amy
         {
             modeBasicMove.enabled = false;
             modeHanging.enabled = false;
+            modeSpring.enabled = false;
             modeDebugMove.enabled = false;
         }
 
@@ -174,12 +192,18 @@ namespace Amy
     	{
             //Debug.DrawLine(transform.position, transform.position + groundNormal, Color.red, 1.0f);
 
+            if (currentMode == PlayerModes.BASIC_MOVE)
+            {
+                if (Vector3.Angle(Vector3.up, groundNormal) < 60.0f && mForwardVelocity > 0.1f)
+                    transform.rotation = Quaternion.Lerp(transform.rotation, Quaternion.FromToRotation(Vector3.up, groundNormal) * Quaternion.LookRotation(mDirection, Vector3.up), Time.deltaTime * turningSpeed);
+                else
+                    transform.rotation = Quaternion.Lerp(transform.rotation, Quaternion.LookRotation(mDirection, Vector3.up), Time.deltaTime * turningSpeed);
+            }
 
-            if(Vector3.Angle(Vector3.up,groundNormal) < 60.0f)
-                transform.rotation = Quaternion.Lerp(transform.rotation,Quaternion.FromToRotation(Vector3.up, groundNormal) * Quaternion.LookRotation(mDirection, Vector3.up), Time.deltaTime * turningSpeed);
-            else
-                transform.rotation = Quaternion.Lerp(transform.rotation, Quaternion.LookRotation(mDirection, Vector3.up), Time.deltaTime * turningSpeed);
-
+            if(currentMode == PlayerModes.SPRING)
+            {
+                transform.rotation = Quaternion.Lerp(transform.rotation, Quaternion.FromToRotation(Vector3.up, groundNormal) * Quaternion.LookRotation(mDirection, Vector3.up), Time.deltaTime * turningSpeed);
+            }
 
             if(mBallModel)
             {
@@ -187,6 +211,8 @@ namespace Amy
             }
 
             debugControls();
+
+
         }
 
         private void LateUpdate()
@@ -219,6 +245,10 @@ namespace Amy
             {
                 case PlayerModes.BASIC_MOVE:
                     modeBasicMove.enabled = true;
+                    break;
+
+                case PlayerModes.SPRING:
+                    modeSpring.enabled = true;
                     break;
 
                 case PlayerModes.HANGING:
@@ -259,6 +289,12 @@ namespace Amy
                 {
                     changeCurrentMode(PlayerModes.DEBUG_MOVE);
                 }
+            }
+
+            if(Input.GetKeyDown(KeyCode.Alpha8))
+            {
+                changeCurrentMode(PlayerModes.SPRING);
+                modeSpring.setSpringVelocity(Vector3.up, 15.0f);
             }
 
         }

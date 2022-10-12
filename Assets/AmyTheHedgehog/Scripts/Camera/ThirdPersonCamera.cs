@@ -21,6 +21,9 @@ namespace Amy
 
 		public Vector3 targetOffset = new Vector3(0, 0.75f, -1.75f);
 
+        public Vector3 offset_near = new Vector3(0, 0.75f, -1.75f);
+        public Vector3 offset_far = new Vector3(0, 1.0f, -3.5f);
+
         Vector3 lookPosition;
 
 		float maxPitch = 50.0f;
@@ -224,14 +227,19 @@ namespace Amy
             playerIsCrouched = false;
             playerVelocity = 0.0f;
 
+            targetOffset = offset_near;
+
             //then, check if we have a player instance
             if (!mPlayer)
                 return;
 
             //The crouched state is part of the GroundMove component.
-           // playerIsCrouched = mPlayer.GetComponent<PlayerBasicMove>().isCrouching;
+            // playerIsCrouched = mPlayer.GetComponent<PlayerBasicMove>().isCrouching;
+
+            float speedFac = (mPlayer.mForwardVelocity / 16.0f);
 
 
+            targetOffset = Vector3.Lerp(offset_near, offset_far, speedFac);
         }
 
         public void Occlusion()
