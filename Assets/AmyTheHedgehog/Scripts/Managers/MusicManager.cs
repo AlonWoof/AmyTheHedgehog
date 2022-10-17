@@ -58,6 +58,14 @@ namespace Amy
         void Update()
         {
            // Debug.Log("BGM VOLUME: " + bgm.volume);
+
+            if(hasIntro && bgm.clip == currentBGM.introClip && !bgm.isPlaying)
+            {
+                //continue to the main event.
+                bgm.clip = currentBGM.mainClip;
+                bgm.loop = true;
+                bgm.Play();
+            }
         }
 
         public void changeSongs(BGMData newSong, float crossFadeTime = 1.0f)

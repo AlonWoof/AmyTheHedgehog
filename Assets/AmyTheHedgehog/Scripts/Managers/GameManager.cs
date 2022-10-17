@@ -134,6 +134,8 @@ namespace Amy
     	{
             checkController();
             debugFunctions();
+
+            systemData.AUDIO_GameSFXMixer.SetFloat("GameSFXVolume", gameSFXVolume);
         }
 
         void debugFunctions()
@@ -309,7 +311,7 @@ namespace Amy
 
 
 
-            yield return Timing.WaitForSeconds(0.5f);
+            yield return Timing.WaitForSeconds(1.5f);
 
             //UIManager.Instance.hideGameOverScreen();
 
@@ -366,7 +368,7 @@ namespace Amy
 
             yield return Timing.WaitForSeconds(waitTime);
 
-            /*
+            
             while (gameSFXVolume < 0.0f)
             {
                 gameSFXVolume = Mathf.Lerp(gameSFXVolume, 0.1f, Time.unscaledDeltaTime * 3);
@@ -375,7 +377,7 @@ namespace Amy
             }
 
             gameSFXVolume = 0.0f;
-            */
+            
 
             yield return Timing.WaitForSeconds(waitTime * 0.5f);
 
