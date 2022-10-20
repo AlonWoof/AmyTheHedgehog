@@ -18,6 +18,8 @@ namespace Amy
         public AmyFXRes RES_AmyPlayerFX;
         public FootstepFXRes RES_footstepFX;
 
+        public GameObject RES_AI_ExclamationFX;
+
 
         [Header("Audio")]
 
@@ -25,5 +27,9 @@ namespace Amy
         public AudioMixer AUDIO_MenuSFXMixer;
         public AudioMixer AUDIO_MusicMixer;
         public AudioMixerGroup AUDIO_Group_Voice;
+
+        public BGMData bgm_alert;
+        public BGMData bgm_evasion;
+        public AudioClip sfx_mgs_clear;
     }
 }

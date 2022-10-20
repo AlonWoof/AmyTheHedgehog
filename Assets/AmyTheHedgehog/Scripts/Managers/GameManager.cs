@@ -63,8 +63,9 @@ namespace Amy
             GameManager.Instance.Init();
             UIManager.Instance.Init();
             PlayerManager.Instance.Init();
+            EnemyManager.Instance.Init();
            //TimeManager.Instance.Init();
-           // MusicManager.Instance.Init();
+            MusicManager.Instance.Init();
 
             //GameManager.Instance.loadTitleScreen();
         }
@@ -85,13 +86,14 @@ namespace Amy
             bgmSource.spatialBlend = 0.0f;
             bgmSource.volume = 0.25f;
             bgmSource.playOnAwake = false;
+            */
 
             systemSoundSource = gameObject.AddComponent<AudioSource>();
             systemSoundSource.spatialBlend = 0.0f;
             systemSoundSource.volume = 0.75f;
             systemSoundSource.playOnAwake = false;
             systemSoundSource.outputAudioMixerGroup = systemData.AUDIO_MenuSFXMixer.outputAudioMixerGroup;
-            */
+            
 
             analogStickState = new bool[8];
             analogStickFirstFrame = new bool[8];
@@ -258,8 +260,8 @@ namespace Amy
 
         public void playSystemSound(AudioClip snd, float volume = 1.0f)
         {
-            //systemSoundSource.volume = volume;
-            //systemSoundSource.PlayOneShot(snd);
+            systemSoundSource.volume = volume;
+            systemSoundSource.PlayOneShot(snd);
         }
 
         #region Scene Transition
@@ -383,6 +385,8 @@ namespace Amy
 
             if (PlayerManager.Instance.mPlayerInstance)
                 PlayerManager.Instance.mPlayerInstance.tpc.centerBehindPlayer();
+
+            EnemyManager.Instance.currentEnemyPhase = ENEMY_PHASE.PHASE_SNEAK;
 
             UIManager.Instance.fadeScreen(true, 0.75f);
             yield return Timing.WaitForSeconds(0.75f);

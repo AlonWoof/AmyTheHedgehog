@@ -18,6 +18,11 @@ namespace Amy
             fadeScreen(true);
         }
 
+        private void OnEnable()
+        {
+            fadeScreen(true);
+        }
+
         public void fadeScreen(bool fadeIn, float time = 1.0f, bool toWhite = false)
         {
             if (!mImage)

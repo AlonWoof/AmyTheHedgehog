@@ -37,7 +37,9 @@ namespace Amy
 
         public float playerDirtiness = 0.0f;
         public int ringCount = 0;
+        public float stealthIndex = 0.0f;
 
+        public bool playerHasStealthCamo = false;
 
         private void Awake()
         {
@@ -62,8 +64,27 @@ namespace Amy
     	// Update is called once per frame
     	void Update()
     	{
-    	    
+            handleStealthIndex();
     	}
+
+        void handleStealthIndex()
+        {
+            stealthIndex = 0.0f;
+
+            if (playerHasStealthCamo)
+                stealthIndex = 1.0f;
+        }
+
+        public void givePlayerStealthCamo()
+        {
+            if (!mPlayerInstance)
+                return;
+
+            if (!mPlayerInstance.GetComponent<StealthCamo>())
+                mPlayerInstance.gameObject.AddComponent<StealthCamo>();
+
+            mPlayerInstance.GetComponent<StealthCamo>().enabled = true;
+        }
 
         public Player getPlayer(bool search = true)
         {

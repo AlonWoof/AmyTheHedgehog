@@ -21,7 +21,7 @@ namespace Amy
         //Amount of slope tolerance when running full speed.
         const float slopeVariance = 20.0f;
 
-        const float baseJumpPower = 4.5f;
+        const float baseJumpPower = 5.0f;
         const float baseJumpHangTime = 1.5f;
 
         public float slopeAmount = 0.0f;

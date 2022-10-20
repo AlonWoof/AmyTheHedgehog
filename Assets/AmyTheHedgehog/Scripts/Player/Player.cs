@@ -18,6 +18,7 @@ namespace Amy
         BASIC_MOVE,
         SPRING,
         HANGING,
+        SWIMMING,
         DEBUG_MOVE
     }
 
@@ -125,6 +126,15 @@ namespace Amy
             newPlayer.tpc = tpc;
             
             newPlayer.mDirection = dir;
+
+            foreach (Transform t in inst.GetComponentsInChildren<Transform>())
+            {
+                if (t.gameObject.name.ToLower().Contains("hitbox"))
+                {
+                    PlayerHitbox hb = t.gameObject.AddComponent<PlayerHitbox>();
+                    hb.mPlayer = newPlayer;
+                }
+            }
 
             return newPlayer;
         }
@@ -297,6 +307,8 @@ namespace Amy
                 modeSpring.setSpringVelocity(Vector3.up, 15.0f);
             }
 
+            if (Input.GetKeyDown(KeyCode.Alpha7))
+                PlayerManager.Instance.givePlayerStealthCamo();
         }
 
     }

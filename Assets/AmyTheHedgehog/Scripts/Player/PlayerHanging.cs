@@ -23,6 +23,8 @@ namespace Amy
 
         private void OnEnable()
         {
+            getBaseComponents();
+
             if (mPlayer.currentMode != PlayerModes.HANGING)
                 return;
 
