@@ -81,7 +81,10 @@ public static class Helper
     }
 
 
-
+    public static Vector4 Plane(Vector3 pos, Vector3 normal)
+    {
+        return new Vector4(normal.x, normal.y, normal.z, -Vector3.Dot(pos, normal));
+    }
 
 
     public static Transform findInChildrenByName(GameObject obj, string name)

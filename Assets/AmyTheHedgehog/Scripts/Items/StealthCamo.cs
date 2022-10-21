@@ -60,9 +60,16 @@ namespace Amy
 
             if (timeLeft < 5.0f)
             {
-                float timefac = 1.0f - (timeLeft / maxTime);
 
-                distort += 0.1f * (timefac * Mathf.Sin(Time.time * 16.0f));
+                if (Time.frameCount % 16 == 0)
+                    veloFactor = Random.Range(-4, 4);
+
+
+                if (timeLeft < 3.0f)
+                {
+                    if (Time.frameCount % 8 == 0)
+                        veloFactor = Random.Range(-16,16);
+                }
             }
 
             foreach (Material m in mats)
