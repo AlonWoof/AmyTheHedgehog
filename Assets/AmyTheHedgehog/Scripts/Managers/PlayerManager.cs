@@ -69,10 +69,18 @@ namespace Amy
 
         void handleStealthIndex()
         {
+            if (!mPlayerInstance)
+                return;
+
+            PlayerBasicMove basicMove = mPlayerInstance.GetComponent<PlayerBasicMove>();
+
             stealthIndex = 0.0f;
 
             if (playerHasStealthCamo)
                 stealthIndex = 1.0f;
+
+            if (basicMove.jumpTimer > 0.2f)
+                stealthIndex -= 0.25f;
         }
 
         public void givePlayerStealthCamo()

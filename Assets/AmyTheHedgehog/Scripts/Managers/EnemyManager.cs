@@ -19,6 +19,9 @@ namespace Amy
 
         public Vector3 lastPlayerLocation;
         public Vector3 playerActualLocation;
+        public Vector3 playerMovementDelta;
+
+        Vector3 pl_lastPos;
 
         public ENEMY_PHASE currentEnemyPhase = ENEMY_PHASE.PHASE_SNEAK;
 
@@ -29,10 +32,15 @@ namespace Amy
         public float alertTimer = 0.0f;
 
 
+        const float tauntTimerMin = 4.0f;
+        const float tauntTimerMax = 8.0f;
+
+        float voiceTauntTimer = 0.0f;
+
         // Start is called before the first frame update
         void Awake()
         {
-
+            voiceTauntTimer = Random.Range(tauntTimerMin, tauntTimerMax);
         }
 
         public void Init()
@@ -46,8 +54,23 @@ namespace Amy
             if (!PlayerManager.Instance.mPlayerInstance)
                 return;
 
+
+
             playerActualLocation = PlayerManager.Instance.mPlayerInstance.transform.position;
 
+            playerMovementDelta = (playerActualLocation - pl_lastPos);
+
+            pl_lastPos = playerActualLocation;
+
+            //Debug.DrawLine(playerActualLocation + Vector3.up * 0.5f, (playerActualLocation + Vector3.up * 0.5f) + (playerMovementDelta), Color.red, 1.1f);
+
+            if (getClosestRobotToPlayer() == null)
+            {
+                if(currentEnemyPhase != ENEMY_PHASE.PHASE_SNEAK)
+                {
+                    PatrolAllBotsInArea();
+                }
+            }
 
             if(currentEnemyPhase == ENEMY_PHASE.PHASE_ALERT)
             {
@@ -73,6 +96,20 @@ namespace Amy
                 {
                     PatrolAllBotsInArea();
                 }
+
+                if (voiceTauntTimer > 0.0f)
+                    voiceTauntTimer -= Time.deltaTime;
+
+                if (cautionTimer > tauntTimerMax)
+                {
+                    if(voiceTauntTimer <= 0.0f)
+                    {
+                        getClosestRobotVoiceToPlayer().playSearchModeTaunt();
+                        voiceTauntTimer = Random.Range(tauntTimerMin, tauntTimerMax);
+                    }
+
+                }
+
             }
 
         }
@@ -107,10 +144,40 @@ namespace Amy
             return start;
         }
 
+        public Robot getClosestRobotToPlayer()
+        {
+            float dist = 512.0f;
+
+            Robot ret = null;
+
+            foreach(Robot r in FindObjectsOfType<Robot>())
+            {
+                if(Vector3.Distance(playerActualLocation,r.transform.position) < dist)
+                {
+                    ret = r;
+                }
+            }
+
+            return ret;
+        }
+
+        public RobotVoices getClosestRobotVoiceToPlayer()
+        {
+            Robot r = getClosestRobotToPlayer();
+
+            if (r == null)
+                return null;
+
+            return r.GetComponent<RobotVoices>();
+        }
+
         public void PatrolAllBotsInArea()
         {
             if (currentEnemyPhase == ENEMY_PHASE.PHASE_SNEAK)
                 return;
+
+            if (currentEnemyPhase == ENEMY_PHASE.PHASE_CAUTION && getClosestRobotToPlayer())
+                getClosestRobotVoiceToPlayer().playPatrolModeVoice();
 
             GameManager.Instance.playSystemSound(GameManager.Instance.systemData.sfx_mgs_clear);
 
@@ -133,6 +200,9 @@ namespace Amy
             if (currentEnemyPhase == ENEMY_PHASE.PHASE_CAUTION)
                 return;
 
+            //if (currentEnemyPhase == ENEMY_PHASE.PHASE_CAUTION)
+             //   getClosestRobotVoiceToPlayer().playPatrolModeVoice();
+
             MusicManager.Instance.changeSongs(GameManager.Instance.systemData.bgm_evasion,1.0f);
 
             currentEnemyPhase = ENEMY_PHASE.PHASE_CAUTION;
@@ -154,6 +224,9 @@ namespace Amy
 
             if (currentEnemyPhase == ENEMY_PHASE.PHASE_ALERT)
                 return;
+
+            if (currentEnemyPhase == ENEMY_PHASE.PHASE_SNEAK)
+                getClosestRobotVoiceToPlayer().playAlertModeVoice();
 
             MusicManager.Instance.changeSongs(GameManager.Instance.systemData.bgm_alert,0.1f);
 

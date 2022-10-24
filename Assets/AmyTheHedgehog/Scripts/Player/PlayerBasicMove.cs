@@ -31,6 +31,7 @@ namespace Amy
         int framesAirborne = 0;
         bool isSliding = false;
         bool isSkidding = false;
+        bool isCrouching = false;
         float skidTimeout = 0.0f;
 
         // Start is called before the first frame update
@@ -251,6 +252,9 @@ namespace Amy
         {
 
             //Debug.Log("PAWA: " + power);
+
+            if (isCrouching)
+                power = Mathf.Clamp(power, 0, 0.4f);
 
 
             float walkSpeedTotal = baseWalkSpeed;

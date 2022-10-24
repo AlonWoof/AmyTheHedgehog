@@ -133,7 +133,29 @@ namespace Amy
                 return;
 
             if (!mirrorCam)
+            {
+                GameObject oldCam = GameObject.Find("MirrorCam");
+
+                if (oldCam)
+                {
+                    if (Application.isEditor)
+                    {
+                        DestroyImmediate(oldCam);
+                    }
+                    else
+                    {
+                        Destroy(oldCam);
+                    }
+                }
+
                 mirrorCam = new GameObject("MirrorCam", typeof(Camera)).GetComponent<Camera>();
+            }
+
+            if(!mirrorRenderer)
+                mirrorRenderer = GetComponent<Renderer>();
+
+            if(propertyBlock == null)
+                propertyBlock = new MaterialPropertyBlock();
 
             mainCam = Camera.current;
 
@@ -142,7 +164,7 @@ namespace Amy
 
             if (!mRenderTexture)
             {
-                mRenderTexture = new RenderTexture(mainCam.pixelWidth, mainCam.pixelHeight, 24, RenderTextureFormat.ARGBHalf, 4);
+                mRenderTexture = new RenderTexture(mainCam.pixelWidth * 2, mainCam.pixelHeight * 2, 24, RenderTextureFormat.ARGBHalf, 4);
             }
 
 
