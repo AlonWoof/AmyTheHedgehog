@@ -5,6 +5,13 @@ using UnityEngine;
 /* Copyright 2021 Jason Haden */
 namespace Amy
 {
+    public enum PlayableCharacter
+    {
+        Amy,
+        Cream
+    }
+
+
     [System.Serializable]
     public class PlayerStatus
     {
@@ -28,7 +35,7 @@ namespace Amy
         //The player's current status. Not sure how much of this should be on the player instance.
         public PlayerStatus status;
 
-        
+        public PlayableCharacter currentCharacter = PlayableCharacter.Amy;
 
         //This will be placed at the last safe place/exit
         public Transform playerCheckpoint;
@@ -40,6 +47,8 @@ namespace Amy
         public float stealthIndex = 0.0f;
 
         public bool playerHasStealthCamo = false;
+
+        
 
         private void Awake()
         {
@@ -157,7 +166,7 @@ namespace Amy
             }
 
 
-            mPlayerInstance = Player.Spawn(playerCheckpoint.transform.position, playerCheckpoint.transform.forward);
+            mPlayerInstance = Player.Spawn(playerCheckpoint.transform.position, playerCheckpoint.transform.forward, currentCharacter);
             
             //saveGame.lastScene = SceneManager.GetActiveScene().name;
             // saveGame.lastExit = lastExit;

@@ -15,6 +15,7 @@ namespace Amy
         public LayerMask groundSnapMask;
 
         public bool copyRotation = false;
+        public bool snapToWaterSurface = false;
 
     	// Start is called before the first frame update
     	void Start()
@@ -35,6 +36,13 @@ namespace Amy
 
             if (copyRotation)
                 transform.rotation = mPlayer.transform.rotation;
+
+            if(snapToWaterSurface)
+            {
+                Vector3 pos = transform.position;
+                pos.y = mPlayer.getWaterYPos();
+                transform.position = pos;
+            }
 
             if(snapToGround)
             {

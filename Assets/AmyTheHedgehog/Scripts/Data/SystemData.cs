@@ -10,8 +10,13 @@ namespace Amy
     public class SystemData : ScriptableObject
     {
         public GameObject RES_AmyIngameModel;
-        public RuntimeAnimatorController RES_AmyIngameAnimator;
+        public GameObject RES_CreamIngameModel;
+
+        public RuntimeAnimatorController RES_AmyIngameAnimator; 
+        public AnimatorOverrideController RES_CreamIngameAnimator;
+
         public CharacterPhysicsData RES_AmyJiggleData;
+        public CharacterPhysicsData RES_CreamJiggleData;
 
         public GameObject RES_userInterface;
         public GameObject RES_mainCamera;

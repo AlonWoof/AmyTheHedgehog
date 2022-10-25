@@ -240,6 +240,8 @@ namespace Amy
 
 
             targetOffset = Vector3.Lerp(offset_near, offset_far, speedFac);
+
+            targetOffset.y *= mPlayer.playerHeight;
         }
 
         public void Occlusion()

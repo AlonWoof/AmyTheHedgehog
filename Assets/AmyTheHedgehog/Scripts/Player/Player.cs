@@ -33,12 +33,18 @@ namespace Amy
 
         float turningSpeed = 10.0f;
 
+        //Who are we?
+        public PlayableCharacter mChara;
+
         //This vector must always be normalized.
         public Vector3 mDirection = Vector3.forward;
 
         public float mForwardVelocity = 0.0f;
         public Vector3 mCurrentMovement = Vector3.zero;
         public Vector3 mDesiredMovement = Vector3.zero;
+
+        public float waterDepth = 0.0f;
+        public float playerHeight = 0.9f;
 
         public Vector3 groundNormal;
         public bool isGrounded;
@@ -51,8 +57,10 @@ namespace Amy
         public PlayerModes currentMode;
         public PlayerModes lastMode;
 
+
         PlayerBasicMove modeBasicMove;
         PlayerSpringBounce modeSpring;
+        PlayerSwimming modeSwimming;
         PlayerHanging modeHanging;
         PlayerDebugMove modeDebugMove;
 
@@ -60,6 +68,7 @@ namespace Amy
         public Transform headBoneTransform;
 
         public bool isBallMode = false;
+       
 
         private void Awake()
         {
@@ -67,15 +76,35 @@ namespace Amy
             
         }
 
-        public static Player Spawn(Vector3 pos, Vector3 dir)
+        public static Player Spawn(Vector3 pos, Vector3 dir, PlayableCharacter chara = PlayableCharacter.Amy)
         {
             float amy_height = 0.9f;
+
+            if (chara == PlayableCharacter.Cream)
+                amy_height = 0.7f;
 
             //Fandom wiki says 25 kg, official sources cheekily say ヒ・ミ・ツ！ ("it's a secret!")
             //So let's assume 25kg, seems about right.
             float amy_weight = 25.0f;
 
-            GameObject inst = GameObject.Instantiate(GameManager.Instance.systemData.RES_AmyIngameModel);
+            GameObject inst;
+
+            switch (chara)
+            {
+                case PlayableCharacter.Amy:
+                    inst = GameObject.Instantiate(GameManager.Instance.systemData.RES_AmyIngameModel);
+                    break;
+
+                case PlayableCharacter.Cream:
+                    inst = GameObject.Instantiate(GameManager.Instance.systemData.RES_CreamIngameModel);
+                    break;
+
+                default:
+                    inst = GameObject.Instantiate(GameManager.Instance.systemData.RES_AmyIngameModel);
+                    break;
+            }
+
+            
             inst.transform.position = pos;
 
 
@@ -110,7 +139,11 @@ namespace Amy
             anim.runtimeAnimatorController = GameManager.Instance.systemData.RES_AmyIngameAnimator;
 
             CharacterPhysics jiggles = inst.AddComponent<CharacterPhysics>();
-            jiggles.mData = GameManager.Instance.systemData.RES_AmyJiggleData;
+
+            if(chara == PlayableCharacter.Amy)
+                jiggles.mData = GameManager.Instance.systemData.RES_AmyJiggleData;
+            else
+                jiggles.mData = GameManager.Instance.systemData.RES_CreamJiggleData;
 
             FootstepFX footsteps = inst.AddComponent<FootstepFX>();
             footsteps.isPlayer = true;
@@ -135,6 +168,9 @@ namespace Amy
                     hb.mPlayer = newPlayer;
                 }
             }
+
+            newPlayer.mChara = chara;
+            newPlayer.playerHeight = amy_height;
 
             return newPlayer;
         }
@@ -175,6 +211,7 @@ namespace Amy
             modeBasicMove = gameObject.AddComponent<PlayerBasicMove>();
             modeHanging = gameObject.AddComponent<PlayerHanging>();
             modeSpring = gameObject.AddComponent<PlayerSpringBounce>();
+            modeSwimming = gameObject.AddComponent<PlayerSwimming>();
             modeDebugMove = gameObject.AddComponent<PlayerDebugMove>();
         }
 
@@ -183,7 +220,38 @@ namespace Amy
             modeBasicMove.enabled = false;
             modeHanging.enabled = false;
             modeSpring.enabled = false;
+            modeSwimming.enabled = false;
             modeDebugMove.enabled = false;
+        }
+
+        public float getWaterYPos()
+        {
+            //ITS UNDER NEGATIVE NINE THOUSAAAAND
+            float water_y = -9001.0f;
+
+            Vector3 start = transform.position + 128.0f * Vector3.up;
+            Vector3 end = transform.position - 128.0f * Vector3.up;
+
+            LayerMask waterCol = LayerMask.GetMask("Water");
+            RaycastHit hitInfo = new RaycastHit();
+
+            if(Physics.Linecast(start,end,out hitInfo, waterCol))
+            {
+                water_y = hitInfo.point.y;
+
+            }
+
+            return water_y;
+        }
+
+        public float getWaterDepth()
+        {
+            float water_y = getWaterYPos();
+
+            if (water_y < transform.position.y)
+                return 0f;
+
+            return water_y - transform.position.y;
         }
 
     	// Start is called before the first frame update
@@ -227,7 +295,8 @@ namespace Amy
 
         private void LateUpdate()
         {
-           // Debug.Log("Delta Timestep: " + Time.deltaTime);
+            // Debug.Log("Delta Timestep: " + Time.deltaTime);
+
         }
 
         private void FixedUpdate()
@@ -259,6 +328,10 @@ namespace Amy
 
                 case PlayerModes.SPRING:
                     modeSpring.enabled = true;
+                    break;
+
+                case PlayerModes.SWIMMING:
+                    modeSwimming.enabled = true;
                     break;
 
                 case PlayerModes.HANGING:
@@ -303,8 +376,8 @@ namespace Amy
 
             if(Input.GetKeyDown(KeyCode.Alpha8))
             {
-                changeCurrentMode(PlayerModes.SPRING);
-                modeSpring.setSpringVelocity(Vector3.up, 15.0f);
+                changeCurrentMode(PlayerModes.SWIMMING);
+                
             }
 
             if (Input.GetKeyDown(KeyCode.Alpha7))
