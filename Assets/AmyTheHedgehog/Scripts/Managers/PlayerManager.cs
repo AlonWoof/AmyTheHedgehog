@@ -8,7 +8,8 @@ namespace Amy
     public enum PlayableCharacter
     {
         Amy,
-        Cream
+        Cream,
+        MAX
     }
 
 

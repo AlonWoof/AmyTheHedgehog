@@ -11,8 +11,8 @@ namespace Amy
         public const float baseRunSpeed = 5.0f;
         public const float baseWalkSpeed = 0.75f;
 
-        public const float runSpeedAccel = 4.0f;
-        public const float runSpeedDeccel = 6.0f;
+        public const float runSpeedAccel = 5.0f;
+        public const float runSpeedDeccel = 8.0f;
         public const float slopeInfluence = 0.5f;
 
         //Max slope when standing still.
@@ -72,6 +72,8 @@ namespace Amy
         {
             updateIKSolver();
             updateIsGrounded();
+
+            checkIfUnderwater();
         }
 
         void lerpValues()
@@ -200,8 +202,8 @@ namespace Amy
             if(skidTimeout <= 0.0f)
                 mPlayer.mForwardVelocity *= dirChange;
 
-            if (dirChange < -0.5f)
-                mPlayer.mForwardVelocity = Mathf.Lerp(mPlayer.mForwardVelocity, 0, 0.5f);
+            //if (dirChange < -0.5f)
+            //    mPlayer.mForwardVelocity = Mathf.Lerp(mPlayer.mForwardVelocity, 0, 0.25f);
         }
 
         void handleMovement()
@@ -395,6 +397,17 @@ namespace Amy
             }
 
             return transform.position + offset;
+        }
+
+        public void checkIfUnderwater()
+        {
+            if (jumpTimer > baseJumpHangTime * 0.5f)
+                return;
+
+            if(mPlayer.getWaterDepth() >= mPlayer.headOffsetFromGround)
+            {
+                mPlayer.changeCurrentMode(PlayerModes.SWIMMING);
+            }
         }
 
         #endregion

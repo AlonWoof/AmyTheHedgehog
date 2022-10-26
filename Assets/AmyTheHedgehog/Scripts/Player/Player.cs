@@ -52,6 +52,8 @@ namespace Amy
         public LayerMask mColMask;
 
         public ThirdPersonCamera tpc;
+        public GameObject fx_waterWadingFX;
+        public WetnessDirtynessProxy fx_wetDirty;
 
         //Modes
         public PlayerModes currentMode;
@@ -66,6 +68,8 @@ namespace Amy
 
         public Transform hipBoneTransform;
         public Transform headBoneTransform;
+
+        public float headOffsetFromGround;
 
         public bool isBallMode = false;
        
@@ -138,6 +142,9 @@ namespace Amy
 
             anim.runtimeAnimatorController = GameManager.Instance.systemData.RES_AmyIngameAnimator;
 
+            if(chara == PlayableCharacter.Cream)
+                anim.runtimeAnimatorController = GameManager.Instance.systemData.RES_CreamIngameAnimator;
+
             CharacterPhysics jiggles = inst.AddComponent<CharacterPhysics>();
 
             if(chara == PlayableCharacter.Amy)
@@ -157,7 +164,8 @@ namespace Amy
             tpc.centerBehindPlayer();
 
             newPlayer.tpc = tpc;
-            
+            newPlayer.fx_waterWadingFX = GameObject.Instantiate(GameManager.Instance.systemData.RES_WaterWadingFX);
+
             newPlayer.mDirection = dir;
 
             foreach (Transform t in inst.GetComponentsInChildren<Transform>())
@@ -180,6 +188,7 @@ namespace Amy
             hipBoneTransform = getBoneByName("hips");
             headBoneTransform = getBoneByName("head");
 
+            headOffsetFromGround = (headBoneTransform.position.y - 0.05f) - transform.position.y;
         }
 
         Transform getBoneByName(string name)
@@ -204,6 +213,8 @@ namespace Amy
             //Add a dummy animator to prevent problems later.
             if (!mAnimator)
                 mAnimator = gameObject.AddComponent<Animator>();
+
+            mAnimator.applyRootMotion = false;
         }
 
         void addAllModes()
@@ -238,7 +249,6 @@ namespace Amy
             if(Physics.Linecast(start,end,out hitInfo, waterCol))
             {
                 water_y = hitInfo.point.y;
-
             }
 
             return water_y;
@@ -252,6 +262,35 @@ namespace Amy
                 return 0f;
 
             return water_y - transform.position.y;
+        }
+
+        public void updateWaterFX()
+        {
+            float depth = getWaterDepth();
+
+            if (depth > 0.0f && depth < playerHeight)
+            {
+                fx_waterWadingFX.gameObject.SetActive(true);
+
+                Vector3 wpos = transform.position;
+                wpos.y = getWaterYPos();
+            }
+            else
+            {
+                fx_waterWadingFX.transform.position = Vector3.down * 100000.0f;
+            }
+
+
+            if (depth > 0.5f)
+            {
+                fx_wetDirty.inWater = true;
+                fx_wetDirty.wetLevel = 0.75f;
+            }
+            else
+            {
+                fx_wetDirty.inWater = false;
+            }
+
         }
 
     	// Start is called before the first frame update
@@ -376,7 +415,7 @@ namespace Amy
 
             if(Input.GetKeyDown(KeyCode.Alpha8))
             {
-                changeCurrentMode(PlayerModes.SWIMMING);
+                mAnimator.applyRootMotion = !mAnimator.applyRootMotion;
                 
             }
 

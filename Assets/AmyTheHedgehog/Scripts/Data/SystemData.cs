@@ -25,6 +25,9 @@ namespace Amy
 
         public GameObject RES_AI_ExclamationFX;
 
+        public GameObject RES_WaterWadingFX;
+        public GameObject RES_ActorWaterSplashFX;
+        public GameObject RES_ActorWaterEmergeFX;
 
         [Header("Audio")]
 

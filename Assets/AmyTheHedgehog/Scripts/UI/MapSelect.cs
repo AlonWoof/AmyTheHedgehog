@@ -24,6 +24,7 @@ namespace Amy
         MAX
     }
 
+
     public class MapSelect : MonoBehaviour
     {
 
@@ -38,7 +39,7 @@ namespace Amy
         public Text exitNumberText;
         public Text timeOfDayText;
 
-        TimeOfDaySelect selectedTime;
+        PlayableCharacter characterSelect;
         int selectedExit;
 
         public List<string> loadingMessages;
@@ -141,14 +142,14 @@ namespace Amy
 
             cursorPosition = Mathf.Clamp(cursorPosition, 0, maxListSize);
 
-            if(selectedTime >= TimeOfDaySelect.MAX)
+            if(characterSelect >= PlayableCharacter.MAX)
             {
-                selectedTime = 0;
+                characterSelect = 0;
             }
 
             selectedExit = Mathf.Clamp(selectedExit, 0, 16);
 
-            setTimeOfDayText();
+            setCharacterText();
             setExitNumberText();
 
             if (entryTexts[cursorPosition] != null && mapList[cursorPosition] != null)
@@ -182,7 +183,7 @@ namespace Amy
 
             if(Input.GetKeyDown(KeyCode.Q) || Input.GetButtonDown("Jump"))
             {
-                selectedTime++;
+                characterSelect++;
                 selectSound.Play();
                 updateSelection();
             }
@@ -204,7 +205,7 @@ namespace Amy
             if(Input.GetButtonDown("Action"))
             {
                 showLoadingScreen();
-                setTimeOfDay();
+                setPlayerCharacter();
                 PlayerManager.Instance.lastExit = selectedExit;
                 GameManager.Instance.loadScene(currentItem.sceneName);
 
@@ -212,24 +213,18 @@ namespace Amy
             }
         }
 
-        void setTimeOfDayText()
+        void setCharacterText()
         {
-            string txt = "Time of Day: ";
+            string txt = "Character: ";
 
-            switch (selectedTime)
+            switch (characterSelect)
             {
-                case TimeOfDaySelect.Midnight:
-                    txt += "Midnight";
+                case PlayableCharacter.Amy:
+                    txt += "<color=#f6a3bb>Amy</color>";
                     break;
 
-                case TimeOfDaySelect.Noon:
-                    txt += "Noon";
-                    break;
-                case TimeOfDaySelect.Sunrise:
-                    txt += "Sunrise";
-                    break;
-                case TimeOfDaySelect.Sunset:
-                    txt += "Sunset";
+                case PlayableCharacter.Cream:
+                    txt += "<color=#f8e0b8>Cream</color>";
                     break;
             }
 
@@ -272,36 +267,10 @@ namespace Amy
             loadingScreen.SetActive(true);
         }
 
-        void setTimeOfDay()
-        {/*
-            if(selectedTime == TimeOfDaySelect.Noon)
-            {
-                TimeManager.Instance.hour = 12;
-                TimeManager.Instance.minute = 0;
-                TimeManager.Instance.second = 0;
-            }
+        void setPlayerCharacter()
+        {
+            PlayerManager.Instance.currentCharacter = characterSelect;
 
-            if (selectedTime == TimeOfDaySelect.Sunset)
-            {
-                TimeManager.Instance.hour = 18;
-                TimeManager.Instance.minute = 0;
-                TimeManager.Instance.second = 0;
-            }
-
-            if (selectedTime == TimeOfDaySelect.Sunrise)
-            {
-                TimeManager.Instance.hour = 8;
-                TimeManager.Instance.minute = 0;
-                TimeManager.Instance.second = 0;
-            }
-
-
-            if (selectedTime == TimeOfDaySelect.Midnight)
-            {
-                TimeManager.Instance.hour = 0;
-                TimeManager.Instance.minute = 0;
-                TimeManager.Instance.second = 0;
-            }*/
         }
 	}
 
