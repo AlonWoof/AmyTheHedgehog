@@ -1,5 +1,52 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!1 &2084906509
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2084906511}
+  - component: {fileID: 2084906510}
+  m_Layer: 0
+  m_Name: GameObject
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &2084906511
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2084906509}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 5115904292469261208}
+  m_RootOrder: 3
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &2084906510
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2084906509}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 464ec3951bb40744891b4a9198d45da7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  stopTime: 64
+  connectionRange: 3
+  connectedWaypoints:
+  - {fileID: 2084906510}
 --- !u!1 &42178776758697779
 GameObject:
   m_ObjectHideFlags: 0
@@ -782,7 +829,7 @@ AudioSource:
   Spatialize: 0
   SpatializePostEffects: 0
   Priority: 0
-  DopplerLevel: 0.1
+  DopplerLevel: 0
   MinDistance: 3
   MaxDistance: 64
   Pan2D: 0
@@ -819,7 +866,7 @@ AudioSource:
     m_Curve:
     - serializedVersion: 3
       time: 0
-      value: 0.9
+      value: 1
       inSlope: 0
       outSlope: 0
       tangentMode: 0
@@ -958,6 +1005,7 @@ Transform:
   - {fileID: 6172394803266530419}
   - {fileID: 4201720514079429382}
   - {fileID: 5420804752517467327}
+  - {fileID: 2084906511}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -993,28 +1041,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   homePatrolRoute:
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
+  - {fileID: 2084906510}
   searchRadius: 32
-  sightRangeNormal: 32
   sightFOVAngle: 45
   hearingRange: 6
   eye: {fileID: 0}
@@ -1023,6 +1051,7 @@ MonoBehaviour:
   isSearching: 0
   isAlertMode: 0
   lastVisionCheck: 0
+  isStationaryRobot: 1
 --- !u!195 &4716938574776382914
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -1086,6 +1115,7 @@ MonoBehaviour:
   - {fileID: 2456415266964436792}
   - {fileID: 7045973498293162918}
   projectileToFire: {fileID: 2566103670266644826, guid: a2cf5aabea83eb845a1e0a6d938acb01, type: 3}
+  target: {x: 0, y: 0, z: 0}
 --- !u!1 &6280068041814538441
 GameObject:
   m_ObjectHideFlags: 0

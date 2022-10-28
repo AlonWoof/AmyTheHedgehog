@@ -30,7 +30,10 @@ namespace Amy
         const float shootTime_Max = 5.0f;
         
 
-        const float sightRangeNormal = 16.0f;
+        float sightRangeNormal = 16.0f;
+        float standingSightBonus = 1.2f;
+        float alertSightBonus = 1.3f;
+
         const float sightRangeAlert = 32.0f;
 
         public float sightFOVAngle = 45.0f;
@@ -99,10 +102,32 @@ namespace Amy
             if (EnemyManager.Instance.currentEnemyPhase == ENEMY_PHASE.PHASE_ALERT)
                 ret *= 1.2f;
 
+            //Can see further when standing still.
+            if (velocity < 0.1f)
+                ret *= standingSightBonus;
+
             //If you got, say, stealth camo.... or crouching, or in tall grass...
             ret *= (1.0f - PlayerManager.Instance.stealthIndex);
 
             return ret;
+        }
+
+        private void OnDrawGizmos()
+        {
+            if (Application.isEditor)
+                return;
+
+            Gizmos.color = new Color(1, 0.65f, 0.5f, 0.2f);
+            Gizmos.DrawSphere(eye.transform.position, calculateSightRange());
+        }
+
+        private void OnDrawGizmosSelected()
+        {
+            if (!Application.isEditor)
+                return;
+
+            Gizmos.color = new Color(1, 0.65f, 0.5f, 0.2f);
+            Gizmos.DrawSphere(transform.position + Vector3.up * 0.75f, calculateSightRange());
         }
 
         void MobileRobotUpdate()

@@ -36,25 +36,25 @@ public class RobotVoices : MonoBehaviour
 
     public void playPatrolModeVoice()
     {
-        mVoice.spatialBlend = 0.5f;
+        //mVoice.spatialBlend = 0.5f;
         playVoice(voices_patrolModeResume);
     }
 
     public void playAlertModeVoice()
     {
-        mVoice.spatialBlend = 0.5f;
+       // mVoice.spatialBlend = 0.5f;
         playVoice(voices_alertModeStart);
     }
 
     public void playSearchModeVoice()
     {
-        mVoice.spatialBlend = 0.5f;
+       // mVoice.spatialBlend = 0.5f;
         playVoice(voices_searchModeStart);
     }
 
     public void playSearchModeTaunt()
     {
-        mVoice.spatialBlend = 1.0f;
+        //mVoice.spatialBlend = 1.0f;
         playVoice(voices_searchTaunts);
     }
 }

@@ -13,14 +13,35 @@ namespace Amy
         public GameObject fx_basicJump;
     }
 
+    [System.Serializable]
+    public class PlayableCharacterData
+    {
+        public float playerHeight = 0.9f;
+        public float playerWeight = 25.0f;
+
+        public float baseWalkSpeed = 0.75f;
+        public float baseRunSpeed = 5.0f;
+
+        public float runSpeedAccel = 5.0f;
+        public float runSpeedDeccel = 8.0f;
+
+
+        public float baseJumpPower = 5.0f;
+        public float baseJumpHangTime = 1.5f;
+        public float baseGravity = 1.5f;
+    }
+
+
     public enum PlayerModes
     {
         BASIC_MOVE,
         SPRING,
         HANGING,
         SWIMMING,
+        DIE,
         DEBUG_MOVE
     }
+
 
     public class Player : MonoBehaviour
 	{
@@ -45,6 +66,7 @@ namespace Amy
 
         public float waterDepth = 0.0f;
         public float playerHeight = 0.9f;
+        public float lungCapacity = 1.0f;
 
         public Vector3 groundNormal;
         public bool isGrounded;
@@ -64,6 +86,7 @@ namespace Amy
         PlayerSpringBounce modeSpring;
         PlayerSwimming modeSwimming;
         PlayerHanging modeHanging;
+        PlayerDie modeDie;
         PlayerDebugMove modeDebugMove;
 
         public Transform hipBoneTransform;
@@ -163,6 +186,8 @@ namespace Amy
             tpc.setPlayerTransform(inst.transform);
             tpc.centerBehindPlayer();
 
+            WetnessDirtynessProxy wetdirt = inst.AddComponent<WetnessDirtynessProxy>();
+
             newPlayer.tpc = tpc;
             newPlayer.fx_waterWadingFX = GameObject.Instantiate(GameManager.Instance.systemData.RES_WaterWadingFX);
 
@@ -214,6 +239,8 @@ namespace Amy
             if (!mAnimator)
                 mAnimator = gameObject.AddComponent<Animator>();
 
+            fx_wetDirty = GetComponent<WetnessDirtynessProxy>();
+
             mAnimator.applyRootMotion = false;
         }
 
@@ -223,6 +250,7 @@ namespace Amy
             modeHanging = gameObject.AddComponent<PlayerHanging>();
             modeSpring = gameObject.AddComponent<PlayerSpringBounce>();
             modeSwimming = gameObject.AddComponent<PlayerSwimming>();
+            modeDie = gameObject.AddComponent<PlayerDie>();
             modeDebugMove = gameObject.AddComponent<PlayerDebugMove>();
         }
 
@@ -232,7 +260,9 @@ namespace Amy
             modeHanging.enabled = false;
             modeSpring.enabled = false;
             modeSwimming.enabled = false;
+            modeDie.enabled = false;
             modeDebugMove.enabled = false;
+
         }
 
         public float getWaterYPos()
@@ -266,6 +296,9 @@ namespace Amy
 
         public void updateWaterFX()
         {
+
+            fx_wetDirty.dirtLevel = PlayerManager.Instance.getCharacterStatus(mChara).dirtiness;
+
             float depth = getWaterDepth();
 
             if (depth > 0.0f && depth < playerHeight)
@@ -285,6 +318,9 @@ namespace Amy
             {
                 fx_wetDirty.inWater = true;
                 fx_wetDirty.wetLevel = 0.75f;
+
+                if(PlayerManager.Instance.getCharacterStatus(mChara).dirtiness > 0.0f)
+                    PlayerManager.Instance.getCharacterStatus(mChara).dirtiness -= Time.deltaTime * 0.5f;
             }
             else
             {
@@ -336,11 +372,80 @@ namespace Amy
         {
             // Debug.Log("Delta Timestep: " + Time.deltaTime);
 
+            updateWaterFX();
+            checkHealth();
+            updateMood();
         }
-
+        
         private void FixedUpdate()
         {
             //Debug.Log("Fixed Timestep: " + Time.fixedDeltaTime);
+            
+        }
+
+        public void updateMood()
+        {
+            PlayerStatus mStats = PlayerManager.Instance.getCharacterStatus(mChara);
+
+            float moodAverage = (mStats.currentHealth + mStats.currentMood) * 0.5f;
+
+            if (moodAverage > 0.25f)
+                mAnimator.SetFloat("mood", 1.0f);
+            else
+                mAnimator.SetFloat("mood", 0.0f);
+
+
+            if (EnemyManager.Instance.currentEnemyPhase == ENEMY_PHASE.PHASE_ALERT)
+                mStats.currentMood -= 0.035f * Time.deltaTime;
+
+            if (EnemyManager.Instance.currentEnemyPhase == ENEMY_PHASE.PHASE_EVADE)
+                mStats.currentMood -= 0.025f * Time.deltaTime;
+
+            if (EnemyManager.Instance.currentEnemyPhase == ENEMY_PHASE.PHASE_SNEAK)
+            {
+                if(currentMode == PlayerModes.BASIC_MOVE && mForwardVelocity < 0.01f)
+                    mStats.currentMood += 0.0002f * Time.deltaTime;
+            }
+        }
+
+        public void checkHealth()
+        {
+
+            
+
+
+
+
+            if (currentMode == PlayerModes.DIE)
+                return;
+
+            if (GameManager.Instance.cutsceneMode)
+                return;
+
+            //Will I ever need to have a position this low?
+            if (transform.position.y < -200.0f)
+            {
+                voidOut();
+                return;
+            }
+
+            if (PlayerManager.Instance.getCurrentPlayerStatus().currentHealth <= 0.0f)
+            {
+                modeDie.deathType = PlayerDie.DeathType.Normal;
+
+                if (currentMode == PlayerModes.SWIMMING)
+                    modeDie.deathType = PlayerDie.DeathType.Drowned;
+
+                changeCurrentMode(PlayerModes.DIE);
+            }
+
+        }
+
+        public void voidOut()
+        {
+            tpc.lockPosition = true;
+            modeDie.deathType = PlayerDie.DeathType.Falling;
+            changeCurrentMode(PlayerModes.DIE);
 
         }
 
@@ -377,9 +482,15 @@ namespace Amy
                     modeHanging.enabled = true;
                     break;
 
+                case PlayerModes.DIE:
+                    modeDie.enabled = true;
+                    break;
+
                 case PlayerModes.DEBUG_MOVE:
                     modeDebugMove.enabled = true;
                     break;
+
+
 
                 default:
                     break;
@@ -415,8 +526,9 @@ namespace Amy
 
             if(Input.GetKeyDown(KeyCode.Alpha8))
             {
-                mAnimator.applyRootMotion = !mAnimator.applyRootMotion;
-                
+                PlayerManager.Instance.killHer();
+
+
             }
 
             if (Input.GetKeyDown(KeyCode.Alpha7))

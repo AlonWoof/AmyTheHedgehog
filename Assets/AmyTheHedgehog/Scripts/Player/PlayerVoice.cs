@@ -17,6 +17,8 @@ namespace Amy
         public AudioClip[] largePain;
 
         public AudioClip[] falling;
+        public AudioClip[] die;
+        public AudioClip[] drown;
 
         public AudioClip[] jumping;
 
@@ -49,6 +51,9 @@ namespace Amy
         public void playVoice(AudioClip[] voices, bool canInterrupt = false)
         {
             if (!canInterrupt && voiceSource.isPlaying)
+                return;
+
+            if (voices == null || voices.Length == 0)
                 return;
 
             voiceSource.clip = voices[Random.Range(0, voices.Length)];

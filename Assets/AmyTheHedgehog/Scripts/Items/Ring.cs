@@ -50,6 +50,10 @@ namespace Amy
 
             PlayerManager.Instance.ringCount++;
 
+            Player mPlayer = other.GetComponent<Player>();
+
+            PlayerManager.Instance.getCharacterStatus(mPlayer.mChara).currentHealth += 0.05f;
+
             GameObject fxinst = GameObject.Instantiate(ringCollectFX);
             fxinst.transform.position = transform.position;
             gameObject.SetActive(false);

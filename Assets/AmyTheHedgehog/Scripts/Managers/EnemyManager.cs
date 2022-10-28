@@ -183,7 +183,7 @@ namespace Amy
 
             if(FindObjectOfType<SceneInfo>())
             {
-                MusicManager.Instance.changeSongs(FindObjectOfType<SceneInfo>().bgmData);
+               // MusicManager.Instance.changeSongs(FindObjectOfType<SceneInfo>().bgmData);
             }
 
             currentEnemyPhase = ENEMY_PHASE.PHASE_SNEAK;
@@ -200,10 +200,10 @@ namespace Amy
             if (currentEnemyPhase == ENEMY_PHASE.PHASE_CAUTION)
                 return;
 
-            //if (currentEnemyPhase == ENEMY_PHASE.PHASE_CAUTION)
-             //   getClosestRobotVoiceToPlayer().playPatrolModeVoice();
+            if (currentEnemyPhase == ENEMY_PHASE.PHASE_CAUTION)
+                getClosestRobotVoiceToPlayer().playSearchModeVoice();
 
-            MusicManager.Instance.changeSongs(GameManager.Instance.systemData.bgm_evasion,1.0f);
+           // MusicManager.Instance.changeSongs(GameManager.Instance.systemData.bgm_evasion,1.0f);
 
             currentEnemyPhase = ENEMY_PHASE.PHASE_CAUTION;
 
@@ -228,7 +228,7 @@ namespace Amy
             if (currentEnemyPhase == ENEMY_PHASE.PHASE_SNEAK)
                 getClosestRobotVoiceToPlayer().playAlertModeVoice();
 
-            MusicManager.Instance.changeSongs(GameManager.Instance.systemData.bgm_alert,0.1f);
+           // MusicManager.Instance.changeSongs(GameManager.Instance.systemData.bgm_alert,0.1f);
 
             resetAlertTimer();
 

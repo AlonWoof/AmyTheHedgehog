@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using MEC;
 
 /* Copyright 2021 Jason Haden */
 namespace Amy
@@ -24,6 +25,9 @@ namespace Amy
         public float jumpTimeBonus = 0.0f;
         public float jumpPowerBonus = 0.0f;
 
+        public float lungCapacity = 1.0f;
+        public float dirtiness = 0.0f;
+
     }
 
 
@@ -34,7 +38,8 @@ namespace Amy
         public Player mPlayerInstance;
 
         //The player's current status. Not sure how much of this should be on the player instance.
-        public PlayerStatus status;
+        public PlayerStatus AmyStatus;
+        public PlayerStatus CreamStatus;
 
         public PlayableCharacter currentCharacter = PlayableCharacter.Amy;
 
@@ -53,7 +58,8 @@ namespace Amy
 
         private void Awake()
         {
-            status = new PlayerStatus();
+            AmyStatus = new PlayerStatus();
+            CreamStatus = new PlayerStatus();
 
             GameObject inst = new GameObject("CHECKPOINT");
             DontDestroyOnLoad(inst);
@@ -77,6 +83,25 @@ namespace Amy
             handleStealthIndex();
     	}
 
+        public PlayerStatus getCurrentPlayerStatus()
+        {
+            return getCharacterStatus(currentCharacter);
+        }
+
+        public PlayerStatus getCharacterStatus(PlayableCharacter chara)
+        {
+            switch(chara)
+            {
+                case PlayableCharacter.Amy:
+                    return AmyStatus;
+
+                case PlayableCharacter.Cream:
+                    return CreamStatus;
+            }
+
+            return AmyStatus;
+        }
+
         void handleStealthIndex()
         {
             if (!mPlayerInstance)
@@ -84,13 +109,30 @@ namespace Amy
 
             PlayerBasicMove basicMove = mPlayerInstance.GetComponent<PlayerBasicMove>();
 
+            if (!basicMove)
+                return;
+
             stealthIndex = 0.0f;
 
+
+
+            //Jumping makes you more visible
+            if (basicMove.jumpTimer > 0.2f)
+                stealthIndex -= 0.25f;
+
+            //Crouching makes you have a lower profile
+            if (basicMove.isCrouching)
+                stealthIndex += 0.45f;
+
+            //Hide in the water
+            if (mPlayerInstance.getWaterDepth() > 1.0f)
+                stealthIndex = 0.8f;
+
+            //Invisibility, full stealth
             if (playerHasStealthCamo)
                 stealthIndex = 1.0f;
 
-            if (basicMove.jumpTimer > 0.2f)
-                stealthIndex -= 0.25f;
+
         }
 
         public void givePlayerStealthCamo()
@@ -163,6 +205,7 @@ namespace Amy
                 // Destroy(mPlayerInstance.gameObject);
                 mPlayerInstance.transform.position = playerCheckpoint.transform.position;
                 mPlayerInstance.mDirection = playerCheckpoint.transform.forward;
+                mPlayerInstance.changeCurrentMode(PlayerModes.BASIC_MOVE);
                 return mPlayerInstance;
             }
 
@@ -173,6 +216,65 @@ namespace Amy
             // saveGame.lastExit = lastExit;
 
             return mPlayerInstance;
+        }
+
+        public void PlayerDieRespawn(PlayerDie.DeathType type)
+        {
+            Timing.RunCoroutine(doPlayerRespawnSequence(type));
+        }
+
+        //I would give this a more fitting name but I want to pay homage to SA1's hilarious kill function name (killHimP())
+        public void killHer()
+        {
+            if (!mPlayerInstance)
+                return;
+
+            mPlayerInstance.GetComponent<PlayerDie>().deathType = PlayerDie.DeathType.Normal;
+            mPlayerInstance.changeCurrentMode(PlayerModes.DIE);
+        }
+
+
+        //TODO: add different respawn situations.
+        public IEnumerator<float> doPlayerRespawnSequence(PlayerDie.DeathType type)
+        {
+           
+            GameManager.Instance.cameraInputDisabled = true;
+            GameManager.Instance.playerInputDisabled = true;
+
+            yield return 0f;
+
+            while (mPlayerInstance.GetComponent<PlayerVoice>().voiceSource.isPlaying)
+                yield return 0f;
+            
+            yield return Timing.WaitForSeconds(0.5f);
+
+            UIManager.Instance.fadeScreen(false, 1.0f, false);
+
+            yield return Timing.WaitForSeconds(1.1f);
+
+            mPlayerInstance.transform.position = playerCheckpoint.transform.position;
+            mPlayerInstance.transform.rotation = playerCheckpoint.transform.rotation;
+
+            //Lose money for getting owned.
+            ringCount -= 35;
+
+            getCurrentPlayerStatus().currentHealth = 1.0f;
+            getCurrentPlayerStatus().currentMood = Mathf.Clamp(getCurrentPlayerStatus().currentMood -= 0.2f,0.0f,1.0f);
+
+            GameObject.Destroy(mPlayerInstance.gameObject);
+            yield return 0f;
+
+            PlayerManager.Instance.spawnPlayerAtCheckpoint();
+
+            yield return Timing.WaitForSeconds(2.0f);
+
+            UIManager.Instance.fadeScreen(true, 1.0f, false);
+
+            yield return Timing.WaitForSeconds(1.1f);
+
+            GameManager.Instance.playerInputDisabled = false;
+            GameManager.Instance.cameraInputDisabled = false;
+
         }
 
     }

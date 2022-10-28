@@ -8,12 +8,12 @@ namespace Amy
 	public class PlayerBasicMove : PlayerMode
 	{
 
-        public const float baseRunSpeed = 5.0f;
-        public const float baseWalkSpeed = 0.75f;
+        public float baseRunSpeed = 5.0f;
+        public float baseWalkSpeed = 0.75f;
 
-        public const float runSpeedAccel = 5.0f;
-        public const float runSpeedDeccel = 8.0f;
-        public const float slopeInfluence = 0.5f;
+        public float runSpeedAccel = 5.0f;
+        public float runSpeedDeccel = 8.0f;
+        public float slopeInfluence = 0.5f;
 
         //Max slope when standing still.
         public const float baseMaxSlope = 45.0f;
@@ -21,8 +21,9 @@ namespace Amy
         //Amount of slope tolerance when running full speed.
         const float slopeVariance = 20.0f;
 
-        const float baseJumpPower = 5.0f;
-        const float baseJumpHangTime = 1.5f;
+        float baseJumpPower = 5.0f;
+        float baseJumpHangTime = 1.5f;
+        float baseGravity = 1.5f;
 
         public float slopeAmount = 0.0f;
         public float jumpTimer = 0.0f;
@@ -31,7 +32,7 @@ namespace Amy
         int framesAirborne = 0;
         bool isSliding = false;
         bool isSkidding = false;
-        bool isCrouching = false;
+        public bool isCrouching = false;
         float skidTimeout = 0.0f;
 
         // Start is called before the first frame update

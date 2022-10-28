@@ -60,6 +60,7 @@ public class FootstepFX : MonoBehaviour
 
 
     public bool isPlayer = false;
+    public Player mPlayer;
 
     public const float dirtMultiplier = 0.013f;
 
@@ -72,7 +73,10 @@ public class FootstepFX : MonoBehaviour
         footFXRes = GameManager.Instance.systemData.RES_footstepFX;
 
         if (gameObject.GetComponent<Player>())
+        {
             isPlayer = true;
+            mPlayer = gameObject.GetComponent<Player>();
+        }
     }
 
     // Update is called once per frame
@@ -211,18 +215,18 @@ public class FootstepFX : MonoBehaviour
 
 
         if (currentTerrain == TerrainType.Dirt)
-            PlayerManager.Instance.playerDirtiness += (0.02f * dirtMultiplier);
+            PlayerManager.Instance.getCharacterStatus(mPlayer.mChara).dirtiness += (0.02f * dirtMultiplier);
 
         if (currentTerrain == TerrainType.Grass)
-            PlayerManager.Instance.playerDirtiness += (0.01f * dirtMultiplier);
+            PlayerManager.Instance.getCharacterStatus(mPlayer.mChara).dirtiness += (0.01f * dirtMultiplier);
 
         if (currentTerrain == TerrainType.Stone)
-            PlayerManager.Instance.playerDirtiness += (0.0001f * dirtMultiplier);
+            PlayerManager.Instance.getCharacterStatus(mPlayer.mChara).dirtiness += (0.0001f * dirtMultiplier);
 
         if (currentTerrain == TerrainType.Water)
-            PlayerManager.Instance.playerDirtiness -= 0.05f;
+            PlayerManager.Instance.getCharacterStatus(mPlayer.mChara).dirtiness -= 0.05f;
 
         if (currentTerrain == TerrainType.Wood)
-            PlayerManager.Instance.playerDirtiness += (0.005f * dirtMultiplier);
+            PlayerManager.Instance.getCharacterStatus(mPlayer.mChara).dirtiness += (0.005f * dirtMultiplier);
     }
 }
