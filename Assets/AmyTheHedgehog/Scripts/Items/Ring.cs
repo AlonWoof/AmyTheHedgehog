@@ -48,7 +48,7 @@ namespace Amy
             if (!other.GetComponent<Player>())
                 return;
 
-            PlayerManager.Instance.ringCount++;
+            PlayerManager.Instance.addRings(1);
 
             Player mPlayer = other.GetComponent<Player>();
 

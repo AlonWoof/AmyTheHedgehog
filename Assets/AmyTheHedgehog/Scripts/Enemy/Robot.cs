@@ -63,7 +63,7 @@ namespace Amy
 
         private void Awake()
         {
-            visionMask = LayerMask.GetMask("PlayerHitbox", "EnemyHitbox", "Collision");
+            visionMask = LayerMask.GetMask("PlayerHitbox", "EnemyHitbox", "Collision", "EnemySightBlocker");
             mAgent = GetComponent<NavMeshAgent>();
 
             if(mAgent)

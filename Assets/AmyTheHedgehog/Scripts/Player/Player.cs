@@ -38,6 +38,7 @@ namespace Amy
         SPRING,
         HANGING,
         SWIMMING,
+        RUBBING,
         DIE,
         DEBUG_MOVE
     }
@@ -67,6 +68,7 @@ namespace Amy
         public float waterDepth = 0.0f;
         public float playerHeight = 0.9f;
         public float lungCapacity = 1.0f;
+        public float airLeft = 1.0f;
 
         public Vector3 groundNormal;
         public bool isGrounded;
@@ -76,6 +78,9 @@ namespace Amy
         public ThirdPersonCamera tpc;
         public GameObject fx_waterWadingFX;
         public WetnessDirtynessProxy fx_wetDirty;
+        public ActorOpacity fx_ActorOpacity;
+
+        public List<Renderer> mRenderers;
 
         //Modes
         public PlayerModes currentMode;
@@ -86,6 +91,7 @@ namespace Amy
         PlayerSpringBounce modeSpring;
         PlayerSwimming modeSwimming;
         PlayerHanging modeHanging;
+        PlayerRubbing modeRubbing;
         PlayerDie modeDie;
         PlayerDebugMove modeDebugMove;
 
@@ -95,13 +101,15 @@ namespace Amy
         public float headOffsetFromGround;
 
         public bool isBallMode = false;
-       
+
+        public float hitStun = 0.0f;
 
         private void Awake()
         {
             mColMask = LayerMask.GetMask("Collision");
-            
+           
         }
+
 
         public static Player Spawn(Vector3 pos, Vector3 dir, PlayableCharacter chara = PlayableCharacter.Amy)
         {
@@ -187,6 +195,7 @@ namespace Amy
             tpc.centerBehindPlayer();
 
             WetnessDirtynessProxy wetdirt = inst.AddComponent<WetnessDirtynessProxy>();
+            inst.AddComponent<ActorOpacity>();
 
             newPlayer.tpc = tpc;
             newPlayer.fx_waterWadingFX = GameObject.Instantiate(GameManager.Instance.systemData.RES_WaterWadingFX);
@@ -240,6 +249,7 @@ namespace Amy
                 mAnimator = gameObject.AddComponent<Animator>();
 
             fx_wetDirty = GetComponent<WetnessDirtynessProxy>();
+            fx_ActorOpacity = GetComponent<ActorOpacity>();
 
             mAnimator.applyRootMotion = false;
         }
@@ -250,6 +260,7 @@ namespace Amy
             modeHanging = gameObject.AddComponent<PlayerHanging>();
             modeSpring = gameObject.AddComponent<PlayerSpringBounce>();
             modeSwimming = gameObject.AddComponent<PlayerSwimming>();
+            modeRubbing = gameObject.AddComponent<PlayerRubbing>();
             modeDie = gameObject.AddComponent<PlayerDie>();
             modeDebugMove = gameObject.AddComponent<PlayerDebugMove>();
         }
@@ -260,6 +271,7 @@ namespace Amy
             modeHanging.enabled = false;
             modeSpring.enabled = false;
             modeSwimming.enabled = false;
+            modeRubbing.enabled = false;
             modeDie.enabled = false;
             modeDebugMove.enabled = false;
 
@@ -327,6 +339,24 @@ namespace Amy
                 fx_wetDirty.inWater = false;
             }
 
+            if(depth > playerHeight * 1.1f)
+            {
+                airLeft -= Time.deltaTime * 0.05f;
+
+                if (airLeft < 0.0f)
+                    airLeft = 0.0f;
+
+                if (airLeft <= 0.0f)
+                    damageHealth(Time.deltaTime * 0.1f);
+            }
+            if (depth < playerHeight)
+            {
+                airLeft += Time.deltaTime * 0.5f;
+
+                if (airLeft > lungCapacity)
+                    airLeft = lungCapacity;
+            }
+
         }
 
     	// Start is called before the first frame update
@@ -338,6 +368,46 @@ namespace Amy
             disableAllModes();
 
             updateCurrentMode();
+
+            mRenderers = new List<Renderer>();
+
+            foreach (Renderer r in GetComponentsInChildren<Renderer>())
+            {
+                mRenderers.Add(r);
+            }
+        }
+
+        void handleOpacity()
+        {
+            
+
+
+            if (hitStun > 0.0f)
+            {
+
+                int frame = 15;
+
+                if (hitStun < 0.25f)
+                    frame = 15;
+
+                if (Time.frameCount % frame == 0)
+                {
+                    if (fx_ActorOpacity.opacity > 0.0f)
+                    {
+                        fx_ActorOpacity.opacity = 0.0f;
+                    }
+                    else if (fx_ActorOpacity.opacity < 1.0f)
+                    {
+                        fx_ActorOpacity.opacity = 1.0f;
+                    }
+
+                }
+
+                return;
+            }
+
+            fx_ActorOpacity.opacity = 1.0f;
+
         }
 
     	// Update is called once per frame
@@ -372,9 +442,11 @@ namespace Amy
         {
             // Debug.Log("Delta Timestep: " + Time.deltaTime);
 
+            handleOpacity();
             updateWaterFX();
             checkHealth();
             updateMood();
+            
         }
         
         private void FixedUpdate()
@@ -396,25 +468,23 @@ namespace Amy
 
 
             if (EnemyManager.Instance.currentEnemyPhase == ENEMY_PHASE.PHASE_ALERT)
-                mStats.currentMood -= 0.035f * Time.deltaTime;
+                damageMood(0.015f * Time.deltaTime);
 
             if (EnemyManager.Instance.currentEnemyPhase == ENEMY_PHASE.PHASE_EVADE)
-                mStats.currentMood -= 0.025f * Time.deltaTime;
+                damageMood(0.005f * Time.deltaTime);
 
             if (EnemyManager.Instance.currentEnemyPhase == ENEMY_PHASE.PHASE_SNEAK)
             {
                 if(currentMode == PlayerModes.BASIC_MOVE && mForwardVelocity < 0.01f)
-                    mStats.currentMood += 0.0002f * Time.deltaTime;
+                    healMood(0.0006f * Time.deltaTime);
             }
         }
 
         public void checkHealth()
         {
 
-            
-
-
-
+            if(hitStun > 0.0f)
+                hitStun -= Time.deltaTime;
 
             if (currentMode == PlayerModes.DIE)
                 return;
@@ -438,6 +508,44 @@ namespace Amy
 
                 changeCurrentMode(PlayerModes.DIE);
             }
+
+        }
+
+        //TODO: Add character specific modifiers later
+        //IE Cream isn't as good at controlling stress and gets hurt easier
+
+        public void healMood(float amnt)
+        {
+            PlayerManager.Instance.getCharacterStatus(mChara).currentMood += amnt;
+            PlayerManager.Instance.getCharacterStatus(mChara).currentMood = Mathf.Clamp01(PlayerManager.Instance.getCharacterStatus(mChara).currentMood);
+
+        }
+
+        public void damageMood(float amnt)
+        {
+            PlayerManager.Instance.getCharacterStatus(mChara).currentMood -= amnt;
+            PlayerManager.Instance.getCharacterStatus(mChara).currentMood = Mathf.Clamp01(PlayerManager.Instance.getCharacterStatus(mChara).currentMood);
+        }
+
+        public void healHealth(float amnt)
+        {
+            PlayerManager.Instance.getCharacterStatus(mChara).currentHealth += amnt;
+            PlayerManager.Instance.getCharacterStatus(mChara).currentHealth = Mathf.Clamp01(PlayerManager.Instance.getCharacterStatus(mChara).currentHealth);
+        }
+        public void damageHealth(float amnt)
+        {
+            PlayerManager.Instance.getCharacterStatus(mChara).currentHealth -= amnt;
+            PlayerManager.Instance.getCharacterStatus(mChara).currentHealth = Mathf.Clamp01(PlayerManager.Instance.getCharacterStatus(mChara).currentHealth);
+        }
+
+        public void onTakeDamage(float amnt, Vector3 srcpos)
+        {
+            if (hitStun > 0.0f)
+                return;
+
+
+            hitStun = 1.0f;
+            damageHealth(amnt);
 
         }
 
@@ -480,6 +588,10 @@ namespace Amy
 
                 case PlayerModes.HANGING:
                     modeHanging.enabled = true;
+                    break;
+
+                case PlayerModes.RUBBING:
+                    modeRubbing.enabled = true;
                     break;
 
                 case PlayerModes.DIE:
@@ -526,8 +638,9 @@ namespace Amy
 
             if(Input.GetKeyDown(KeyCode.Alpha8))
             {
-                PlayerManager.Instance.killHer();
-
+                // PlayerManager.Instance.killHer();
+                //changeCurrentMode(PlayerModes.RUBBING);
+                onTakeDamage(0.15f, transform.position + transform.forward);
 
             }
 

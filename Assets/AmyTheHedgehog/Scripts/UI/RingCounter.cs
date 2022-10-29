@@ -19,7 +19,7 @@ namespace Amy
         void Update()
         {
 
-            mText.text = PlayerManager.Instance.ringCount.ToString();
+            mText.text = PlayerManager.Instance.getRings().ToString("00000");
         }
 
 

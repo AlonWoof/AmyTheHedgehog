@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 /* Copyright 2021 Jason Haden */
-namespace Forest
+namespace Amy
 {
 
 	public class ActorOpacity : MonoBehaviour

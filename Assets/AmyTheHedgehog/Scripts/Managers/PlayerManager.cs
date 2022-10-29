@@ -49,7 +49,9 @@ namespace Amy
         public int lastExit = 0;
 
         public float playerDirtiness = 0.0f;
-        public int ringCount = 0;
+
+        public int ringBank = 0;
+        int ringCount = 0;
         public float stealthIndex = 0.0f;
 
         public bool playerHasStealthCamo = false;
@@ -223,6 +225,28 @@ namespace Amy
             Timing.RunCoroutine(doPlayerRespawnSequence(type));
         }
 
+        public void addRings(int n)
+        {
+            ringCount += n;
+
+            //why can't i hold all these rings
+            if (ringCount > 99999)
+                ringCount = 99999;
+        }
+
+        public void subtractRings(int n)
+        {
+            ringCount -= n;
+
+            if (ringCount < 0)
+                ringCount = 0;
+        }
+
+        public int getRings()
+        {
+            return ringCount;
+        }
+
         //I would give this a more fitting name but I want to pay homage to SA1's hilarious kill function name (killHimP())
         public void killHer()
         {
@@ -256,10 +280,11 @@ namespace Amy
             mPlayerInstance.transform.rotation = playerCheckpoint.transform.rotation;
 
             //Lose money for getting owned.
-            ringCount -= 35;
+            subtractRings(35);
 
-            getCurrentPlayerStatus().currentHealth = 1.0f;
-            getCurrentPlayerStatus().currentMood = Mathf.Clamp(getCurrentPlayerStatus().currentMood -= 0.2f,0.0f,1.0f);
+            getCurrentPlayerStatus().currentHealth = Mathf.Lerp(0.25f, 0.9f, getCurrentPlayerStatus().currentMood);
+            getCurrentPlayerStatus().currentMood = Mathf.Clamp(getCurrentPlayerStatus().currentMood -= Random.Range(0.16f,0.3f),0.0f,1.0f);
+            
 
             GameObject.Destroy(mPlayerInstance.gameObject);
             yield return 0f;
