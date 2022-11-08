@@ -12,12 +12,50 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ba387377c52e2be43a2bfce956521cc4, type: 3}
   m_Name: SystemData
   m_EditorClassIdentifier: 
-  RES_AmyIngameModel: {fileID: 7550150583927836031, guid: 9cdaac0bf86d802468107cc209b4f636, type: 3}
-  RES_CreamIngameModel: {fileID: 496749416349666561, guid: 822491da172c28c46802b7f273b3775c, type: 3}
-  RES_AmyIngameAnimator: {fileID: 9100000, guid: e40eed9d5d4dfc44aa3ab801384d64e9, type: 2}
-  RES_CreamIngameAnimator: {fileID: 22100000, guid: d9ec95f98f80d3b4491ec13081cc0098, type: 2}
-  RES_AmyJiggleData: {fileID: 11400000, guid: 2aadecb1e300a0e41ab3a017eb574568, type: 2}
-  RES_CreamJiggleData: {fileID: 11400000, guid: 1b2fc72a46b60a04580cb0b2866c675a, type: 2}
+  AmyParams:
+    ingameModel: {fileID: 7550150583927836031, guid: 9cdaac0bf86d802468107cc209b4f636, type: 3}
+    ingameAnimator: {fileID: 9100000, guid: e40eed9d5d4dfc44aa3ab801384d64e9, type: 2}
+    height: 0.9
+    weight: 25
+    gravity_mult: 1.5
+    baseWalkSpeed: 0.75
+    baseRunSpeed: 4.5
+    runSpeedAccel: 3
+    runSpeedDeccel: 8
+    baseJumpPower: 5
+    baseJumpHangTime: 1.5
+    swimSpeed: 2.3
+    jiggleData: {fileID: 11400000, guid: 2aadecb1e300a0e41ab3a017eb574568, type: 2}
+    baseStats:
+      currentHealth: 1
+      currentMood: 1
+      speedBonus: 0
+      jumpTimeBonus: 0
+      jumpPowerBonus: 0
+      lungCapacity: 20
+      dirtiness: 0
+  CreamParams:
+    ingameModel: {fileID: 496749416349666561, guid: 822491da172c28c46802b7f273b3775c, type: 3}
+    ingameAnimator: {fileID: 22100000, guid: d9ec95f98f80d3b4491ec13081cc0098, type: 2}
+    height: 0.7
+    weight: 12
+    gravity_mult: 1.25
+    baseWalkSpeed: 0.75
+    baseRunSpeed: 3.75
+    runSpeedAccel: 6
+    runSpeedDeccel: 8
+    baseJumpPower: 4.5
+    baseJumpHangTime: 2
+    swimSpeed: 1.85
+    jiggleData: {fileID: 0}
+    baseStats:
+      currentHealth: 1
+      currentMood: 1
+      speedBonus: 0
+      jumpTimeBonus: 0
+      jumpPowerBonus: 0
+      lungCapacity: 15
+      dirtiness: 0
   RES_userInterface: {fileID: 6064850547931311056, guid: 1acd5a71c0cce5b4a974f6647a7cb039, type: 3}
   RES_mainCamera: {fileID: 1182611570590789308, guid: 3b8d6c1dee24aa4498dbb0de4bef3d6d, type: 3}
   RES_AmyPlayerFX:
@@ -27,7 +65,7 @@ MonoBehaviour:
     res_FootFX_Dirt: {fileID: 2184994687598506789, guid: 14f720bf20e532a44b75bbe2788b21c4, type: 3}
     res_FootFX_Stone: {fileID: 1396866792464056812, guid: 528ba74b183078643919b3e600f497e1, type: 3}
     res_FootFX_Grass: {fileID: 1396866792464056812, guid: 7154c633b5c088742b6a7f9e8ad3a782, type: 3}
-    res_FootFX_Water: {fileID: 0}
+    res_FootFX_Water: {fileID: 8877630003353545551, guid: fe464b8622a7a8c4483507b0ce1cb32b, type: 3}
     res_SwimFX_Surface: {fileID: 0}
     res_SwimFX_DiveStart: {fileID: 0}
     res_SwimFX_Submerged: {fileID: 0}

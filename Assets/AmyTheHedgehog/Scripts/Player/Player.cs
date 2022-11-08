@@ -13,31 +13,16 @@ namespace Amy
         public GameObject fx_basicJump;
     }
 
-    [System.Serializable]
-    public class PlayableCharacterData
-    {
-        public float playerHeight = 0.9f;
-        public float playerWeight = 25.0f;
-
-        public float baseWalkSpeed = 0.75f;
-        public float baseRunSpeed = 5.0f;
-
-        public float runSpeedAccel = 5.0f;
-        public float runSpeedDeccel = 8.0f;
-
-
-        public float baseJumpPower = 5.0f;
-        public float baseJumpHangTime = 1.5f;
-        public float baseGravity = 1.5f;
-    }
 
 
     public enum PlayerModes
     {
+        INIT,
         BASIC_MOVE,
         SPRING,
         HANGING,
         SWIMMING,
+        FLYING,
         RUBBING,
         DIE,
         DEBUG_MOVE
@@ -57,6 +42,7 @@ namespace Amy
 
         //Who are we?
         public PlayableCharacter mChara;
+        public CharacterParams mPars;
 
         //This vector must always be normalized.
         public Vector3 mDirection = Vector3.forward;
@@ -65,10 +51,11 @@ namespace Amy
         public Vector3 mCurrentMovement = Vector3.zero;
         public Vector3 mDesiredMovement = Vector3.zero;
 
+        public float groundAltitude = 0.0f;
         public float waterDepth = 0.0f;
         public float playerHeight = 0.9f;
-        public float lungCapacity = 1.0f;
-        public float airLeft = 1.0f;
+        public float lungCapacity = 20.0f;
+        public float airLeft = 20.0f;
 
         public Vector3 groundNormal;
         public bool isGrounded;
@@ -90,6 +77,7 @@ namespace Amy
         PlayerBasicMove modeBasicMove;
         PlayerSpringBounce modeSpring;
         PlayerSwimming modeSwimming;
+        PlayerFlying modeFlying;
         PlayerHanging modeHanging;
         PlayerRubbing modeRubbing;
         PlayerDie modeDie;
@@ -113,33 +101,22 @@ namespace Amy
 
         public static Player Spawn(Vector3 pos, Vector3 dir, PlayableCharacter chara = PlayableCharacter.Amy)
         {
-            float amy_height = 0.9f;
+            CharacterParams cpar = GameManager.getSystemData().AmyParams;
 
-            if (chara == PlayableCharacter.Cream)
-                amy_height = 0.7f;
+            if(chara == PlayableCharacter.Cream)
+                cpar = GameManager.getSystemData().CreamParams;
+
+
+            float amy_height = cpar.height;
+
 
             //Fandom wiki says 25 kg, official sources cheekily say ヒ・ミ・ツ！ ("it's a secret!")
             //So let's assume 25kg, seems about right.
-            float amy_weight = 25.0f;
+            float amy_weight = cpar.weight;
 
-            GameObject inst;
 
-            switch (chara)
-            {
-                case PlayableCharacter.Amy:
-                    inst = GameObject.Instantiate(GameManager.Instance.systemData.RES_AmyIngameModel);
-                    break;
 
-                case PlayableCharacter.Cream:
-                    inst = GameObject.Instantiate(GameManager.Instance.systemData.RES_CreamIngameModel);
-                    break;
-
-                default:
-                    inst = GameObject.Instantiate(GameManager.Instance.systemData.RES_AmyIngameModel);
-                    break;
-            }
-
-            
+            GameObject inst = GameObject.Instantiate(cpar.ingameModel);     
             inst.transform.position = pos;
 
 
@@ -171,17 +148,10 @@ namespace Amy
             if(!anim)
                 inst.AddComponent<Animator>();
 
-            anim.runtimeAnimatorController = GameManager.Instance.systemData.RES_AmyIngameAnimator;
-
-            if(chara == PlayableCharacter.Cream)
-                anim.runtimeAnimatorController = GameManager.Instance.systemData.RES_CreamIngameAnimator;
+            anim.runtimeAnimatorController = cpar.ingameAnimator;
 
             CharacterPhysics jiggles = inst.AddComponent<CharacterPhysics>();
-
-            if(chara == PlayableCharacter.Amy)
-                jiggles.mData = GameManager.Instance.systemData.RES_AmyJiggleData;
-            else
-                jiggles.mData = GameManager.Instance.systemData.RES_CreamJiggleData;
+            jiggles.mData = cpar.jiggleData;
 
             FootstepFX footsteps = inst.AddComponent<FootstepFX>();
             footsteps.isPlayer = true;
@@ -212,6 +182,7 @@ namespace Amy
             }
 
             newPlayer.mChara = chara;
+            newPlayer.mPars = cpar;
             newPlayer.playerHeight = amy_height;
 
             return newPlayer;
@@ -260,6 +231,7 @@ namespace Amy
             modeHanging = gameObject.AddComponent<PlayerHanging>();
             modeSpring = gameObject.AddComponent<PlayerSpringBounce>();
             modeSwimming = gameObject.AddComponent<PlayerSwimming>();
+            modeFlying = gameObject.AddComponent<PlayerFlying>();
             modeRubbing = gameObject.AddComponent<PlayerRubbing>();
             modeDie = gameObject.AddComponent<PlayerDie>();
             modeDebugMove = gameObject.AddComponent<PlayerDebugMove>();
@@ -271,10 +243,28 @@ namespace Amy
             modeHanging.enabled = false;
             modeSpring.enabled = false;
             modeSwimming.enabled = false;
+            modeFlying.enabled = false;
             modeRubbing.enabled = false;
             modeDie.enabled = false;
             modeDebugMove.enabled = false;
 
+        }
+
+        public float getAltitudeFromGround()
+        {
+            float altitude = 1000.0f;
+
+            Vector3 start = transform.position + Vector3.up * 0.2f;
+            Vector3 end = transform.position - 1000.0f * Vector3.up;
+
+            RaycastHit hitInfo = new RaycastHit();
+
+            if (Physics.Linecast(start, end, out hitInfo, mColMask))
+            {
+                altitude = transform.position.y - hitInfo.point.y;
+            }
+
+            return altitude;
         }
 
         public float getWaterYPos()
@@ -282,8 +272,8 @@ namespace Amy
             //ITS UNDER NEGATIVE NINE THOUSAAAAND
             float water_y = -9001.0f;
 
-            Vector3 start = transform.position + 128.0f * Vector3.up;
-            Vector3 end = transform.position - 128.0f * Vector3.up;
+            Vector3 start = transform.position + 2048.0f * Vector3.up;
+            Vector3 end = transform.position - 2048.0f * Vector3.up;
 
             LayerMask waterCol = LayerMask.GetMask("Water");
             RaycastHit hitInfo = new RaycastHit();
@@ -341,17 +331,17 @@ namespace Amy
 
             if(depth > playerHeight * 1.1f)
             {
-                airLeft -= Time.deltaTime * 0.05f;
+                airLeft -= Time.deltaTime;
 
                 if (airLeft < 0.0f)
                     airLeft = 0.0f;
 
                 if (airLeft <= 0.0f)
-                    damageHealth(Time.deltaTime * 0.1f);
+                    damageHealth(Time.deltaTime * 0.2f);
             }
             if (depth < playerHeight)
             {
-                airLeft += Time.deltaTime * 0.5f;
+                airLeft += Time.deltaTime * 5.0f;
 
                 if (airLeft > lungCapacity)
                     airLeft = lungCapacity;
@@ -375,6 +365,13 @@ namespace Amy
             {
                 mRenderers.Add(r);
             }
+
+            Invoke("initComplete", 0.1f);
+        }
+
+        void initComplete()
+        {
+            changeCurrentMode(PlayerModes.BASIC_MOVE);
         }
 
         void handleOpacity()
@@ -478,6 +475,8 @@ namespace Amy
                 if(currentMode == PlayerModes.BASIC_MOVE && mForwardVelocity < 0.01f)
                     healMood(0.0006f * Time.deltaTime);
             }
+
+            PlayerManager.Instance.getCharacterStatus(mChara).currentMood = Mathf.Clamp01(PlayerManager.Instance.getCharacterStatus(mChara).currentMood);
         }
 
         public void checkHealth()
@@ -509,6 +508,8 @@ namespace Amy
                 changeCurrentMode(PlayerModes.DIE);
             }
 
+
+            PlayerManager.Instance.getCharacterStatus(mChara).currentHealth = Mathf.Clamp01(PlayerManager.Instance.getCharacterStatus(mChara).currentHealth);
         }
 
         //TODO: Add character specific modifiers later
@@ -586,6 +587,10 @@ namespace Amy
                     modeSwimming.enabled = true;
                     break;
 
+                case PlayerModes.FLYING:
+                    modeFlying.enabled = true;
+                    break;
+
                 case PlayerModes.HANGING:
                     modeHanging.enabled = true;
                     break;
@@ -643,6 +648,15 @@ namespace Amy
                 onTakeDamage(0.15f, transform.position + transform.forward);
 
             }
+
+            if (Input.GetKeyDown(KeyCode.Alpha6))
+            {
+                // PlayerManager.Instance.killHer();
+                changeCurrentMode(PlayerModes.RUBBING);
+               // onTakeDamage(0.15f, transform.position + transform.forward);
+
+            }
+
 
             if (Input.GetKeyDown(KeyCode.Alpha7))
                 PlayerManager.Instance.givePlayerStealthCamo();

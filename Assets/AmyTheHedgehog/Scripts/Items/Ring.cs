@@ -8,7 +8,6 @@ namespace Amy
 
 	public class Ring : MonoBehaviour
 	{
-
         public bool hoverAboveGround = false;
         public float hoverHeight = 0.5f;
         public LayerMask mColMask;
@@ -57,6 +56,23 @@ namespace Amy
             GameObject fxinst = GameObject.Instantiate(ringCollectFX);
             fxinst.transform.position = transform.position;
             gameObject.SetActive(false);
+        }
+
+
+
+        private void OnDrawGizmosSelected()
+        {
+            mColMask = LayerMask.GetMask("Collision");
+
+            if (hoverAboveGround)
+            {
+                RaycastHit hitInfo = new RaycastHit();
+
+                if (Physics.Linecast(transform.position, transform.position - Vector3.up * 32.0f, out hitInfo, mColMask))
+                {
+                    transform.position = hitInfo.point + Vector3.up * hoverHeight;
+                }
+            }
         }
     }
 

@@ -51,6 +51,9 @@ namespace Amy
 
         public AudioSource selectSound;
 
+        public Color color_amy;
+        public Color color_cream;
+
         // Start is called before the first frame update
         void Start()
         {
@@ -108,7 +111,7 @@ namespace Amy
                 i++;
             }
 
-
+            characterSelect = PlayerManager.Instance.currentCharacter;
 
             updateSelection();
         }
@@ -152,11 +155,16 @@ namespace Amy
             setCharacterText();
             setExitNumberText();
 
+            Color textColor = color_amy;
+
+            if (characterSelect == PlayableCharacter.Cream)
+                textColor = color_cream;
+
             if (entryTexts[cursorPosition] != null && mapList[cursorPosition] != null)
             {
                 foreach (Text t in entryTexts)
                 {
-                    t.color = Color.Lerp(Color.red,Color.white,0.5f);
+                    t.color = textColor;
                 }
 
                 entryTexts[cursorPosition].color = Color.white;

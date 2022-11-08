@@ -9,14 +9,9 @@ namespace Amy
     [CreateAssetMenu(fileName = "SystemData", menuName = "SystemData", order = 51)]
     public class SystemData : ScriptableObject
     {
-        public GameObject RES_AmyIngameModel;
-        public GameObject RES_CreamIngameModel;
 
-        public RuntimeAnimatorController RES_AmyIngameAnimator; 
-        public AnimatorOverrideController RES_CreamIngameAnimator;
-
-        public CharacterPhysicsData RES_AmyJiggleData;
-        public CharacterPhysicsData RES_CreamJiggleData;
+        public CharacterParams AmyParams;
+        public CharacterParams CreamParams;
 
         public GameObject RES_userInterface;
         public GameObject RES_mainCamera;

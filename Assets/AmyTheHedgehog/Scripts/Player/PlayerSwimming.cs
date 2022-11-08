@@ -29,13 +29,8 @@ namespace Amy
             if (mPlayer.currentMode != PlayerModes.SWIMMING)
                 return;
 
+            swimSpeed = mPlayer.mPars.swimSpeed;
 
-            if (mPlayer.mChara == PlayableCharacter.Amy)
-                swimSpeed = 2.3f;
-
-            //Little babby isn't that good at swimming
-            if (mPlayer.mChara == PlayableCharacter.Cream)
-                swimSpeed = 1.28f;
 
             //mRigidBody.velocity = Vector3.up * mPlayer.GetComponent<PlayerBasicMove>().verticalVelocity;
 

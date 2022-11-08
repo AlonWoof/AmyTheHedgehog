@@ -88,6 +88,8 @@ namespace Amy
             bgmSource.playOnAwake = false;
             */
 
+            Application.targetFrameRate = 60;
+
             systemSoundSource = gameObject.AddComponent<AudioSource>();
             systemSoundSource.spatialBlend = 0.0f;
             systemSoundSource.volume = 0.75f;
@@ -276,7 +278,10 @@ namespace Amy
             Timing.RunCoroutine(loadSceneRoutine(sceneName, whiteFade, delayBeforeLoading), Segment.RealtimeUpdate);
         }
 
-
+        public static SystemData getSystemData()
+        {
+            return GameManager.Instance.systemData;
+        }
 
         IEnumerator<float> loadSceneRoutine(string sceneName, bool whiteFade, float delay = 0.0f)
         {
@@ -313,7 +318,7 @@ namespace Amy
 
 
 
-            yield return Timing.WaitForSeconds(1.5f);
+            yield return Timing.WaitForSeconds(0.5f);
 
             //UIManager.Instance.hideGameOverScreen();
 
@@ -379,12 +384,17 @@ namespace Amy
             }
 
             gameSFXVolume = 0.0f;
+
+            if (PlayerManager.Instance.mPlayerInstance)
+                PlayerManager.Instance.mPlayerInstance.tpc.centerBehindPlayer();
+
             
 
             yield return Timing.WaitForSeconds(waitTime * 0.5f);
 
             if (PlayerManager.Instance.mPlayerInstance)
-                PlayerManager.Instance.mPlayerInstance.tpc.centerBehindPlayer();
+                PlayerManager.Instance.mPlayerInstance.changeCurrentMode(PlayerModes.BASIC_MOVE);
+
 
             EnemyManager.Instance.currentEnemyPhase = ENEMY_PHASE.PHASE_SNEAK;
 

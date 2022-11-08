@@ -39,7 +39,9 @@ namespace Amy
         void Start()
     	{
             getBaseComponents();
-    	}
+            setBaseStats();
+
+        }
 
         private void OnEnable()
         {
@@ -52,7 +54,23 @@ namespace Amy
             mRigidBody.isKinematic = false;
             verticalVelocity = 0.0f;
             mPlayer.groundNormal = Vector3.up;
+            isCrouching = false;
+
+            setBaseStats();
         }
+
+        void setBaseStats()
+        {
+            baseRunSpeed = mPlayer.mPars.baseRunSpeed;
+            baseWalkSpeed = mPlayer.mPars.baseWalkSpeed;
+
+            runSpeedAccel = mPlayer.mPars.runSpeedAccel;
+            runSpeedDeccel = mPlayer.mPars.runSpeedDeccel;
+
+            baseJumpPower = mPlayer.mPars.baseJumpPower;
+            baseJumpHangTime = mPlayer.mPars.baseJumpHangTime;
+        }
+
 
         // Update is called once per frame
         void Update()
@@ -101,9 +119,10 @@ namespace Amy
             if (Mathf.Abs(mPlayer.mForwardVelocity) < ((runSpeedDeccel * Time.fixedDeltaTime)))
                 mPlayer.mForwardVelocity = Mathf.Lerp(mPlayer.mForwardVelocity, 0, Time.fixedDeltaTime * 3.0f);
 
-            float animSpeedMult = Mathf.Clamp((mPlayer.mForwardVelocity / baseRunSpeed), 0.5f, 8.0f);
+            float animSpeedMult = Mathf.Clamp((mPlayer.mForwardVelocity / 4.0f), 0.5f, 8.0f);
 
             mAnimator.SetFloat("animSpeedMult", animSpeedMult);
+            mAnimator.SetBool("Crouching", isCrouching);
 
             if (footStepFX)
             {
@@ -159,6 +178,30 @@ namespace Amy
             if (!Input.GetButton("Jump"))
                 jumpTimer = 0.0f;
 
+            if(mPlayer.mForwardVelocity < 0.1f)
+            {
+                if(Input.GetButton("Action") && Input.GetButton("Jump"))
+                {
+                    jumpTimer = 0.0f;
+                    mPlayer.changeCurrentMode(PlayerModes.RUBBING);
+                }
+            }
+
+            Debug.Log("Alt: " + mPlayer.getAltitudeFromGround());
+
+            if(mPlayer.getAltitudeFromGround() > 0.4f && mPlayer.mChara == PlayableCharacter.Cream)
+            {
+                if(Input.GetButtonDown("Jump"))
+                {
+                    mPlayer.changeCurrentMode(PlayerModes.FLYING);
+                }
+            }
+
+            if(Input.GetButtonDown("Crouch"))
+            {
+                isCrouching = !isCrouching;
+            }
+
             float h = InputFunctions.getLeftAnalogX();
             float v = InputFunctions.getLeftAnalogY();
 
@@ -193,8 +236,15 @@ namespace Amy
             if (skidTimeout > 0.0f)
                 return;
 
-            if (mPlayer.mForwardVelocity < getRunSpeed(mPlayer.mDesiredMovement.magnitude))
-                mPlayer.mForwardVelocity += (runSpeedAccel * (1.0f + (slopeAmount * slopeInfluence)) * Time.fixedDeltaTime);
+            float waterSlowdown = 1.0f;
+
+            if (mPlayer.getWaterDepth() > 0.0f && mPlayer.getWaterYPos() > mPlayer.hipBoneTransform.position.y)
+                waterSlowdown = 0.75f;
+
+            if (mPlayer.mForwardVelocity < getRunSpeed() * mPlayer.mDesiredMovement.magnitude)
+                mPlayer.mForwardVelocity += (runSpeedAccel * (waterSlowdown) * (1.0f + (slopeAmount * slopeInfluence)) * Time.fixedDeltaTime);
+
+
 
             //Debug.Log("NORMAL DOT: " + slopeAmount + " ANGLE: " + Vector3.Angle(Vector3.up, mPlayer.groundNormal));
 
@@ -231,7 +281,7 @@ namespace Amy
         void calculateGravity()
         {
 
-            float gravityMult = 1.5f;
+            float gravityMult = mPlayer.mPars.gravity_mult;
 
             if (isSliding)
                 gravityMult = 2.3f;
@@ -256,9 +306,6 @@ namespace Amy
 
             //Debug.Log("PAWA: " + power);
 
-            if (isCrouching)
-                power = Mathf.Clamp(power, 0, 0.4f);
-
 
             float walkSpeedTotal = baseWalkSpeed;
             walkSpeedTotal += ((baseWalkSpeed * 1.0f) * slopeAmount);
@@ -272,17 +319,11 @@ namespace Amy
                 runSpeedTotal = baseRunSpeed * 2.0f;
             }
 
-
-            if (power < 0.4f)
+            if (isCrouching)
                 return walkSpeedTotal;
 
-            if (power > 0.95f)
-                return runSpeedTotal;
 
-            float newPower = Helper.remapRange(power, 0.4f, 1.0f, 0.0f, 1.0f);
-
-
-            return Mathf.Lerp(newPower, walkSpeedTotal, runSpeedTotal);
+            return runSpeedTotal;
         }
 
         float getMaxSlope()
@@ -417,6 +458,12 @@ namespace Amy
         {
             if (!mPlayer.isGrounded && !isDouble && !ignoreGrounded)
                 return;
+
+            if(isCrouching)
+            {
+                isCrouching = false;
+                return;
+            }    
 
             float slopeMult = Mathf.Clamp01(1.0f + slopeAmount);
 

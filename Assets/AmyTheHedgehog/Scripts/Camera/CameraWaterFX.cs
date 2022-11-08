@@ -15,11 +15,13 @@ namespace Amy
         public float waterFar = 32.0f;
 
         public WaterDistortPostProcess waterDistort;
+        public AudioSource waterAmb;
 
     	// Start is called before the first frame update
     	void Start()
     	{
-    	    
+            isInWater = false;
+
     	}
 
         void setFogParams()
@@ -34,11 +36,13 @@ namespace Amy
             {
                 GameManager.Instance.systemData.AUDIO_GameSFXMixer.SetFloat("LowPass", 1000.0f);
                 waterDistort.enabled = true;
+                waterAmb.volume = 0.05f;
             }
             else
             {
                 GameManager.Instance.systemData.AUDIO_GameSFXMixer.SetFloat("LowPass", 22000.00f);
                 waterDistort.enabled = false;
+                waterAmb.volume = 0.0f;
             }
     	}
 	}

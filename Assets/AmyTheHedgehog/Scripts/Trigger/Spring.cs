@@ -9,6 +9,7 @@ namespace Amy
 
         public float power = 15.0f;
         public GameObject springFX;
+        public Animator mAnimator;
 
         // Start is called before the first frame update
         void Start()
@@ -31,6 +32,16 @@ namespace Amy
 
             p.changeCurrentMode(PlayerModes.SPRING);
             p.GetComponent<PlayerSpringBounce>().setSpringVelocity(transform.up, power);
+
+            if(springFX)
+            {
+                GameObject inst = GameObject.Instantiate(springFX);
+                inst.transform.position = transform.position;
+                inst.transform.rotation = transform.rotation;
+            }
+
+            if (mAnimator)
+                mAnimator.Play("spring_bounce");
         }
     }
 }

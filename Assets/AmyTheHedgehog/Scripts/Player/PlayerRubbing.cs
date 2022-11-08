@@ -55,6 +55,7 @@ namespace Amy
 
                 //TODO: Replace with a sequence where we do the cum. Leg shaky, maybe a bit of drippy FX too.
                 mPlayer.changeCurrentMode(mPlayer.lastMode);
+                mAnimator.CrossFade("Idle_Base",0.2f);
             }
         }
 

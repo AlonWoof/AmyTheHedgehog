@@ -13,6 +13,34 @@ namespace Amy
         MAX
     }
 
+    [System.Serializable]
+    public class CharacterParams
+    {
+        public GameObject ingameModel;
+        public RuntimeAnimatorController ingameAnimator;
+
+        public float height = 0.9f;
+        public float weight = 25.0f;
+        public float gravity_mult = 1.5f;
+
+
+
+        public float baseWalkSpeed = 0.75f;
+        public float baseRunSpeed = 5.0f;
+
+        public float runSpeedAccel = 8.0f;
+        public float runSpeedDeccel = 10.0f;
+
+        public float baseJumpPower = 5.0f;
+        public float baseJumpHangTime = 1.5f;
+
+        public float swimSpeed = 2.3f;
+
+        public CharacterPhysicsData jiggleData;
+
+        public PlayerStatus baseStats;
+    }
+
 
     [System.Serializable]
     public class PlayerStatus
@@ -25,9 +53,27 @@ namespace Amy
         public float jumpTimeBonus = 0.0f;
         public float jumpPowerBonus = 0.0f;
 
-        public float lungCapacity = 1.0f;
+        public float lungCapacity = 20.0f;
         public float dirtiness = 0.0f;
 
+
+        public PlayerStatus makeCopy()
+        {
+            PlayerStatus ns = new PlayerStatus();
+
+            ns.currentHealth = currentHealth;
+            ns.currentMood = currentMood;
+
+            ns.speedBonus = speedBonus;
+
+            ns.jumpTimeBonus = jumpTimeBonus;
+            ns.jumpPowerBonus = jumpPowerBonus;
+
+            ns.lungCapacity = lungCapacity;
+            ns.dirtiness = dirtiness;
+
+            return ns;
+        }
     }
 
 
@@ -60,8 +106,9 @@ namespace Amy
 
         private void Awake()
         {
-            AmyStatus = new PlayerStatus();
-            CreamStatus = new PlayerStatus();
+
+            AmyStatus = GameManager.getSystemData().AmyParams.baseStats.makeCopy();
+            CreamStatus = GameManager.getSystemData().CreamParams.baseStats.makeCopy();
 
             GameObject inst = new GameObject("CHECKPOINT");
             DontDestroyOnLoad(inst);
@@ -76,7 +123,7 @@ namespace Amy
         // Start is called before the first frame update
         void Start()
     	{
-    	    
+
     	}
 
     	// Update is called once per frame
@@ -117,7 +164,6 @@ namespace Amy
             stealthIndex = 0.0f;
 
 
-
             //Jumping makes you more visible
             if (basicMove.jumpTimer > 0.2f)
                 stealthIndex -= 0.25f;
@@ -134,7 +180,17 @@ namespace Amy
             if (playerHasStealthCamo)
                 stealthIndex = 1.0f;
 
+            float oneMinus = 1.0f - stealthIndex;
 
+            Color stealthColor = Color.green;
+
+            if (stealthIndex < 0.75f)
+                stealthColor = Color.yellow;
+
+            if (stealthIndex < 0)
+                stealthColor = Color.red;
+
+            Circle.DrawEllipse(mPlayerInstance.transform.position + Vector3.up * 0.5f, Vector3.up, mPlayerInstance.transform.forward, oneMinus * 3.0f, oneMinus * 3.0f, 32, stealthColor);
         }
 
         public void givePlayerStealthCamo()
@@ -198,8 +254,6 @@ namespace Amy
         public Player spawnPlayerAtCheckpoint()
         {
             Debug.Log("Respawning Player...");
-
-            //getDOFObjects();
 
             if (mPlayerInstance != null)
             {
