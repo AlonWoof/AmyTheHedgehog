@@ -26,7 +26,7 @@ namespace Amy
 
         }
 
-        void switchAllObjects()
+        public void switchAllObjects()
         {
             foreach (GameObject g in amy_objects)
                 g.SetActive(false);

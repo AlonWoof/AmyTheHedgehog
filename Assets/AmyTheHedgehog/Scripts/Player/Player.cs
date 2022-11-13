@@ -23,6 +23,8 @@ namespace Amy
         HANGING,
         SWIMMING,
         FLYING,
+        LISTENING,
+        CUTSCENE,
         RUBBING,
         DIE,
         DEBUG_MOVE
@@ -57,6 +59,10 @@ namespace Amy
         public float lungCapacity = 20.0f;
         public float airLeft = 20.0f;
 
+        //Fun statistics
+        public float distanceTraveledSinceSpawn = 0.0f;
+        Vector3 lastPos = Vector3.zero;
+
         public Vector3 groundNormal;
         public bool isGrounded;
 
@@ -82,6 +88,10 @@ namespace Amy
         PlayerRubbing modeRubbing;
         PlayerDie modeDie;
         PlayerDebugMove modeDebugMove;
+
+        //Special "modes". Or submodes, really.
+        PlayerActivator activator;
+
 
         public Transform hipBoneTransform;
         public Transform headBoneTransform;
@@ -235,6 +245,8 @@ namespace Amy
             modeRubbing = gameObject.AddComponent<PlayerRubbing>();
             modeDie = gameObject.AddComponent<PlayerDie>();
             modeDebugMove = gameObject.AddComponent<PlayerDebugMove>();
+
+            activator = gameObject.AddComponent<PlayerActivator>();
         }
 
         void disableAllModes()
@@ -248,7 +260,10 @@ namespace Amy
             modeDie.enabled = false;
             modeDebugMove.enabled = false;
 
+
+            activator.enabled = false;
         }
+
 
         public float getAltitudeFromGround()
         {
@@ -431,9 +446,20 @@ namespace Amy
             }
 
             debugControls();
-
+            updateDistance();
 
         }
+
+        void updateDistance()
+        {
+            if(!GameManager.Instance.playerInputDisabled)
+            {
+                distanceTraveledSinceSpawn += Vector3.Distance(lastPos, transform.position);
+            }
+
+            lastPos = transform.position;
+        }
+
 
         private void LateUpdate()
         {
@@ -577,6 +603,7 @@ namespace Amy
             {
                 case PlayerModes.BASIC_MOVE:
                     modeBasicMove.enabled = true;
+                    activator.enabled = true;
                     break;
 
                 case PlayerModes.SPRING:
@@ -585,10 +612,14 @@ namespace Amy
 
                 case PlayerModes.SWIMMING:
                     modeSwimming.enabled = true;
+                    activator.enabled = true;
                     break;
 
                 case PlayerModes.FLYING:
                     modeFlying.enabled = true;
+                    break;
+
+                case PlayerModes.LISTENING:
                     break;
 
                 case PlayerModes.HANGING:

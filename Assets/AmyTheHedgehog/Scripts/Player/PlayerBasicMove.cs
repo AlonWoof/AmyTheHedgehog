@@ -187,7 +187,7 @@ namespace Amy
                 }
             }
 
-            Debug.Log("Alt: " + mPlayer.getAltitudeFromGround());
+            //Debug.Log("Alt: " + mPlayer.getAltitudeFromGround());
 
             if(mPlayer.getAltitudeFromGround() > 0.4f && mPlayer.mChara == PlayableCharacter.Cream)
             {

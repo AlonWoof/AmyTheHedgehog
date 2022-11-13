@@ -356,6 +356,40 @@ namespace Amy
 
         }
 
+        public void characterSwitch(PlayableCharacter newChar)
+        {
+            Timing.RunCoroutine(doCharacterSwitch(newChar));
+        }
+
+        IEnumerator<float> doCharacterSwitch(PlayableCharacter newChar)
+        {
+            GameManager.Instance.playerInputDisabled = true;
+            GameManager.Instance.cameraInputDisabled = true;
+
+            UIManager.Instance.fadeScreen(false, 0.5f, false);
+            yield return Timing.WaitForSeconds(0.6f);
+
+            playerCheckpoint.transform.position = mPlayerInstance.transform.position;
+            playerCheckpoint.transform.rotation = mPlayerInstance.transform.rotation;
+
+            currentCharacter = newChar;
+            GameObject.Destroy(mPlayerInstance.gameObject);
+            mPlayerInstance = null;
+            
+            spawnPlayerAtCheckpoint();
+
+            foreach (CharacterEventSwitcher c in FindObjectsOfType<CharacterEventSwitcher>())
+                c.switchAllObjects();
+
+            yield return Timing.WaitForSeconds(0.5f);
+
+            UIManager.Instance.fadeScreen(true, 0.5f, false);
+            yield return Timing.WaitForSeconds(0.5f);
+
+            GameManager.Instance.playerInputDisabled = false;
+            GameManager.Instance.cameraInputDisabled = false;
+        }
+
     }
 
 }
