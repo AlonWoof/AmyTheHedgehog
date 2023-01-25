@@ -11,8 +11,8 @@ namespace Amy
         public float baseRunSpeed = 5.0f;
         public float baseWalkSpeed = 0.75f;
 
-        public float runSpeedAccel = 5.0f;
-        public float runSpeedDeccel = 8.0f;
+        public float runSpeedAccel = 3.0f;
+        public float runSpeedDeccel = 4.0f;
         public float slopeInfluence = 0.5f;
 
         //Max slope when standing still.
@@ -28,6 +28,7 @@ namespace Amy
         public float slopeAmount = 0.0f;
         public float jumpTimer = 0.0f;
         public float verticalVelocity = 0.0f;
+        public bool isAttacking = false;
 
         int framesAirborne = 0;
         bool isSliding = false;
@@ -178,6 +179,9 @@ namespace Amy
             if (!Input.GetButton("Jump"))
                 jumpTimer = 0.0f;
 
+            if (Input.GetButtonDown("Attack"))
+                Attack();
+
             if(mPlayer.mForwardVelocity < 0.1f)
             {
                 if(Input.GetButton("Action") && Input.GetButton("Jump"))
@@ -209,11 +213,18 @@ namespace Amy
             if (Input.GetKeyDown(KeyCode.Alpha9))
                 mPlayer.mForwardVelocity += baseRunSpeed * 3.0f;
 
+            if(isAttacking)
+            {
+                mPlayer.mDesiredMovement = Vector3.zero;
+                return;
+            }
+
             if (Mathf.Abs(h) == 0 && Mathf.Abs(v) == 0)
             {
                 mPlayer.mDesiredMovement = Vector3.zero;
                 return;
             }
+
 
             Vector3 targetDirection = Vector3.ClampMagnitude(new Vector3(h, 0f, v), 1.0f);
             Quaternion targetRotation = Quaternion.LookRotation(targetDirection, Vector3.up);
@@ -242,8 +253,11 @@ namespace Amy
                 waterSlowdown = 0.75f;
 
             if (mPlayer.mForwardVelocity < getRunSpeed() * mPlayer.mDesiredMovement.magnitude)
-                mPlayer.mForwardVelocity += (runSpeedAccel * (waterSlowdown) * (1.0f + (slopeAmount * slopeInfluence)) * Time.fixedDeltaTime);
+            {
+                float amountMult = Mathf.Clamp(1.0f - (mPlayer.mForwardVelocity / getRunSpeed()),0.1f,1.0f);
 
+                mPlayer.mForwardVelocity += ((runSpeedAccel * amountMult) * (waterSlowdown) * (1.0f + (slopeAmount * slopeInfluence)) * Time.fixedDeltaTime);
+            }
 
 
             //Debug.Log("NORMAL DOT: " + slopeAmount + " ANGLE: " + Vector3.Angle(Vector3.up, mPlayer.groundNormal));
@@ -482,6 +496,21 @@ namespace Amy
             mVoice.playVoiceDelayed(Random.Range(0.05f,0.1f),mVoice.jumping);
             mPlayer.spawnFX(GameManager.Instance.systemData.RES_AmyPlayerFX.fx_basicJump, transform.position);
            // mPlayer.isBallMode = true;
+        }
+
+        void Attack()
+        {
+            if (isAttacking)
+                return;
+
+            if(mPlayer.isGrounded)
+            {
+                if(Mathf.Abs(mPlayer.mForwardVelocity) < 0.1f)
+                {
+                    mVoice.playVoiceDelayed(0.1f, mVoice.basicAttack, true);
+                    mAnimator.Play("HammerAttack");
+                }
+            }
         }
 
         #endregion

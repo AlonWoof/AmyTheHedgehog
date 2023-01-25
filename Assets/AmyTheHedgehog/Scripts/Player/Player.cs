@@ -26,6 +26,8 @@ namespace Amy
         LISTENING,
         CUTSCENE,
         RUBBING,
+        HAMMER_ATTACK,
+        HAMMER_JUMP,
         DIE,
         DEBUG_MOVE
     }

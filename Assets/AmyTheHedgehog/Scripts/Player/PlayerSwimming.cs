@@ -92,7 +92,7 @@ namespace Amy
                    // if(Vector3.Dot(hitInfo.normal,Vector3.up) < 0.5f)
                    // {
                         mPlayer.changeCurrentMode(PlayerModes.BASIC_MOVE);
-                        mAnimator.Play("Locomotion_Base");
+                        mAnimator.Play("Walk");
                   // }
                 }
 
