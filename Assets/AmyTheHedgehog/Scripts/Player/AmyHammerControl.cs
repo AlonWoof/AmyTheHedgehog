@@ -68,7 +68,21 @@ namespace Amy
 
             hammerScale = mAnimator.GetFloat("hammerScale");
 
+            Player mPlayer = GetComponentInChildren<Player>();
+
+            if (mPlayer)
+            {
+                if (!mPlayer.isVisible)
+                {
+                    hammerScale = 0.0f;
+                }
+            }
+
             hammerTransform.localScale = Vector3.one * hammerScale;
+
+            
+
+
 
             //hammerScale = Mathf.Lerp(hammerScale, desiredHammerScale, 0.15f);
 
@@ -106,11 +120,6 @@ namespace Amy
 
             GameObject inst = GameObject.Instantiate(hammerHitFX);
             inst.transform.position = pos;
-
-
-
-            
-
             
         }
     }

@@ -236,7 +236,23 @@ namespace Amy
 
         }
 
+        public void restartMusic()
+        {
+            bgm.Stop();
 
+            if (hasIntro)
+            {
+                bgm.clip = currentBGM.introClip;
+                bgm.loop = false;
+            }
+            else
+            {
+                bgm.clip = currentBGM.mainClip;
+                bgm.loop = true;
+            }
+
+            bgm.Play();
+        }
 
     }
 }

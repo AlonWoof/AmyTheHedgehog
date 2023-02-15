@@ -11,6 +11,28 @@ namespace Amy
         public GameObject springFX;
         public Animator mAnimator;
 
+        private void OnDrawGizmos()
+        {
+            Gizmos.DrawLine(transform.position, calcSpringEndPos());
+        }
+
+        Vector3 calcSpringEndPos()
+        {
+            Vector3 start = transform.position;
+            float springVelocityLeft = power;
+            float springDecay = 16.0f;
+
+            Vector3 currentPos = start;
+
+            while (springVelocityLeft > 0.0f)
+            {
+                currentPos += ((transform.up * springVelocityLeft) * 0.1666666f);
+                springVelocityLeft -= springDecay * 0.1666666f;
+            }
+
+            return currentPos - transform.up * 1.5f;
+        }
+
         // Start is called before the first frame update
         void Start()
         {
@@ -32,6 +54,7 @@ namespace Amy
 
             p.changeCurrentMode(PlayerModes.SPRING);
             p.GetComponent<PlayerSpringBounce>().setSpringVelocity(transform.up, power);
+            p.transform.position = transform.position;
 
             if(springFX)
             {

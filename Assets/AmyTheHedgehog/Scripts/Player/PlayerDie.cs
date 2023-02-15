@@ -13,6 +13,7 @@ namespace Amy
         float gravity = 3.0f;
 
         bool isWaterDeath = false;
+        PlayerHurt hurt;
 
         public enum DeathType
         {
@@ -23,10 +24,12 @@ namespace Amy
 
         public DeathType deathType;
 
-        // Start is called before the first frame update
-        void Start()
-        {
+        float verticalVelocity;
+        int framesAirborne = 0;
 
+        private void Awake()
+        {
+            getBaseComponents();
         }
 
         private void OnEnable()
@@ -36,7 +39,9 @@ namespace Amy
             if (mPlayer.currentMode != PlayerModes.DIE)
                 return;
 
-            if(deathType == DeathType.Normal)
+            hurt = GetComponent<PlayerHurt>();
+
+            if (deathType == DeathType.Normal)
             {
                 mVoice.playVoice(mVoice.die);
                 mAnimator.Play("Die_Start");
@@ -66,7 +71,48 @@ namespace Amy
 
         private void LateUpdate()
         {
-            groundCheck();
+            //groundCheck();
+            updateIsGrounded();
+
+            PlayerHurt hurt = GetComponent<PlayerHurt>();
+
+            Vector3 dir = Helper.getDirectionTo(transform.position, hurt.knockOrigin);
+            dir.y = 0.0f;
+
+            mPlayer.mDirection = dir.normalized;
+
+            transform.rotation = Quaternion.LookRotation(mPlayer.mDirection);
+            calculateGravity();
+            Vector3 moveVec = -(mPlayer.mDirection * hurt.knockPower);
+            moveVec += Vector3.up * (hurt.knockPower * 0.65f);
+
+            moveVec += verticalVelocity * Vector3.up;
+            mRigidBody.velocity = moveVec;
+            float knockDecay = 8.0f;
+
+            if (hurt.knockPower > 0.0f)
+            {
+                hurt.knockPower -= (knockDecay * Time.fixedDeltaTime);
+            }
+
+            hurt.knockPower = Mathf.Clamp(hurt.knockPower, 0.0f, 128.0f);
+        }
+
+        void calculateGravity()
+        {
+
+            float gravityMult = mPlayer.mPars.gravity_mult;
+
+
+            if (mPlayer.isGrounded)
+            {
+                if (hurt.knockPower < 0.01f)
+                    verticalVelocity = Mathf.Lerp(verticalVelocity, -1, 0.5f);
+            }
+            else
+            {
+                verticalVelocity = Mathf.Lerp(verticalVelocity, Physics.gravity.y * gravityMult, Time.fixedDeltaTime);
+            }
         }
 
         void groundCheck()
@@ -91,7 +137,53 @@ namespace Amy
                 velo.y = -gravity;
                 mRigidBody.velocity = velo;
             }
-        }    
+        }
+
+        void updateIsGrounded()
+        {
+
+            Vector3 start = transform.position + (0.15f * Vector3.up);
+            Vector3 end = transform.position - (Vector3.up * 0.15f);
+            RaycastHit hitInfo = new RaycastHit();
+
+            Debug.DrawLine(start, end, Color.cyan, 0.1f);
+
+            float angle = Vector3.Angle(Vector3.up, mPlayer.groundNormal);
+
+            if (Physics.Linecast(start, end, out hitInfo, mPlayer.mColMask))
+            {
+                if (!mPlayer.isGrounded && hurt.knockPower < 0.5f)
+                {
+                    //mPlayer.isBallMode = false;
+                    //mPlayer.changeCurrentMode(PlayerModes.BASIC_MOVE);
+                    // mAnimator.Play("Land");
+                    transform.position = hitInfo.point;
+
+                }
+
+                
+                mPlayer.isGrounded = true;
+                mPlayer.groundNormal = hitInfo.normal;
+                framesAirborne = 0;
+
+            }
+            else
+            {
+                framesAirborne++;
+
+                if (framesAirborne > 5)
+                {
+                    if (mPlayer.isGrounded)
+                    {
+
+                        mPlayer.isGrounded = false;
+                        mPlayer.groundNormal = Vector3.up;
+
+                    }
+                }
+            }
+
+        }
     }
 
 

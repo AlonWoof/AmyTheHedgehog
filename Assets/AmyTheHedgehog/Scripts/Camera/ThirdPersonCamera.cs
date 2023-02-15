@@ -22,7 +22,7 @@ namespace Amy
 		public Vector3 targetOffset = new Vector3(0, 0.75f, -1.75f);
 
         public Vector3 offset_near = new Vector3(0, 0.75f, -1.75f);
-        public Vector3 offset_far = new Vector3(0, 1.0f, -3.5f);
+        public Vector3 offset_far = new Vector3(0, 1.5f, -3.5f);
 
         Vector3 lookPosition;
 
@@ -155,11 +155,6 @@ namespace Amy
         void updateLookPosition()
         {
 
-            if (playerIsCrouched)
-                heightOffset = Mathf.Lerp(heightOffset, crouchedHeightOffset, 0.12f);
-            else
-                heightOffset = Mathf.Lerp(heightOffset, defaultHeightOffset, 0.2f);
-
             lookPosition = playerTransform.position + (heightOffset * Vector3.up);
 
             if (!mPlayer)
@@ -167,6 +162,17 @@ namespace Amy
 
             if (!mPlayer.headBoneTransform || !mPlayer.hipBoneTransform)
                 return;
+
+            float adjustFac = 0;// Mathf.Clamp01(mPlayer.mForwardVelocity / 16.0f);
+
+
+            if (playerIsCrouched)
+                heightOffset = Mathf.Lerp(heightOffset, crouchedHeightOffset + adjustFac, 0.12f);
+            else
+                heightOffset = Mathf.Lerp(heightOffset, defaultHeightOffset + adjustFac, 0.2f);
+
+
+            heightOffset += adjustFac;
 
             if(mPlayer.currentMode == PlayerModes.HANGING)
             {
@@ -240,6 +246,8 @@ namespace Amy
 
 
             targetOffset = Vector3.Lerp(offset_near, offset_far, speedFac);
+
+            //targetOffset = offset_far;
 
             targetOffset.y *= mPlayer.playerHeight;
         }

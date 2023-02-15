@@ -321,6 +321,8 @@ namespace Amy
 
             yield return 0f;
 
+            MusicManager.Instance.fadeBGM(0.0f, 1.0f);
+
             while (mPlayerInstance.GetComponent<PlayerVoice>().voiceSource.isPlaying)
                 yield return 0f;
             
@@ -328,7 +330,10 @@ namespace Amy
 
             UIManager.Instance.fadeScreen(false, 1.0f, false);
 
+
             yield return Timing.WaitForSeconds(1.1f);
+            MusicManager.Instance.restartMusic();
+            MusicManager.Instance.fadeBGM(1.0f, 0.01f);
 
             mPlayerInstance.transform.position = playerCheckpoint.transform.position;
             mPlayerInstance.transform.rotation = playerCheckpoint.transform.rotation;

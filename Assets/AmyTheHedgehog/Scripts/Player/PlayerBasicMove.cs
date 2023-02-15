@@ -27,6 +27,7 @@ namespace Amy
 
         public float slopeAmount = 0.0f;
         public float jumpTimer = 0.0f;
+        public float hammerJumpTimer = 0.0f;
         public float verticalVelocity = 0.0f;
         public bool isAttacking = false;
 
@@ -273,7 +274,7 @@ namespace Amy
 
         void handleMovement()
         {
-            if (mPlayer.isGrounded && mRigidBody.velocity.y < 0.01f && jumpTimer < 0.01f)
+            if (mPlayer.isGrounded && mRigidBody.velocity.y < 0.01f && jumpTimer < 0.01f && hammerJumpTimer < 0.01f)
                 mRigidBody.MovePosition(getFloorPosition());
 
             getMaxSlope();
@@ -289,6 +290,8 @@ namespace Amy
             if (jumpTimer > 0.0f)
                 jumpTimer -= Time.fixedDeltaTime;
 
+            if (hammerJumpTimer > 0.0f)
+                hammerJumpTimer -= Time.fixedDeltaTime;
 
         }
 
@@ -302,7 +305,7 @@ namespace Amy
 
             if(mPlayer.isGrounded)
             {
-                if(jumpTimer < 0.01f)
+                if(jumpTimer < 0.01f && hammerJumpTimer < 0.01f)
                     verticalVelocity = Mathf.Lerp(verticalVelocity, -1, 0.5f);
             }
             else
@@ -490,12 +493,34 @@ namespace Amy
 
 
             verticalVelocity = jumpPower;
-            jumpTimer = baseJumpHangTime * slopeMult;
+            jumpTimer = baseJumpHangTime;
             mAnimator.Play("Jump");
             mAnimator.Play("Mouth_Jumping");
             mVoice.playVoiceDelayed(Random.Range(0.05f,0.1f),mVoice.jumping);
             mPlayer.spawnFX(GameManager.Instance.systemData.RES_AmyPlayerFX.fx_basicJump, transform.position);
            // mPlayer.isBallMode = true;
+        }
+
+        public void HammerJump()
+        {
+            if (!mPlayer.isGrounded)
+                return;
+
+
+            float slopeMult = Mathf.Clamp01(1.0f + slopeAmount);
+
+            if (slopeMult < 0.45f)
+                return;
+
+            float jumpPower = (baseJumpPower * 1.9f) * slopeMult;
+
+
+            verticalVelocity = jumpPower;
+            hammerJumpTimer = (baseJumpHangTime * 1.5f) * slopeMult;
+            mAnimator.Play("Jump");
+            mAnimator.Play("Mouth_Jumping");
+            mVoice.playVoiceDelayed(Random.Range(0.05f, 0.1f), mVoice.jumping);
+            mPlayer.spawnFX(GameManager.Instance.systemData.RES_AmyPlayerFX.fx_basicJump, transform.position);
         }
 
         void Attack()
@@ -505,10 +530,17 @@ namespace Amy
 
             if(mPlayer.isGrounded)
             {
-                if(Mathf.Abs(mPlayer.mForwardVelocity) < 0.1f)
+                Debug.Log("VELO: " + mPlayer.mForwardVelocity);
+
+                if(Mathf.Abs(mPlayer.mForwardVelocity) < 5.75f)
                 {
                     mVoice.playVoiceDelayed(0.1f, mVoice.basicAttack, true);
                     mAnimator.Play("HammerAttack");
+                }
+                else
+                {
+                    //HammerJump
+                    HammerJump();
                 }
             }
         }

@@ -28,6 +28,7 @@ namespace Amy
         RUBBING,
         HAMMER_ATTACK,
         HAMMER_JUMP,
+        HURT,
         DIE,
         DEBUG_MOVE
     }
@@ -74,6 +75,7 @@ namespace Amy
         public GameObject fx_waterWadingFX;
         public WetnessDirtynessProxy fx_wetDirty;
         public ActorOpacity fx_ActorOpacity;
+        public PlayerVoice mVoice;
 
         public List<Renderer> mRenderers;
 
@@ -88,6 +90,7 @@ namespace Amy
         PlayerFlying modeFlying;
         PlayerHanging modeHanging;
         PlayerRubbing modeRubbing;
+        PlayerHurt modeHurt;
         PlayerDie modeDie;
         PlayerDebugMove modeDebugMove;
 
@@ -101,6 +104,7 @@ namespace Amy
         public float headOffsetFromGround;
 
         public bool isBallMode = false;
+        public bool isVisible = false;
 
         public float hitStun = 0.0f;
 
@@ -225,7 +229,7 @@ namespace Amy
             mCollider = GetComponent<CapsuleCollider>();
             mRigidBody = GetComponent<Rigidbody>();
             mBallModel = GetComponent<BallModeModel>();
-
+            mVoice = GetComponent<PlayerVoice>();
 
             //Add a dummy animator to prevent problems later.
             if (!mAnimator)
@@ -245,6 +249,7 @@ namespace Amy
             modeSwimming = gameObject.AddComponent<PlayerSwimming>();
             modeFlying = gameObject.AddComponent<PlayerFlying>();
             modeRubbing = gameObject.AddComponent<PlayerRubbing>();
+            modeHurt = gameObject.AddComponent<PlayerHurt>();
             modeDie = gameObject.AddComponent<PlayerDie>();
             modeDebugMove = gameObject.AddComponent<PlayerDebugMove>();
 
@@ -259,6 +264,7 @@ namespace Amy
             modeSwimming.enabled = false;
             modeFlying.enabled = false;
             modeRubbing.enabled = false;
+            modeHurt.enabled = false;
             modeDie.enabled = false;
             modeDebugMove.enabled = false;
 
@@ -399,29 +405,33 @@ namespace Amy
             if (hitStun > 0.0f)
             {
 
-                int frame = 15;
+                int frame = 3;
 
                 if (hitStun < 0.25f)
-                    frame = 15;
+                    frame = 3;
 
                 if (Time.frameCount % frame == 0)
                 {
-                    if (fx_ActorOpacity.opacity > 0.0f)
-                    {
-                        fx_ActorOpacity.opacity = 0.0f;
-                    }
-                    else if (fx_ActorOpacity.opacity < 1.0f)
-                    {
-                        fx_ActorOpacity.opacity = 1.0f;
-                    }
-
+                    toggleAllRenderers(!isVisible);
                 }
 
                 return;
             }
 
-            fx_ActorOpacity.opacity = 1.0f;
+            toggleAllRenderers(true);
 
+        }
+
+        void toggleAllRenderers(bool visible)
+        {
+            foreach(Renderer r in GetComponentsInChildren<Renderer>())
+            {
+                
+                if(r.enabled == !visible)
+                    r.enabled = visible;
+            }
+
+            isVisible = visible;
         }
 
     	// Update is called once per frame
@@ -567,15 +577,29 @@ namespace Amy
             PlayerManager.Instance.getCharacterStatus(mChara).currentHealth = Mathf.Clamp01(PlayerManager.Instance.getCharacterStatus(mChara).currentHealth);
         }
 
-        public void onTakeDamage(float amnt, Vector3 srcpos)
+        public void onTakeDamage(float amnt, Vector3 srcpos, float force = 0.0f)
         {
             if (hitStun > 0.0f)
                 return;
 
+            hitStun = 2.5f;
 
-            hitStun = 1.0f;
+            if (currentMode == PlayerModes.BASIC_MOVE && force > 0.1f)
+            {
+                changeCurrentMode(PlayerModes.HURT);
+                modeHurt.setKnockBack(srcpos, force);
+            }
+
             damageHealth(amnt);
 
+
+            if (PlayerManager.Instance.getCharacterStatus(mChara).currentHealth > 0.0f)
+            {
+                if (force < 0.1f)
+                    mVoice.playVoice(mVoice.smallPain);
+                else
+                    mVoice.playVoice(mVoice.largePain);
+            }
         }
 
         public void voidOut()
@@ -632,6 +656,10 @@ namespace Amy
                     modeRubbing.enabled = true;
                     break;
 
+                case PlayerModes.HURT:
+                    modeHurt.enabled = true;
+                    break;
+
                 case PlayerModes.DIE:
                     modeDie.enabled = true;
                     break;
@@ -678,7 +706,7 @@ namespace Amy
             {
                 // PlayerManager.Instance.killHer();
                 //changeCurrentMode(PlayerModes.RUBBING);
-                onTakeDamage(0.15f, transform.position + transform.forward);
+                onTakeDamage(0.15f, transform.position + transform.forward, 8.0f);
 
             }
 
