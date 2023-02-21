@@ -1,0 +1,84 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c2be282a5fff04c4892b824f1183cc74, type: 3}
+  m_Name: SystemData
+  m_EditorClassIdentifier: 
+  AmyParams:
+    ingameModel: {fileID: 4745323695854999012, guid: 4439a92949fa78b45a08eda585cba69c, type: 3}
+    ingameAnimator: {fileID: 9100000, guid: 2ec874b0a8ce5034eaf6d6a6bf69cdd4, type: 2}
+    height: 0.9
+    weight: 25
+    forwardAccel: 4.5
+    airAccel: 5
+    jumpSpeed: 5
+    groundFriction: 0.52
+    airResistance: 0.45
+    slopeResistance: 4.5
+    railSpeed: 8
+    jump_hangTime: 1
+    gravityMult: 1.5
+    baseStats:
+      currentHealth: 1
+      currentMood: 1
+      speedBonus: 0
+      jumpTimeBonus: 0
+      jumpPowerBonus: 0
+      lungCapacity: 20
+      dirtiness: 0
+  CreamParams:
+    ingameModel: {fileID: 0}
+    ingameAnimator: {fileID: 0}
+    height: 0.8
+    weight: 25
+    forwardAccel: 4
+    airAccel: 6
+    jumpSpeed: 5
+    groundFriction: 0.65
+    airResistance: 0.5
+    slopeResistance: 4.5
+    railSpeed: 6
+    jump_hangTime: 1
+    gravityMult: 1.5
+    baseStats:
+      currentHealth: 1
+      currentMood: 1
+      speedBonus: 0
+      jumpTimeBonus: 0
+      jumpPowerBonus: 0
+      lungCapacity: 20
+      dirtiness: 0
+  RES_userInterface: {fileID: 6064850547931311056, guid: 1acd5a71c0cce5b4a974f6647a7cb039, type: 3}
+  RES_mainCamera: {fileID: 6520535683780218669, guid: af7d0377a6b01a24eb8f9e78aa70cf09, type: 3}
+  RES_AmyPlayerFX:
+    fx_basicJump: {fileID: 7706281447472519630, guid: 50977361d9502e04a8473c9cc5806d65, type: 3}
+    prop_amyCloth: {fileID: 4619037562850722088, guid: ce32ab6fa6a014c42a27692fe263d06c, type: 3}
+    prop_creamCloth: {fileID: 0}
+  RES_footstepFX:
+    res_FootFX_Default: {fileID: 1396866792464056812, guid: 528ba74b183078643919b3e600f497e1, type: 3}
+    res_FootFX_Dirt: {fileID: 2184994687598506789, guid: 14f720bf20e532a44b75bbe2788b21c4, type: 3}
+    res_FootFX_Stone: {fileID: 0}
+    res_FootFX_Grass: {fileID: 1396866792464056812, guid: 7154c633b5c088742b6a7f9e8ad3a782, type: 3}
+    res_FootFX_Water: {fileID: 8877630003353545551, guid: fe464b8622a7a8c4483507b0ce1cb32b, type: 3}
+    res_SwimFX_Surface: {fileID: 0}
+    res_SwimFX_DiveStart: {fileID: 0}
+    res_SwimFX_Submerged: {fileID: 0}
+  RES_AI_ExclamationFX: {fileID: 0}
+  RES_WaterWadingFX: {fileID: 0}
+  RES_ActorWaterSplashFX: {fileID: 0}
+  RES_ActorWaterEmergeFX: {fileID: 0}
+  AUDIO_GameSFXMixer: {fileID: 24100000, guid: 6d820247d60a3ed4bb236244fa4897ce, type: 2}
+  AUDIO_MenuSFXMixer: {fileID: 24100000, guid: 514a1f777cc1b574ea41de55fde1d63a, type: 2}
+  AUDIO_MusicMixer: {fileID: 24100000, guid: 514a1f777cc1b574ea41de55fde1d63a, type: 2}
+  AUDIO_Group_Voice: {fileID: -8440597184400336725, guid: 6d820247d60a3ed4bb236244fa4897ce, type: 2}
+  bgm_alert: {fileID: 0}
+  bgm_evasion: {fileID: 0}
+  sfx_mgs_clear: {fileID: 0}
