@@ -31,6 +31,8 @@ namespace Amy
 
 		public float gravityMult = 1.5f;
 
+		public float swimSpeed = 3.0f;
+
 		public PlayerStatus baseStats;
 	}
 
@@ -39,6 +41,7 @@ namespace Amy
 		NORMAL,
 		SPRING,
 		RAIL,
+		SWIMMING,
 		LISTENING,
 		CUTSCENE,
 		KILLED
@@ -74,12 +77,18 @@ namespace Amy
 		public float stickTimeout = 0.0f;
 		public float jumpTimer = 1.0f;
 
+		public Transform hipBoneTransform;
+		public Transform headBoneTransform;
+
+		public float headOffsetFromGround;
+
 		//Modes
 		public PlayerModes currentMode;
 		public PlayerModes lastMode;
 
 		public PlayerBasicMove modeBasic;
 		public PlayerSpringBounce modeSpring;
+		public PlayerSwimming modeSwimming;
 		public PlayerRail modeRail;
 
 		public static Player Spawn(Vector3 pos, Vector3 dir, PlayableCharacter chara = PlayableCharacter.Amy)
@@ -126,6 +135,7 @@ namespace Amy
 				inst.AddComponent<Animator>();
 
 			anim.runtimeAnimatorController = cpar.ingameAnimator;
+			anim.applyRootMotion = false;
 
 			//CharacterPhysics jiggles = inst.AddComponent<CharacterPhysics>();
 			//jiggles.mData = cpar.jiggleData;
@@ -172,6 +182,7 @@ namespace Amy
         {
 			modeBasic = gameObject.AddComponent<PlayerBasicMove>();
 			modeSpring = gameObject.AddComponent<PlayerSpringBounce>();
+			modeSwimming = gameObject.AddComponent<PlayerSwimming>();
 			modeRail = gameObject.AddComponent<PlayerRail>();
 		}
 
@@ -179,6 +190,7 @@ namespace Amy
         {
 			modeBasic.enabled = false;
 			modeSpring.enabled = false;
+			modeSwimming.enabled = false;
 			modeRail.enabled = false;
         }
 
@@ -196,6 +208,10 @@ namespace Amy
 					modeSpring.enabled = true;
 					break;
 
+				case PlayerModes.SWIMMING:
+					modeSwimming.enabled = true;
+					break;
+
 				case PlayerModes.RAIL:
 					modeRail.enabled = true;
 					break;
@@ -209,10 +225,30 @@ namespace Amy
 			mVoice = GetComponent<PlayerVoice>();
 		}
 
+		void getPlayerBones()
+		{
+			hipBoneTransform = getBoneByName("hips");
+			headBoneTransform = getBoneByName("head");
+
+			headOffsetFromGround = (headBoneTransform.position.y - 0.05f) - transform.position.y;
+		}
+
+		Transform getBoneByName(string name)
+		{
+			foreach (Transform t in GetComponentsInChildren<Transform>())
+			{
+				if (t.gameObject.name.ToLower() == name.ToLower())
+					return t;
+			}
+
+			return null;
+		}
+
 		private void Awake()
 		{
 			addAllModes();
 			getBaseComponents();
+			getPlayerBones();
 			mColMask = LayerMask.GetMask("Collision");
 
 		}
@@ -281,6 +317,35 @@ namespace Amy
 
 		}
 
+		public float getWaterYPos()
+		{
+			//ITS UNDER NEGATIVE NINE THOUSAAAAND
+			float water_y = -9001.0f;
+
+			Vector3 start = transform.position + 2048.0f * Vector3.up;
+			Vector3 end = transform.position - 2048.0f * Vector3.up;
+
+			LayerMask waterCol = LayerMask.GetMask("Water");
+			RaycastHit hitInfo = new RaycastHit();
+
+			if (Physics.Linecast(start, end, out hitInfo, waterCol))
+			{
+				water_y = hitInfo.point.y;
+			}
+
+			return water_y;
+		}
+
+		public float getWaterDepth()
+		{
+			float water_y = getWaterYPos();
+
+			if (water_y < transform.position.y)
+				return 0f;
+
+			return water_y - transform.position.y;
+		}
+
 		public void CalcVerticalVelocity()
 		{
 			float gravityMult = mParam.gravityMult;
@@ -331,6 +396,17 @@ namespace Amy
 			}
 
 			return false;
+		}
+
+		public void checkIfUnderwater()
+		{
+			if (jumpTimer > mParam.jump_hangTime * 0.5f)
+				return;
+
+			if (getWaterDepth() >= headOffsetFromGround)
+			{
+				changeCurrentMode(PlayerModes.SWIMMING);
+			}
 		}
 
 		void getGroundNormal()
@@ -435,7 +511,7 @@ namespace Amy
 
 			float slopeMult = Mathf.Clamp01(1.0f + slopeAmount);
 
-			if (slopeMult < 0.45f)
+			if (slopeMult < 0.45f && isOnGround)
 				return;
 
 			float jumpPower = mParam.jumpSpeed * slopeMult;
@@ -599,7 +675,7 @@ namespace Amy
 
 			if(Physics.Linecast(start,end,mColMask))
             {
-				acceleration *= 0.5f;
+				acceleration.z *= 0.5f;
             }
         }
 

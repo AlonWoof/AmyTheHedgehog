@@ -36,6 +36,12 @@ namespace Amy
 			mPlayer.updateRotation();
 		}
 
+        private void LateUpdate()
+        {
+			mPlayer.checkIfUnderwater();
+
+		}
+
         void handleInput()
         {
 

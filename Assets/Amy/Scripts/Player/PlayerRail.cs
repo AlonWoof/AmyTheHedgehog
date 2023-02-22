@@ -17,10 +17,12 @@ namespace Amy
 		public float mSpeed = 0.0f;
 
 		public float animSpeed;
+		public float leanLeftRight = 0.0f;
 
 		Vector3 offset;
 
 		public GameObject clothModel;
+		public GameObject mountPoint;
 
         private void OnEnable()
         {
@@ -34,6 +36,9 @@ namespace Amy
 
 			if (!clothModel)
 				SpawnClothModel();
+
+			if (!mountPoint)
+				mountPoint = new GameObject("RailMountPoint");
 
 			clothModel.SetActive(true);
 		}
@@ -71,16 +76,34 @@ namespace Amy
 
 			offset = Vector3.up * mPlayer.mParam.height;
 
-
 		}
 	
 	    // Update is called once per frame
 	    void Update()
 	    {
 
+			handleInput();
 
 
-	    }
+		}
+
+		void handleInput()
+        {
+			float h = InputFunctions.getLeftAnalogX();
+			float v = InputFunctions.getLeftAnalogY();
+
+
+			if (Mathf.Abs(h) == 0 && Mathf.Abs(v) == 0)
+			{
+				leanLeftRight = Mathf.Lerp(leanLeftRight, 0.0f, Time.deltaTime * 3.0f);
+
+				return;
+			}
+
+
+			leanLeftRight = Mathf.Lerp(leanLeftRight, h, Time.deltaTime * 3.0f);
+
+		}
 
         private void FixedUpdate()
         {
@@ -88,18 +111,27 @@ namespace Amy
 				return;
 
 			calcSpeed();
-			checkIfNextNode();
-
-
+			
+			swingAnimation();
 		}
+
+        private void LateUpdate()
+        {
+			checkIfNextNode();
+			lockToCorrectPosition();
+		}
+
 
         public void MountRail(Rail r)
         {
 			mRail = r;
 			railProgress = 0;
 
-			transform.position = r.points[0].transform.position - (offset);
+			mountPoint.transform.position = r.points[0].transform.position + Vector3.up * 0.15f;
+			transform.position = mountPoint.transform.position - offset;
 			mPlayer.tpc.centerBehindPlayer();
+
+			mPlayer.transform.SetParent(mountPoint.transform);
 
 			mSpeed = mPlayer.speed.magnitude;
 			animSpeed = Mathf.Clamp01(mSpeed / mPlayer.mParam.railSpeed);
@@ -114,12 +146,14 @@ namespace Amy
 			mPlayer.framesAirborne = 11;
 			mPlayer.isOnGround = false;
 			//mPlayer.mAnimator.Play("Airborne");
+
+			mPlayer.transform.SetParent(null);
 		}
 
 		void calcSpeed()
 		{
-			Transform currentNode = getCurrentNode();
-			Transform nextNode = getNextNode();
+			RailNode currentNode = getCurrentNode();
+			RailNode nextNode = getNextNode();
 
 
 			if (!nextNode || !currentNode)
@@ -129,7 +163,7 @@ namespace Amy
 			mSpeed = Mathf.Lerp(mSpeed, nSpd, Time.fixedDeltaTime * 0.5f);
 
 			Debug.Log("RAIL DIST: " + getProgressBetweenNodes());
-			lockToCorrectPosition();
+			
 
 			//if (getTotalProgress() < 0.1f)
 				//mPlayer.tpc.centerBehindPlayer();
@@ -139,18 +173,13 @@ namespace Amy
 
 			Vector3 moveVec = dirToNext.normalized * mSpeed;
 
-			mPlayer.setVelocityDirectly(moveVec);
+			mPlayer.setVelocityDirectly(mPlayer.mRigidBody.velocity + (moveVec * Time.fixedDeltaTime));
 
 			dirToNext.y = 0;
 			transform.rotation = Quaternion.LookRotation(dirToNext.normalized, Vector3.up);
 			mPlayer.direction = dirToNext.normalized;
 
 			float desiredAnimSpeed = Mathf.Clamp01(mSpeed / mPlayer.mParam.railSpeed);
-
-			if (getTotalProgress() > 0.8f)
-			{
-				desiredAnimSpeed = 0;
-			}
 
 			animSpeed = Mathf.Lerp(animSpeed, desiredAnimSpeed, Time.fixedDeltaTime * 3.0f);
 
@@ -161,8 +190,8 @@ namespace Amy
 
 		void checkIfNextNode()
         {
-			Transform currentNode = getCurrentNode();
-			Transform nextNode = getNextNode();
+			RailNode currentNode = getCurrentNode();
+			RailNode nextNode = getNextNode();
 
 			if (!currentNode)
 				return;
@@ -184,16 +213,16 @@ namespace Amy
 		
 		float getProgressBetweenNodes()
         {
-			Transform currentNode = getCurrentNode();
-			Transform nextNode = getNextNode();
+			RailNode currentNode = getCurrentNode();
+			RailNode nextNode = getNextNode();
 
 			if (!nextNode || !currentNode)
 				return -1.0f;
 
 			Vector3 currentPos = transform.position + offset;
 
-			float dista = Vector3.Distance(currentNode.position, nextNode.position);
-			float distb = Vector3.Distance(currentNode.position, currentPos);
+			float dista = Vector3.Distance(currentNode.transform.position, nextNode.transform.position);
+			float distb = Vector3.Distance(currentNode.transform.position, currentPos);
 
 			return (distb / dista);
 			
@@ -201,16 +230,16 @@ namespace Amy
 
 		float getTotalProgress()
         {
-			Transform firstNode = getFirstNode();
-			Transform lastNode = getLastNode();
+			RailNode firstNode = getFirstNode();
+			RailNode lastNode = getLastNode();
 
 			if (!firstNode || !lastNode)
 				return -1.0f;
 
 			Vector3 currentPos = transform.position + offset;
 
-			float dista = Vector3.Distance(firstNode.position, lastNode.position);
-			float distb = Vector3.Distance(firstNode.position, currentPos);
+			float dista = Vector3.Distance(firstNode.transform.position, lastNode.transform.position);
+			float distb = Vector3.Distance(firstNode.transform.position, currentPos);
 
 			return (distb / dista);
 		}
@@ -218,18 +247,21 @@ namespace Amy
 		void lockToCorrectPosition()
         {
 
-			Transform currentNode = getCurrentNode();
-			Transform nextNode = getNextNode();
+			RailNode currentNode = getCurrentNode();
+			RailNode nextNode = getNextNode();
 
 			if (!nextNode || !currentNode)
 				return;
 
-			Vector3 mountPoint = Vector3.Lerp(currentNode.position, nextNode.position, getProgressBetweenNodes());
+			mountPoint.transform.position = Vector3.Lerp(currentNode.transform.position, nextNode.transform.position, getProgressBetweenNodes()) + Vector3.up * 0.15f; ;
 
-			transform.position = mountPoint - offset;
-        }
 
-		Transform getCurrentNode()
+			transform.position = mountPoint.transform.position - offset - (Vector3.up * 0.15f);
+			
+
+		}
+
+		RailNode getCurrentNode()
 		{
 			if (!mRail)
 				return null;
@@ -243,7 +275,7 @@ namespace Amy
 			return mRail.points[railProgress];
 		}
 
-		Transform getFirstNode()
+		RailNode getFirstNode()
 		{
 			if (!mRail)
 				return null;
@@ -254,7 +286,7 @@ namespace Amy
 			return mRail.points[0];
 		}
 
-		Transform getLastNode()
+		RailNode getLastNode()
 		{
 			if (!mRail)
 				return null;
@@ -265,8 +297,7 @@ namespace Amy
 			return mRail.points[mRail.points.Length - 1];
 		}
 
-
-		Transform getNextNode()
+		RailNode getNextNode()
         {
 			if (!mRail)
 				return null;
@@ -293,5 +324,16 @@ namespace Amy
 
 			mRail.events[railProgress].Invoke();
 		}
+
+		void swingAnimation()
+        {
+			float leaning = leanLeftRight + Mathf.Sin(Time.time * 2.0f) * 0.2f;
+			leaning = Mathf.Clamp(leaning, -1.0f, 1.0f);
+
+			float fac = Mathf.Lerp(-30, 30, (leaning + 1.0f) * 0.5f);
+
+
+			mountPoint.transform.rotation = mountPoint.transform.rotation * Quaternion.Euler(fac, 0, 0);
+        }
 	}
 }
