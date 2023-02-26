@@ -44,7 +44,8 @@ namespace Amy
 		SWIMMING,
 		LISTENING,
 		CUTSCENE,
-		KILLED
+		KILLED,
+		DEBUG_MOVE
     }
 
 	public class Player : MonoBehaviour
@@ -56,6 +57,9 @@ namespace Amy
 		public ThirdPersonCamera tpc;
 		public PlayerVoice mVoice;
 
+		public PlayerParameters mParam;
+		public PlayableCharacter mChara;
+
 		public Vector3 speed = Vector3.zero;
 		public Vector3 acceleration = Vector3.zero;
 		public Vector3 direction = Vector3.zero;
@@ -66,12 +70,13 @@ namespace Amy
 		public Vector3 stickAngle;
 		public float stickPower;
 
-		public PlayerParameters mParam;
+		
 
 		public LayerMask mColMask;
 
 		public bool isOnGround = false;
 		public bool isSliding = false;
+		public bool isHammerJumping = false;
 		public int framesAirborne = 0;
 
 		public float stickTimeout = 0.0f;
@@ -79,6 +84,11 @@ namespace Amy
 
 		public Transform hipBoneTransform;
 		public Transform headBoneTransform;
+
+		public Transform rThighBoneTransform;
+		public Transform lThighBoneTransform;
+
+		public float leanAmount = 0.0f;
 
 		public float headOffsetFromGround;
 
@@ -90,6 +100,7 @@ namespace Amy
 		public PlayerSpringBounce modeSpring;
 		public PlayerSwimming modeSwimming;
 		public PlayerRail modeRail;
+		public PlayerDebugMove modeDebug;
 
 		public static Player Spawn(Vector3 pos, Vector3 dir, PlayableCharacter chara = PlayableCharacter.Amy)
 		{
@@ -171,7 +182,7 @@ namespace Amy
 				}
 			}
 
-			//newPlayer.mChara = chara;
+			newPlayer.mChara = chara;
 			newPlayer.mParam = cpar;
 			//newPlayer.playerHeight = amy_height;
 
@@ -184,6 +195,7 @@ namespace Amy
 			modeSpring = gameObject.AddComponent<PlayerSpringBounce>();
 			modeSwimming = gameObject.AddComponent<PlayerSwimming>();
 			modeRail = gameObject.AddComponent<PlayerRail>();
+			modeDebug = gameObject.AddComponent<PlayerDebugMove>();
 		}
 
 		public void disableAllModes()
@@ -192,6 +204,7 @@ namespace Amy
 			modeSpring.enabled = false;
 			modeSwimming.enabled = false;
 			modeRail.enabled = false;
+			modeDebug.enabled = false;
         }
 
 		public void refreshMode()
@@ -215,6 +228,10 @@ namespace Amy
 				case PlayerModes.RAIL:
 					modeRail.enabled = true;
 					break;
+
+				case PlayerModes.DEBUG_MOVE:
+					modeDebug.enabled = true;
+					break;
             }
         }
 
@@ -230,6 +247,9 @@ namespace Amy
 			hipBoneTransform = getBoneByName("hips");
 			headBoneTransform = getBoneByName("head");
 
+			rThighBoneTransform = getBoneByName("thigh_r");
+			lThighBoneTransform = getBoneByName("thigh_l");
+
 			headOffsetFromGround = (headBoneTransform.position.y - 0.05f) - transform.position.y;
 		}
 
@@ -242,6 +262,53 @@ namespace Amy
 			}
 
 			return null;
+		}
+
+
+		void doLeanAnimation()
+        {
+			float angle = (20.0f * leanAmount) * Mathf.Clamp01(Mathf.Abs(acceleration.z) / 6.0f);
+
+			leanAmount = Mathf.Lerp(leanAmount, 0.0f, Time.deltaTime * 3.0f);
+
+			hipBoneTransform.rotation = hipBoneTransform.rotation * Quaternion.Euler(0, 0, angle);
+
+			rThighBoneTransform.rotation = rThighBoneTransform.rotation * Quaternion.Euler(0, 0, angle);
+			lThighBoneTransform.rotation = lThighBoneTransform.rotation * Quaternion.Euler(0, 0, angle);
+
+			headBoneTransform.rotation = headBoneTransform.rotation * Quaternion.Euler(0, Mathf.Clamp(-angle * 5.0f, -40, 40), 0);
+		}
+
+		public PlayerStatus getStatus()
+        {
+			PlayerStatus result = null;
+
+			switch(mChara)
+            {
+				case PlayableCharacter.Amy:
+					result = PlayerManager.Instance.AmyStatus;
+					break;
+
+				case PlayableCharacter.Cream:
+					result = PlayerManager.Instance.AmyStatus;
+					break;
+			}
+
+			return result;
+        }
+
+		void updateHealth()
+        {
+			PlayerStatus pstats = getStatus();
+
+			pstats.currentHealth = Mathf.Clamp(pstats.currentHealth, 0, pstats.maxHealth);
+			pstats.currentMood = Mathf.Clamp(pstats.currentMood, 0, pstats.maxMood);
+
+			if(pstats.currentHealth == 0)
+            {
+				//DIE
+            }
+
 		}
 
 		private void Awake()
@@ -283,7 +350,29 @@ namespace Amy
 			mAnimator.SetFloat("z_accel", runAnimProgress);
 			mAnimator.SetFloat("run_anim_speed", runAnimSpeed);
 
-			
+			debugControls();
+		}
+
+        private void LateUpdate()
+        {
+			doLeanAnimation();
+
+		}
+
+        void debugControls()
+        {
+			if (Input.GetKeyDown(KeyCode.Keypad5))
+			{
+
+				if (currentMode == PlayerModes.DEBUG_MOVE)
+				{
+					changeCurrentMode(PlayerModes.NORMAL);
+				}
+				else
+				{
+					changeCurrentMode(PlayerModes.DEBUG_MOVE);
+				}
+			}
 		}
 
 		public void changeCurrentMode(PlayerModes newMode)
@@ -350,9 +439,12 @@ namespace Amy
 		{
 			float gravityMult = mParam.gravityMult;
 
+			if (checkFallOffCeiling() || checkFallOffWall())
+				gravityMult *= -1.0f;
+
 			float verticalVelocity = acceleration.y;
 
-			if (isOnGround && !checkFallOffWall() && !checkFallOffCeiling())
+			if (isOnGround && !checkFallOffCeiling() && !checkFallOffWall())
 			{
 				if (jumpTimer < 0.01f)
 					verticalVelocity = Mathf.Lerp(verticalVelocity, 0, 0.25f);
@@ -360,8 +452,8 @@ namespace Amy
 			else
 			{
 				float extraJumpPower = (0.15f * (jumpTimer / mParam.jump_hangTime));
-
 				verticalVelocity = Mathf.Lerp(verticalVelocity + extraJumpPower, Physics.gravity.y * gravityMult, Time.fixedDeltaTime * 1.5f);
+			
 			}
 
 			acceleration.y = verticalVelocity;
@@ -376,8 +468,10 @@ namespace Amy
 		bool checkFallOffWall()
         {
 
+			//Debug.Log("DOT OF WALL: " + Vector3.Dot(groundNormal, Vector3.up));
 
-			if(Mathf.Abs(slopeAmount) > 0.65f && acceleration.z < 3.0f)
+
+			if(Vector3.Dot(groundNormal, Vector3.up) < 0.65f && acceleration.z < 3.0f)
             {
 
 				return true;
@@ -388,9 +482,9 @@ namespace Amy
 
 		bool checkFallOffCeiling()
 		{
-			return false;
 
-			if (groundNormal.y < 0.75f && acceleration.z < 3.0f)
+
+			if (Vector3.Dot(groundNormal, Vector3.down) > 0.75f && acceleration.z < 3.0f)
 			{
 				return true;
 			}
@@ -454,29 +548,36 @@ namespace Amy
 					isSliding = false;
                 }
 
-				if (Vector3.Dot(groundNormal, new_ground) > 0.25f)
+				if (Vector3.Dot(groundNormal, new_ground) > 0.25)
                 {
-					groundNormal = new_ground;
+						groundNormal = new_ground;
 
-					if (!isOnGround)
-					{
-						isOnGround = true;
-						mAnimator.Play("Land");
-						acceleration.y = 0.0f;
-						acceleration *= 0.95f;
-						speed.y = 0.0f;
-						framesAirborne = 0;
-					}
-
-					if (framesAirborne > 0 || Vector3.Distance(hitInfo.point, transform.position) > 0.01f)
-					{
-						if (jumpTimer < 0.05f)
+						if (!isOnGround)
 						{
-							transform.position = hitInfo.point;
-	
+							isHammerJumping = false;
+							isOnGround = true;
+							mAnimator.Play("Land");
+							acceleration.y = 0.0f;
+							acceleration *= 0.95f;
+							speed.y = 0.0f;
+							framesAirborne = 0;
 						}
-					}
+
+						if (framesAirborne > 0 || Vector3.Distance(hitInfo.point, transform.position) > 0.01f)
+						{
+							if (jumpTimer < 0.05f)
+							{
+								transform.position = hitInfo.point;
+
+							}
+						}
+
 				}
+				else
+                {
+					groundNormal = Vector3.up;
+					
+                }
 
 
 			}
@@ -491,7 +592,9 @@ namespace Amy
 					if (isOnGround)
 					{
 						isOnGround = false;
-						mAnimator.Play("Airborne");
+
+						if(!isHammerJumping)
+							mAnimator.Play("Airborne");
 
 					}
 				}
@@ -525,12 +628,44 @@ namespace Amy
 			jumpTimer = mParam.jump_hangTime;
 		}
 
+		public void hammerJump()
+        {
+			if (!isOnGround)
+				return;
+
+			float slopeMult = Mathf.Clamp01(1.0f + slopeAmount);
+
+			if (slopeMult < 0.45f && isOnGround)
+				return;
+
+			float jumpPower = mParam.jumpSpeed * slopeMult;
+
+			//acceleration *= 0.8f;
+			acceleration.y = jumpPower * 1.9f;
+			mAnimator.Play("HammerJump");
+			isHammerJumping = true;
+			//mAnimator.Play("Mouth_Jumping");
+			mVoice.playVoiceDelayed(Random.Range(0.05f, 0.1f), mVoice.altJumping);
+			spawnFX(GameManager.Instance.systemData.RES_AmyPlayerFX.fx_basicJump, transform.position);
+			spawnFX(GameManager.Instance.systemData.RES_AmyPlayerFX.fx_pikoHammerJump, transform.position + transform.forward + Vector3.up * 0.2f);
+			jumpTimer = mParam.jump_hangTime;
+		}
+
+		public void checkForHammerJump()
+        {
+			if (acceleration.z < 7.0f)
+				return;
+
+			if (Input.GetButtonDown("Attack"))
+				hammerJump();
+		}
+
 		public void checkForJump()
         {
 			if (Input.GetButtonDown("Jump"))
 				Jump(false);
 
-			if (!Input.GetButton("Jump"))
+			if (!Input.GetButton("Jump") && !isHammerJumping)
 				jumpTimer = 0.0f;
 
 			if (jumpTimer > 0.0f)
@@ -579,10 +714,23 @@ namespace Amy
 			prev_direction = direction;
 			direction = mDir.normalized;
 
+			float turningFactor = (1 - Vector3.Dot(direction.normalized, prev_direction.normalized)) * Helper.AngleDir(direction.normalized, prev_direction.normalized, transform.up);
+
+			turningFactor *= 16.0f;
+
+			if (Mathf.Abs(turningFactor) > 0.01f)
+				leanAmount += turningFactor;
+
+			leanAmount = Mathf.Clamp(leanAmount, -1.0f, 1.0f);
+
+			if(Mathf.Abs(turningFactor) > 0.5f)
+				Debug.Log("TURNING: " + turningFactor);
 
 			//Debug.Log(Vector3.Dot(direction, prev_direction));
 
 			float dirChange = Mathf.Clamp01(Vector3.Dot(direction, prev_direction));
+
+			
 
 			float forward_accel = (targetDirection.magnitude * mParam.forwardAccel);
 			forward_accel += (slopeAmount * mParam.forwardAccel);
@@ -637,9 +785,16 @@ namespace Amy
 			if (checkFallOffCeiling() && isOnGround)
             {
 				//mAnimator.Play("Airborne");
-				groundNormal = Vector3.up;
-				isOnGround = false;
+				//groundNormal = Vector3.up;
+				//isOnGround = false;
             }
+
+			if (checkFallOffWall() && isOnGround)
+			{
+				//mAnimator.Play("Airborne");
+				//groundNormal = Vector3.up;
+				//isOnGround = false;
+			}
 
 			if (Mathf.Abs(slopeAmount) > 0.6f)
 			{

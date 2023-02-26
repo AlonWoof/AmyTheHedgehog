@@ -25,6 +25,8 @@ namespace Amy
 			mPlayer.CalcSlope();
 			mPlayer.checkForJump();
 
+			if(mPlayer.mChara == PlayableCharacter.Amy)
+				mPlayer.checkForHammerJump();
 		}
 
         private void FixedUpdate()

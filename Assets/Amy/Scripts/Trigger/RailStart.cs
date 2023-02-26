@@ -34,10 +34,10 @@ namespace Amy
 
 				if (!mPlayer.isOnGround && Mathf.Abs(mPlayer.speed.y) > 0.2f && mPlayer.currentMode == PlayerModes.NORMAL)
 				{
-					mPlayer = PlayerManager.Instance.getPlayer();
-					mPlayer.changeCurrentMode(PlayerModes.RAIL);
+					//mPlayer = PlayerManager.Instance.getPlayer();
+					//mPlayer.changeCurrentMode(PlayerModes.RAIL);
 
-					mPlayer.modeRail.MountRail(mRail);
+					//mPlayer.modeRail.MountRail(mRail);
 				}
 			}
         }

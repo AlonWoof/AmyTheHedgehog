@@ -17,8 +17,10 @@ namespace Amy
     [System.Serializable]
     public class PlayerStatus
     {
-        public float currentHealth = 1.0f;
-        public float currentMood = 1.0f;
+        public float currentHealth = 25.0f;
+        public float maxHealth = 25.0f;
+        public float currentMood = 25.0f;
+        public float maxMood = 25.0f;
 
         public float speedBonus = 0.0f;
 
@@ -34,7 +36,9 @@ namespace Amy
             PlayerStatus ns = new PlayerStatus();
 
             ns.currentHealth = currentHealth;
+            ns.maxHealth = maxHealth;
             ns.currentMood = currentMood;
+            ns.maxMood = maxMood;
 
             ns.speedBonus = speedBonus;
 

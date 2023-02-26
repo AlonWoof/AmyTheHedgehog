@@ -13,7 +13,6 @@ namespace Amy
 	{
 
 		public Rail mRail;
-		public int railProgress = 0;
 		public float mSpeed = 0.0f;
 
 		public float animSpeed;
@@ -23,6 +22,15 @@ namespace Amy
 
 		public GameObject clothModel;
 		public GameObject mountPoint;
+
+		public float railProgress = 0.0f;
+		public float railDistance = 0.0f;
+		public int currentRailNode = 0;
+
+		const float mountPointHeight = 1.1f;
+		const float mountPointForward = 0.165f;
+
+		public float speedMult = 0.0f;
 
         private void OnEnable()
         {
@@ -92,6 +100,11 @@ namespace Amy
 			float h = InputFunctions.getLeftAnalogX();
 			float v = InputFunctions.getLeftAnalogY();
 
+			if(Input.GetButtonDown("Jump"))
+            {
+				DismountRailJump();
+				return;
+			}
 
 			if (Mathf.Abs(h) == 0 && Mathf.Abs(v) == 0)
 			{
@@ -111,46 +124,123 @@ namespace Amy
 				return;
 
 			calcSpeed();
-			
+			calcPosition();
 			swingAnimation();
 		}
 
         private void LateUpdate()
         {
-			checkIfNextNode();
-			lockToCorrectPosition();
+			//checkIfNextNode();
+			//lockToCorrectPosition();
+			//mPlayer.tpc.centerBehindPlayer();
+			
+
 		}
 
 
-        public void MountRail(Rail r)
+        public void MountRail(Rail r, Vector3 pos)
         {
 			mRail = r;
-			railProgress = 0;
+			railDistance = 0.0f;
+			mSpeed = 0.0f;
 
-			mountPoint.transform.position = r.points[0].transform.position + Vector3.up * 0.15f;
+			mPlayer.transform.SetParent(null);
+			mountPoint.transform.position = pos;
+			mountPoint.transform.rotation = transform.rotation;
 			transform.position = mountPoint.transform.position - offset;
 			mPlayer.tpc.centerBehindPlayer();
 
 			mPlayer.transform.SetParent(mountPoint.transform);
 
+			mPlayer.mRigidBody.isKinematic = true;
 			mSpeed = mPlayer.speed.magnitude;
 			animSpeed = Mathf.Clamp01(mSpeed / mPlayer.mParam.railSpeed);
 			mPlayer.mAnimator.Play("Rail");
 			triggerNodeEvent();
+
 		}
+
+		public void getRailDirectionAndSpeedMult()
+        {
+			Vector3 back = mRail.getPosOnRailFromDistance(railDistance - 0.5f);
+			Vector3 forward = mRail.getPosOnRailFromDistance(railDistance + 0.5f);
+
+			speedMult = (back.y - forward.y) * 2.0f;
+
+
+			Vector3 dir = Helper.getDirectionTo(back, forward);
+
+			dir.y = 0;
+
+			mountPoint.transform.rotation = Quaternion.LookRotation(dir.normalized, Vector3.up);
+        }
 
 		public void DismountRail()
         {
-			transform.position = mRail.end.transform.position + (offset * 0.25f);
-			mPlayer.changeCurrentMode(PlayerModes.NORMAL);
-			mPlayer.framesAirborne = 11;
-			mPlayer.isOnGround = false;
-			//mPlayer.mAnimator.Play("Airborne");
-
+			mPlayer.mRigidBody.isKinematic = false;
 			mPlayer.transform.SetParent(null);
+			mPlayer.changeCurrentMode(PlayerModes.NORMAL);
+			mPlayer.mAnimator.Play("Airborne");
+			mPlayer.isOnGround = false;
+			mPlayer.framesAirborne = 10;
+			mRail.checkForPlayerTimeout = 1.0f;
+
+			mPlayer.acceleration.y = mSpeed * 0.5f;
+			mPlayer.acceleration.z = mSpeed * 0.5f;
+		}
+
+		public void DismountRailJump()
+        {
+			mPlayer.mRigidBody.isKinematic = false;
+			mPlayer.transform.SetParent(null);
+			mPlayer.changeCurrentMode(PlayerModes.NORMAL);
+			mPlayer.mAnimator.Play("Jump");
+			mPlayer.Jump(true);
+			mPlayer.acceleration.y += mSpeed * 0.25f;
+			mPlayer.acceleration.z = mSpeed * 0.5f;
+			mPlayer.isOnGround = false;
+			mPlayer.framesAirborne = 10;
+			mRail.checkForPlayerTimeout = 1.0f;
 		}
 
 		void calcSpeed()
+		{
+
+			mSpeed += (speedMult * mPlayer.mParam.railSpeed) * Time.fixedDeltaTime;
+
+			float desiredAnimSpeed = Mathf.Clamp01(mSpeed / mPlayer.mParam.railSpeed);
+
+			animSpeed = Mathf.Lerp(animSpeed, desiredAnimSpeed, Time.fixedDeltaTime * 3.0f);
+
+			mPlayer.mAnimator.SetFloat("animSpeed", animSpeed);
+	
+
+			railDistance += mSpeed * Time.fixedDeltaTime;
+
+		}
+
+		void calcPosition()
+        {
+
+			if (railDistance > mRail.totalDistance)
+			{
+				DismountRail();
+				return;
+
+			}
+
+			transform.position = mountPoint.transform.position - (Vector3.up * mountPointHeight) - (transform.forward * mountPointForward);
+			mountPoint.transform.position = mRail.getPosOnRailFromDistance(railDistance);
+
+			getRailDirectionAndSpeedMult();
+
+
+		}
+
+
+
+
+		void oldCalcSpeed()
 		{
 			RailNode currentNode = getCurrentNode();
 			RailNode nextNode = getNextNode();
@@ -266,13 +356,15 @@ namespace Amy
 			if (!mRail)
 				return null;
 
-			if ((mRail.points.Length - 1) < railProgress)
+			int node = mRail.getNodeIndexFromDistance(railDistance);
+
+			if ((mRail.points.Length - 1) < node)
 				return null;
 
-			if (mRail.points[railProgress] == null)
+			if (mRail.points[node] == null)
 				return null;
 
-			return mRail.points[railProgress];
+			return mRail.points[node];
 		}
 
 		RailNode getFirstNode()
@@ -302,13 +394,15 @@ namespace Amy
 			if (!mRail)
 				return null;
 
-			if ((mRail.points.Length-1) < railProgress + 1)
+			int node = mRail.getNodeIndexFromDistance(railDistance) + 1;
+
+			if ((mRail.points.Length-1) < node)
 				return null;
 
-			if (mRail.points[railProgress + 1] == null)
+			if (mRail.points[node] == null)
 				return null;
 
-			return mRail.points[railProgress + 1];
+			return mRail.points[node];
         }
 
 		void triggerNodeEvent()
@@ -319,10 +413,10 @@ namespace Amy
 			if ((mRail.events.Length - 1) < railProgress)
 				return;
 
-			if (mRail.events[railProgress] == null)
+			if (mRail.events[currentRailNode] == null)
 				return;
 
-			mRail.events[railProgress].Invoke();
+			mRail.events[currentRailNode].Invoke();
 		}
 
 		void swingAnimation()
@@ -332,8 +426,9 @@ namespace Amy
 
 			float fac = Mathf.Lerp(-30, 30, (leaning + 1.0f) * 0.5f);
 
-
-			mountPoint.transform.rotation = mountPoint.transform.rotation * Quaternion.Euler(fac, 0, 0);
-        }
+			//mPlayer.tpc.centerBehindPlayer();
+			
+			//mountPoint.transform.rotation = Quaternion.LookRotation(mountPoint.transform.forward) * Quaternion.Euler(0, 0, fac);
+		}
 	}
 }

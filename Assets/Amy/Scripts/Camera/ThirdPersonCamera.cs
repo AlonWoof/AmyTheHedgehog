@@ -227,6 +227,15 @@ namespace Amy
 
         }
 
+        public void centerBehindPlayerSmooth(float rate)
+        {
+            if (!playerTransform)
+                return;
+
+            currentAngle.x = Mathf.Lerp(currentAngle.x, -10, rate);
+            currentAngle.y = Mathf.Lerp(currentAngle.y, (Quaternion.LookRotation(playerTransform.forward).eulerAngles.y), rate);
+        }
+
         void interpolate()
         {
 

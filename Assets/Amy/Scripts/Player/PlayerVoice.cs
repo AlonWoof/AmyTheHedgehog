@@ -21,6 +21,7 @@ namespace Amy
         public AudioClip[] drown;
 
         public AudioClip[] jumping;
+        public AudioClip[] altJumping;
 
         public AudioSource voiceSource;
 
