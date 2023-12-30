@@ -31,6 +31,8 @@ namespace Amy
 
         public List<GameObject> preloadObjects;
 
+        public float shadow_dist = 1024f;
+
         void Awake()
         {
             //if (forceHour > -1)
@@ -44,6 +46,8 @@ namespace Amy
 
             //sky = FindObjectOfType<TenkokuModule>();
             currentFogColor = RenderSettings.fogColor;
+
+            QualitySettings.shadowDistance = shadow_dist;
         }
 
         // Update is called once per frame

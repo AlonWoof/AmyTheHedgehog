@@ -16,14 +16,14 @@ namespace Amy
     	{
     	    if(!mCamera)
             {
-               // mCamera = GameManager.Instance.mainCamera;
+                mCamera = GameManager.Instance.mainCamera;
             }
     	}
 
     	// Update is called once per frame
     	void LateUpdate()
     	{
-            //alignCamera();
+            alignCamera();
         }
 
         private void Update()
@@ -41,7 +41,7 @@ namespace Amy
         {
             if (!mCamera)
             {
-                //mCamera = GameManager.Instance.mainCamera;
+                mCamera = GameManager.Instance.mainCamera;
                 return;
             }
 

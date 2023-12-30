@@ -16,7 +16,7 @@ namespace Amy
         float currentVerticalMovement = 0.0f;
         float speedMult = 0.0f;
 
-        float swimSpeed = 3.0f;
+        float swimSpeed = 6.0f;
 
 
         // Start is called before the first frame update

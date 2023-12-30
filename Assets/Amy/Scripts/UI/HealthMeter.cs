@@ -24,11 +24,13 @@ namespace Amy
         void Update()
         {
 
-            float targetScale = PlayerManager.Instance.getCurrentPlayerStatus().currentHealth;
+            PlayerStatus pstats = PlayerManager.Instance.getCurrentPlayerStatus();
+
+            float targetScale = (pstats.currentHealth / pstats.maxHealth);
 
             healthBar.transform.localScale = new Vector3(targetScale, 1, 1);
 
-            targetScale = PlayerManager.Instance.getCurrentPlayerStatus().currentMood;
+            targetScale = (pstats.currentMood / pstats.maxMood);
 
             moodBar.transform.localScale = new Vector3(targetScale, 1, 1);
         }

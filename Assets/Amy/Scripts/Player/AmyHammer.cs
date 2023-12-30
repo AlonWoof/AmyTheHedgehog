@@ -13,14 +13,25 @@ namespace Amy
 	{
 
 		public GameObject hammerModel;
+		public Transform hammerNode;
 
-		float currentScale = 0.0f;
+		public Damage hammerDamage;
+
+		public float currentScale = 0.0f;
 
 	    // Start is called before the first frame update
 	    void Start()
 	    {
 			getBaseComponents();
-	    }
+
+			hammerNode = mPlayer.getBoneByName("weapon");
+
+			if (!hammerNode)
+				return;
+
+			hammerDamage = GetComponentInChildren<Damage>();
+
+		}
 
         private void Update()
         {
@@ -30,10 +41,10 @@ namespace Amy
         // Update is called once per frame
         void LateUpdate()
 	    {
-			if (!hammerModel)
+			if (!hammerModel || !hammerNode)
 				return;
 
-			hammerModel.transform.localScale = Vector3.one * currentScale;
+			hammerNode.transform.localScale = Vector3.one * currentScale;
 
 
 			if (currentScale <= 0.001f)
@@ -41,5 +52,7 @@ namespace Amy
 			else
 				hammerModel.SetActive(true);
 		}
-	}
+
+  
+    }
 }

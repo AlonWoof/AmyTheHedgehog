@@ -9,6 +9,8 @@ using UnityEngine.SceneManagement;
 namespace Amy
 {
 
+
+
     [System.Serializable]
     public class GameConfig
     {
@@ -55,7 +57,16 @@ namespace Amy
         AudioSource systemSoundSource;
         public float gameSFXVolume;
 
-        
+        public Cinemachine.CinemachineBlendDefinition blend_instant;
+        public Cinemachine.CinemachineBlendDefinition blend_fast;
+        public Cinemachine.CinemachineBlendDefinition blend_slow;
+
+        public enum blend_mode
+        {
+            instant,
+            fast,
+            slow
+        }
 
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
         static void OnAfterSceneLoadRuntimeMethod()
@@ -109,7 +120,10 @@ namespace Amy
 
         public Camera spawnMainCamera()
         {
-            
+
+            blend_instant.m_Time = 0.0f;
+
+
             //Clear duplicates
             if (FindObjectOfType<Cinemachine.CinemachineBrain>())
             {
@@ -123,6 +137,35 @@ namespace Amy
             inst.tag = "MainCamera";
 
             return inst.GetComponent<Camera>();
+        }
+
+        
+
+        public void changeCameraBlendMode(blend_mode mode)
+        {
+
+            Cinemachine.CinemachineBrain mCam = mainCamera.GetComponentInChildren<Cinemachine.CinemachineBrain>();
+
+            switch (mode)
+            {
+                case blend_mode.instant:
+                    mCam.m_DefaultBlend.m_Style = Cinemachine.CinemachineBlendDefinition.Style.Cut;
+                    mCam.m_DefaultBlend.m_Time = 0.0f;
+                    break;
+                case blend_mode.fast:
+                    mCam.m_DefaultBlend.m_Style = Cinemachine.CinemachineBlendDefinition.Style.EaseInOut;
+                    mCam.m_DefaultBlend.m_Time = 0.25f;
+                    break;
+                case blend_mode.slow:
+                    mCam.m_DefaultBlend.m_Style = Cinemachine.CinemachineBlendDefinition.Style.EaseInOut;
+                    mCam.m_DefaultBlend.m_Time = 1.0f;
+                    break;
+            }
+        }
+
+        public void resetCameraBlendMode()
+        {
+            changeCameraBlendMode(blend_mode.instant);
         }
 
         public void Init()

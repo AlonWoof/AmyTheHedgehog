@@ -14,6 +14,8 @@ namespace Amy
         public GameObject fx_pikoHammerJump;
         public GameObject prop_amyCloth;
         public GameObject prop_creamCloth;
+
+        public GameObject basicSlingshotProjectile;
     }
 
     [System.Serializable]

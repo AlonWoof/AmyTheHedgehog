@@ -8,9 +8,9 @@ Material:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: Amy_Headband
-  m_Shader: {fileID: 4800000, guid: 085241b986784ad4ba338d3a30cff936, type: 3}
+  m_Shader: {fileID: 4800000, guid: e25dea7125ec3fa44b41fd2661d23410, type: 3}
   m_ShaderKeywords: 
-  m_LightmapFlags: 0
+  m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
   m_CustomRenderQueue: -1
@@ -47,6 +47,10 @@ Material:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
+    - _Mask:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     - _MaskMap:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
@@ -75,17 +79,22 @@ Material:
     - _BumpScale: 1
     - _Cutoff: 0.5
     - _DetailNormalMapScale: 1
+    - _DirtLevel: 0
     - _DstBlend: 0
     - _GlossMapScale: 1
     - _Glossiness: 0
     - _GlossyReflections: 1
     - _Metallic: 0
+    - _Metalness: 0
     - _Mode: 0
+    - _Occlusion: 1
     - _OcclusionStrength: 1
     - _Parallax: 0.02
     - _Smoothness: 0.75
     - _SmoothnessTextureChannel: 0
+    - _SpecularGloss: 0.179
     - _SpecularHighlights: 1
+    - _SpecularPower: 0.264
     - _SrcBlend: 1
     - _UVSec: 0
     - _ZWrite: 1
@@ -93,4 +102,6 @@ Material:
     m_Colors:
     - _Color: {r: 1, g: 0.033018887, b: 0.033018887, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
+    - _FlashColor: {r: 0, g: 0, b: 0, a: 0}
+    - _SpecColor: {r: 1, g: 1, b: 1, a: 1}
   m_BuildTextureStacks: []

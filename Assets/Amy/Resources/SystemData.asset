@@ -15,20 +15,156 @@ MonoBehaviour:
   AmyParams:
     ingameModel: {fileID: 4745323695854999012, guid: 4439a92949fa78b45a08eda585cba69c, type: 3}
     ingameAnimator: {fileID: 9100000, guid: 2ec874b0a8ce5034eaf6d6a6bf69cdd4, type: 2}
+    hitBoxes:
+    - boneName: head
+      mShape: 0
+      Weakness: 0
+      Immunity: 0
+      damageMultiplier: 1
+      radius: 0.14
+      height: 0
+      center: {x: 0, y: 0.12, z: 0}
+      size: {x: 0, y: 0, z: 0}
+    - boneName: chest
+      mShape: 2
+      Weakness: 0
+      Immunity: 0
+      damageMultiplier: 1
+      radius: 0
+      height: 0
+      center: {x: 0, y: 0.06, z: 0.025}
+      size: {x: 0.1, y: 0.15, z: 0.1}
+    - boneName: hips
+      mShape: 2
+      Weakness: 0
+      Immunity: 0
+      damageMultiplier: 1
+      radius: 0
+      height: 0
+      center: {x: 0, y: 0.04, z: 0}
+      size: {x: 0.15, y: 0.07, z: 0.1}
+    - boneName: thigh_l
+      mShape: 1
+      Weakness: 0
+      Immunity: 0
+      damageMultiplier: 1
+      radius: 0.03
+      height: 0.18
+      center: {x: 0, y: 0.09, z: 0}
+      size: {x: 1, y: 1, z: 1}
+    - boneName: thigh_r
+      mShape: 1
+      Weakness: 0
+      Immunity: 0
+      damageMultiplier: 1
+      radius: 0.03
+      height: 0.18
+      center: {x: 0, y: 0.09, z: 0}
+      size: {x: 1, y: 1, z: 1}
+    - boneName: shin_l
+      mShape: 1
+      Weakness: 0
+      Immunity: 0
+      damageMultiplier: 1
+      radius: 0.03
+      height: 0.18
+      center: {x: 0, y: 0.09, z: 0}
+      size: {x: 1, y: 1, z: 1}
+    - boneName: upperarm_l
+      mShape: 1
+      Weakness: 0
+      Immunity: 0
+      damageMultiplier: 1
+      radius: 0.022
+      height: 0.15
+      center: {x: 0, y: 0.041, z: 0}
+      size: {x: 1, y: 1, z: 1}
+    - boneName: upperarm_r
+      mShape: 1
+      Weakness: 0
+      Immunity: 0
+      damageMultiplier: 1
+      radius: 0.022
+      height: 0.15
+      center: {x: 0, y: 0.041, z: 0}
+      size: {x: 1, y: 1, z: 1}
+    - boneName: forearm_l
+      mShape: 1
+      Weakness: 0
+      Immunity: 0
+      damageMultiplier: 1
+      radius: 0.022
+      height: 0.15
+      center: {x: 0, y: 0.041, z: 0}
+      size: {x: 1, y: 1, z: 1}
+    - boneName: forearm_r
+      mShape: 1
+      Weakness: 0
+      Immunity: 0
+      damageMultiplier: 1
+      radius: 0.022
+      height: 0.15
+      center: {x: 0, y: 0.041, z: 0}
+      size: {x: 1, y: 1, z: 1}
+    - boneName: hand_l
+      mShape: 2
+      Weakness: 0
+      Immunity: 0
+      damageMultiplier: 1
+      radius: 0
+      height: 0
+      center: {x: 0, y: 0.054, z: 0}
+      size: {x: 0.029, y: 0.077, z: 0.063}
+    - boneName: hand_r
+      mShape: 2
+      Weakness: 0
+      Immunity: 0
+      damageMultiplier: 1
+      radius: 0
+      height: 0
+      center: {x: 0, y: 0.054, z: 0}
+      size: {x: 0.029, y: 0.077, z: 0.063}
+    - boneName: shin_r
+      mShape: 1
+      Weakness: 0
+      Immunity: 0
+      damageMultiplier: 1
+      radius: 0.03
+      height: 0.18
+      center: {x: 0, y: 0.09, z: 0}
+      size: {x: 1, y: 1, z: 1}
+    - boneName: foot_r
+      mShape: 2
+      Weakness: 0
+      Immunity: 0
+      damageMultiplier: 1
+      radius: 0
+      height: 0
+      center: {x: 0, y: 0.048, z: 0}
+      size: {x: 0.08, y: 0.13, z: 0.063}
+    - boneName: foot_l
+      mShape: 2
+      Weakness: 0
+      Immunity: 0
+      damageMultiplier: 1
+      radius: 0
+      height: 0
+      center: {x: 0, y: 0.048, z: 0}
+      size: {x: 0.08, y: 0.13, z: 0.063}
     height: 0.9
     weight: 25
-    forwardAccel: 4.5
+    forwardAccel: 4.3
     airAccel: 8
-    jumpSpeed: 6
+    jumpSpeed: 8
     groundFriction: 0.52
     airResistance: 0.26
     slopeResistance: 4.5
     railSpeed: 8
     jump_hangTime: 1
     gravityMult: 1.5
-    swimSpeed: 1.5
+    swimSpeed: 3
     baseStats:
-      currentHealth: 1
+      currentHealth: 25
       maxHealth: 25
       currentMood: 1
       maxMood: 25
@@ -38,22 +174,23 @@ MonoBehaviour:
       lungCapacity: 20
       dirtiness: 0
   CreamParams:
-    ingameModel: {fileID: 0}
-    ingameAnimator: {fileID: 0}
+    ingameModel: {fileID: 8320836909537376735, guid: 7a9c43ef7fe932f40aa27e2810c7f027, type: 3}
+    ingameAnimator: {fileID: 9100000, guid: 66a4be1c3b4202a4687b5eb084531268, type: 2}
+    hitBoxes: []
     height: 0.8
     weight: 25
-    forwardAccel: 4
-    airAccel: 6
-    jumpSpeed: 5
+    forwardAccel: 4.5
+    airAccel: 8
+    jumpSpeed: 8
     groundFriction: 0.65
-    airResistance: 0.5
+    airResistance: 0.15
     slopeResistance: 4.5
     railSpeed: 6
     jump_hangTime: 1
     gravityMult: 1.5
-    swimSpeed: 3
+    swimSpeed: 2.5
     baseStats:
-      currentHealth: 1
+      currentHealth: 25
       maxHealth: 25
       currentMood: 1
       maxMood: 25
@@ -70,6 +207,7 @@ MonoBehaviour:
     fx_pikoHammerJump: {fileID: 147084192042313075, guid: 2a941585f99674442a5899dba5f09f53, type: 3}
     prop_amyCloth: {fileID: 4619037562850722088, guid: ce32ab6fa6a014c42a27692fe263d06c, type: 3}
     prop_creamCloth: {fileID: 0}
+    basicSlingshotProjectile: {fileID: 6954768854289804828, guid: cf516fe19ce2fce48931d7d6e178c606, type: 3}
   RES_footstepFX:
     res_FootFX_Default: {fileID: 1396866792464056812, guid: 528ba74b183078643919b3e600f497e1, type: 3}
     res_FootFX_Dirt: {fileID: 2184994687598506789, guid: 14f720bf20e532a44b75bbe2788b21c4, type: 3}

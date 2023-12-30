@@ -22,10 +22,13 @@ public class EulerRotation : MonoBehaviour
     {
         
 
-        myRotation += rotation * (Time.deltaTime * speed);
 
-        transform.localRotation = Quaternion.Euler(myRotation);
 	}
 
+    private void FixedUpdate()
+    {
+        myRotation += rotation * (Time.fixedDeltaTime * speed);
 
+        transform.localRotation = Quaternion.Euler(myRotation);
+    }
 }

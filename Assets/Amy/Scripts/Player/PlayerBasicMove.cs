@@ -24,9 +24,19 @@ namespace Amy
 			mPlayer.checkStickPower();
 			mPlayer.CalcSlope();
 			mPlayer.checkForJump();
+			
 
-			if(mPlayer.mChara == PlayableCharacter.Amy)
+			if (mPlayer.mChara == PlayableCharacter.Amy)
+			{
 				mPlayer.checkForHammerJump();
+				mPlayer.checkForAirAttack();
+				mPlayer.checkForSlingshot();
+			}
+
+			if(mPlayer.mChara == PlayableCharacter.Cream)
+            {
+				mPlayer.checkForFlying();
+			}
 		}
 
         private void FixedUpdate()

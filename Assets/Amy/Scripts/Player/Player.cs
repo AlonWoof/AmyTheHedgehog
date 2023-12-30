@@ -14,6 +14,7 @@ namespace Amy
 		public GameObject ingameModel;
 		public RuntimeAnimatorController ingameAnimator;
 		//public CharacterPhysicsData jiggleData;
+		public HitboxData[] hitBoxes;
 
 		public float height = 1.0f;
 		public float weight = 50.0f;
@@ -42,8 +43,12 @@ namespace Amy
 		SPRING,
 		RAIL,
 		SWIMMING,
+		FLY,
 		LISTENING,
+		SLINGSHOT,
+		LADDER,
 		CUTSCENE,
+		HURT,
 		KILLED,
 		DEBUG_MOVE
     }
@@ -62,6 +67,7 @@ namespace Amy
 
 		public Vector3 speed = Vector3.zero;
 		public Vector3 acceleration = Vector3.zero;
+		public Vector3 platformVelocity = Vector3.zero;
 		public Vector3 direction = Vector3.zero;
 		public Vector3 prev_direction = Vector3.zero;
 		public Vector3 groundNormal = Vector3.up;
@@ -77,6 +83,9 @@ namespace Amy
 		public bool isOnGround = false;
 		public bool isSliding = false;
 		public bool isHammerJumping = false;
+		public bool isAttacking = false;
+		public float mutekiTimer = 0.0f;
+		public float attackTimer = 0.0f;
 		public int framesAirborne = 0;
 
 		public float stickTimeout = 0.0f;
@@ -99,8 +108,14 @@ namespace Amy
 		public PlayerBasicMove modeBasic;
 		public PlayerSpringBounce modeSpring;
 		public PlayerSwimming modeSwimming;
+		public PlayerFly modeFly;
 		public PlayerRail modeRail;
+		public PlayerSlingshot modeSlingshot;
+		public PlayerClimb modeLadder;
+		public PlayerHurt modeHurt;
 		public PlayerDebugMove modeDebug;
+
+		public List<Hitbox> hitBoxes;
 
 		public static Player Spawn(Vector3 pos, Vector3 dir, PlayableCharacter chara = PlayableCharacter.Amy)
 		{
@@ -165,6 +180,9 @@ namespace Amy
 
 			newPlayer.fx_footsteps = footsteps;
 
+			AmyTailAnimation tail = inst.AddComponent<AmyTailAnimation>();
+			
+
 			//WetnessDirtynessProxy wetdirt = inst.AddComponent<WetnessDirtynessProxy>();
 			//inst.AddComponent<ActorOpacity>();
 
@@ -173,18 +191,34 @@ namespace Amy
 
 			newPlayer.direction = dir;
 
-			foreach (Transform t in inst.GetComponentsInChildren<Transform>())
-			{
-				if (t.gameObject.name.ToLower().Contains("hitbox"))
-				{
-					//PlayerHitbox hb = t.gameObject.AddComponent<PlayerHitbox>();
-					//hb.mPlayer = newPlayer;
-				}
-			}
 
 			newPlayer.mChara = chara;
 			newPlayer.mParam = cpar;
 			//newPlayer.playerHeight = amy_height;
+
+			foreach(Transform t in inst.GetComponentsInChildren<Transform>(true))
+            {
+				t.gameObject.layer = LayerMask.NameToLayer("Actor");
+            }
+
+			//Let's keep track of the hitboxes~
+			newPlayer.hitBoxes = new List<Hitbox>();
+
+			if (cpar.hitBoxes != null)
+			{
+				foreach (HitboxData h in cpar.hitBoxes)
+				{
+					Hitbox newHB = h.addToTransform(newPlayer.getBoneByName(h.boneName));
+					
+					if(newHB)
+                    {
+						newPlayer.hitBoxes.Add(newHB);
+						newHB.isPlayerHitbox = true;
+						newHB.damageTeam = DamageTeam.Player;
+						newHB.mPlayer = newPlayer;
+                    }
+				}
+			}
 
 			return newPlayer;
 		}
@@ -194,7 +228,11 @@ namespace Amy
 			modeBasic = gameObject.AddComponent<PlayerBasicMove>();
 			modeSpring = gameObject.AddComponent<PlayerSpringBounce>();
 			modeSwimming = gameObject.AddComponent<PlayerSwimming>();
+			modeFly = gameObject.AddComponent<PlayerFly>();
 			modeRail = gameObject.AddComponent<PlayerRail>();
+			modeSlingshot = gameObject.AddComponent<PlayerSlingshot>();
+			modeLadder = gameObject.AddComponent<PlayerClimb>();
+			modeHurt = gameObject.AddComponent<PlayerHurt>();
 			modeDebug = gameObject.AddComponent<PlayerDebugMove>();
 		}
 
@@ -203,7 +241,11 @@ namespace Amy
 			modeBasic.enabled = false;
 			modeSpring.enabled = false;
 			modeSwimming.enabled = false;
+			modeFly.enabled = false;
 			modeRail.enabled = false;
+			modeSlingshot.enabled = false;
+			modeLadder.enabled = false;
+			modeHurt.enabled = false;
 			modeDebug.enabled = false;
         }
 
@@ -225,8 +267,24 @@ namespace Amy
 					modeSwimming.enabled = true;
 					break;
 
+				case PlayerModes.FLY:
+					modeFly.enabled = true;
+					break;
+
 				case PlayerModes.RAIL:
 					modeRail.enabled = true;
+					break;
+
+				case PlayerModes.SLINGSHOT:
+					modeSlingshot.enabled = true;
+					break;
+
+				case PlayerModes.LADDER:
+					modeLadder.enabled = true;
+					break;
+
+				case PlayerModes.HURT:
+					modeHurt.enabled = true;
 					break;
 
 				case PlayerModes.DEBUG_MOVE:
@@ -253,7 +311,7 @@ namespace Amy
 			headOffsetFromGround = (headBoneTransform.position.y - 0.05f) - transform.position.y;
 		}
 
-		Transform getBoneByName(string name)
+		public Transform getBoneByName(string name)
 		{
 			foreach (Transform t in GetComponentsInChildren<Transform>())
 			{
@@ -338,19 +396,72 @@ namespace Amy
 			if (acceleration.z < 0.0f)
 				runAnimProgress = Mathf.Clamp(runAnimProgress, 0, 3);
 
-			if (runAnimSpeed < 0.5f && runAnimSpeed > 0.0f)
-				runAnimSpeed = 0.5f;
+			if (runAnimSpeed < 0.75f && runAnimSpeed > 0.0f)
+				runAnimSpeed = 0.75f;
 
-			if (runAnimSpeed > -0.5f && runAnimSpeed < 0.0f)
-				runAnimSpeed = -0.5f;
+			if (runAnimSpeed > -0.75f && runAnimSpeed < 0.0f)
+				runAnimSpeed = -0.75f;
 
+			if(attackTimer > 0.0f)
+            {
+				attackTimer -= Time.deltaTime;
 
+				if(attackTimer <= 0.0f)
+                {
+					isAttacking = false;
+					attackTimer = 0.0f;
+                }
+            }
+
+			if(mutekiTimer > 0.0f)
+            {
+				mutekiTimer -= Time.deltaTime;
+
+				if (mutekiTimer <= 0.0f)
+				{
+					//Stop flashing
+					mAnimator.CrossFade("Flash_Neutral",0.2f);
+
+					mutekiTimer = 0.0f;
+				}
+			}
 
 			mAnimator.SetFloat("y_accel", speed.y);
 			mAnimator.SetFloat("z_accel", runAnimProgress);
 			mAnimator.SetFloat("run_anim_speed", runAnimSpeed);
 
 			debugControls();
+		}
+
+		public void takeDamage(Damage dmg, float multiplier = 1.0f)
+        {
+			if (mutekiTimer > 0.0f && dmg.damageType != DamageType.Crush)
+				return;
+
+			if(currentMode == PlayerModes.NORMAL)
+            {
+				PlayerStatus pstats = getStatus();
+
+				if(multiplier < 1.1f)
+					mVoice.playVoice(mVoice.smallPain);
+				else
+					mVoice.playVoice(mVoice.largePain);
+
+				mAnimator.Play("Flash_Red_Fast");
+
+				float force = 16.0f;
+
+				if (currentMode == PlayerModes.NORMAL && force > 0.1f)
+				{
+					changeCurrentMode(PlayerModes.HURT);
+					modeHurt.setKnockBack(dmg.transform.position, force);
+				}
+
+				pstats.currentHealth -= (dmg.damageAmount * multiplier);
+				updateHealth();
+			}
+
+			mutekiTimer = 0.5f;
 		}
 
         private void LateUpdate()
@@ -371,6 +482,19 @@ namespace Amy
 				else
 				{
 					changeCurrentMode(PlayerModes.DEBUG_MOVE);
+				}
+			}
+
+			if(Input.GetKeyDown(KeyCode.Keypad7))
+            {
+
+				if (currentMode == PlayerModes.SLINGSHOT)
+				{
+					changeCurrentMode(PlayerModes.NORMAL);
+				}
+				else
+				{
+					changeCurrentMode(PlayerModes.SLINGSHOT);
 				}
 			}
 		}
@@ -404,6 +528,24 @@ namespace Amy
 			//conv.x = 0;
 
 
+		}
+
+
+		public float getAltitudeFromGround()
+		{
+			float altitude = 1000.0f;
+
+			Vector3 start = transform.position + Vector3.up * 0.2f;
+			Vector3 end = transform.position - 1000.0f * Vector3.up;
+
+			RaycastHit hitInfo = new RaycastHit();
+
+			if (Physics.Linecast(start, end, out hitInfo, mColMask))
+			{
+				altitude = transform.position.y - hitInfo.point.y;
+			}
+
+			return altitude;
 		}
 
 		public float getWaterYPos()
@@ -463,6 +605,9 @@ namespace Amy
 
 			if (Mathf.Abs(speed.y) < 0.01f)
 				speed.y = 0.0f;
+
+			if (Mathf.Abs(platformVelocity.y) < 0.01f)
+				platformVelocity.y = 0.0f;
 		}
 
 		bool checkFallOffWall()
@@ -607,6 +752,19 @@ namespace Amy
 				slopeAmount = 0.0f;
 		}
 
+		public bool canJump(bool ignoreGrounded)
+        {
+			if (!isOnGround && !ignoreGrounded)
+				return false;
+
+			float slopeMult = Mathf.Clamp01(1.0f + slopeAmount);
+
+			if (slopeMult < 0.45f && isOnGround)
+				return false;
+
+			return true;
+		}
+
 		public void Jump(bool ignoreGrounded)
         {
 			if (!isOnGround && !ignoreGrounded)
@@ -651,6 +809,24 @@ namespace Amy
 			jumpTimer = mParam.jump_hangTime;
 		}
 
+		public void airHammerAttack()
+        {
+			if (isOnGround)
+				return;
+
+			if (isAttacking)
+				return;
+
+			mAnimator.CrossFade("AirAttack",0.2f);
+			isAttacking = true;
+			attackTimer = 0.6f;
+			//mAnimator.Play("Mouth_Jumping");
+			mVoice.playVoiceDelayed(Random.Range(0.05f, 0.1f), mVoice.altJumping, true);
+			//spawnFX(GameManager.Instance.systemData.RES_AmyPlayerFX.fx_basicJump, transform.position);
+			//spawnFX(GameManager.Instance.systemData.RES_AmyPlayerFX.fx_pikoHammerJump, transform.position + transform.forward + Vector3.up * 0.2f);
+			//jumpTimer = mParam.jump_hangTime;
+		}
+
 		public void checkForHammerJump()
         {
 			if (acceleration.z < 7.0f)
@@ -658,6 +834,23 @@ namespace Amy
 
 			if (Input.GetButtonDown("Attack"))
 				hammerJump();
+		}
+
+		public void checkForAirAttack()
+        {
+
+			if (Input.GetButtonDown("Attack"))
+				airHammerAttack();
+		}
+
+		public void checkForLadder(Ladder l)
+        {
+
+			if (currentMode != PlayerModes.NORMAL && currentMode != PlayerModes.SPRING && currentMode != PlayerModes.SWIMMING)
+				return;
+
+			changeCurrentMode(PlayerModes.LADDER);
+			modeLadder.startClimbing(l);
 		}
 
 		public void checkForJump()
@@ -671,6 +864,33 @@ namespace Amy
 			if (jumpTimer > 0.0f)
 				jumpTimer -= Time.deltaTime;
 		}
+
+		public void checkForFlying()
+        {
+			if (getAltitudeFromGround() > 0.4f && mChara == PlayableCharacter.Cream)
+			{
+				if (Input.GetButtonDown("Jump"))
+				{
+					changeCurrentMode(PlayerModes.FLY);
+				}
+			}
+		}
+
+
+		public void checkForSlingshot()
+        {
+			if (Input.GetAxis("Shoot") < 0.5f)
+				return;
+
+
+			if (speed.magnitude > 0.1f)
+				return;
+
+			if (!isOnGround)
+				return;
+
+			changeCurrentMode(PlayerModes.SLINGSHOT);
+        }
 
 		public void checkStickPower()
 		{
@@ -707,9 +927,6 @@ namespace Amy
 			//mPlayer.acceleration.z += ((mDir * mPlayer.mParam.forwardAccel) * Time.deltaTime);
 
 			float slopePenalty = Mathf.Clamp(slopeAmount, 0, 2.0f);
-
-
-			
 
 			prev_direction = direction;
 			direction = mDir.normalized;
@@ -836,8 +1053,11 @@ namespace Amy
 
 		public void updatePosition()
 		{
+			
 			speed = Vector3.Lerp(speed, WorldToPlayerSpace(acceleration), Time.deltaTime * 8.0f);
-			mRigidBody.velocity = speed;
+			mRigidBody.velocity = speed + platformVelocity;
+
+			platformVelocity = Vector3.Lerp(platformVelocity, Vector3.zero, Time.deltaTime * 8.0f);
 
 			adjustStepVolume();
 			checkForwardWall();

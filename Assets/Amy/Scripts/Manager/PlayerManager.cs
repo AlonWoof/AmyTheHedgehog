@@ -52,8 +52,15 @@ namespace Amy
         }
     }
 
+    [System.Serializable]
+    public class ProgressData
+    {
+        public bool hasHammer = false;
+        public bool hasCloth = false;
+        public bool hasSlingshot = false;
+    }
 
-	public class PlayerManager : Singleton<PlayerManager>
+    public class PlayerManager : Singleton<PlayerManager>
 	{
 
         //The current player instance.
@@ -63,6 +70,9 @@ namespace Amy
         public PlayerStatus AmyStatus;
         public PlayerStatus CreamStatus;
 
+        //Unlockable/Story progression
+        public ProgressData progress;
+
         public PlayableCharacter currentCharacter = PlayableCharacter.Amy;
 
         //This will be placed at the last safe place/exit
@@ -71,6 +81,7 @@ namespace Amy
         public int lastExit = 0;
 
         public float playerDirtiness = 0.0f;
+        public float playerStress = 0.0f;
 
         public int ringBank = 0;
         int ringCount = 0;
