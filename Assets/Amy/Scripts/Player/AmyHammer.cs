@@ -18,6 +18,7 @@ namespace Amy
 		public Damage hammerDamage;
 
 		public float currentScale = 0.0f;
+		public bool isAttacking = false;
 
 	    // Start is called before the first frame update
 	    void Start()
@@ -29,14 +30,15 @@ namespace Amy
 			if (!hammerNode)
 				return;
 
-			hammerDamage = GetComponentInChildren<Damage>();
+			hammerDamage = hammerNode.GetComponentInChildren<Damage>();
 
 		}
 
         private void Update()
         {
 			currentScale = mPlayer.mAnimator.GetFloat("hammerScale");
-        }
+
+		}
 
         // Update is called once per frame
         void LateUpdate()
@@ -51,6 +53,24 @@ namespace Amy
 				hammerModel.SetActive(false);
 			else
 				hammerModel.SetActive(true);
+
+
+		}
+
+		public void enableHurtbox()
+        {
+			if (!hammerDamage)
+				return;
+
+			hammerDamage.gameObject.SetActive(true);
+        }
+
+		public void disableHurtbox()
+        {
+			if (!hammerDamage)
+				return;
+
+			hammerDamage.gameObject.SetActive(false);
 		}
 
   

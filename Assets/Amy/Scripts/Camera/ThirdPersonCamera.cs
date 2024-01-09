@@ -45,6 +45,7 @@ namespace Amy
         public float playerVelocity = 0.0f;
         public bool playerIsCrouched = false;
 
+        CameraDOFBox dof;
 
         private void Awake()
         {
@@ -53,6 +54,8 @@ namespace Amy
 
             Cursor.lockState = CursorLockMode.Locked;
             Cursor.visible = false;
+
+            dof = FindObjectOfType<CameraDOFBox>();
         }
 
         // Start is called before the first frame update
@@ -98,7 +101,10 @@ namespace Amy
                 mPlayer = playerTransform.GetComponent<Player>();
             }
 
-
+            if(dof)
+            {
+                dof.focusDist = Vector3.Distance(lookPosition, transform.position);
+            }
         }
 
 
@@ -159,7 +165,28 @@ namespace Amy
         void updateLookPosition()
         {
 
+            if (dof)
+            {
+                dof.fxEnabled = false;
+            }
+
             lookPosition = playerTransform.position + (heightOffset * Vector3.up);
+
+
+            if (!mPlayer)
+                return;
+
+
+
+            if (mPlayer.currentMode == PlayerModes.RUBBING)
+            {
+                lookPosition = mPlayer.hipBoneTransform.position;// + (crouchedHeightOffset * Vector3.up);
+
+                if(dof)
+                {
+                    dof.fxEnabled = true;
+                }
+            }
 
             /*
             if (!mPlayer)
@@ -196,7 +223,10 @@ namespace Amy
             if (playerIsCrouched)
                 currentFOV *= 0.8f;
 
-            vCam.m_Lens.FieldOfView = Mathf.Lerp(vCam.m_Lens.FieldOfView,currentFOV,0.1f);
+            if (mPlayer.currentMode == PlayerModes.RUBBING)
+                currentFOV = 45.0f;
+
+            vCam.m_Lens.FieldOfView = Mathf.Lerp(vCam.m_Lens.FieldOfView,currentFOV, 0.1f);
 
             Vector3 translatedOffset = targetOffset;
     
@@ -251,8 +281,11 @@ namespace Amy
             targetOffset = offset_near;
 
             //then, check if we have a player instance
-            //if (!mPlayer)
-            //    return;
+            if (!mPlayer)
+                return;
+
+            if (mPlayer.currentMode == PlayerModes.RUBBING)
+                targetOffset = offset_near * 0.5f;
 
             //The crouched state is part of the GroundMove component.
             // playerIsCrouched = mPlayer.GetComponent<PlayerBasicMove>().isCrouching;
@@ -265,6 +298,11 @@ namespace Amy
             //targetOffset = offset_far;
 
             targetOffset.y *= mPlayer.mParam.height;
+
+            if(mPlayer.currentMode == PlayerModes.RUBBING)
+            {
+
+            }
         }
 
         public void Occlusion()

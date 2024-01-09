@@ -26,7 +26,10 @@ namespace Amy
 		private void OnEnable()
 		{
 			if (mPlayer.currentMode != PlayerModes.HURT)
+			{
+				enabled = false;
 				return;
+			}
 
 			mRigidBody.isKinematic = false;
 			//grounderIK.enabled = false;

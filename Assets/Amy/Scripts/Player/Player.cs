@@ -48,6 +48,7 @@ namespace Amy
 		SLINGSHOT,
 		LADDER,
 		CUTSCENE,
+		RUBBING,
 		HURT,
 		KILLED,
 		DEBUG_MOVE
@@ -112,8 +113,11 @@ namespace Amy
 		public PlayerRail modeRail;
 		public PlayerSlingshot modeSlingshot;
 		public PlayerClimb modeLadder;
+		public PlayerRubbing modeRubbing;
 		public PlayerHurt modeHurt;
 		public PlayerDebugMove modeDebug;
+
+		public PlayerAreaDetector areaDetector;
 
 		public List<Hitbox> hitBoxes;
 
@@ -232,6 +236,7 @@ namespace Amy
 			modeRail = gameObject.AddComponent<PlayerRail>();
 			modeSlingshot = gameObject.AddComponent<PlayerSlingshot>();
 			modeLadder = gameObject.AddComponent<PlayerClimb>();
+			modeRubbing = gameObject.AddComponent<PlayerRubbing>();
 			modeHurt = gameObject.AddComponent<PlayerHurt>();
 			modeDebug = gameObject.AddComponent<PlayerDebugMove>();
 		}
@@ -245,6 +250,7 @@ namespace Amy
 			modeRail.enabled = false;
 			modeSlingshot.enabled = false;
 			modeLadder.enabled = false;
+			modeRubbing.enabled = false;
 			modeHurt.enabled = false;
 			modeDebug.enabled = false;
         }
@@ -281,6 +287,10 @@ namespace Amy
 
 				case PlayerModes.LADDER:
 					modeLadder.enabled = true;
+					break;
+
+				case PlayerModes.RUBBING:
+					modeRubbing.enabled = true;
 					break;
 
 				case PlayerModes.HURT:
@@ -355,9 +365,9 @@ namespace Amy
 			return result;
         }
 
-		void updateHealth()
+		public void updateHealth()
         {
-			PlayerStatus pstats = getStatus();
+			PlayerStatus pstats = getStatus();			
 
 			pstats.currentHealth = Mathf.Clamp(pstats.currentHealth, 0, pstats.maxHealth);
 			pstats.currentMood = Mathf.Clamp(pstats.currentMood, 0, pstats.maxMood);
@@ -376,6 +386,7 @@ namespace Amy
 			getPlayerBones();
 			mColMask = LayerMask.GetMask("Collision");
 
+			areaDetector = gameObject.AddComponent<PlayerAreaDetector>();
 		}
 
 		// Start is called before the first frame update
@@ -829,7 +840,7 @@ namespace Amy
 
 		public void checkForHammerJump()
         {
-			if (acceleration.z < 7.0f)
+			if (acceleration.z < 5.3f)
 				return;
 
 			if (Input.GetButtonDown("Attack"))
@@ -936,7 +947,7 @@ namespace Amy
 			turningFactor *= 16.0f;
 
 			if (Mathf.Abs(turningFactor) > 0.01f)
-				leanAmount += turningFactor;
+				leanAmount += turningFactor * 1.5f;
 
 			leanAmount = Mathf.Clamp(leanAmount, -1.0f, 1.0f);
 

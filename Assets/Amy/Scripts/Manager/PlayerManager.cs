@@ -82,6 +82,7 @@ namespace Amy
 
         public float playerDirtiness = 0.0f;
         public float playerStress = 0.0f;
+        public float lastOrgasmCooldown = 0.0f;
 
         public int ringBank = 0;
         int ringCount = 0;
@@ -117,7 +118,11 @@ namespace Amy
     	void Update()
     	{
             handleStealthIndex();
-    	}
+
+            if (lastOrgasmCooldown > 0.0f)
+                lastOrgasmCooldown -= Time.deltaTime;
+
+        }
 
         public PlayerStatus getCurrentPlayerStatus()
         {

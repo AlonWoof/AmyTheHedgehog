@@ -28,6 +28,8 @@ namespace Amy
 		public Vector3 currentDirection;
 		public Vector3 homeDirection;
 
+		public List<Player> playerList;
+
 		void Awake()
 		{
 			homeDirection = transform.forward;
@@ -87,11 +89,32 @@ namespace Amy
 
 		public Player getClosestPlayerInRange()
 		{
+
+			if (playerList == null)
+			{
+				playerList = new List<Player>();
+
+				foreach(Player p in FindObjectsOfType<Player>())
+                {
+					playerList.Add(p);
+                }
+			}
+
+			if (playerList.Count == 0)
+			{
+				playerList = new List<Player>();
+
+				foreach (Player p in FindObjectsOfType<Player>())
+				{
+					playerList.Add(p);
+				}
+			}
+
 			float closest = attackRange * 1.5f;
 
 			Player ret = null;
 
-			foreach (Player p in FindObjectsOfType<Player>())
+			foreach (Player p in playerList)
 			{
 				float dst = Vector3.Distance(transform.position, p.transform.position + Vector3.up * 0.5f);
 				if (dst < closest)

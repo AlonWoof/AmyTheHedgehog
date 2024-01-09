@@ -1,10 +1,11 @@
-// Made with Amplify Shader Editor v1.9.1.8
+// Made with Amplify Shader Editor v1.9.1.5
 // Available at the Unity Asset Store - http://u3d.as/y3X 
 Shader "AlonWoof/Dolphin/Triplanar"
 {
 	Properties
 	{
 		_MainTex("MainTex", 2D) = "white" {}
+		_Scale("Scale", Float) = 1
 		[HideInInspector] __dirty( "", Int ) = 1
 	}
 
@@ -32,6 +33,7 @@ Shader "AlonWoof/Dolphin/Triplanar"
 		};
 
 		sampler2D _MainTex;
+		uniform float _Scale;
 
 
 		inline float4 TriplanarSampling2( sampler2D topTexMap, float3 worldPos, float3 worldNormal, float falloff, float2 tiling, float3 normalScale, float3 index )
@@ -50,9 +52,10 @@ Shader "AlonWoof/Dolphin/Triplanar"
 		void surf( Input i , inout SurfaceOutput o )
 		{
 			o.Normal = float3(0,0,1);
+			float2 temp_cast_0 = (_Scale).xx;
 			float3 ase_worldPos = i.worldPos;
 			float3 ase_worldNormal = WorldNormalVector( i, float3( 0, 0, 1 ) );
-			float4 triplanar2 = TriplanarSampling2( _MainTex, ase_worldPos, ase_worldNormal, 1.0, float2( 1,1 ), 1.0, 0 );
+			float4 triplanar2 = TriplanarSampling2( _MainTex, ase_worldPos, ase_worldNormal, 1.0, temp_cast_0, 1.0, 0 );
 			o.Albedo = triplanar2.xyz;
 			o.Alpha = 1;
 		}
@@ -139,9 +142,11 @@ Shader "AlonWoof/Dolphin/Triplanar"
 	CustomEditor "ASEMaterialInspector"
 }
 /*ASEBEGIN
-Version=19108
-Node;AmplifyShaderEditor.TriplanarNode;2;-689.5828,-16.04103;Inherit;True;Spherical;World;False;MainTex;_MainTex;white;0;None;Mid Texture 0;_MidTexture0;white;-1;None;Bot Texture 0;_BotTexture0;white;-1;None;Triplanar Sampler;Tangent;10;0;SAMPLER2D;;False;5;FLOAT;1;False;1;SAMPLER2D;;False;6;FLOAT;0;False;2;SAMPLER2D;;False;7;FLOAT;0;False;9;FLOAT3;0,0,0;False;8;FLOAT;1;False;3;FLOAT2;1,1;False;4;FLOAT;1;False;5;FLOAT4;0;FLOAT;1;FLOAT;2;FLOAT;3;FLOAT;4
+Version=19105
 Node;AmplifyShaderEditor.StandardSurfaceOutputNode;0;2.004095,0;Float;False;True;-1;2;ASEMaterialInspector;0;0;Lambert;AlonWoof/Dolphin/Triplanar;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;Back;0;False;;0;False;;False;0;False;;0;False;;False;0;Opaque;0.5;True;True;0;False;Opaque;;Geometry;All;12;all;True;True;True;True;0;False;;False;0;False;;255;False;;255;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;False;2;15;10;25;False;0.5;True;0;0;False;;0;False;;0;0;False;;0;False;;0;False;;0;False;;0;False;0;0,0,0,0;VertexOffset;True;False;Cylindrical;False;True;Relative;0;;-1;-1;-1;-1;0;False;0;0;False;;-1;0;False;;0;0;0;False;0.1;False;;0;False;;False;15;0;FLOAT3;0,0,0;False;1;FLOAT3;0,0,0;False;2;FLOAT3;0,0,0;False;3;FLOAT;0;False;4;FLOAT;0;False;6;FLOAT3;0,0,0;False;7;FLOAT3;0,0,0;False;8;FLOAT;0;False;9;FLOAT;0;False;10;FLOAT;0;False;13;FLOAT3;0,0,0;False;11;FLOAT3;0,0,0;False;12;FLOAT3;0,0,0;False;14;FLOAT4;0,0,0,0;False;15;FLOAT3;0,0,0;False;0
+Node;AmplifyShaderEditor.TriplanarNode;2;-689.5828,-16.04103;Inherit;True;Spherical;World;False;MainTex;_MainTex;white;0;None;Mid Texture 0;_MidTexture0;white;-1;None;Bot Texture 0;_BotTexture0;white;-1;None;Triplanar Sampler;Tangent;10;0;SAMPLER2D;;False;5;FLOAT;1;False;1;SAMPLER2D;;False;6;FLOAT;0;False;2;SAMPLER2D;;False;7;FLOAT;0;False;9;FLOAT3;0,0,0;False;8;FLOAT;1;False;3;FLOAT2;1,1;False;4;FLOAT;1;False;5;FLOAT4;0;FLOAT;1;FLOAT;2;FLOAT;3;FLOAT;4
+Node;AmplifyShaderEditor.RangedFloatNode;3;-952.7893,38.47949;Inherit;False;Property;_Scale;Scale;1;0;Create;True;0;0;0;False;0;False;1;1;0;0;0;1;FLOAT;0
 WireConnection;0;0;2;0
+WireConnection;2;3;3;0
 ASEEND*/
-//CHKSM=EB8430F1EBC370FF89CF6D2F57A2C0A45DB8994C
+//CHKSM=DC06B530178A83CC5BFE804ABB780A2FA4A4A919
