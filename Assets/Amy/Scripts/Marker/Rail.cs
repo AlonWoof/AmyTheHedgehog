@@ -91,6 +91,9 @@ namespace Amy
 				return;
 			}
 
+			if (!PlayerManager.Instance.hasCloth)
+				return;
+
 
 			for (int i = 0; i < points.Length - 1; i++)
 			{

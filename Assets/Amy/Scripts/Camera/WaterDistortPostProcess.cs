@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-/* Copyright 2021 Jason Haden */
+/* Copyright 2021 Jennifer Haden */
 namespace Amy
 {
 	[ExecuteInEditMode]

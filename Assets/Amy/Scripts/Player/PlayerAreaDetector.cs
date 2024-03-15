@@ -13,6 +13,10 @@ namespace Amy
 	{
 		public List<NPC> nearbyNPCs;
 		public List<Enemy> nearbyEnemies;
+		public List<Vibes> nearbyVibes;
+
+		public Enemy closestEnemy = null;
+		public NPC closestNPC = null;
 
 		public float detectRadius = 20.0f;
 
@@ -23,6 +27,7 @@ namespace Amy
 	    {
 			nearbyEnemies = new List<Enemy>();
 			nearbyNPCs = new List<NPC>();
+			nearbyVibes = new List<Vibes>();
 			refreshLists();
 		}
 	
@@ -40,12 +45,27 @@ namespace Amy
 				timeTilUpdate -= Time.deltaTime;
             }
 
+			if(Time.frameCount % 30 == 0)
+            {
+				refreshClosestEnemy();
+				refreshClosestNPC();
+			}
+
+			if(nearbyVibes.Count > 0)
+            {
+				foreach(Vibes v in nearbyVibes)
+                {
+					PlayerStatus pstats = mPlayer.getStatus();
+					pstats.currentMood += (v.moodPerSecond * Time.deltaTime);
+                }
+            }
 	    }
 
 		void refreshLists()
         {
 			nearbyNPCs.Clear();
 			nearbyEnemies.Clear();
+			nearbyVibes.Clear();
 
 			foreach(NPC n in FindObjectsOfType<NPC>())
             {
@@ -62,6 +82,15 @@ namespace Amy
 					nearbyEnemies.Add(n);
 				}
 			}
+
+			foreach (Vibes v in FindObjectsOfType<Vibes>())
+			{
+				if (Vector3.Distance(transform.position, v.transform.position) < v.range)
+				{
+					nearbyVibes.Add(v);
+				}
+			}
+
 		}
 
 		public int getNearbyEnemyCount()
@@ -75,10 +104,49 @@ namespace Amy
 			return nearbyNPCs.Count;
 		}
 
+		public int getNearbyVibesCount()
+		{
+			return nearbyVibes.Count;
+		}
+
 		public int getNearbyActorCount()
         {
 			return getNearbyNPCCount() + getNearbyEnemyCount();
         }
 
+
+		public void refreshClosestNPC()
+        {
+			closestNPC = null;
+			float bestDist = 16.0f;
+
+			foreach (NPC e in nearbyNPCs)
+			{
+				float dst = Vector3.Distance(e.transform.position, transform.position + (Vector3.up * 0.5f));
+
+				if (dst < bestDist)
+				{
+					bestDist = dst;
+					closestNPC = e;
+				}
+			}
+		}
+
+		public void refreshClosestEnemy()
+        {
+			closestEnemy = null;
+			float bestDist = 16.0f;
+
+			foreach(Enemy e in nearbyEnemies)
+            {
+				float dst = Vector3.Distance(e.transform.position, transform.position + (Vector3.up * 0.5f));
+
+				if(dst < bestDist)
+                {
+					bestDist = dst;
+					closestEnemy = e;
+                }
+            }
+        }
 	}
 }

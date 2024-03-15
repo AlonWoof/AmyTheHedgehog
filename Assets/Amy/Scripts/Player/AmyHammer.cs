@@ -36,7 +36,12 @@ namespace Amy
 
         private void Update()
         {
+
+
 			currentScale = mPlayer.mAnimator.GetFloat("hammerScale");
+
+			if (!PlayerManager.Instance.hasHammer)
+				currentScale = 0.0f;
 
 		}
 

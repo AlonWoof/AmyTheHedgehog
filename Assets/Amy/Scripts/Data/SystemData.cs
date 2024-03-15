@@ -12,6 +12,7 @@ namespace Amy
         public GameObject fx_basicJump;
         public GameObject fx_pikoHammerHit;
         public GameObject fx_pikoHammerJump;
+        public GameObject fx_pikoHammerTrail;
         public GameObject prop_amyCloth;
         public GameObject prop_creamCloth;
 
@@ -36,6 +37,7 @@ namespace Amy
         public GameObject RES_WaterWadingFX;
         public GameObject RES_ActorWaterSplashFX;
         public GameObject RES_ActorWaterEmergeFX;
+        public GameObject RES_RingTobitiri;
 
         [Header("Audio")]
 

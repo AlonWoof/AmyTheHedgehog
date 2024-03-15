@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 5899640788235248381}
   - component: {fileID: 8976716954387682297}
   - component: {fileID: 8852995186322027570}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Ring
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -50,6 +50,9 @@ MonoBehaviour:
   mColMask:
     serializedVersion: 2
     m_Bits: 1024
+  tobitiri: 0
+  timeLeft: 10
+  mRenderer: {fileID: 0}
   ringCollectFX: {fileID: 4765995113946487661, guid: 4e73bc73e7f98e94ab04c6a0695e6f1b, type: 3}
 --- !u!135 &8852995186322027570
 SphereCollider:
@@ -130,6 +133,10 @@ PrefabInstance:
     - target: {fileID: 919132149155446097, guid: 754707f0e3d5f694092871946a96a774, type: 3}
       propertyPath: m_Name
       value: ring
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 754707f0e3d5f694092871946a96a774, type: 3}
+      propertyPath: m_Layer
+      value: 7
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 754707f0e3d5f694092871946a96a774, type: 3}

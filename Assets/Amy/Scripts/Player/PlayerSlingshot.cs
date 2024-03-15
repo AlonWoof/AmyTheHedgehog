@@ -322,6 +322,13 @@ namespace Amy
 					mPlayer.Jump(false);
 					return;
 				}
+
+				if (Input.GetButtonDown("Attack") && mPlayer.attackTimer < 0.01f)
+				{
+					mPlayer.changeCurrentMode(PlayerModes.NORMAL);
+					mPlayer.groundAttack();
+					return;
+				}
 			}
 
 			if(currentState == state.RELOAD)

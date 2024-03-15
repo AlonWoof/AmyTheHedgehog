@@ -64,7 +64,9 @@ namespace Amy
 
         private void OnDisable()
         {
-			clothModel.SetActive(false);
+
+			if(clothModel)
+				clothModel.SetActive(false);
 
 		}
 

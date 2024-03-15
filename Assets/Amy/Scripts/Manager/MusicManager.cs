@@ -238,6 +238,12 @@ namespace Amy
 
         public void restartMusic()
         {
+            if (!bgm)
+                return;
+
+            if (!bgm.clip)
+                return;
+
             bgm.Stop();
 
             if (hasIntro)

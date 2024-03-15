@@ -4,7 +4,7 @@ using UnityEngine;
 using MEC;
 using Cinemachine;
 
-/* Copyright 2021 Jason Haden */
+/* Copyright 2021 Jennifer Haden */
 namespace Amy
 {
 

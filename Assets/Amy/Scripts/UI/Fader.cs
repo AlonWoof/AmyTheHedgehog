@@ -4,7 +4,7 @@ using UnityEngine;
 using MEC;
 using UnityEngine.UI;
 
-/* Copyright 2022 Jason Haden */
+/* Copyright 2022 Jennifer Haden */
 namespace Amy
 {
 

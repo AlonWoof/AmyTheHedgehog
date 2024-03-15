@@ -43,6 +43,14 @@ namespace Amy
 				excitement = Mathf.Lerp(excitement, 0.2f, Time.deltaTime * 0.1f);
             }
 
+			PlayerStatus pstats = PlayerManager.Instance.getCurrentPlayerStatus();
+
+			float fac = ((pstats.currentHealth / pstats.maxHealth) + (pstats.currentMood / pstats.maxMood)) * 0.5f;
+
+			excitement *= fac;
+
+			excitement = Mathf.Clamp(excitement, 0.25f, 3.0f);
+
 			mood = Mathf.Lerp(mood, PlayerManager.Instance.AmyStatus.currentMood/PlayerManager.Instance.AmyStatus.maxMood, Time.deltaTime * 1.2f);
 
         }

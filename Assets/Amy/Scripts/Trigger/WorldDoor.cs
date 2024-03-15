@@ -12,7 +12,7 @@ namespace Amy
     {
 		Pink,
 		Blue,
-		Red,
+		Green,
 		Yellow
     }
 
@@ -22,6 +22,7 @@ namespace Amy
 		public float range = 8.0f;
 
 		bool isOpen = false;
+		bool isWarping = false;
 
 		public DoorColor color;
 		public Animator mAnimator;
@@ -33,7 +34,7 @@ namespace Amy
 		void Start()
 	    {
 			mAnimator = GetComponentInChildren<Animator>();
-
+			isWarping = false;
 		}
 	
 	    // Update is called once per frame
@@ -42,6 +43,9 @@ namespace Amy
 
 			if (Time.frameCount % 15 == 0)
 				checkPlayerInRange();
+
+			if (isWarping)
+				Time.timeScale = 0.01f;
 	    }
 
 
@@ -52,6 +56,19 @@ namespace Amy
 
 			if (!canOpenDoor())
 				return;
+
+			if (PlayerManager.Instance.mPlayerInstance.currentMode != PlayerModes.NORMAL)
+			{
+
+				if (isOpen)
+				{
+					mAnimator.Play("Close");
+					isOpen = false;
+				}
+
+				return;
+
+			}
 
 			float dist = Vector3.Distance(transform.position + Vector3.up, PlayerManager.Instance.mPlayerInstance.transform.position);
 
@@ -90,14 +107,23 @@ namespace Amy
 			if (!isOpen)
 				return;
 
+			//No double-warpsies. 
+			if (isWarping)
+				return;
+
 			Player nPlayer = other.GetComponentInChildren<Player>();
 
 			if (!nPlayer)
 				return;
 
+			//Only if we in normal mode.
+			if (nPlayer.currentMode != PlayerModes.NORMAL)
+				return;
+
 			PlayerManager.Instance.lastExit = destinationExit;
 			GameManager.Instance.loadScene(destinationScene, true);
 
+			isWarping = true;
 		}
     }
 }

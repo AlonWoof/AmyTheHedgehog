@@ -5,7 +5,7 @@ using MEC;
 using UnityEngine.Audio;
 using UnityEngine.SceneManagement;
 
-/* Copyright 2022 Jason Haden */
+/* Copyright 2022 Jennifer Haden */
 namespace Amy
 {
 
@@ -207,6 +207,10 @@ namespace Amy
             if (Input.GetKey(KeyCode.F6))
                 Time.timeScale = Mathf.Lerp(Time.timeScale, 1.0f, Time.unscaledDeltaTime * 3.0f);
 
+            //How fucking brutal
+            if (Input.GetKey(KeyCode.F7))
+                PlayerManager.Instance.killHer();    
+
 
             if (Input.GetKeyDown(KeyCode.F2))
             {
@@ -368,6 +372,13 @@ namespace Amy
 
             //UIManager.Instance.hideGameOverScreen();
 
+            //Night chance?
+            float rng = Random.Range(0, 100.0f);
+
+            if (rng < 50.0f)
+                PlayerManager.Instance.isNightTime = true;
+            else
+                PlayerManager.Instance.isNightTime = false;
 
             AsyncOperation load = UnityEngine.SceneManagement.SceneManager.LoadSceneAsync(sceneName);
 
@@ -376,18 +387,30 @@ namespace Amy
                 load = UnityEngine.SceneManagement.SceneManager.LoadSceneAsync("default");
             }
 
+            
 
             while (!load.isDone)
             {
+                
                 yield return 0f;
             }
+
+            Time.timeScale = 1.0f;
 
             //preloadAssets();
 
             //SceneManager.SetActiveScene(SceneManager.GetSceneByName(sceneName));
 
+            foreach(ReflectionProbe r in FindObjectsOfType<ReflectionProbe>())
+            {
+                if(r.mode == UnityEngine.Rendering.ReflectionProbeMode.Realtime)
+                {
+                    r.RenderProbe();
+                }
+            }
 
             bool playerShouldSpawn = true;
+            PlayerManager.Instance.isHubRoom = false;
 
             SceneInfo scn = FindObjectOfType<SceneInfo>();
 
@@ -400,7 +423,8 @@ namespace Amy
 
                 //PlayerManager.Instance.isOutdoors = scn.isOutdoors;
 
-
+                if(scn.isHubRoom)
+                    PlayerManager.Instance.isHubRoom = true;
 
             }
             else

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using MEC;
 
-/* Copyright 2021 Jason Haden */
+/* Copyright 2021 Jennifer Haden */
 namespace Amy
 {
     public enum PlayableCharacter
@@ -90,6 +90,15 @@ namespace Amy
 
         public bool playerHasStealthCamo = false;
 
+        //Scene flags
+        public bool isHubRoom = false;
+        public bool isNightTime = false;
+        public bool ringLeftChannel = false;
+
+        //Item progression
+        public bool hasHammer = false;
+        public bool hasSlingshot = false;
+        public bool hasCloth = false;
         
 
         private void Awake()
@@ -253,8 +262,8 @@ namespace Amy
 
             if (mPlayerInstance != null)
             {
-                // Debug.Log("Destroying duplicate player...");
-                // Destroy(mPlayerInstance.gameObject);
+                //Debug.Log("Destroying duplicate player...");
+                //Destroy(mPlayerInstance.gameObject);
                 mPlayerInstance.transform.position = playerCheckpoint.transform.position;
                 mPlayerInstance.direction = playerCheckpoint.transform.forward;
                 mPlayerInstance.changeCurrentMode(PlayerModes.NORMAL);
@@ -270,12 +279,12 @@ namespace Amy
             return mPlayerInstance;
         }
 
-        /*
-        public void PlayerDieRespawn(PlayerDie.DeathType type)
+        
+        public void PlayerDieRespawn(PlayerKilled.DeathType type)
         {
             Timing.RunCoroutine(doPlayerRespawnSequence(type));
         }
-        */
+        
 
         public void addRings(int n)
         {
@@ -298,20 +307,20 @@ namespace Amy
         {
             return ringCount;
         }
-        /*
+        
         //I would give this a more fitting name but I want to pay homage to SA1's hilarious kill function name (killHimP())
         public void killHer()
         {
             if (!mPlayerInstance)
                 return;
 
-            mPlayerInstance.GetComponent<PlayerDie>().deathType = PlayerDie.DeathType.Normal;
-            mPlayerInstance.changeCurrentMode(PlayerModes.DIE);
+            mPlayerInstance.GetComponent<PlayerKilled>().deathType = PlayerKilled.DeathType.Normal;
+            mPlayerInstance.changeCurrentMode(PlayerModes.KILLED);
         }
 
 
         //TODO: add different respawn situations.
-        public IEnumerator<float> doPlayerRespawnSequence(PlayerDie.DeathType type)
+        public IEnumerator<float> doPlayerRespawnSequence(PlayerKilled.DeathType type)
         {
            
             GameManager.Instance.cameraInputDisabled = true;
@@ -358,7 +367,7 @@ namespace Amy
             GameManager.Instance.cameraInputDisabled = false;
 
         }
-        */
+        
 
         public void characterSwitch(PlayableCharacter newChar)
         {

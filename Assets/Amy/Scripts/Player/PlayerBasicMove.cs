@@ -31,6 +31,7 @@ namespace Amy
 
 			if (mPlayer.mChara == PlayableCharacter.Amy)
 			{
+				mPlayer.checkForGroundAttack();
 				mPlayer.checkForHammerJump();
 				mPlayer.checkForAirAttack();
 				mPlayer.checkForSlingshot();
@@ -81,8 +82,11 @@ namespace Amy
 
         void handleInput()
         {
+			if (GameManager.Instance.playerInputDisabled)
+				return;
 
-			if(Input.GetButtonDown("LockOn") && idleCounter > 5.0f && mPlayer.areaDetector.getNearbyActorCount() == 0)
+
+			if (Input.GetButtonDown("LockOn") && idleCounter > 5.0f && mPlayer.areaDetector.getNearbyActorCount() == 0)
             {
 				//if(mPlayer.getStatus().currentMood < mPlayer.getStatus().maxMood && mPlayer.acceleration.magnitude < 0.001f)
 				// {

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using MEC;
 
-/* Copyright 2021 Jason Haden */
+/* Copyright 2021 Jennifer Haden */
 namespace Amy
 {
 
@@ -22,6 +22,9 @@ namespace Amy
 
         public AudioClip[] jumping;
         public AudioClip[] altJumping;
+
+        public AudioClip[] groundAttack;
+        public AudioClip[] airAttack;
 
         public AudioSource voiceSource;
 

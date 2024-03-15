@@ -49,14 +49,11 @@ namespace Amy
 
 
 
-		public void takeDamage(Damage dmg)
+		public bool takeDamage(Damage dmg)
         {
 
 			if (isDead)
-				return;
-
-			if (dmg.damageTeam == DamageTeam.Enemy)
-				return;
+				return false;
 
 			onTakeDamageEvent.Invoke();
 
@@ -65,6 +62,7 @@ namespace Amy
 
 			mutekiTimer = 0.5f;
 
+			return true;
 		}
 
 

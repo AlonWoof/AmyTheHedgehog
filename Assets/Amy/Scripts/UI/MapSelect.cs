@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-/* Copyright 2021 Jason Haden */
+/* Copyright 2021 Jennifer Haden */
 namespace Amy
 {
     [System.Serializable]

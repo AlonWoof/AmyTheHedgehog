@@ -39,8 +39,13 @@ namespace Amy
 		// Start is called before the first frame update
 		void Start()
 	    {
-	        
-	    }
+			playerList = new List<Player>();
+
+			foreach (Player p in FindObjectsOfType<Player>())
+			{
+				playerList.Add(p);
+			}
+		}
 	
 	    // Update is called once per frame
 	    void Update()
@@ -98,6 +103,26 @@ namespace Amy
                 {
 					playerList.Add(p);
                 }
+			}
+
+			if(playerList.Count == 0)
+            {
+				foreach (Player p in FindObjectsOfType<Player>())
+				{
+					playerList.Add(p);
+				}
+
+				return null;
+			}
+
+			if(!playerList[0])
+            {
+				playerList = new List<Player>();
+
+				foreach (Player p in FindObjectsOfType<Player>())
+				{
+					playerList.Add(p);
+				}
 			}
 
 			if (playerList.Count == 0)

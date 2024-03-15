@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-/* Copyright 2022 Jason Haden */
+/* Copyright 2022 Jennifer Haden */
 namespace Amy
 {
 

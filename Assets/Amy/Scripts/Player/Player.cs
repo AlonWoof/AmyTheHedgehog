@@ -60,6 +60,7 @@ namespace Amy
 		public Rigidbody mRigidBody;
 		public Animator mAnimator;
 		public FootstepFX fx_footsteps;
+		public WeaponTrailFX fx_hammerTrail;
 		public ThirdPersonCamera tpc;
 		public PlayerVoice mVoice;
 
@@ -115,7 +116,9 @@ namespace Amy
 		public PlayerClimb modeLadder;
 		public PlayerRubbing modeRubbing;
 		public PlayerHurt modeHurt;
+		public PlayerKilled modeKilled;
 		public PlayerDebugMove modeDebug;
+		
 
 		public PlayerAreaDetector areaDetector;
 
@@ -224,6 +227,17 @@ namespace Amy
 				}
 			}
 
+			//Weapon trail fx
+			GameObject wfx = GameObject.Instantiate(GameManager.Instance.systemData.RES_AmyPlayerFX.fx_pikoHammerTrail);
+			newPlayer.fx_hammerTrail = wfx.GetComponent<WeaponTrailFX>();
+			newPlayer.fx_hammerTrail.weaponNode = newPlayer.getBoneByName("HurtBox_Hammer");
+
+			//Status effects
+			foreach(StatusEffect s in PlayerManager.Instance.gameObject.GetComponentsInChildren<StatusEffect>())
+            {
+				s.setPlayer(newPlayer);
+            }
+
 			return newPlayer;
 		}
 
@@ -238,6 +252,7 @@ namespace Amy
 			modeLadder = gameObject.AddComponent<PlayerClimb>();
 			modeRubbing = gameObject.AddComponent<PlayerRubbing>();
 			modeHurt = gameObject.AddComponent<PlayerHurt>();
+			modeKilled = gameObject.AddComponent<PlayerKilled>();
 			modeDebug = gameObject.AddComponent<PlayerDebugMove>();
 		}
 
@@ -252,6 +267,7 @@ namespace Amy
 			modeLadder.enabled = false;
 			modeRubbing.enabled = false;
 			modeHurt.enabled = false;
+			modeKilled.enabled = false;
 			modeDebug.enabled = false;
         }
 
@@ -295,6 +311,10 @@ namespace Amy
 
 				case PlayerModes.HURT:
 					modeHurt.enabled = true;
+					break;
+
+				case PlayerModes.KILLED:
+					modeKilled.enabled = true;
 					break;
 
 				case PlayerModes.DEBUG_MOVE:
@@ -365,19 +385,7 @@ namespace Amy
 			return result;
         }
 
-		public void updateHealth()
-        {
-			PlayerStatus pstats = getStatus();			
 
-			pstats.currentHealth = Mathf.Clamp(pstats.currentHealth, 0, pstats.maxHealth);
-			pstats.currentMood = Mathf.Clamp(pstats.currentMood, 0, pstats.maxMood);
-
-			if(pstats.currentHealth == 0)
-            {
-				//DIE
-            }
-
-		}
 
 		private void Awake()
 		{
@@ -421,7 +429,10 @@ namespace Amy
                 {
 					isAttacking = false;
 					attackTimer = 0.0f;
-                }
+
+					if (fx_hammerTrail)
+						fx_hammerTrail.disableFX();
+				}
             }
 
 			if(mutekiTimer > 0.0f)
@@ -444,36 +455,117 @@ namespace Amy
 			debugControls();
 		}
 
-		public void takeDamage(Damage dmg, float multiplier = 1.0f)
+		public void updateHealth()
+		{
+			PlayerStatus pstats = getStatus();
+
+			pstats.currentHealth = Mathf.Clamp(pstats.currentHealth, 0, pstats.maxHealth);
+			pstats.currentMood = Mathf.Clamp(pstats.currentMood, 0, pstats.maxMood);
+
+			if (pstats.currentHealth == 0)
+			{
+				if(currentMode == PlayerModes.NORMAL)
+                {
+					modeKilled.deathType = PlayerKilled.DeathType.Normal;
+					changeCurrentMode(PlayerModes.KILLED);
+				}
+			}
+
+		}
+
+		public bool takeDamage(Damage dmg, float multiplier = 1.0f)
         {
 			if (mutekiTimer > 0.0f && dmg.damageType != DamageType.Crush)
-				return;
+				return false;
 
-			if(currentMode == PlayerModes.NORMAL)
+			int rings = PlayerManager.Instance.getRings();
+
+			//Rings protect you from ouchies.
+			if (rings > 0)
+				dmg.damageAmount *= 0.5f;
+
+			float force = 16.0f;
+
+			if (rings > 0)
+				force *= 0.75f;
+
+			if (currentMode == PlayerModes.NORMAL)
             {
 				PlayerStatus pstats = getStatus();
 
-				if(multiplier < 1.1f)
-					mVoice.playVoice(mVoice.smallPain);
-				else
-					mVoice.playVoice(mVoice.largePain);
 
-				mAnimator.Play("Flash_Red_Fast");
 
-				float force = 16.0f;
-
-				if (currentMode == PlayerModes.NORMAL && force > 0.1f)
+				if (currentMode == PlayerModes.NORMAL && force > 1.0f)
 				{
-					changeCurrentMode(PlayerModes.HURT);
 					modeHurt.setKnockBack(dmg.transform.position, force);
 				}
 
+
 				pstats.currentHealth -= (dmg.damageAmount * multiplier);
+
+				if (rings > 0)
+					pstats.currentHealth = Mathf.Clamp(pstats.currentHealth, 1, pstats.maxHealth);
+
+				if (pstats.currentHealth > 0)
+					changeCurrentMode(PlayerModes.HURT);
+				else
+				{
+					modeKilled.deathType = PlayerKilled.DeathType.Normal;
+					changeCurrentMode(PlayerModes.KILLED);
+					return true;
+				}
+
+
+
+				if (multiplier < 1.1f && force < 10.0f)
+				{
+					mVoice.playVoice(mVoice.smallPain);
+				}
+				else
+				{
+					mVoice.playVoice(mVoice.largePain);
+				}
+
+				mAnimator.Play("Flash_Red_Fast");
+
 				updateHealth();
 			}
 
+			if (rings > 0)
+				damageRingScatter();
+
 			mutekiTimer = 0.5f;
+			return true;
 		}
+
+		void damageRingScatter()
+        {
+			int rings = PlayerManager.Instance.getRings();
+
+			if (rings > 20)
+				rings = 20;
+
+			Transform scatterer = new GameObject("scatter").transform;
+			scatterer.transform.position = transform.position + Vector3.up * 0.75f;
+
+			PlayerManager.Instance.subtractRings(rings);
+
+			for(int i = 1; i < rings + 1; i++)
+            {
+
+				float angle = (360.0f / rings) * i;
+
+				scatterer.transform.rotation = Quaternion.Euler(0, angle, 0);
+
+				GameObject inst = GameObject.Instantiate(GameManager.Instance.systemData.RES_RingTobitiri);
+
+				inst.transform.position = scatterer.transform.position + scatterer.transform.forward * 0.25f;
+
+				Rigidbody r = inst.GetComponent<Rigidbody>();
+				r.velocity = (scatterer.transform.forward * Random.Range(2.5f,3.0f)) + Vector3.up * Random.Range(2.5f, 3.0f);
+
+            }
+        }
 
         private void LateUpdate()
         {
@@ -498,15 +590,28 @@ namespace Amy
 
 			if(Input.GetKeyDown(KeyCode.Keypad7))
             {
+				
 
-				if (currentMode == PlayerModes.SLINGSHOT)
-				{
-					changeCurrentMode(PlayerModes.NORMAL);
-				}
-				else
-				{
-					changeCurrentMode(PlayerModes.SLINGSHOT);
-				}
+				GameObject dSource = new GameObject("Dmg");
+
+				Damage dmg = dSource.AddComponent<Damage>();
+
+				dSource.transform.position = transform.position + Vector3.up * 0.5f + transform.forward;
+
+				dmg.damageAmount = 5;
+				dmg.damageType = DamageType.Neutral;
+				dmg.source = dSource;
+
+				takeDamage(dmg);
+
+			}
+
+			if (Input.GetKeyDown(KeyCode.Keypad9))
+			{
+				if(currentMode == PlayerModes.NORMAL)
+                {
+					changeCurrentMode(PlayerModes.RUBBING);
+                }
 			}
 		}
 
@@ -773,6 +878,9 @@ namespace Amy
 			if (slopeMult < 0.45f && isOnGround)
 				return false;
 
+			if (PlayerManager.Instance.isHubRoom)
+				return false;
+
 			return true;
 		}
 
@@ -802,6 +910,9 @@ namespace Amy
 			if (!isOnGround)
 				return;
 
+			if (isAttacking)
+				return;
+
 			float slopeMult = Mathf.Clamp01(1.0f + slopeAmount);
 
 			if (slopeMult < 0.45f && isOnGround)
@@ -820,6 +931,47 @@ namespace Amy
 			jumpTimer = mParam.jump_hangTime;
 		}
 
+		public void groundAttack()
+        {
+
+			if (isAttacking)
+				return;
+
+			if (PlayerManager.Instance.isHubRoom)
+				return;
+
+			if (!PlayerManager.Instance.hasHammer)
+				return;
+
+			acceleration = Vector3.zero;
+
+			mAnimator.Play("Attack");
+			isAttacking = true;
+			attackTimer = 0.6f;
+
+			if(fx_hammerTrail)
+				fx_hammerTrail.enableFX();
+
+			mVoice.playVoiceDelayed(Random.Range(0.05f, 0.1f), mVoice.groundAttack, true);
+
+
+			//Homing
+			if(areaDetector.closestEnemy)
+            {
+				float dst = Vector3.Distance(transform.position + Vector3.up * 0.5f, areaDetector.closestEnemy.transform.position);
+
+				if (dst < 4.0f)
+                {
+					Vector3 dir = Helper.getDirectionTo(transform.position, areaDetector.closestEnemy.transform.position);
+					dir.y = 0;
+
+					setAngleInstantly(dir);
+					acceleration.z = dst * 2.0f;
+
+				}
+            }
+		}
+
 		public void airHammerAttack()
         {
 			if (isOnGround)
@@ -831,11 +983,31 @@ namespace Amy
 			mAnimator.CrossFade("AirAttack",0.2f);
 			isAttacking = true;
 			attackTimer = 0.6f;
+
+			if (fx_hammerTrail)
+				fx_hammerTrail.enableFX();
+
 			//mAnimator.Play("Mouth_Jumping");
-			mVoice.playVoiceDelayed(Random.Range(0.05f, 0.1f), mVoice.altJumping, true);
+			mVoice.playVoiceDelayed(Random.Range(0.05f, 0.1f), mVoice.airAttack, true);
 			//spawnFX(GameManager.Instance.systemData.RES_AmyPlayerFX.fx_basicJump, transform.position);
 			//spawnFX(GameManager.Instance.systemData.RES_AmyPlayerFX.fx_pikoHammerJump, transform.position + transform.forward + Vector3.up * 0.2f);
 			//jumpTimer = mParam.jump_hangTime;
+
+			//Homing
+			if (areaDetector.closestEnemy)
+			{
+				float dst = Vector3.Distance(transform.position + Vector3.up * 0.5f, areaDetector.closestEnemy.transform.position);
+
+				if (dst < 8.0f)
+				{
+					Vector3 dir = Helper.getDirectionTo(transform.position, areaDetector.closestEnemy.transform.position);
+					dir.y = 0;
+
+					setAngleInstantly(dir);
+					acceleration.z = dst * 4.0f;
+
+				}
+			}
 		}
 
 		public void checkForHammerJump()
@@ -843,12 +1015,38 @@ namespace Amy
 			if (acceleration.z < 5.3f)
 				return;
 
+			if (PlayerManager.Instance.isHubRoom)
+				return;
+
+			if (!PlayerManager.Instance.hasHammer)
+				return;
+
 			if (Input.GetButtonDown("Attack"))
 				hammerJump();
 		}
 
+		public void checkForGroundAttack()
+        {
+			if (acceleration.magnitude > 1.0f || !isOnGround)
+				return;
+
+			if (PlayerManager.Instance.isHubRoom)
+				return;
+
+			if (!PlayerManager.Instance.hasHammer)
+				return;
+
+			if (Input.GetButtonDown("Attack"))
+				groundAttack();
+        }
+
 		public void checkForAirAttack()
         {
+			if (PlayerManager.Instance.isHubRoom)
+				return;
+
+			if (!PlayerManager.Instance.hasHammer)
+				return;
 
 			if (Input.GetButtonDown("Attack"))
 				airHammerAttack();
@@ -866,7 +1064,7 @@ namespace Amy
 
 		public void checkForJump()
         {
-			if (Input.GetButtonDown("Jump"))
+			if (Input.GetButtonDown("Jump") && canJump(false))
 				Jump(false);
 
 			if (!Input.GetButton("Jump") && !isHammerJumping)
@@ -893,6 +1091,11 @@ namespace Amy
 			if (Input.GetAxis("Shoot") < 0.5f)
 				return;
 
+			if (PlayerManager.Instance.isHubRoom)
+				return;
+
+			if (!PlayerManager.Instance.hasSlingshot)
+				return;
 
 			if (speed.magnitude > 0.1f)
 				return;
@@ -906,13 +1109,18 @@ namespace Amy
 		public void checkStickPower()
 		{
 
-			if(stickTimeout > 0.0f)
+
+			if (stickTimeout > 0.0f)
             {
 				stickTimeout -= Time.deltaTime;
 				return;
 			}
 
 			stickPower = 0.0f;
+
+
+			if (GameManager.Instance.playerInputDisabled)
+				return;
 
 			float h = InputFunctions.getLeftAnalogX();
 			float v = InputFunctions.getLeftAnalogY();
@@ -922,6 +1130,9 @@ namespace Amy
 
 			stickAngle =  Vector3.ClampMagnitude(new Vector3(h, 0f, v), 1.0f);
 			stickPower = stickAngle.magnitude;
+
+
+			Debug.Log(stickPower);
 
 			Vector3 targetDirection = stickAngle;
 			Quaternion targetRotation = Quaternion.LookRotation(targetDirection, Vector3.up);
@@ -969,8 +1180,9 @@ namespace Amy
 				acceleration.z *= dirChange;
 
 			acceleration.z += forward_accel * Time.deltaTime;
-			
 
+			if (PlayerManager.Instance.isHubRoom)
+				acceleration.z = Mathf.Clamp(acceleration.z, 0, 1.2f);
 		}
 
 		public void applyFriction()
