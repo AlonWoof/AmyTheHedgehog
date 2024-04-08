@@ -14,7 +14,6 @@ GameObject:
   - component: {fileID: 6553749580567412952}
   - component: {fileID: 6553749580567412953}
   - component: {fileID: 5715522542084349264}
-  - component: {fileID: 2375260199264653680}
   m_Layer: 0
   m_Name: EnemyTestBullet
   m_TagString: Untagged
@@ -34,6 +33,7 @@ Transform:
   m_LocalScale: {x: 0.05, y: 0.05, z: 0.05}
   m_Children:
   - {fileID: 6291375162441864997}
+  - {fileID: 5338416006847758544}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -129,19 +129,65 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   body: {fileID: 0}
   onCollisionFX: {fileID: 2918217833887393753, guid: d33456c229855fa418ca39780257460e, type: 3}
-  speed: 90
+  speed: 30
   spread: 0
+  lifetime: 100
   colMask:
     serializedVersion: 2
     m_Bits: 1152
   team: 2
---- !u!114 &2375260199264653680
+--- !u!1 &7083271332789837668
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 5338416006847758544}
+  - component: {fileID: 4763427468411670004}
+  - component: {fileID: 1821240989768413580}
+  m_Layer: 0
+  m_Name: dmg
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &5338416006847758544
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7083271332789837668}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 20, y: 20, z: 20}
+  m_Children: []
+  m_Father: {fileID: 6553749580567412933}
+  m_RootOrder: 1
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!135 &4763427468411670004
+SphereCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7083271332789837668}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 0.05
+  m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &1821240989768413580
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6553749580567412958}
+  m_GameObject: {fileID: 7083271332789837668}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 8526c14f270fb3c49a783b5861cf6c92, type: 3}
@@ -149,8 +195,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   damageAmount: 5
   damageType: 1
-  damageTeam: 2
-  source: {x: 0, y: 0, z: 0}
+  hurtsPlayer: 1
+  hurtsEnemy: 0
+  source: {fileID: 0}
+  collisionFX: {fileID: 0}
+  onContact:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!1 &7896275980823671214
 GameObject:
   m_ObjectHideFlags: 0

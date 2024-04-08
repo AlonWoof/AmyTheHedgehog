@@ -1,10 +1,12 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 
 public class PrefabSpawner : MonoBehaviour
 {
     public GameObject prefabToSpawn;
+    public bool trigger = false;
 
     // Start is called before the first frame update
     void Start()
@@ -15,7 +17,11 @@ public class PrefabSpawner : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+        if(trigger)
+        {
+            spawnPrefab();
+            trigger = false;
+        }
     }
 
     public void spawnPrefab()

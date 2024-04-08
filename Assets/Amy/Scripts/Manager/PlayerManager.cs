@@ -13,6 +13,17 @@ namespace Amy
         MAX
     }
 
+    public enum PlayerStatusFX
+    {
+        None = 0,
+        Relaxed = 1,
+        Scared = 2,
+        Tired = 4,
+        Dirty = 8,
+        Horny = 16,
+        Sick = 32,
+        GoodFood = 64
+    }
 
     [System.Serializable]
     public class PlayerStatus
@@ -21,6 +32,8 @@ namespace Amy
         public float maxHealth = 25.0f;
         public float currentMood = 25.0f;
         public float maxMood = 25.0f;
+        public float maxStamina = 25.0f;
+        public float currentStamina = 25.0f;
 
         public float speedBonus = 0.0f;
 
@@ -30,6 +43,9 @@ namespace Amy
         public float lungCapacity = 20.0f;
         public float dirtiness = 0.0f;
 
+        public int statusFX;
+        public float scaredTimeLeft = 0.0f;
+        public float goodFoodTimeLeft = 0.0f;
 
         public PlayerStatus makeCopy()
         {
@@ -48,7 +64,35 @@ namespace Amy
             ns.lungCapacity = lungCapacity;
             ns.dirtiness = dirtiness;
 
+            ns.scaredTimeLeft = scaredTimeLeft;
+            ns.goodFoodTimeLeft = goodFoodTimeLeft;
+
+            ns.statusFX = statusFX;
+
             return ns;
+        }
+
+        public void clampValues()
+        {
+            currentHealth = Mathf.Clamp(currentHealth, 0, maxHealth);
+            currentStamina = Mathf.Clamp(currentStamina, 0, maxStamina);
+            currentMood = Mathf.Clamp(currentMood, 0, maxMood);
+            dirtiness = Mathf.Clamp01(dirtiness);
+        }
+
+        public bool checkStatusEffect(PlayerStatusFX fx)
+        {
+            return ((statusFX & (int)fx) == (int)fx);
+        }
+
+        public void setStatusEffect(PlayerStatusFX fx)
+        {
+            statusFX |= (int)fx;
+        }
+
+        public void unSetStatusEffect(PlayerStatusFX fx)
+        {
+            statusFX &= ~(int)fx;
         }
     }
 
@@ -131,6 +175,9 @@ namespace Amy
             if (lastOrgasmCooldown > 0.0f)
                 lastOrgasmCooldown -= Time.deltaTime;
 
+
+            if(mPlayerInstance)
+                updatePlayerStatus(mPlayerInstance);
         }
 
         public PlayerStatus getCurrentPlayerStatus()
@@ -207,6 +254,108 @@ namespace Amy
 
             mPlayerInstance.GetComponent<StealthCamo>().enabled = true;
             */
+        }
+
+        public void updatePlayerStatus(Player pl)
+        {
+
+            PlayerStatus pStats = pl.getStatus();
+
+            calculateHealing(pStats);
+
+            if (pl.currentMode != PlayerModes.RUBBING)
+                calculateMood(pStats);
+
+            if(pStats.checkStatusEffect(PlayerStatusFX.Scared))
+            {
+                if(pStats.scaredTimeLeft > 0.0f)
+                {
+                    float mult = 1.0f;
+
+                    if (pStats.checkStatusEffect(PlayerStatusFX.Relaxed) || pStats.checkStatusEffect(PlayerStatusFX.GoodFood))
+                        mult = 2.0f;
+
+                    if (pStats.checkStatusEffect(PlayerStatusFX.Tired))
+                        mult = 0.5f;
+
+                    pStats.scaredTimeLeft -= (Time.deltaTime * mult);
+                }
+                else
+                {
+                    pStats.unSetStatusEffect(PlayerStatusFX.Scared);
+                    pl.updateExpression();
+                }
+            }
+        }
+
+        public void calculateHealing(PlayerStatus pStats)
+        {
+            float baseHealFac = 0.075f;
+
+            //How efficiently one converts stamina to health depends on mood.
+            float moodFac = pStats.currentMood / pStats.maxMood;
+            float healthFac = pStats.currentHealth / pStats.maxHealth;
+            
+            if(healthFac < 0.98f)
+            {
+                if(pStats.currentStamina > 0.01f)
+                {
+                    pStats.currentHealth += (Time.deltaTime * baseHealFac) * moodFac;
+                    pStats.currentStamina -= (Time.deltaTime * baseHealFac);
+                }
+            }
+            else
+            {
+                pStats.currentHealth = pStats.maxHealth;
+            }
+        }
+
+        public void calculateMood(PlayerStatus pStats)
+        {
+            // Generally speaking, it should move slowly and be based on many factors,
+            // such as health, stamina, vibes of the place, etc....
+
+            float baseMoodDecay = 0.15f;
+
+            float moodFac = pStats.currentMood / pStats.maxMood;
+            float healthFac = pStats.currentHealth / pStats.maxHealth;
+            float staminaFac = pStats.currentStamina / pStats.currentStamina;
+
+            float genkiAverage = (staminaFac + healthFac + healthFac) * 0.3333333f;
+
+            if (genkiAverage > 0.95f)
+                genkiAverage = 1.0f;
+
+            float targetMood = genkiAverage * pStats.maxMood;
+
+
+            if (pStats.checkStatusEffect(PlayerStatusFX.Relaxed))
+                targetMood *= 1.2f;
+
+            if (pStats.checkStatusEffect(PlayerStatusFX.GoodFood))
+                targetMood *= 1.5f;
+
+            if (pStats.checkStatusEffect(PlayerStatusFX.Tired))
+                targetMood *= 0.75f;
+
+            if (pStats.checkStatusEffect(PlayerStatusFX.Sick))
+                targetMood *= 0.65f;
+
+            if (pStats.checkStatusEffect(PlayerStatusFX.Scared))
+                targetMood *= 0.5f;
+
+            if (pStats.checkStatusEffect(PlayerStatusFX.Dirty))
+                targetMood *= 0.8f;
+
+            if (pStats.checkStatusEffect(PlayerStatusFX.Horny))
+                targetMood *= 0.9f;
+
+            pStats.currentMood = Mathf.Lerp(pStats.currentMood, targetMood, Time.deltaTime * 1.2f);
+            pStats.currentMood = Mathf.Clamp(pStats.currentMood, 0, genkiAverage * pStats.maxMood);
+
+
+            pStats.clampValues();
+            // pStats.currentMood = genkiAverage * pStats.maxMood;
         }
 
         public Player getPlayer(bool search = true)
@@ -348,9 +497,13 @@ namespace Amy
             //Lose money for getting owned.
             subtractRings(35);
 
-            getCurrentPlayerStatus().currentHealth = Mathf.Lerp(0.25f, 0.9f, getCurrentPlayerStatus().currentMood);
-            getCurrentPlayerStatus().currentMood = Mathf.Clamp(getCurrentPlayerStatus().currentMood -= Random.Range(0.16f,0.3f),0.0f,1.0f);
-            
+            float stamFac = getCurrentPlayerStatus().currentStamina / getCurrentPlayerStatus().maxStamina;
+
+            getCurrentPlayerStatus().currentHealth = Mathf.Lerp(1.0f, getCurrentPlayerStatus().maxHealth, stamFac);
+            getCurrentPlayerStatus().currentStamina *= 0.5f;
+            getCurrentPlayerStatus().currentMood *= 0.5f;
+
+
 
             GameObject.Destroy(mPlayerInstance.gameObject);
             yield return 0f;

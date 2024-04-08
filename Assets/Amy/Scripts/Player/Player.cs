@@ -56,7 +56,16 @@ namespace Amy
 
 	public class Player : MonoBehaviour
 	{
+		//Consts
+		const float hammerJumpStaimaCost = 0.05f;
+		const float jumpStaimaCost = 0.025f;
+		const float hammerAttackStaminaCost = 0.025f;
+		const float moveStaminaCost = 0.002f;
+		const float flyStaminaCost = 0.004f;
 
+
+
+		//Components
 		public Rigidbody mRigidBody;
 		public Animator mAnimator;
 		public FootstepFX fx_footsteps;
@@ -64,9 +73,11 @@ namespace Amy
 		public ThirdPersonCamera tpc;
 		public PlayerVoice mVoice;
 
+		//Character Data
 		public PlayerParameters mParam;
 		public PlayableCharacter mChara;
 
+		//Movement vectors
 		public Vector3 speed = Vector3.zero;
 		public Vector3 acceleration = Vector3.zero;
 		public Vector3 platformVelocity = Vector3.zero;
@@ -82,6 +93,7 @@ namespace Amy
 
 		public LayerMask mColMask;
 
+		//Status indicators
 		public bool isOnGround = false;
 		public bool isSliding = false;
 		public bool isHammerJumping = false;
@@ -378,7 +390,7 @@ namespace Amy
 					break;
 
 				case PlayableCharacter.Cream:
-					result = PlayerManager.Instance.AmyStatus;
+					result = PlayerManager.Instance.CreamStatus;
 					break;
 			}
 
@@ -401,7 +413,7 @@ namespace Amy
 		void Start()
 		{
 			getBaseComponents();
-
+			updateExpression();
 		}
 
 		// Update is called once per frame
@@ -478,6 +490,9 @@ namespace Amy
 			if (mutekiTimer > 0.0f && dmg.damageType != DamageType.Crush)
 				return false;
 
+			if (attackTimer > 0.0f && dmg.damageType != DamageType.Crush)
+				return false;
+
 			int rings = PlayerManager.Instance.getRings();
 
 			//Rings protect you from ouchies.
@@ -489,7 +504,7 @@ namespace Amy
 			if (rings > 0)
 				force *= 0.75f;
 
-			if (currentMode == PlayerModes.NORMAL)
+			if (currentMode == PlayerModes.NORMAL || currentMode == PlayerModes.FLY)
             {
 				PlayerStatus pstats = getStatus();
 
@@ -497,11 +512,26 @@ namespace Amy
 
 				if (currentMode == PlayerModes.NORMAL && force > 1.0f)
 				{
-					modeHurt.setKnockBack(dmg.transform.position, force);
+					if (dmg.useSourceDir)
+					{
+						modeHurt.setKnockBack(dmg.transform.position, force);
+					}
+					else
+                    {
+						modeHurt.setKnockBack(transform.position + transform.forward + Vector3.up * 0.5f, force);
+					}
+				}
+
+				if (currentMode == PlayerModes.FLY)
+				{
+					mAnimator.CrossFade("Ears_Normal", 0.25f);
+					modeHurt.setKnockBack(transform.position + Vector3.up, 3.0f);
 				}
 
 
 				pstats.currentHealth -= (dmg.damageAmount * multiplier);
+				pstats.currentMood -= pstats.maxMood * 0.1f;
+				pstats.clampValues();
 
 				if (rings > 0)
 					pstats.currentHealth = Mathf.Clamp(pstats.currentHealth, 1, pstats.maxHealth);
@@ -534,7 +564,7 @@ namespace Amy
 			if (rings > 0)
 				damageRingScatter();
 
-			mutekiTimer = 0.5f;
+			mutekiTimer = 0.75f;
 			return true;
 		}
 
@@ -565,12 +595,28 @@ namespace Amy
 				r.velocity = (scatterer.transform.forward * Random.Range(2.5f,3.0f)) + Vector3.up * Random.Range(2.5f, 3.0f);
 
             }
-        }
+
+			GameObject tobitiriSFX = GameObject.Instantiate(GameManager.Instance.systemData.RES_RingTobitiriFX);
+			tobitiriSFX.transform.position = transform.position;
+
+		}
 
         private void LateUpdate()
         {
 			doLeanAnimation();
 
+		}
+
+		public void updateExpression()
+        {
+			if (currentMode == PlayerModes.RUBBING)
+				mAnimator.Play("Face_Ecchi");
+			else if (currentMode == PlayerModes.HURT)
+				mAnimator.Play("Face_Itai");
+			else if(getStatus().checkStatusEffect(PlayerStatusFX.Scared))
+				mAnimator.Play("Face_Kowaii");
+			else
+				mAnimator.Play("Face_Neutral");
 		}
 
         void debugControls()
@@ -624,7 +670,7 @@ namespace Amy
 			currentMode = newMode;
 
 			refreshMode();
-
+			updateExpression();
 		}
 
 		public void CalcSlope()
@@ -817,7 +863,10 @@ namespace Amy
 						{
 							isHammerJumping = false;
 							isOnGround = true;
-							mAnimator.Play("Land");
+
+							if(currentMode != PlayerModes.HURT && currentMode != PlayerModes.KILLED)
+								mAnimator.Play("Land");
+
 							acceleration.y = 0.0f;
 							acceleration *= 0.95f;
 							speed.y = 0.0f;
@@ -896,10 +945,15 @@ namespace Amy
 
 			float jumpPower = mParam.jumpSpeed * slopeMult;
 
+			if (getStatus().checkStatusEffect(PlayerStatusFX.Tired))
+				jumpPower *= 0.65f;
+
 			acceleration *= 0.8f;
 			acceleration.y = jumpPower;
 			mAnimator.Play("Jump");
 			//mAnimator.Play("Mouth_Jumping");
+			getStatus().currentStamina -= jumpStaimaCost;
+			getStatus().clampValues();
 			mVoice.playVoiceDelayed(Random.Range(0.05f, 0.1f), mVoice.jumping);
 			spawnFX(GameManager.Instance.systemData.RES_AmyPlayerFX.fx_basicJump, transform.position);
 			jumpTimer = mParam.jump_hangTime;
@@ -924,6 +978,8 @@ namespace Amy
 			acceleration.y = jumpPower * 1.9f;
 			mAnimator.Play("HammerJump");
 			isHammerJumping = true;
+			getStatus().currentStamina -= hammerJumpStaimaCost;
+			getStatus().clampValues();
 			//mAnimator.Play("Mouth_Jumping");
 			mVoice.playVoiceDelayed(Random.Range(0.05f, 0.1f), mVoice.altJumping);
 			spawnFX(GameManager.Instance.systemData.RES_AmyPlayerFX.fx_basicJump, transform.position);
@@ -947,6 +1003,8 @@ namespace Amy
 
 			mAnimator.Play("Attack");
 			isAttacking = true;
+			getStatus().currentStamina -= hammerAttackStaminaCost;
+			getStatus().clampValues();
 			attackTimer = 0.6f;
 
 			if(fx_hammerTrail)
@@ -980,7 +1038,7 @@ namespace Amy
 			if (isAttacking)
 				return;
 
-			mAnimator.CrossFade("AirAttack",0.2f);
+			mAnimator.Play("AirAttack");
 			isAttacking = true;
 			attackTimer = 0.6f;
 
@@ -992,6 +1050,8 @@ namespace Amy
 			//spawnFX(GameManager.Instance.systemData.RES_AmyPlayerFX.fx_basicJump, transform.position);
 			//spawnFX(GameManager.Instance.systemData.RES_AmyPlayerFX.fx_pikoHammerJump, transform.position + transform.forward + Vector3.up * 0.2f);
 			//jumpTimer = mParam.jump_hangTime;
+			acceleration.y = 3.0f;
+			acceleration.z = 9.5f;
 
 			//Homing
 			if (areaDetector.closestEnemy)
@@ -1004,7 +1064,7 @@ namespace Amy
 					dir.y = 0;
 
 					setAngleInstantly(dir);
-					acceleration.z = dst * 4.0f;
+					acceleration.z = 16.0f;
 
 				}
 			}
@@ -1019,6 +1079,10 @@ namespace Amy
 				return;
 
 			if (!PlayerManager.Instance.hasHammer)
+				return;
+
+			//Get this poor girl some rest jeez...
+			if (getStatus().checkStatusEffect(PlayerStatusFX.Tired))
 				return;
 
 			if (Input.GetButtonDown("Attack"))
@@ -1173,6 +1237,9 @@ namespace Amy
 
 			float forward_accel = (targetDirection.magnitude * mParam.forwardAccel);
 			forward_accel += (slopeAmount * mParam.forwardAccel);
+
+			if (getStatus().checkStatusEffect(PlayerStatusFX.Tired))
+				forward_accel *= 0.48f;
 
 			//forward_accel *= dirChange;
 
@@ -1407,6 +1474,42 @@ namespace Amy
 				inst.transform.SetParent(transform);
 
 			return inst;
+		}
+
+		public string dbg_getModeString()
+        {
+
+			switch(currentMode)
+            {
+				case PlayerModes.NORMAL:
+					return "NORMAL";
+				case PlayerModes.SPRING:
+					return "SPRING";
+				case PlayerModes.RAIL:
+					return "RAIL";
+				case PlayerModes.SWIMMING:
+					return "SWIMMING";
+				case PlayerModes.FLY:
+					return "FLY";
+				case PlayerModes.LISTENING:
+					return "LISTENING";
+				case PlayerModes.SLINGSHOT:
+					return "SLINGSHOT";
+				case PlayerModes.LADDER:
+					return "LADDER";
+				case PlayerModes.CUTSCENE:
+					return "CUTSCENE";
+				case PlayerModes.RUBBING:
+					return "RUBBING";
+				case PlayerModes.HURT:
+					return "HURT";
+				case PlayerModes.KILLED:
+					return "KILLED";
+				case PlayerModes.DEBUG_MOVE:
+					return "DEBUG_MOVE";
+			}
+
+			return "SORRY NOTHING";
 		}
 	}
 

@@ -38,6 +38,8 @@ namespace Amy
         public GameObject RES_ActorWaterSplashFX;
         public GameObject RES_ActorWaterEmergeFX;
         public GameObject RES_RingTobitiri;
+        public GameObject RES_RingTobitiriFX;
+
 
         [Header("Audio")]
 
@@ -49,5 +51,6 @@ namespace Amy
         public BGMData bgm_alert;
         public BGMData bgm_evasion;
         public AudioClip sfx_mgs_clear;
+
     }
 }

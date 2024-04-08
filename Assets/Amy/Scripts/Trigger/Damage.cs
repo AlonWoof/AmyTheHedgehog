@@ -37,6 +37,7 @@ namespace Amy
 
 		public bool hurtsPlayer = false;
 		public bool hurtsEnemy = false;
+		public bool useSourceDir = false;
 
 		public GameObject source;
 		public GameObject collisionFX;

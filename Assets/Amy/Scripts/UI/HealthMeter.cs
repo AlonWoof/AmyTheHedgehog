@@ -12,7 +12,8 @@ namespace Amy
     {
 
         public Image healthBar;
-        public Image moodBar;
+        public Image healthBarBG;
+        public Image staminaBar;
 
         // Start is called before the first frame update
         void Start()
@@ -28,11 +29,12 @@ namespace Amy
 
             float targetScale = (pstats.currentHealth / pstats.maxHealth);
 
-            healthBar.transform.localScale = new Vector3(targetScale, 1, 1);
+            healthBar.transform.localScale = new Vector3(1, targetScale, 1);
+            healthBarBG.transform.localScale = Vector3.Lerp(healthBarBG.transform.localScale, new Vector3(1, targetScale, 1), Time.deltaTime * 4.0f);
 
-            targetScale = (pstats.currentMood / pstats.maxMood);
+            targetScale = (pstats.currentStamina / pstats.maxStamina);
 
-            moodBar.transform.localScale = new Vector3(targetScale, 1, 1);
+            staminaBar.transform.localScale = new Vector3(1, targetScale, 1);
         }
     }
 }

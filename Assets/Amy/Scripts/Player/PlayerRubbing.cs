@@ -19,6 +19,7 @@ namespace Amy
 
 		public float timeTilOrgasm = 15.0f;
 		public float healthRecoveryRate = 0.8f;
+		public float staminaDrainRate = 0.1f;
 
 	    // Start is called before the first frame update
 	    void Start()
@@ -53,7 +54,7 @@ namespace Amy
 
 			yield return Timing.WaitForSeconds(0.1f);
 
-			mPlayer.mAnimator.Play("Face_Ecchi");
+			mPlayer.updateExpression();
 
 		}
 
@@ -65,16 +66,15 @@ namespace Amy
 
 			mAnimator.CrossFade("Idle", 0.2f);
 			yield return Timing.WaitForSeconds(0.1f);
-			mPlayer.mAnimator.Play("Face_Neutral");
 			mPlayer.changeCurrentMode(PlayerModes.NORMAL);
+
 		}
 
 		public IEnumerator<float> cancelCaught()
         {
-			mPlayer.getStatus().currentMood = 0.0f;
+			mPlayer.getStatus().currentMood *= 0.5f;
 			mAnimator.CrossFade("Idle", 0.2f);
 			yield return Timing.WaitForSeconds(0.1f);
-			mPlayer.mAnimator.Play("Face_Neutral");
 			mPlayer.changeCurrentMode(PlayerModes.NORMAL);
 		}
 
@@ -88,6 +88,7 @@ namespace Amy
 			if (pstats.currentMood < pstats.maxMood)
             {
 				pstats.currentMood += Time.deltaTime * healthRecoveryRate * healMult;
+				pstats.currentStamina -= Time.deltaTime * staminaDrainRate * healMult;
 				mPlayer.updateHealth();
 			}
 

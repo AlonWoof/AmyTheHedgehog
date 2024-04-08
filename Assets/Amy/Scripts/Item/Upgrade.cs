@@ -12,6 +12,7 @@ namespace Amy
 	public class Upgrade : MonoBehaviour
 	{
 		protected Animator mAnimator;
+		protected const PlayableCharacter character = PlayableCharacter.Amy;
 
 		// Start is called before the first frame update
 		void Start()
@@ -23,6 +24,10 @@ namespace Amy
 			{
 				Die();
 			}
+
+			if (PlayerManager.Instance.currentCharacter != character)
+				Die();
+
 		}
 
 		protected virtual bool playerHasItem()
@@ -39,7 +44,7 @@ namespace Amy
         {
 			Player pl = other.GetComponent<Player>();
 
-			if (!pl || PlayerManager.Instance.hasHammer)
+			if (!pl || playerHasItem())
 				return;
 
 			doItemGetScene();

@@ -13,6 +13,7 @@ namespace Amy
 
         public float speed = 6.0f;
         public float spread = 0.0f;
+        public float lifetime = 100.0f;
 
         public LayerMask colMask;
         public DamageTeam team;
@@ -42,40 +43,24 @@ namespace Amy
         private void Update()
         {
             gameObject.layer = LayerMask.NameToLayer("Projectile");
-            doContactRaycast();
         }
 
         // Update is called once per frame
         void FixedUpdate()
         {
             body.velocity = transform.forward * speed;
+
+            lifetime -= Time.fixedDeltaTime;
+
+            if (lifetime < 0.0f)
+                Die();
         }
 
-        void doContactRaycast()
-        {
-            Vector3 start = transform.position;
-            Vector3 end = transform.position + ((transform.forward * (speed * Time.fixedDeltaTime)) * 1.5f);
-
-            RaycastHit hitInfo = new RaycastHit();
-
-            Debug.DrawLine(start, end, Color.red);
-
-            if(Physics.Linecast(start,end, out hitInfo))
-            {  
-                transform.position = hitInfo.point;
-                speed *= 0.25f;
-                body.velocity = Vector3.zero;
-                //Die();
-            }
-        }
 
         private void OnTriggerEnter(Collider other)
         {
             if (other.gameObject.layer == LayerMask.NameToLayer("Collision"))
-                Die();
-
-            if (other.GetComponent<Hitbox>())
-                Die();
+                lifetime = Time.deltaTime * 1.5f;
         }
 
         private void OnCollisionEnter(Collision collision)
@@ -83,13 +68,14 @@ namespace Amy
 
             if (collision.collider.gameObject.layer == LayerMask.NameToLayer("Collision"))
             {
-                Die();
+                lifetime = Time.deltaTime * 1.5f;
             }
 
             if (collision.collider.GetComponent<Hitbox>())
             {
-                
+                lifetime = Time.deltaTime * 1.5f;
             }
+
         }
 
         void Die()

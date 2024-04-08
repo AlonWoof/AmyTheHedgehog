@@ -15,8 +15,10 @@ namespace Amy
 		public float knockPower = 0.0f;
 		public Vector3 knockOrigin;
 
+		float hurtAnimTimer = 0.75f;
 		float verticalVelocity;
 		int framesAirborne = 0;
+
 
 		private void Awake()
 		{
@@ -45,6 +47,8 @@ namespace Amy
 			knockPower = power;
 			knockOrigin = origin;
 			mPlayer.acceleration.y = power * 0.65f;
+			hurtAnimTimer = 0.25f;
+
 
 			mAnimator.Play("Hurt");
 		}
@@ -60,7 +64,8 @@ namespace Amy
 
 			mPlayer.direction = dir.normalized;
 
-
+			if (hurtAnimTimer > 0.0f)
+				hurtAnimTimer -= Time.deltaTime;
 
 			if (knockPower > 0.5f)
 			{
@@ -80,6 +85,8 @@ namespace Amy
 			knockPower = Mathf.Clamp(knockPower, 0.0f, 128.0f);
 
 			mPlayer.groundNormal = Vector3.up;
+
+			updateIsGrounded();
 		}
 
 
@@ -110,7 +117,7 @@ namespace Amy
 			{
 				float groundAngle = Vector3.Angle(Vector3.up, hitInfo.normal);
 
-				Debug.Log("Floop Angle: " + groundAngle);
+				//Debug.Log("Floop Angle: " + groundAngle);
 
 				if (groundAngle > 30)
 					return;
@@ -124,7 +131,7 @@ namespace Amy
 					mPlayer.isOnGround = true;
 				}
 
-				if(mPlayer.mutekiTimer < 0.001f && knockPower < 0.1f)
+				if(hurtAnimTimer < 0.01f)
                 {
 					mPlayer.changeCurrentMode(PlayerModes.NORMAL);
 					mAnimator.Play("Hurt_Land");

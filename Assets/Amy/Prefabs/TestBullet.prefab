@@ -4933,8 +4933,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   body: {fileID: 0}
   onCollisionFX: {fileID: 2918217833887393753, guid: d33456c229855fa418ca39780257460e, type: 3}
-  speed: 60
+  speed: 30
   spread: 0
+  lifetime: 100
   colMask:
     serializedVersion: 2
     m_Bits: 1152
@@ -4953,5 +4954,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   damageAmount: 5
   damageType: 1
-  damageTeam: 1
-  source: {x: 0, y: 0, z: 0}
+  hurtsPlayer: 0
+  hurtsEnemy: 0
+  source: {fileID: 0}
+  collisionFX: {fileID: 0}
+  onContact:
+    m_PersistentCalls:
+      m_Calls: []

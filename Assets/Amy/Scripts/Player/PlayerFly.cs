@@ -24,6 +24,8 @@ namespace Amy
 		//Special animation offset.
 		float hoverOffset = 0.0f;
 
+		float moveMult;
+
 		Vector3 mDesiredMovement;
 		Vector3 mCurrentMovement;
 
@@ -58,7 +60,7 @@ namespace Amy
 
 			fly_left = max_fly;
 			mAnimator.CrossFade("Fly_Basic", 0.25f);
-
+			mAnimator.CrossFade("Ears_Flying", 0.25f);
 		}
 
 		void handleInput()
@@ -93,11 +95,17 @@ namespace Amy
 		{
 
 			Vector3 horizMovement = mRigidBody.velocity;
+			float vertMovement = mRigidBody.velocity.y;
 
 			horizMovement.y = 0.0f;
 
-			mAnimator.SetFloat("fly_speed", horizMovement.magnitude / 4.0f);
+			//mAnimator.SetFloat("fly_speed", horizMovement.magnitude / 4.0f);
 			mAnimator.SetFloat("animSpeed", 1.0f + horizMovement.magnitude / 4.0f);
+			//mAnimator.SetFloat("y_accel", vertMovement);
+
+			mAnimator.SetFloat("fly_z", horizMovement.magnitude * 0.25f);
+			mAnimator.SetFloat("fly_y", vertMovement * 0.3f);
+			mAnimator.SetFloat("fly_speed", Mathf.Clamp(mRigidBody.velocity.magnitude * 0.5f, 1.0f, 4.0f));
 
 			mPlayer.hipBoneTransform.position += hoverOffset * (Vector3.up * 0.1f);
 		}
@@ -119,6 +127,7 @@ namespace Amy
 			if (Physics.Linecast(start, end, out hitInfo, mPlayer.mColMask))
 			{
 				mPlayer.changeCurrentMode(PlayerModes.NORMAL);
+				mAnimator.CrossFade("Ears_Normal", 0.25f);
 			}
 		}
 
@@ -128,6 +137,7 @@ namespace Amy
 			if (mPlayer.getWaterDepth() >= mPlayer.headOffsetFromGround)
 			{
 				mPlayer.changeCurrentMode(PlayerModes.SWIMMING);
+				mAnimator.CrossFade("Ears_Normal", 0.25f);
 			}
 		}
 
@@ -163,6 +173,7 @@ namespace Amy
 				if (fly_left > 0.1f)
 					desiredVelo.y = -4.0f;
 			}
+
 
 			mPlayer.setVelocityDirectly(Vector3.Lerp(mRigidBody.velocity, desiredVelo, Time.fixedDeltaTime * 2.0f));
 			transform.rotation = Quaternion.Lerp(transform.rotation, Quaternion.LookRotation(mPlayer.direction, Vector3.up), Time.deltaTime * 3.0f);
