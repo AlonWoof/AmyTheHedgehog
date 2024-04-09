@@ -54,7 +54,7 @@ namespace Amy
 		Vector3 lookDirection = Vector3.forward;
 
 		float nodeTimeout = 5.0f;
-		float voiceTimeout = 4.0f;
+		float voiceTimeout = 15.0f;
 
 		int lastVoice = 0;
 
@@ -117,41 +117,6 @@ namespace Amy
             }
         }
 
-		bool isPlayerVisible()
-        {
-			Player pl = PlayerManager.Instance.getPlayer();
-
-
-
-			if (!pl)
-				return false;
-
-			if (Vector3.Angle(headNode.forward, Helper.getDirectionTo(headNode.position, pl.transform.position)) > viewFOV)
-				return false;
-
-			Vector3 start = headNode.transform.position;
-			Vector3 end = pl.transform.position + Vector3.up * 0.5f;
-
-			if (Vector3.Distance(start, end) > viewRange)
-				return false;
-
-			RaycastHit hitInfo = new RaycastHit();
-
-			if(Physics.Linecast(start,end, out hitInfo))
-            {
-				Hitbox hit = hitInfo.collider.GetComponentInChildren<Hitbox>();
-
-				if (hit.isPlayerHitbox)
-                {
-					lastKnownPosition = hit.transform.position;
-					return true;
-                }
-            }
-
-			return false;
-
-			
-        }
 
 		IEnumerator<float> doStartWander()
 		{
@@ -167,10 +132,44 @@ namespace Amy
 			nodeTimeout = 8.0f;
 		}
 
+		float getModeFOV()
+        {
+			switch(currentMode)
+            {
+				case EvilAmyMode.Chase:
+					return viewFOV * 0.75f;
+				case EvilAmyMode.Search:
+					return viewFOV * 1.5f;
+				case EvilAmyMode.Wander:
+					return viewFOV;
+            }
+
+			return viewFOV;
+		}
+
+		float getModeViewDist()
+		{
+			switch (currentMode)
+			{
+				case EvilAmyMode.Chase:
+					return viewRange * 1.5f;
+				case EvilAmyMode.Search:
+					return viewRange;
+				case EvilAmyMode.Wander:
+					return viewRange * 0.75f;
+			}
+
+			return viewFOV;
+		}
+
 		void wanderUpdate()
         {
 
-			if (isPlayerVisible())
+			Player pl = PlayerManager.Instance.getPlayer();
+
+			
+
+			if (EnemyHelpers.isPlayerVisible(pl, headNode, getModeFOV(), getModeViewDist()))
 			{
 				timePlayerVisible += Time.deltaTime;
 
@@ -264,6 +263,7 @@ namespace Amy
 			yield return 0f;
 
 			pl.getStatus().setStatusEffect(PlayerStatusFX.Scared);
+			pl.mVoice.playVoice(pl.mVoice.scared, true);
 			pl.updateExpression();
 			currentMode = EvilAmyMode.Chase;
         }
@@ -281,7 +281,7 @@ namespace Amy
 
 			timeSpentChasing += Time.deltaTime;
 
-			if (isPlayerVisible())
+			if (EnemyHelpers.isPlayerVisible(pl, headNode, getModeFOV(), getModeViewDist()))
 				chaseTimeLeft = 5.0f;
 			else
             {
@@ -297,12 +297,22 @@ namespace Amy
 
 		}
 
+		public void onDamage()
+        {
+			if (currentMode != EvilAmyMode.Chase)
+			{
+				changeMode(EvilAmyMode.Chase);
+				lastKnownPosition = PlayerManager.Instance.getPlayer().transform.position;
+			}
+		}
+
         private void OnTriggerEnter(Collider other)
         {
             if(other.gameObject.GetComponent<Player>())
             {
 				Timing.RunCoroutine(doDeathSequence(), Segment.RealtimeUpdate);
             }
+
         }
 
 

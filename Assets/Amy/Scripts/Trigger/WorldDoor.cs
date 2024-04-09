@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 //////////////////////////////////////
 //         2024 AlonWoof            //
@@ -28,7 +29,12 @@ namespace Amy
 		public Animator mAnimator;
 
 		public string destinationScene = "default";
+		
 		public int destinationExit = 0;
+
+		#if UNITY_EDITOR
+		public UnityEditor.SceneAsset destinationSceneAsset;
+		#endif
 
 		// Start is called before the first frame update
 		void Start()
@@ -125,5 +131,10 @@ namespace Amy
 
 			isWarping = true;
 		}
+
+        private void OnValidate()
+        {
+			name = "Door_" + destinationScene + "_exit" + destinationExit;
+        }
     }
 }

@@ -26,6 +26,8 @@ namespace Amy
         public AudioClip[] groundAttack;
         public AudioClip[] airAttack;
 
+        public AudioClip[] scared;
+
         public AudioSource voiceSource;
 
         public float pitchMin = 1.0f;

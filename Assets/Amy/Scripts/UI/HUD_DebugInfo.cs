@@ -4,19 +4,29 @@ using UnityEngine;
 using UnityEngine.UI;
 
 //////////////////////////////////////
-//         2023 AlonWoof            //
+//         2024 AlonWoof            //
 //////////////////////////////////////
 
 namespace Amy
 {
 
+	public enum DebugInfoPage
+    {
+		None,
+		PlayerInstance,
+		PlayerStatus,
+		SceneInfo,
+		PageCount
+    }
 	public class HUD_DebugInfo : MonoBehaviour
 	{
 		public Text dbg_text;
 		public Player player;
 
-	    // Start is called before the first frame update
-	    void Start()
+		public DebugInfoPage currentPage;
+
+		// Start is called before the first frame update
+		void Start()
 	    {
 	        
 	    }
@@ -25,6 +35,13 @@ namespace Amy
 	    void Update()
 	    {
 	        
+			if(Input.GetKeyDown(KeyCode.F3))
+            {
+				currentPage++;
+
+				if (currentPage == DebugInfoPage.PageCount)
+					currentPage = DebugInfoPage.None;
+            }
 	    }
 
         private void LateUpdate()
@@ -44,9 +61,34 @@ namespace Amy
 				return;
 			}
 
+			if (currentPage == DebugInfoPage.None)
+			{
+				dbg_text.text = "";
+				return;
+			}
+
 			PlayerStatus pstats = player.getStatus();
 
 			string dbgstr = "DEBUG INFO\n\n";
+
+			switch(currentPage)
+            {
+				case DebugInfoPage.PlayerInstance:
+					dbgstr += getPlayerInstanceInfo();
+					break;
+            }
+
+			dbg_text.text = dbgstr;
+		}
+
+		string getPlayerInstanceInfo()
+        {
+
+			player = PlayerManager.Instance.getPlayer();
+			PlayerStatus pstats = player.getStatus();
+
+			string dbgstr = "";
+
 			dbgstr += "Health: " + pstats.currentHealth + " / " + pstats.maxHealth + "\n";
 			dbgstr += "Stamina: " + pstats.currentStamina + " / " + pstats.maxStamina + "\n";
 			dbgstr += "Mood: " + pstats.currentMood + " / " + pstats.maxMood + "\n\n";
@@ -73,7 +115,7 @@ namespace Amy
 			dbgstr += "attackTimer: " + player.attackTimer + "\n";
 			dbgstr += "isHammerJumping: " + player.framesAirborne + "\n";
 
-		dbg_text.text = dbgstr;
+			return dbgstr;
 		}
 	}
 }

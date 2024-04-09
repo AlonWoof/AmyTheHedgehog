@@ -86,6 +86,7 @@ namespace Amy
 				}
 			}
 
+
 			if (other.GetComponent<Enemy>() && hurtsEnemy)
 			{
 				bool success = other.GetComponent<Enemy>().takeDamage(this);
