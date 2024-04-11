@@ -32,6 +32,7 @@ namespace Amy
 			if (mPlayer.mChara == PlayableCharacter.Amy)
 			{
 				mPlayer.checkForGroundAttack();
+				mPlayer.checkForRunningGroundAttack();
 				mPlayer.checkForHammerJump();
 				mPlayer.checkForAirAttack();
 				mPlayer.checkForSlingshot();

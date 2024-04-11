@@ -15,6 +15,7 @@ namespace Amy
 
 		public string sceneToLoad;
 		public float timeTilLoad = 10.0f;
+		bool triggered = false;
 
 	    // Start is called before the first frame update
 	    void Start()
@@ -27,12 +28,15 @@ namespace Amy
 	    {
 			if (timeTilLoad > 0.0f)
 				timeTilLoad -= Time.unscaledDeltaTime;
-			else
+			else if(!triggered)
             {
-				GameManager.Instance.loadScene(sceneToLoad);
-				enabled = false;
+
+				PlayerManager.Instance.PlayerDieRespawn(PlayerKilled.DeathType.Corrupted);
+				//enabled = false;
+				triggered = true;
 				//Application.Quit();
-            }
+				Time.timeScale = 1.0f;
+			}
 			
 	    }
 	}

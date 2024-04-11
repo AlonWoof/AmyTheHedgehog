@@ -56,7 +56,7 @@ namespace Amy
 				foreach(Vibes v in nearbyVibes)
                 {
 					PlayerStatus pstats = mPlayer.getStatus();
-					pstats.currentMood += (v.moodPerSecond * Time.deltaTime);
+					//pstats.currentMood += (v.moodPerSecond * Time.deltaTime);
                 }
             }
 	    }
@@ -136,17 +136,35 @@ namespace Amy
         {
 			closestEnemy = null;
 			float bestDist = 16.0f;
+			float bestAngle = 0.5f;
 
 			foreach(Enemy e in nearbyEnemies)
             {
 				float dst = Vector3.Distance(e.transform.position, transform.position + (Vector3.up * 0.5f));
+				float ang_cam = Vector3.Dot(Camera.main.transform.forward, Helper.getDirectionTo(Camera.main.transform.position, e.transform.position).normalized);
+				float ang_player = Vector3.Dot(transform.forward, Helper.getDirectionTo(transform.position, e.transform.position).normalized);
+				float ang = (ang_cam + ang_cam + ang_player) * 0.33333f;
+
+
+				if (ang < 0.5f)
+					dst = 100.0f;
+
+				if (ang > 0.5f && ang < 0.75f)
+					dst = 15.0f + dst * 0.0625f;
 
 				if(dst < bestDist)
                 {
 					bestDist = dst;
+					bestAngle = ang;
 					closestEnemy = e;
                 }
+
             }
-        }
+
+			Debug.Log("BEST ANGLE: " + bestAngle);
+
+
+
+		}
 	}
 }

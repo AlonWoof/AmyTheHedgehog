@@ -21,6 +21,8 @@ namespace Amy
 
 		public float attackRange = 16.0f;
 		public float attackTimer = 3.0f;
+		public const float minAttackTime = 2.0f;
+		public const float maxAttackTime = 5.0f;
 
 		public CoroutineHandle thinkHandle;
 		public CoroutineHandle currentActionHandle;
@@ -78,7 +80,7 @@ namespace Amy
 				if(attackTimer < 0.0f)
                 {
 					fireShot();
-					attackTimer = Random.Range(0.1f, 2.0f);
+					attackTimer = Random.Range(minAttackTime, maxAttackTime);
                 }
 			}
 			else
@@ -134,6 +136,7 @@ namespace Amy
 					playerList.Add(p);
 				}
 			}
+
 
 			float closest = attackRange * 1.5f;
 

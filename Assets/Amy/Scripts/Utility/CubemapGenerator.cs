@@ -12,14 +12,12 @@ using UnityEditor;
 public class CubemapGenerator : MonoBehaviour
 {
 
-	public Camera mCamera;
-
 	public int resWidth = 512; 
 	public int resHeight = 512;
 
-	public Texture2D tex;
 	public Cubemap cb;
-
+	public Texture2D normalMap;
+	
 	// Start is called before the first frame update
 	void Start()
 	{
@@ -32,12 +30,54 @@ public class CubemapGenerator : MonoBehaviour
 
 	}
 
-	public void generateCubemapTextures()
-    {
-		cb = new Cubemap(resWidth, TextureFormat.RGB24, 0);
+	void CreateBBMaterial()
+	{
+#if UNITY_EDITOR
+		// Create a simple material asset
 
-		mCamera.RenderToCubemap(cb);
-		AssetDatabase.CreateAsset(cb, "Assets/Amy/Materials/Cubemaps/" + SceneManager.GetActiveScene().name + "_cubemap.cubemap");
+		Cubemap cb = (Cubemap)AssetDatabase.LoadAssetAtPath("Assets/Amy/Materials/Cubemaps/" + SceneManager.GetActiveScene().name + "_cubemap.cubemap", typeof(Cubemap));
+
+		Material material = new Material(Shader.Find("AlonWoof/Amy/DoorPortal"));
+		material.SetTexture("_MainTex", cb);
+		material.mainTexture = cb;
+		material.SetTexture("_Normal0", normalMap);
+		material.SetTexture("_Normal1", normalMap);
+
+
+		AssetDatabase.CreateAsset(material, "Assets/Amy/Materials/Cubemaps/" + "bb_" + SceneManager.GetActiveScene().name + "_portal" + ".mat");
+
+		// Print the path of the created asset
+		Debug.Log(AssetDatabase.GetAssetPath(material));
+	#endif
 	}
 
+
+	public void generateCubemapTextures()
+    {
+	#if UNITY_EDITOR
+		cb = new Cubemap(resWidth, TextureFormat.RGB24, 0);
+
+		GameObject cam = GameObject.Instantiate(Amy.GameManager.LoadSystemDataStandalone().RES_mainCamera);
+		
+		if(cam.GetComponentInChildren<Cinemachine.CinemachineBrain>())
+        {
+			cam.GetComponentInChildren<Cinemachine.CinemachineBrain>().enabled = false;
+
+		}
+		
+		cam.transform.position = transform.position;
+		cam.transform.rotation = transform.rotation;
+
+		cam.tag = "";
+		Camera mCam = cam.GetComponent<Camera>();
+		mCam.RenderToCubemap(cb);
+		
+
+		AssetDatabase.CreateAsset(cb, "Assets/Amy/Materials/Cubemaps/" + SceneManager.GetActiveScene().name + "_cubemap.cubemap");
+
+		DestroyImmediate(cam);
+
+	#endif
+	}
+	
 }

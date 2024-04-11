@@ -23,7 +23,8 @@ namespace Amy
         {
             Normal,
             Falling,
-            Drowned
+            Drowned,
+            Corrupted
         }
 
         public DeathType deathType;

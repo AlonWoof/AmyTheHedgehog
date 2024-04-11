@@ -113,7 +113,8 @@ namespace Amy
 			dbgstr += "isHammerJumping: " + player.isAttacking + "\n";
 			dbgstr += "mutekiTimer: " + player.mutekiTimer + "\n";
 			dbgstr += "attackTimer: " + player.attackTimer + "\n";
-			dbgstr += "isHammerJumping: " + player.framesAirborne + "\n";
+			dbgstr += "framesAirborne: " + player.framesAirborne + "\n";
+			dbgstr += "hammerJumpCharge: " + player.hammerJumpCharge + "\n";
 
 			return dbgstr;
 		}

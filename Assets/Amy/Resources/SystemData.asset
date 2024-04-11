@@ -175,10 +175,149 @@ MonoBehaviour:
       jumpPowerBonus: 0
       lungCapacity: 20
       dirtiness: 0
+      statusFX: 0
+      currentVibes: 0
+      scaredTimeLeft: 0
+      goodFoodTimeLeft: 0
   CreamParams:
     ingameModel: {fileID: 8320836909537376735, guid: 7a9c43ef7fe932f40aa27e2810c7f027, type: 3}
     ingameAnimator: {fileID: 9100000, guid: 66a4be1c3b4202a4687b5eb084531268, type: 2}
-    hitBoxes: []
+    hitBoxes:
+    - boneName: head
+      mShape: 0
+      Weakness: 0
+      Immunity: 0
+      damageMultiplier: 1
+      radius: 0.14
+      height: 0
+      center: {x: 0, y: 0.12, z: 0}
+      size: {x: 0, y: 0, z: 0}
+    - boneName: chest
+      mShape: 2
+      Weakness: 0
+      Immunity: 0
+      damageMultiplier: 1
+      radius: 0
+      height: 0
+      center: {x: 0, y: 0.06, z: 0.025}
+      size: {x: 0.1, y: 0.15, z: 0.1}
+    - boneName: hips
+      mShape: 2
+      Weakness: 0
+      Immunity: 0
+      damageMultiplier: 1
+      radius: 0
+      height: 0
+      center: {x: 0, y: 0.04, z: 0}
+      size: {x: 0.15, y: 0.07, z: 0.1}
+    - boneName: thigh_l
+      mShape: 1
+      Weakness: 0
+      Immunity: 0
+      damageMultiplier: 1
+      radius: 0.03
+      height: 0.18
+      center: {x: 0, y: 0.09, z: 0}
+      size: {x: 1, y: 1, z: 1}
+    - boneName: thigh_r
+      mShape: 1
+      Weakness: 0
+      Immunity: 0
+      damageMultiplier: 1
+      radius: 0.03
+      height: 0.18
+      center: {x: 0, y: 0.09, z: 0}
+      size: {x: 1, y: 1, z: 1}
+    - boneName: shin_l
+      mShape: 1
+      Weakness: 0
+      Immunity: 0
+      damageMultiplier: 1
+      radius: 0.03
+      height: 0.18
+      center: {x: 0, y: 0.09, z: 0}
+      size: {x: 1, y: 1, z: 1}
+    - boneName: upperarm_l
+      mShape: 1
+      Weakness: 0
+      Immunity: 0
+      damageMultiplier: 1
+      radius: 0.022
+      height: 0.15
+      center: {x: 0, y: 0.041, z: 0}
+      size: {x: 1, y: 1, z: 1}
+    - boneName: upperarm_r
+      mShape: 1
+      Weakness: 0
+      Immunity: 0
+      damageMultiplier: 1
+      radius: 0.022
+      height: 0.15
+      center: {x: 0, y: 0.041, z: 0}
+      size: {x: 1, y: 1, z: 1}
+    - boneName: forearm_l
+      mShape: 1
+      Weakness: 0
+      Immunity: 0
+      damageMultiplier: 1
+      radius: 0.022
+      height: 0.15
+      center: {x: 0, y: 0.041, z: 0}
+      size: {x: 1, y: 1, z: 1}
+    - boneName: forearm_r
+      mShape: 1
+      Weakness: 0
+      Immunity: 0
+      damageMultiplier: 1
+      radius: 0.022
+      height: 0.15
+      center: {x: 0, y: 0.041, z: 0}
+      size: {x: 1, y: 1, z: 1}
+    - boneName: hand_l
+      mShape: 2
+      Weakness: 0
+      Immunity: 0
+      damageMultiplier: 1
+      radius: 0
+      height: 0
+      center: {x: 0, y: 0.054, z: 0}
+      size: {x: 0.029, y: 0.077, z: 0.063}
+    - boneName: hand_r
+      mShape: 2
+      Weakness: 0
+      Immunity: 0
+      damageMultiplier: 1
+      radius: 0
+      height: 0
+      center: {x: 0, y: 0.054, z: 0}
+      size: {x: 0.029, y: 0.077, z: 0.063}
+    - boneName: shin_r
+      mShape: 1
+      Weakness: 0
+      Immunity: 0
+      damageMultiplier: 1
+      radius: 0.03
+      height: 0.18
+      center: {x: 0, y: 0.09, z: 0}
+      size: {x: 1, y: 1, z: 1}
+    - boneName: foot_r
+      mShape: 2
+      Weakness: 0
+      Immunity: 0
+      damageMultiplier: 1
+      radius: 0
+      height: 0
+      center: {x: 0, y: 0.048, z: 0}
+      size: {x: 0.08, y: 0.13, z: 0.063}
+    - boneName: foot_l
+      mShape: 2
+      Weakness: 0
+      Immunity: 0
+      damageMultiplier: 1
+      radius: 0
+      height: 0
+      center: {x: 0, y: 0.048, z: 0}
+      size: {x: 0.08, y: 0.13, z: 0.063}
     height: 0.8
     weight: 25
     forwardAccel: 4.5
@@ -203,6 +342,10 @@ MonoBehaviour:
       jumpPowerBonus: 0
       lungCapacity: 10
       dirtiness: 0
+      statusFX: 0
+      currentVibes: 0
+      scaredTimeLeft: 0
+      goodFoodTimeLeft: 0
   RES_userInterface: {fileID: 6064850547931311056, guid: 1acd5a71c0cce5b4a974f6647a7cb039, type: 3}
   RES_mainCamera: {fileID: 6520535683780218669, guid: af7d0377a6b01a24eb8f9e78aa70cf09, type: 3}
   RES_AmyPlayerFX:
@@ -235,3 +378,4 @@ MonoBehaviour:
   bgm_alert: {fileID: 0}
   bgm_evasion: {fileID: 0}
   sfx_mgs_clear: {fileID: 0}
+  Cutscene_AmyWakeup: {fileID: 6688582756318106170, guid: 91dfae556bb934742a193d0c535fd95b, type: 3}

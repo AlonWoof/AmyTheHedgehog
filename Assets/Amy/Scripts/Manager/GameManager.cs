@@ -84,6 +84,11 @@ namespace Amy
             QualitySettings.vSyncCount = 0;
         }
 
+        public static SystemData LoadSystemDataStandalone()
+        {
+            return Resources.Load("SystemData") as SystemData;
+        }
+
         // Start is called before the first frame update
         void Awake()
         {

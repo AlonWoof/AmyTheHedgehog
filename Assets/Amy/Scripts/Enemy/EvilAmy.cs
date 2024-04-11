@@ -15,6 +15,7 @@ namespace Amy
 	public enum EvilAmyMode
     {
 		Wander,
+		Alerted,
 		Search,
 		Chase
     }
@@ -73,8 +74,13 @@ namespace Amy
 				case EvilAmyMode.Wander:
 					wanderUpdate();
 					break;
+
+				case EvilAmyMode.Alerted:
+					break;
+
 				case EvilAmyMode.Search:
 					break;
+
 				case EvilAmyMode.Chase:
 					chaseUpdate();
 					break;
@@ -172,6 +178,7 @@ namespace Amy
 			if (EnemyHelpers.isPlayerVisible(pl, headNode, getModeFOV(), getModeViewDist()))
 			{
 				timePlayerVisible += Time.deltaTime;
+				lookDirection = Helper.getDirectionTo(transform.position, pl.transform.position);
 
 				if (timePlayerVisible > 1.0f)
 				{
@@ -320,10 +327,13 @@ namespace Amy
         {
 			//ZA WARUDO
 			Time.timeScale = 0.0f;
+			GameManager.Instance.playerInputDisabled = true;
+			GameManager.Instance.cameraInputDisabled = true;
 
 			GameObject.Instantiate(textureFucker);
 
 			MusicManager.Instance.fadeBGM(0.0f, 0.01f);
+			MusicManager.Instance.bgm.volume = 0.0f;
 
 			yield return Timing.WaitForSeconds(1.0f);
 			

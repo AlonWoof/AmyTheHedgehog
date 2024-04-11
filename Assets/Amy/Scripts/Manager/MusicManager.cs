@@ -98,7 +98,7 @@ namespace Amy
             if (currentBGM.outroClip != null)
                 hasOutro = true;
 
-            Timing.RunCoroutine(doSongTransition(crossFadeTime));
+            Timing.RunCoroutine(doSongTransition(crossFadeTime), Segment.RealtimeUpdate);
         }
 
         IEnumerator<float> doSongTransition(float crossFadeTime)
@@ -129,12 +129,12 @@ namespace Amy
 
         public void fadeBGM(float targetVolume = 0.0f, float crossFadeTime = 1.0f)
         {
-            Timing.RunCoroutine(doBGMFade(targetVolume, crossFadeTime));
+            Timing.RunCoroutine(doBGMFade(targetVolume, crossFadeTime), Segment.RealtimeUpdate);
         }
 
         public void fadeCombatBGM(float targetVolume = 0.0f, float crossFadeTime = 1.0f)
         {
-            Timing.RunCoroutine(doCombatBGMFade(targetVolume, crossFadeTime));
+            Timing.RunCoroutine(doCombatBGMFade(targetVolume, crossFadeTime), Segment.RealtimeUpdate);
         }
 
         IEnumerator<float> doBGMFade(float target, float crossFadeTime)
@@ -197,7 +197,7 @@ namespace Amy
 
         public void playMusicEffect(AudioClip musicEffect, float fadetime = 1.0f, bool resumeAfter = false)
         {
-            Timing.RunCoroutine(doMusicEffect(musicEffect, fadetime, resumeAfter));
+            Timing.RunCoroutine(doMusicEffect(musicEffect, fadetime, resumeAfter), Segment.RealtimeUpdate);
         }
 
         IEnumerator<float> doMusicEffect(AudioClip musicEffect, float fadetime, bool resumeAfter)

@@ -52,5 +52,9 @@ namespace Amy
         public BGMData bgm_evasion;
         public AudioClip sfx_mgs_clear;
 
+        [Header("Cutscenes")]
+
+        public GameObject Cutscene_AmyWakeup;
+
     }
 }

@@ -1,8 +1,8 @@
-// Upgrade NOTE: upgraded instancing buffer 'AlonWoofDolphinEye' to new syntax.
+// Upgrade NOTE: upgraded instancing buffer 'AlonWoofAmyEye' to new syntax.
 
 // Made with Amplify Shader Editor v1.9.1.5
 // Available at the Unity Asset Store - http://u3d.as/y3X 
-Shader "AlonWoof/Dolphin/Eye"
+Shader "AlonWoof/Amy/Eye"
 {
 	Properties
 	{
@@ -44,14 +44,14 @@ Shader "AlonWoof/Dolphin/Eye"
 		uniform float _SpecularGloss;
 		uniform float _SpecularPower;
 
-		UNITY_INSTANCING_BUFFER_START(AlonWoofDolphinEye)
+		UNITY_INSTANCING_BUFFER_START(AlonWoofAmyEye)
 			UNITY_DEFINE_INSTANCED_PROP(float, _LookX)
-#define _LookX_arr AlonWoofDolphinEye
+#define _LookX_arr AlonWoofAmyEye
 			UNITY_DEFINE_INSTANCED_PROP(float, _LookY)
-#define _LookY_arr AlonWoofDolphinEye
+#define _LookY_arr AlonWoofAmyEye
 			UNITY_DEFINE_INSTANCED_PROP(float, _EyeJitter)
-#define _EyeJitter_arr AlonWoofDolphinEye
-		UNITY_INSTANCING_BUFFER_END(AlonWoofDolphinEye)
+#define _EyeJitter_arr AlonWoofAmyEye
+		UNITY_INSTANCING_BUFFER_END(AlonWoofAmyEye)
 
 		void surf( Input i , inout SurfaceOutput o )
 		{
@@ -60,13 +60,13 @@ Shader "AlonWoof/Dolphin/Eye"
 			float4 appendResult49 = (float4(_LookX_Instance , _LookY_Instance , 0.0 , 0.0));
 			float2 uv_TexCoord50 = i.uv_texcoord + appendResult49.xy;
 			float2 temp_cast_2 = (_Time.y).xx;
-			float dotResult4_g2 = dot( temp_cast_2 , float2( 12.9898,78.233 ) );
-			float lerpResult10_g2 = lerp( 0.0 , 1.0 , frac( ( sin( dotResult4_g2 ) * 43758.55 ) ));
+			float dotResult4_g4 = dot( temp_cast_2 , float2( 12.9898,78.233 ) );
+			float lerpResult10_g4 = lerp( 0.0 , 1.0 , frac( ( sin( dotResult4_g4 ) * 43758.55 ) ));
 			float mulTime73 = _Time.y * 0.85;
 			float2 temp_cast_3 = (mulTime73).xx;
 			float dotResult4_g3 = dot( temp_cast_3 , float2( 12.9898,78.233 ) );
 			float lerpResult10_g3 = lerp( 0.0 , 1.0 , frac( ( sin( dotResult4_g3 ) * 43758.55 ) ));
-			float4 appendResult82 = (float4(lerpResult10_g2 , lerpResult10_g3 , 0.0 , 0.0));
+			float4 appendResult82 = (float4(lerpResult10_g4 , lerpResult10_g3 , 0.0 , 0.0));
 			float _EyeJitter_Instance = UNITY_ACCESS_INSTANCED_PROP(_EyeJitter_arr, _EyeJitter);
 			float4 eyeOffsetUV51 = ( float4( uv_TexCoord50, 0.0 , 0.0 ) + ( appendResult82 * _EyeJitter_Instance ) );
 			float3 finalNormals12 = UnpackNormal( tex2D( _Bump, eyeOffsetUV51.xy ) );
@@ -137,9 +137,9 @@ Node;AmplifyShaderEditor.SimpleAddOpNode;72;-1688.803,-2589.191;Inherit;False;2;
 Node;AmplifyShaderEditor.SimpleAddOpNode;85;-1440.546,-2294.032;Inherit;False;2;2;0;FLOAT2;0,0;False;1;FLOAT4;0,0,0,0;False;1;FLOAT4;0
 Node;AmplifyShaderEditor.SimpleMultiplyOpNode;83;-1980.045,-2158.829;Inherit;False;2;2;0;FLOAT4;0,0,0,0;False;1;FLOAT;0;False;1;FLOAT4;0
 Node;AmplifyShaderEditor.FunctionNode;75;-2381.803,-2048.324;Inherit;False;Random Range;-1;;3;7b754edb8aebbfb4a9ace907af661cfc;0;3;1;FLOAT2;0,0;False;2;FLOAT;0;False;3;FLOAT;1;False;1;FLOAT;0
-Node;AmplifyShaderEditor.FunctionNode;68;-2379.803,-2168.492;Inherit;False;Random Range;-1;;2;7b754edb8aebbfb4a9ace907af661cfc;0;3;1;FLOAT2;0,0;False;2;FLOAT;0;False;3;FLOAT;1;False;1;FLOAT;0
+Node;AmplifyShaderEditor.FunctionNode;68;-2379.803,-2168.492;Inherit;False;Random Range;-1;;4;7b754edb8aebbfb4a9ace907af661cfc;0;3;1;FLOAT2;0,0;False;2;FLOAT;0;False;3;FLOAT;1;False;1;FLOAT;0
 Node;AmplifyShaderEditor.SimpleMultiplyOpNode;84;-1981.344,-2041.83;Inherit;False;2;2;0;FLOAT4;0,0,0,0;False;1;FLOAT4;0.003,0.003,0,0;False;1;FLOAT4;0
-Node;AmplifyShaderEditor.StandardSurfaceOutputNode;0;-4.121002,-418.3776;Float;False;True;-1;2;ASEMaterialInspector;0;0;BlinnPhong;AlonWoof/Dolphin/Eye;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;Back;0;False;;0;False;;False;0;False;;0;False;;False;0;Opaque;0.5;True;True;0;False;Opaque;;Geometry;All;12;all;True;True;True;True;0;False;;False;0;False;;255;False;;255;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;False;2;15;10;25;False;0.5;True;0;0;False;;0;False;;0;0;False;;0;False;;0;False;;0;False;;0;False;0;0,0,0,0;VertexOffset;True;False;Cylindrical;False;True;Relative;0;;-1;-1;-1;-1;0;False;0;0;False;;0;0;False;;0;0;0;False;0.1;False;;0;False;;False;15;0;FLOAT3;0,0,0;False;1;FLOAT3;0,0,0;False;2;FLOAT3;0,0,0;False;3;FLOAT;0;False;4;FLOAT;0;False;6;FLOAT3;0,0,0;False;7;FLOAT3;0,0,0;False;8;FLOAT;0;False;9;FLOAT;0;False;10;FLOAT;0;False;13;FLOAT3;0,0,0;False;11;FLOAT3;0,0,0;False;12;FLOAT3;0,0,0;False;14;FLOAT4;0,0,0,0;False;15;FLOAT3;0,0,0;False;0
+Node;AmplifyShaderEditor.StandardSurfaceOutputNode;0;-4.121002,-418.3776;Float;False;True;-1;2;ASEMaterialInspector;0;0;BlinnPhong;AlonWoof/Amy/Eye;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;Back;0;False;;0;False;;False;0;False;;0;False;;False;0;Opaque;0.5;True;True;0;False;Opaque;;Geometry;All;12;all;True;True;True;True;0;False;;False;0;False;;255;False;;255;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;False;2;15;10;25;False;0.5;True;0;0;False;;0;False;;0;0;False;;0;False;;0;False;;0;False;;0;False;0;0,0,0,0;VertexOffset;True;False;Cylindrical;False;True;Relative;0;;-1;-1;-1;-1;0;False;0;0;False;;0;0;False;;0;0;0;False;0.1;False;;0;False;;False;15;0;FLOAT3;0,0,0;False;1;FLOAT3;0,0,0;False;2;FLOAT3;0,0,0;False;3;FLOAT;0;False;4;FLOAT;0;False;6;FLOAT3;0,0,0;False;7;FLOAT3;0,0,0;False;8;FLOAT;0;False;9;FLOAT;0;False;10;FLOAT;0;False;13;FLOAT3;0,0,0;False;11;FLOAT3;0,0,0;False;12;FLOAT3;0,0,0;False;14;FLOAT4;0,0,0,0;False;15;FLOAT3;0,0,0;False;0
 Node;AmplifyShaderEditor.RangedFloatNode;70;-2665.304,-1852.991;Inherit;False;InstancedProperty;_EyeJitter;EyeJitter;10;0;Create;True;0;0;0;False;0;False;0;0;0;0.01;0;1;FLOAT;0
 WireConnection;12;0;10;0
 WireConnection;1;1;42;0
@@ -185,4 +185,4 @@ WireConnection;0;2;66;0
 WireConnection;0;3;15;0
 WireConnection;0;4;16;0
 ASEEND*/
-//CHKSM=4F1E714F1F4BAB84849641F3D62500ABF268FD33
+//CHKSM=9A49C8B1568949F6F3DF3B537C81729B3996A94C

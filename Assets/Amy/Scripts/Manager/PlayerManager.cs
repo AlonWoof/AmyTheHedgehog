@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using MEC;
+using UnityEngine.SceneManagement;
 
 /* Copyright 2021 Jennifer Haden */
 namespace Amy
@@ -44,6 +45,7 @@ namespace Amy
         public float dirtiness = 0.0f;
 
         public int statusFX;
+        public int currentVibes;
         public float scaredTimeLeft = 0.0f;
         public float goodFoodTimeLeft = 0.0f;
 
@@ -68,6 +70,7 @@ namespace Amy
             ns.goodFoodTimeLeft = goodFoodTimeLeft;
 
             ns.statusFX = statusFX;
+            ns.currentVibes = currentVibes;
 
             return ns;
         }
@@ -93,6 +96,22 @@ namespace Amy
         public void unSetStatusEffect(PlayerStatusFX fx)
         {
             statusFX &= ~(int)fx;
+        }
+
+
+        public bool checkVibe(VibeType v)
+        {
+            return ((currentVibes & (int)v) == (int)v);
+        }
+
+        public void setVibe(VibeType v)
+        {
+            currentVibes |= (int)v;
+        }
+
+        public void unSetVibe(VibeType v)
+        {
+            currentVibes &= ~(int)v;
         }
     }
 
@@ -358,6 +377,22 @@ namespace Amy
             // pStats.currentMood = genkiAverage * pStats.maxMood;
         }
 
+        public void vibeCheck(Player pl)
+        {
+            //Only run this one once in a while.
+            PlayerStatus pStats = pl.getStatus();
+
+            pStats.currentVibes = 0;
+
+            foreach (Vibes v in FindObjectsOfType<Vibes>())
+            {
+                if(Vector3.Distance(v.transform.position, pl.transform.position + Vector3.up * 0.5f) < v.range)
+                {
+                    pStats.setVibe(v.vibeFlags);
+                }
+            }
+        }
+
         public Player getPlayer(bool search = true)
         {
             if (mPlayerInstance != null)
@@ -479,8 +514,11 @@ namespace Amy
 
             MusicManager.Instance.fadeBGM(0.0f, 1.0f);
 
-            while (mPlayerInstance.GetComponent<PlayerVoice>().voiceSource.isPlaying)
-                yield return 0f;
+            if (mPlayerInstance)
+            {
+                while (mPlayerInstance.GetComponent<PlayerVoice>().voiceSource.isPlaying)
+                    yield return 0f;
+            }
             
             yield return Timing.WaitForSeconds(0.5f);
 
@@ -488,39 +526,39 @@ namespace Amy
 
 
             yield return Timing.WaitForSeconds(1.1f);
-            MusicManager.Instance.restartMusic();
+            //MusicManager.Instance.restartMusic();
             MusicManager.Instance.fadeBGM(1.0f, 0.01f);
 
-            mPlayerInstance.transform.position = playerCheckpoint.transform.position;
-            mPlayerInstance.transform.rotation = playerCheckpoint.transform.rotation;
-
             //Lose money for getting owned.
-            subtractRings(35);
+            ringCount = 0;
 
-            float stamFac = getCurrentPlayerStatus().currentStamina / getCurrentPlayerStatus().maxStamina;
+            getCurrentPlayerStatus().currentHealth = getCurrentPlayerStatus().maxHealth * 0.5f;
+            getCurrentPlayerStatus().currentStamina = getCurrentPlayerStatus().maxStamina * 0.5f;
 
-            getCurrentPlayerStatus().currentHealth = Mathf.Lerp(1.0f, getCurrentPlayerStatus().maxHealth, stamFac);
-            getCurrentPlayerStatus().currentStamina *= 0.5f;
-            getCurrentPlayerStatus().currentMood *= 0.5f;
+            if(type == PlayerKilled.DeathType.Corrupted)
+            {
+                getCurrentPlayerStatus().currentStamina = getCurrentPlayerStatus().maxStamina * 0.1f;
+                getCurrentPlayerStatus().setStatusEffect(PlayerStatusFX.Tired);
+                getCurrentPlayerStatus().unSetStatusEffect(PlayerStatusFX.Scared);
+            }
 
+            if(mPlayerInstance)
+                GameObject.Destroy(mPlayerInstance.gameObject);
 
-
-            GameObject.Destroy(mPlayerInstance.gameObject);
             yield return 0f;
 
-            PlayerManager.Instance.spawnPlayerAtCheckpoint();
 
             yield return Timing.WaitForSeconds(2.0f);
 
-            UIManager.Instance.fadeScreen(true, 1.0f, false);
+            SceneManager.LoadScene("AmyRoom");
+            yield return Timing.WaitForSeconds(0.2f);
+            GameObject.Instantiate(GameManager.Instance.systemData.Cutscene_AmyWakeup);
 
-            yield return Timing.WaitForSeconds(1.1f);
-
-            GameManager.Instance.playerInputDisabled = false;
-            GameManager.Instance.cameraInputDisabled = false;
+            UIManager.Instance.fadeScreen(true, 3.0f);
 
         }
         
+
 
         public void characterSwitch(PlayableCharacter newChar)
         {
@@ -555,6 +593,8 @@ namespace Amy
             GameManager.Instance.playerInputDisabled = false;
             GameManager.Instance.cameraInputDisabled = false;
         }
+
+
 
     }
 

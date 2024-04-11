@@ -98,8 +98,10 @@ namespace Amy
 		public bool isSliding = false;
 		public bool isHammerJumping = false;
 		public bool isAttacking = false;
+		public bool isHammerSpin = false;
 		public float mutekiTimer = 0.0f;
 		public float attackTimer = 0.0f;
+		public float hammerJumpCharge = 0.0f;
 		public int framesAirborne = 0;
 
 		public float stickTimeout = 0.0f;
@@ -440,6 +442,7 @@ namespace Amy
 				if(attackTimer <= 0.0f)
                 {
 					isAttacking = false;
+					isHammerSpin = false;
 					attackTimer = 0.0f;
 
 					if (fx_hammerTrail)
@@ -1030,6 +1033,68 @@ namespace Amy
             }
 		}
 
+		public void runningGroundAttack()
+        {
+			if (isAttacking)
+				return;
+
+			if (PlayerManager.Instance.isHubRoom)
+				return;
+
+			if (!PlayerManager.Instance.hasHammer)
+				return;
+
+			//acceleration = Vector3.zero;
+
+			mAnimator.Play("RunningGroundAttack");
+			isHammerSpin = true;
+			isAttacking = true;
+			getStatus().currentStamina -= hammerAttackStaminaCost;
+			getStatus().clampValues();
+			attackTimer = 0.6f;
+
+			if (fx_hammerTrail)
+				fx_hammerTrail.enableFX();
+
+			mVoice.playVoiceDelayed(Random.Range(0.05f, 0.1f), mVoice.groundAttack, true);
+			hammerJumpCharge = 0.0f;
+
+			//Homing
+			if (areaDetector.closestEnemy)
+			{
+				float dst = Vector3.Distance(transform.position + Vector3.up * 0.5f, areaDetector.closestEnemy.transform.position);
+				float vertDist = areaDetector.closestEnemy.transform.position.y - transform.position.y;
+
+
+				if (dst < 4.0f && vertDist < 1.0f)
+				{
+					Vector3 dir = Helper.getHorizontalDirectionTo(transform.position, areaDetector.closestEnemy.transform.position);
+					dir.y = 0;
+
+					setAngleInstantly(dir);
+					//acceleration.z = dst * 2.0f;
+
+					if(areaDetector.closestEnemy.transform.position.y - transform.position.y > 0.8f)
+                    {
+
+						float slopeMult = Mathf.Clamp01(1.0f + slopeAmount);
+
+						if (slopeMult < 0.45f && isOnGround)
+							return;
+
+						float jumpPower = mParam.jumpSpeed * slopeMult;
+
+						if (getStatus().checkStatusEffect(PlayerStatusFX.Tired))
+							jumpPower *= 0.65f;
+
+						acceleration.y = jumpPower * 2;
+						jumpTimer = mParam.jump_hangTime;
+					}
+
+				}
+			}
+		}
+
 		public void airHammerAttack()
         {
 			if (isOnGround)
@@ -1039,6 +1104,7 @@ namespace Amy
 				return;
 
 			mAnimator.Play("AirAttack");
+			isHammerSpin = true;
 			isAttacking = true;
 			attackTimer = 0.6f;
 
@@ -1057,15 +1123,45 @@ namespace Amy
 			if (areaDetector.closestEnemy)
 			{
 				float dst = Vector3.Distance(transform.position + Vector3.up * 0.5f, areaDetector.closestEnemy.transform.position);
+				float vertDist = areaDetector.transform.position.y - transform.position.y;
 
-				if (dst < 8.0f)
+
+
+				if (dst < 4.0f && dst > 1.0f)
 				{
 					Vector3 dir = Helper.getDirectionTo(transform.position, areaDetector.closestEnemy.transform.position);
-					dir.y = 0;
+					dir.y = 0.0f;
 
-					setAngleInstantly(dir);
-					acceleration.z = 16.0f;
+					setAngleInstantly(dir.normalized);
+					acceleration.z = dst * 4.0f;
+					acceleration.y = vertDist * 4.0f;
 
+				}
+			}
+		}
+
+		public void updateHoming()
+        {
+
+			if (!isAttacking)
+				return;
+
+
+			if (areaDetector.closestEnemy)
+			{
+				float dst = Vector3.Distance(transform.position + Vector3.up * 0.5f, areaDetector.closestEnemy.transform.position);
+
+				if (dst < 4.0f && dst > 1.0f)
+				{
+					Vector3 dir = Helper.getDirectionTo(transform.position, areaDetector.closestEnemy.transform.position);
+
+					
+					//acceleration.z = 16.0f;
+					//setVelocityDirectly(dir * (dst * 8.0f));
+					acceleration = transform.rotation * (dir * 8.0f);
+
+					dir.y = 0.0f;
+					setAngleInstantly(dir.normalized);
 				}
 			}
 		}
@@ -1073,7 +1169,13 @@ namespace Amy
 		public void checkForHammerJump()
         {
 			if (acceleration.z < 5.3f)
+			{
+				hammerJumpCharge = 0.0f;
 				return;
+			}
+
+			if(!isOnGround)
+				hammerJumpCharge = 0.0f;
 
 			if (PlayerManager.Instance.isHubRoom)
 				return;
@@ -1085,8 +1187,16 @@ namespace Amy
 			if (getStatus().checkStatusEffect(PlayerStatusFX.Tired))
 				return;
 
-			if (Input.GetButtonDown("Attack"))
+			if(Input.GetButton("Attack") && hammerJumpCharge < 1.0f)
+            {
+				hammerJumpCharge += Time.deltaTime * 2.0f;
+			}
+			else if(!Input.GetButton("Attack") && hammerJumpCharge > 0.9f)
+            {
 				hammerJump();
+				hammerJumpCharge = 0.0f;
+			}
+
 		}
 
 		public void checkForGroundAttack()
@@ -1100,9 +1210,27 @@ namespace Amy
 			if (!PlayerManager.Instance.hasHammer)
 				return;
 
-			if (Input.GetButtonDown("Attack"))
+			if (Input.GetButtonDown("Attack") )
 				groundAttack();
         }
+
+		public void checkForRunningGroundAttack()
+        {
+			if (acceleration.magnitude < 1.0f || !isOnGround)
+				return;
+
+			if (PlayerManager.Instance.isHubRoom)
+				return;
+
+			if (!PlayerManager.Instance.hasHammer)
+				return;
+
+			if (!Input.GetButton("Attack") && hammerJumpCharge > 0.01f && hammerJumpCharge < 0.9f)
+			{
+				runningGroundAttack();
+				hammerJumpCharge = 0.0f;
+			}
+		}
 
 		public void checkForAirAttack()
         {
@@ -1111,6 +1239,9 @@ namespace Amy
 
 			if (!PlayerManager.Instance.hasHammer)
 				return;
+
+			//if (isAttacking && !isOnGround)
+				//updateHoming();
 
 			if (Input.GetButtonDown("Attack"))
 				airHammerAttack();
@@ -1195,13 +1326,10 @@ namespace Amy
 			stickAngle =  Vector3.ClampMagnitude(new Vector3(h, 0f, v), 1.0f);
 			stickPower = stickAngle.magnitude;
 
-
 			Debug.Log(stickPower);
 
 			Vector3 targetDirection = stickAngle;
 			Quaternion targetRotation = Quaternion.LookRotation(targetDirection, Vector3.up);
-
-			
 
 			//Vector3 camAngle = GameManager.Instance.mainCamera.transform.forward;
 			Vector3 camAngle = Camera.main.transform.forward;

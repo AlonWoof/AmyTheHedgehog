@@ -166,6 +166,17 @@ public static class Helper
     }
 
 
+    public static Vector3 getHorizontalDirectionTo(Vector3 a, Vector3 b)
+    {
+        Vector3 heading = zeroAltitude(a) - zeroAltitude(b);
+
+        float distance = heading.magnitude;
+        Vector3 direction = heading / distance; // This is now the normalized direction.
+
+        return -direction;
+    }
+
+
 
     public static float ClampAngle(float angle, float min, float max)
     {
