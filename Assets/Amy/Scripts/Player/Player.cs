@@ -140,6 +140,9 @@ namespace Amy
 
 		public static Player Spawn(Vector3 pos, Vector3 dir, PlayableCharacter chara = PlayableCharacter.Amy)
 		{
+			//Replace this with something better later.
+			GameManager.Instance.findSceneInfo();
+
 			PlayerParameters cpar = GameManager.getSystemData().AmyParams;
 
 			if (chara == PlayableCharacter.Cream)
@@ -372,6 +375,7 @@ namespace Amy
 			float angle = (20.0f * leanAmount) * Mathf.Clamp01(Mathf.Abs(acceleration.z) / 6.0f);
 
 			leanAmount = Mathf.Lerp(leanAmount, 0.0f, Time.deltaTime * 3.0f);
+
 
 			hipBoneTransform.rotation = hipBoneTransform.rotation * Quaternion.Euler(0, 0, angle);
 
@@ -608,6 +612,8 @@ namespace Amy
         {
 			doLeanAnimation();
 
+			//if (acceleration.z > 0.5f)
+			//	tpc.centerBehindPlayerSmooth(Time.deltaTime);
 		}
 
 		public void updateExpression()
@@ -1189,7 +1195,7 @@ namespace Amy
 
 			if(Input.GetButton("Attack") && hammerJumpCharge < 1.0f)
             {
-				hammerJumpCharge += Time.deltaTime * 2.0f;
+				hammerJumpCharge += Time.deltaTime * 3.0f;
 			}
 			else if(!Input.GetButton("Attack") && hammerJumpCharge > 0.9f)
             {

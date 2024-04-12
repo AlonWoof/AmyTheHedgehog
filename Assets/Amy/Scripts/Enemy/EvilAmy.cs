@@ -64,6 +64,13 @@ namespace Amy
 	    {
 			lookDirection = headNode.transform.forward;
 			currentDirection = headNode.transform.forward;
+
+			if (nodes.Count > 0)
+			{
+				transform.position = nodes[Random.Range(0, nodes.Count)].position;
+				mAgent.SetDestination(transform.position);
+				nodeTimeout = Random.Range(5.0f, 10.0f);
+			}
 		}
 	
 	    // Update is called once per frame
@@ -173,7 +180,6 @@ namespace Amy
 
 			Player pl = PlayerManager.Instance.getPlayer();
 
-			
 
 			if (EnemyHelpers.isPlayerVisible(pl, headNode, getModeFOV(), getModeViewDist()))
 			{
@@ -335,8 +341,10 @@ namespace Amy
 			MusicManager.Instance.fadeBGM(0.0f, 0.01f);
 			MusicManager.Instance.bgm.volume = 0.0f;
 
+			MusicManager.Instance.changeSongs(null, 0.3f);
 			yield return Timing.WaitForSeconds(1.0f);
 			
+
 			SceneManager.LoadScene("DeathScreen");
 
 		}

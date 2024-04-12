@@ -25,6 +25,7 @@ namespace Amy
 		// Start is called before the first frame update
 		void Start()
 	    {
+			getBaseComponents();
 			nearbyEnemies = new List<Enemy>();
 			nearbyNPCs = new List<NPC>();
 			nearbyVibes = new List<Vibes>();
@@ -51,15 +52,10 @@ namespace Amy
 				refreshClosestNPC();
 			}
 
-			if(nearbyVibes.Count > 0)
-            {
-				foreach(Vibes v in nearbyVibes)
-                {
-					PlayerStatus pstats = mPlayer.getStatus();
-					//pstats.currentMood += (v.moodPerSecond * Time.deltaTime);
-                }
-            }
-	    }
+
+			updateVibes();
+
+		}
 
 		void refreshLists()
         {
@@ -114,6 +110,20 @@ namespace Amy
 			return getNearbyNPCCount() + getNearbyEnemyCount();
         }
 
+		public void updateVibes()
+        {
+			PlayerStatus pStats = mPlayer.getStatus();
+
+			pStats.currentVibes = 0;
+
+			foreach(Vibes v in nearbyVibes)
+            {
+				if(Vector3.Distance(v.transform.position, mPlayer.transform.position + Vector3.up * 0.5f) < v.range)
+                {
+					pStats.setVibe(v.vibeFlags);
+                }
+            }
+        }
 
 		public void refreshClosestNPC()
         {

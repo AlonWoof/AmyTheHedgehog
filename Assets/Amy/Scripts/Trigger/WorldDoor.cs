@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEditor;
 
 //////////////////////////////////////
 //         2024 AlonWoof            //
@@ -33,7 +34,7 @@ namespace Amy
 		public int destinationExit = 0;
 
 		#if UNITY_EDITOR
-		public UnityEditor.SceneAsset destinationSceneAsset;
+
 		#endif
 
 		// Start is called before the first frame update
@@ -134,7 +135,24 @@ namespace Amy
 
         private void OnValidate()
         {
+#if UNITY_EDITOR
+
+
 			name = "Door_" + destinationScene + "_exit" + destinationExit;
-        }
-    }
+
+
+			Material m = (Material)AssetDatabase.LoadAssetAtPath("Assets/Amy/Materials/Cubemaps/" + destinationScene + "_portal" + ".mat", typeof(Material));
+
+			if (!m)
+				return;
+
+			foreach (Renderer r in GetComponentsInChildren<Renderer>())
+            {
+				if(r.gameObject.name.ToLower() == "portal")
+					r.material = m;
+			}
+#endif
+		}
+
+	}
 }

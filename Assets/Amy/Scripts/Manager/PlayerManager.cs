@@ -11,7 +11,7 @@ namespace Amy
     {
         Amy,
         Cream,
-        MAX
+        None
     }
 
     public enum PlayerStatusFX
@@ -135,6 +135,7 @@ namespace Amy
 
         //Unlockable/Story progression
         public ProgressData progress;
+        
 
         public PlayableCharacter currentCharacter = PlayableCharacter.Amy;
 
@@ -194,8 +195,13 @@ namespace Amy
             if (lastOrgasmCooldown > 0.0f)
                 lastOrgasmCooldown -= Time.deltaTime;
 
+            if (currentCharacter != PlayableCharacter.Cream)
+                calculateSleeping(CreamStatus);
 
-            if(mPlayerInstance)
+            if (currentCharacter != PlayableCharacter.Amy)
+                calculateSleeping(AmyStatus);
+
+            if (mPlayerInstance)
                 updatePlayerStatus(mPlayerInstance);
         }
 
@@ -281,6 +287,9 @@ namespace Amy
             PlayerStatus pStats = pl.getStatus();
 
             calculateHealing(pStats);
+
+            vibeCheck(pl);
+
 
             if (pl.currentMode != PlayerModes.RUBBING)
                 calculateMood(pStats);
@@ -369,6 +378,9 @@ namespace Amy
             if (pStats.checkStatusEffect(PlayerStatusFX.Horny))
                 targetMood *= 0.9f;
 
+            if (pStats.checkVibe(VibeType.Peaceful))
+                targetMood = Mathf.Clamp(targetMood, pStats.maxMood * 0.5f, pStats.maxMood);
+
             pStats.currentMood = Mathf.Lerp(pStats.currentMood, targetMood, Time.deltaTime * 1.2f);
             pStats.currentMood = Mathf.Clamp(pStats.currentMood, 0, genkiAverage * pStats.maxMood);
 
@@ -382,16 +394,63 @@ namespace Amy
             //Only run this one once in a while.
             PlayerStatus pStats = pl.getStatus();
 
-            pStats.currentVibes = 0;
-
-            foreach (Vibes v in FindObjectsOfType<Vibes>())
+            if ( pStats.checkVibe(VibeType.Scary))
             {
-                if(Vector3.Distance(v.transform.position, pl.transform.position + Vector3.up * 0.5f) < v.range)
+
+                float stressFactor = 0.02f;
+
+                //Little bunny scares easier
+                if (currentCharacter == PlayableCharacter.Cream)
+                    stressFactor = 0.2f;
+
+                playerStress += Time.deltaTime * stressFactor;
+
+                if (playerStress > 1.0f)
                 {
-                    pStats.setVibe(v.vibeFlags);
+                    if (!pStats.checkStatusEffect(PlayerStatusFX.Scared) || pStats.scaredTimeLeft < 0.5f)
+                    {
+                            pStats.setStatusEffect(PlayerStatusFX.Scared);
+                            pl.updateExpression();
+                            pStats.scaredTimeLeft = 10.0f;
+                    }
                 }
             }
+
+
+            if (pStats.checkVibe(VibeType.Dark) && currentCharacter == PlayableCharacter.Cream)
+            {
+
+                //Little bunny scared of the dark, the poor dear.
+
+                if (!pStats.checkStatusEffect(PlayerStatusFX.Scared) || pStats.scaredTimeLeft < 0.5f)
+                {
+                        pStats.setStatusEffect(PlayerStatusFX.Scared);
+                        pl.updateExpression();
+                        pStats.scaredTimeLeft = 10.0f;
+                }
+            }
+
         }
+
+
+        public void calculateSleeping(PlayerStatus pStats)
+        {
+            if(pStats.checkStatusEffect(PlayerStatusFX.Scared) || pStats.checkStatusEffect(PlayerStatusFX.Tired))
+            {
+                pStats.unSetStatusEffect(PlayerStatusFX.Scared);
+                pStats.unSetStatusEffect(PlayerStatusFX.Tired);
+            }
+
+            if (!pStats.checkStatusEffect(PlayerStatusFX.Relaxed))
+                pStats.setStatusEffect(PlayerStatusFX.Relaxed);
+
+            if (pStats.currentStamina < pStats.maxStamina)
+                pStats.currentStamina += (Time.deltaTime * 0.05f) * (pStats.currentMood/pStats.maxMood);
+
+            calculateHealing(pStats);
+            calculateMood(pStats);
+        }
+
 
         public Player getPlayer(bool search = true)
         {
@@ -430,7 +489,7 @@ namespace Amy
             playerCheckpoint.transform.position = mExit.transform.position;
             playerCheckpoint.transform.rotation = mExit.transform.rotation;
 
-
+            
             spawnPlayerAtCheckpoint();
 
             if (mExit.altCheckpoint)
@@ -555,7 +614,6 @@ namespace Amy
             GameObject.Instantiate(GameManager.Instance.systemData.Cutscene_AmyWakeup);
 
             UIManager.Instance.fadeScreen(true, 3.0f);
-
         }
         
 

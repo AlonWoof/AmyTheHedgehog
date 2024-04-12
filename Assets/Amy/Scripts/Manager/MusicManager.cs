@@ -68,6 +68,7 @@ namespace Amy
             }
         }
 
+
         public void changeSongs(BGMData newSong, float crossFadeTime = 1.0f)
         {
 

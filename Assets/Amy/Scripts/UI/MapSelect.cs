@@ -145,7 +145,7 @@ namespace Amy
 
             cursorPosition = Mathf.Clamp(cursorPosition, 0, maxListSize);
 
-            if(characterSelect >= PlayableCharacter.MAX)
+            if(characterSelect >= PlayableCharacter.None)
             {
                 characterSelect = 0;
             }

@@ -17,6 +17,7 @@ public class CubemapGenerator : MonoBehaviour
 
 	public Cubemap cb;
 	public Texture2D normalMap;
+	public Camera cam;
 	
 	// Start is called before the first frame update
 	void Start()
@@ -30,7 +31,7 @@ public class CubemapGenerator : MonoBehaviour
 
 	}
 
-	void CreateBBMaterial()
+	void CreatePortalMaterial()
 	{
 #if UNITY_EDITOR
 		// Create a simple material asset
@@ -40,11 +41,11 @@ public class CubemapGenerator : MonoBehaviour
 		Material material = new Material(Shader.Find("AlonWoof/Amy/DoorPortal"));
 		material.SetTexture("_MainTex", cb);
 		material.mainTexture = cb;
-		material.SetTexture("_Normal0", normalMap);
+		material.SetTexture("_Normal", normalMap);
 		material.SetTexture("_Normal1", normalMap);
 
 
-		AssetDatabase.CreateAsset(material, "Assets/Amy/Materials/Cubemaps/" + "bb_" + SceneManager.GetActiveScene().name + "_portal" + ".mat");
+		AssetDatabase.CreateAsset(material, "Assets/Amy/Materials/Cubemaps/" + SceneManager.GetActiveScene().name + "_portal" + ".mat");
 
 		// Print the path of the created asset
 		Debug.Log(AssetDatabase.GetAssetPath(material));
@@ -56,26 +57,20 @@ public class CubemapGenerator : MonoBehaviour
     {
 	#if UNITY_EDITOR
 		cb = new Cubemap(resWidth, TextureFormat.RGB24, 0);
+		cam.gameObject.SetActive(true);
 
-		GameObject cam = GameObject.Instantiate(Amy.GameManager.LoadSystemDataStandalone().RES_mainCamera);
-		
-		if(cam.GetComponentInChildren<Cinemachine.CinemachineBrain>())
-        {
-			cam.GetComponentInChildren<Cinemachine.CinemachineBrain>().enabled = false;
 
-		}
-		
 		cam.transform.position = transform.position;
 		cam.transform.rotation = transform.rotation;
 
 		cam.tag = "";
-		Camera mCam = cam.GetComponent<Camera>();
-		mCam.RenderToCubemap(cb);
+		cam.RenderToCubemap(cb);
 		
 
 		AssetDatabase.CreateAsset(cb, "Assets/Amy/Materials/Cubemaps/" + SceneManager.GetActiveScene().name + "_cubemap.cubemap");
 
-		DestroyImmediate(cam);
+		cam.gameObject.SetActive(false);
+		CreatePortalMaterial();
 
 	#endif
 	}

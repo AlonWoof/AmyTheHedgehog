@@ -46,7 +46,7 @@ namespace Amy
         {
             if(other.GetComponent<Player>())
             {
-                Timing.RunCoroutine(sceneTransitionCutscene());
+                Timing.RunCoroutine(sceneTransitionCutscene(),Segment.RealtimeUpdate);
             }
         }
 
@@ -61,8 +61,6 @@ namespace Amy
                 vCam.m_Priority = 999;
                 vCam.gameObject.SetActive(true);
             }
-
-
 
             if (moveTarget)
             {
@@ -80,12 +78,27 @@ namespace Amy
                 }
             }
 
-            if(!waitForMove)
-                yield return Timing.WaitForSeconds(timer);
+            //if(!waitForMove)
+                //yield return Timing.WaitForSeconds(timer);
 
             PlayerManager.Instance.lastExit = exitNumber;
+
+            while(Time.timeScale > 0.01f)
+            {
+                Time.timeScale = Mathf.Lerp(Time.timeScale, 0.0f, 0.5f);
+                yield return 0f;
+            }
+            Time.timeScale = 0.0f;
+
+
             GameManager.Instance.loadScene(targetScene,whiteFade);
         }
-	}
+
+        private void OnValidate()
+        {
+            name = "LoadingZone_" + targetScene + "_exit" + exitNumber;
+
+        }
+    }
 
 }

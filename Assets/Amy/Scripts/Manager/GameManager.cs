@@ -82,6 +82,8 @@ namespace Amy
 
             Application.targetFrameRate = Screen.currentResolution.refreshRate * 2;
             QualitySettings.vSyncCount = 0;
+
+
         }
 
         public static SystemData LoadSystemDataStandalone()
@@ -490,10 +492,29 @@ namespace Amy
             isLoading = false;
         }
 
+        public void findSceneInfo()
+        {
+            SceneInfo scn = FindObjectOfType<SceneInfo>();
+            if (scn != null)
+            {
+                MusicManager.Instance.changeSongs(scn.bgmData);
 
+                if (scn.isHubRoom)
+                    PlayerManager.Instance.isHubRoom = true;
+
+            }
+            else
+            {
+                GameObject inst = new GameObject("MISSING SCENE INFO");
+                scn = inst.AddComponent<SceneInfo>();
+            }
+
+        }
 
         #endregion
 
     }
+
+
 
 }
