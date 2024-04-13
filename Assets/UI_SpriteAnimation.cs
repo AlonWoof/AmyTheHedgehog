@@ -24,11 +24,11 @@ public class UI_SpriteAnimation : MonoBehaviour
         
         if(currentTimeLeft <= 0.0f)
         {
-            currentTimeLeft = (Application.targetFrameRate / frameRate) * Time.deltaTime;
+            currentTimeLeft = (Application.targetFrameRate / frameRate) * Time.unscaledDeltaTime;
             AdvanceFrame();
         }
 
-        currentTimeLeft -= Time.deltaTime;
+        currentTimeLeft -= Time.unscaledDeltaTime;
     }
 
     void AdvanceFrame()

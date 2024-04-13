@@ -41,14 +41,15 @@ namespace Amy
 			sleepyAmyAnimator.Play("Sleep");
 			wakeup_ZoomCam.SetActive(true);
 
-			yield return Timing.WaitForSeconds(5);
+			UIManager.Instance.fadeScreen(false, 0.01f, false);
 
 			wakeupCam_anim.Play("Start");
+			UIManager.Instance.fadeScreen(true, 3.0f, false);
 
-			yield return Timing.WaitForSeconds(10.5f);
+			yield return Timing.WaitForSeconds(5.0f);
 
 			sleepyAmyAnimator.Play("WakeUp");
-			yield return Timing.WaitForSeconds(5.0f);
+			yield return Timing.WaitForSeconds(6.0f);
 
 			UIManager.Instance.fadeScreen(false, 1.0f);
 			yield return Timing.WaitForSeconds(1.0f);

@@ -12,7 +12,7 @@ namespace Amy
     public enum VibeType
     {
         Neutral = 0,
-        Peaceful = 1,
+        Safe = 1,
         Pretty = 2,
         Fun = 4,
         Dark = 8,

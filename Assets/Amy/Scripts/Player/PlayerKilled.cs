@@ -57,12 +57,13 @@ namespace Amy
 
             if (deathType == DeathType.Falling)
             {
+                mPlayer.tpc.lockPosition = true;
                 mPlayer.mVoice.playVoice(mPlayer.mVoice.falling, true);
             }
 
             if (deathType == DeathType.Drowned)
             {
-                //Replace with actual voice
+                //Replace with actual voice and animation
                 mPlayer.mVoice.playVoice(mPlayer.mVoice.largePain, true);
                 mAnimator.Play("Die_Start");
             }

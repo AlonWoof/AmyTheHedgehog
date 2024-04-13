@@ -23,11 +23,16 @@ namespace Amy
 	    // Update is called once per frame
 	    void Update()
 	    {
+
+			if (GameManager.Instance.gamePaused)
+				return;
+
 			handleInput();
 			mPlayer.checkStickPower();
 			mPlayer.CalcSlope();
 			mPlayer.checkForJump();
-			
+			mPlayer.checkForInteract();
+
 
 			if (mPlayer.mChara == PlayableCharacter.Amy)
 			{
@@ -36,6 +41,7 @@ namespace Amy
 				mPlayer.checkForHammerJump();
 				mPlayer.checkForAirAttack();
 				mPlayer.checkForSlingshot();
+				
 			}
 
 			if(mPlayer.mChara == PlayableCharacter.Cream)
@@ -46,6 +52,8 @@ namespace Amy
 
         private void FixedUpdate()
         {
+			if (GameManager.Instance.gamePaused)
+				return;
 
 			mPlayer.CalcVerticalVelocity();
 			mPlayer.applyFriction();
@@ -55,6 +63,9 @@ namespace Amy
 
         private void LateUpdate()
         {
+			if (GameManager.Instance.gamePaused)
+				return;
+
 			mPlayer.checkIfUnderwater();
 
 

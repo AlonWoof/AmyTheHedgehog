@@ -39,11 +39,15 @@ namespace Amy
         {
 			getBaseComponents();
 
+
 			if (mPlayer.currentMode != PlayerModes.FLY)
 			{
 				enabled = false;
 				return;
 			}
+
+			mPlayer.clearAccel();
+			mPlayer.clearSpeed();
 
 			//Unless we add Tails, Cream is the only one who can fly
 			if (mPlayer.mChara != PlayableCharacter.Cream)
@@ -53,14 +57,13 @@ namespace Amy
 
 			//Though it would maybe be nice to have a cute boy in the mix... especially seeing that cute backsack when he flies~
 			//But let's not get carried away, now. Two is already twice as much as I intended originally.
-
 			start_altitude = transform.position.y;
 
 			mRigidBody.velocity = Vector3.Lerp(mRigidBody.velocity, Vector3.zero, 0.5f);
 
 			fly_left = max_fly;
 			mAnimator.CrossFade("Fly_Basic", 0.25f);
-			mAnimator.CrossFade("Ears_Flying", 0.25f);
+			
 		}
 
 		void handleInput()
@@ -112,6 +115,9 @@ namespace Amy
 
 		private void FixedUpdate()
         {
+			if (GameManager.Instance.gamePaused)
+				return;
+
 			calculateVerticalVelocity();
 			groundedCheck();
 			checkIfUnderwater();
@@ -127,7 +133,6 @@ namespace Amy
 			if (Physics.Linecast(start, end, out hitInfo, mPlayer.mColMask))
 			{
 				mPlayer.changeCurrentMode(PlayerModes.NORMAL);
-				mAnimator.CrossFade("Ears_Normal", 0.25f);
 			}
 		}
 
@@ -137,7 +142,6 @@ namespace Amy
 			if (mPlayer.getWaterDepth() >= mPlayer.headOffsetFromGround)
 			{
 				mPlayer.changeCurrentMode(PlayerModes.SWIMMING);
-				mAnimator.CrossFade("Ears_Normal", 0.25f);
 			}
 		}
 
@@ -183,6 +187,9 @@ namespace Amy
 		// Update is called once per frame
 		void Update()
 	    {
+			if (GameManager.Instance.gamePaused)
+				return;
+
 			handleInput();
 
 			Quaternion newRot = Quaternion.LookRotation(mPlayer.direction);

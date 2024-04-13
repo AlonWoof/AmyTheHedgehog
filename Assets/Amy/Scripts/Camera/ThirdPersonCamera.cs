@@ -24,6 +24,10 @@ namespace Amy
         public Vector3 offset_near = new Vector3(0, 0.75f, -1.75f);
         public Vector3 offset_far = new Vector3(0, 1.5f, -3.5f);
 
+        public float pauseZoomAmount = 0.25f;
+        public Vector3 pauseZoom_near = new Vector3(0, 0.375f, -0.875f);
+        public Vector3 pauseZoom_far = new Vector3(0, 1.5f, -3.5f);
+
         Vector3 lookPosition;
 
 		float maxPitch = 50.0f;
@@ -84,6 +88,15 @@ namespace Amy
             handleInput();
             interpolate();
             handlePlayerActions();
+
+            if (GameManager.Instance.gamePaused)
+                pausedUpdate();
+        }
+
+        void pausedUpdate()
+        {
+            updateLookPosition();
+            updateDesiredPosition();
         }
 
         // Update is called once per frame
@@ -91,6 +104,9 @@ namespace Amy
 		{
 			if (!playerTransform)
 				return;
+
+            if (GameManager.Instance.gamePaused)
+                return;
 
             updateLookPosition();
             updateDesiredPosition();
@@ -213,12 +229,11 @@ namespace Amy
             */
         }
 
-		void updateDesiredPosition()
+        void updateDesiredPosition()
         {
 
             //Adjust FOV
             float currentFOV = 60.0f; //GameManager.Instance.config.desiredFOV;
-            //currentFOV *= Mathf.Lerp(0.8f, 1.2f, currentAngle.x.Remap(-maxPitch, maxPitch, 0, 1));
 
             if (playerIsCrouched)
                 currentFOV *= 0.8f;
@@ -235,14 +250,51 @@ namespace Amy
 
             desiredPosition = lookPosition + rotatedOffset;
 
+            float t = Time.fixedUnscaledDeltaTime;
+
+            if (GameManager.Instance.gamePaused)
+                t = Time.unscaledDeltaTime;
 
             if (!lockPosition)
-                transform.position = Vector3.Lerp(transform.position, desiredPosition, Time.fixedDeltaTime * 30.0f);
+                transform.position = Vector3.Lerp(transform.position, desiredPosition, t * 30.0f);
 
             transform.LookAt(lookPosition);
 
             Occlusion();
 
+        }
+
+        public void updateDesiredPositionPaused()
+        {
+            //Adjust FOV
+            float currentFOV = 60.0f; //GameManager.Instance.config.desiredFOV;
+
+            if (playerIsCrouched)
+                currentFOV *= 0.8f;
+
+            if (mPlayer.currentMode == PlayerModes.RUBBING)
+                currentFOV = 45.0f;
+
+            vCam.m_Lens.FieldOfView = Mathf.Lerp(vCam.m_Lens.FieldOfView, currentFOV, 0.1f);
+
+            Vector3 translatedOffset = targetOffset;
+
+
+            Vector3 rotatedOffset = Quaternion.Euler(currentAngle.x, currentAngle.y, 0) * (translatedOffset);
+
+            desiredPosition = lookPosition + rotatedOffset;
+
+            float t = Time.fixedUnscaledDeltaTime;
+
+            if (GameManager.Instance.gamePaused)
+                t = Time.unscaledDeltaTime;
+
+            if (!lockPosition)
+                transform.position = Vector3.Lerp(transform.position, desiredPosition, t * 30.0f);
+
+            transform.LookAt(lookPosition);
+
+            Occlusion();
         }
 
 
@@ -280,6 +332,8 @@ namespace Amy
 
             targetOffset = offset_near;
 
+
+
             //then, check if we have a player instance
             if (!mPlayer)
                 return;
@@ -295,14 +349,12 @@ namespace Amy
 
             targetOffset = Vector3.Lerp(offset_near, offset_far, speedFac);
 
-            //targetOffset = offset_far;
+            if (GameManager.Instance.gamePaused)
+                targetOffset = Vector3.Lerp(pauseZoom_near, pauseZoom_far, pauseZoomAmount);
+
 
             targetOffset.y *= mPlayer.mParam.height;
 
-            if(mPlayer.currentMode == PlayerModes.RUBBING)
-            {
-
-            }
         }
 
         public void Occlusion()

@@ -55,6 +55,7 @@ namespace Amy
         [Header("Cutscenes")]
 
         public GameObject Cutscene_AmyWakeup;
+        public GameObject Cutscene_CreamWakeup;
 
     }
 }

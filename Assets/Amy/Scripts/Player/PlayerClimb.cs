@@ -36,6 +36,9 @@ namespace Amy
 			if (!currentLadder)
 				return;
 
+			if (GameManager.Instance.gamePaused)
+				return;
+
 			handleInput();
 			handleLadderMovement();
 

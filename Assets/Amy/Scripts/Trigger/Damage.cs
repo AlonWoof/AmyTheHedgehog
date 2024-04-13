@@ -63,7 +63,7 @@ namespace Amy
 			//if (!hb)
 			//	return;
 
-			Debug.Log("HIT! " + other.gameObject.name);
+			//Debug.Log("HIT! " + other.gameObject.name);
 
 			//if (hb.damageTeam == damageTeam)
 			//	return;

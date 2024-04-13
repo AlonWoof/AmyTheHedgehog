@@ -9,18 +9,29 @@ using UnityEngine;
 namespace Amy
 {
 
-	public class Upgrade_Cloth : MonoBehaviour
+	public class Upgrade_Cloth : Upgrade
 	{
-	    // Start is called before the first frame update
-	    void Start()
-	    {
-	        
-	    }
 	
 	    // Update is called once per frame
 	    void Update()
 	    {
 	        
 	    }
+
+		protected override bool playerHasItem()
+		{
+			return PlayerManager.Instance.hasCloth;
+		}
+
+
+		protected override void doItemGetScene()
+		{
+			//Insert some fancy cutscene or something.
+			mAnimator.Play("Disappear");
+
+			PlayerManager.Instance.hasCloth = true;
+
+			Invoke("Die", 5.0f);
+		}
 	}
 }

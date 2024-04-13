@@ -59,6 +59,9 @@ namespace Amy
 			if (mPlayer.currentMode != PlayerModes.HURT)
 				return;
 
+			if (GameManager.Instance.gamePaused)
+				return;
+
 			Vector3 dir = Helper.getDirectionTo(transform.position, knockOrigin);
 			dir.y = 0.0f;
 
@@ -92,6 +95,9 @@ namespace Amy
 
 		private void FixedUpdate()
 		{
+
+			if (GameManager.Instance.gamePaused)
+				return;
 
 			mPlayer.CalcVerticalVelocity();
 			mPlayer.applyFriction();

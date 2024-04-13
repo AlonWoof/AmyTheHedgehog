@@ -3,6 +3,10 @@ using System.Collections.Generic;
 using UnityEngine;
 using MEC;
 using UnityEngine.SceneManagement;
+using System.IO;
+using System.Runtime.InteropServices;
+using System.Runtime.Serialization.Formatters.Binary;
+using Unity.Collections;
 
 /* Copyright 2021 Jennifer Haden */
 namespace Amy
@@ -121,7 +125,19 @@ namespace Amy
         public bool hasHammer = false;
         public bool hasCloth = false;
         public bool hasSlingshot = false;
+
+        public ProgressData makeCopy()
+        {
+            ProgressData ret = new ProgressData();
+
+            ret.hasHammer = hasHammer;
+            ret.hasCloth = hasCloth;
+            ret.hasSlingshot = hasSlingshot;
+
+            return ret;
+        }
     }
+
 
     public class PlayerManager : Singleton<PlayerManager>
 	{
@@ -134,8 +150,12 @@ namespace Amy
         public PlayerStatus CreamStatus;
 
         //Unlockable/Story progression
-        public ProgressData progress;
-        
+        public bool hasHammer = false;
+        public bool hasCloth = false;
+        public bool hasSlingshot = false;
+        public List<StoryFlag> cutsceneFlags;
+        public System.DateTime lastSaveTime;
+
 
         public PlayableCharacter currentCharacter = PlayableCharacter.Amy;
 
@@ -158,11 +178,6 @@ namespace Amy
         public bool isHubRoom = false;
         public bool isNightTime = false;
         public bool ringLeftChannel = false;
-
-        //Item progression
-        public bool hasHammer = false;
-        public bool hasSlingshot = false;
-        public bool hasCloth = false;
         
 
         private void Awake()
@@ -174,7 +189,11 @@ namespace Amy
             GameObject inst = new GameObject("CHECKPOINT");
             DontDestroyOnLoad(inst);
             playerCheckpoint = inst.transform;
+
+            SaveGame.loadGame(0);
         }
+
+
 
         public void Init()
         {
@@ -184,8 +203,20 @@ namespace Amy
         // Start is called before the first frame update
         void Start()
     	{
-
+            
     	}
+
+        void setNewGameState()
+        {
+            ringBank = 0;
+            hasHammer = false;
+            hasCloth = false;
+            hasSlingshot = false;
+
+            cutsceneFlags = new List<StoryFlag>();
+            AmyStatus = GameManager.getSystemData().AmyParams.baseStats.makeCopy();
+            CreamStatus = GameManager.getSystemData().CreamParams.baseStats.makeCopy();
+        }
 
     	// Update is called once per frame
     	void Update()
@@ -195,15 +226,16 @@ namespace Amy
             if (lastOrgasmCooldown > 0.0f)
                 lastOrgasmCooldown -= Time.deltaTime;
 
-            if (currentCharacter != PlayableCharacter.Cream)
-                calculateSleeping(CreamStatus);
-
-            if (currentCharacter != PlayableCharacter.Amy)
-                calculateSleeping(AmyStatus);
-
             if (mPlayerInstance)
                 updatePlayerStatus(mPlayerInstance);
+
+            if (currentCharacter != PlayableCharacter.Amy)
+                processSleeping(AmyStatus);
+
+            if (currentCharacter != PlayableCharacter.Cream)
+                processSleeping(CreamStatus);
         }
+
 
         public PlayerStatus getCurrentPlayerStatus()
         {
@@ -283,30 +315,35 @@ namespace Amy
 
         public void updatePlayerStatus(Player pl)
         {
-
             PlayerStatus pStats = pl.getStatus();
 
-            calculateHealing(pStats);
+            processStatusFX(pl);
+            processVibes(pl);
+            processMood(pl);
+            processHealing(pl);
 
-            vibeCheck(pl);
+        }
 
-
-            if (pl.currentMode != PlayerModes.RUBBING)
-                calculateMood(pStats);
+        public void processStatusFX(Player pl)
+        {
+            PlayerStatus pStats = pl.getStatus();
+            const float scaredStaminaDrain = 0.25f;
 
             if(pStats.checkStatusEffect(PlayerStatusFX.Scared))
             {
+                if(pStats.currentStamina > 0.02f)
+                {
+                    pStats.currentStamina -= (scaredStaminaDrain * Time.deltaTime);
+                }
+                else if(pStats.currentHealth > 0.0f)
+                {
+                    pStats.currentHealth -= scaredStaminaDrain * Time.deltaTime;
+                    pl.updateHealth();
+                }
+
                 if(pStats.scaredTimeLeft > 0.0f)
                 {
-                    float mult = 1.0f;
-
-                    if (pStats.checkStatusEffect(PlayerStatusFX.Relaxed) || pStats.checkStatusEffect(PlayerStatusFX.GoodFood))
-                        mult = 2.0f;
-
-                    if (pStats.checkStatusEffect(PlayerStatusFX.Tired))
-                        mult = 0.5f;
-
-                    pStats.scaredTimeLeft -= (Time.deltaTime * mult);
+                    pStats.scaredTimeLeft -= Time.deltaTime;
                 }
                 else
                 {
@@ -314,36 +351,52 @@ namespace Amy
                     pl.updateExpression();
                 }
             }
-        }
 
-        public void calculateHealing(PlayerStatus pStats)
-        {
-            float baseHealFac = 0.075f;
-
-            //How efficiently one converts stamina to health depends on mood.
-            float moodFac = pStats.currentMood / pStats.maxMood;
-            float healthFac = pStats.currentHealth / pStats.maxHealth;
-            
-            if(healthFac < 0.98f)
+            if((pStats.currentStamina / pStats.maxStamina) < 0.125f)
             {
-                if(pStats.currentStamina > 0.01f)
+                if(!pStats.checkStatusEffect(PlayerStatusFX.Tired))
                 {
-                    pStats.currentHealth += (Time.deltaTime * baseHealFac) * moodFac;
-                    pStats.currentStamina -= (Time.deltaTime * baseHealFac);
+                    pStats.setStatusEffect(PlayerStatusFX.Tired);
                 }
             }
-            else
+            else if ((pStats.currentStamina / pStats.maxStamina) > 0.25f)
             {
-                pStats.currentHealth = pStats.maxHealth;
+                if (pStats.checkStatusEffect(PlayerStatusFX.Tired))
+                {
+                    pStats.unSetStatusEffect(PlayerStatusFX.Tired);
+                }
             }
         }
 
-        public void calculateMood(PlayerStatus pStats)
+        public void processVibes(Player pl)
         {
-            // Generally speaking, it should move slowly and be based on many factors,
-            // such as health, stamina, vibes of the place, etc....
+            PlayerStatus pStats = pl.getStatus();
 
-            float baseMoodDecay = 0.15f;
+            if (pStats.checkVibe(VibeType.Dark) && !pStats.checkVibe(VibeType.Safe))
+            {
+                if(pl.mChara == PlayableCharacter.Cream)
+                {
+                    inflictScaredStatus(pl, 0.25f);
+                }
+            }
+
+            if (pStats.checkVibe(VibeType.Scary) && !pStats.checkVibe(VibeType.Safe))
+            {
+                if (pl.mChara == PlayableCharacter.Cream)
+                {
+                    inflictScaredStatus(pl, 0.25f);
+                }
+            }
+
+            if(pStats.checkVibe(VibeType.Safe))
+            {
+                
+            }
+        }
+
+        public void processMood(Player pl)
+        {
+            PlayerStatus pStats = pl.getStatus();
 
             float moodFac = pStats.currentMood / pStats.maxMood;
             float healthFac = pStats.currentHealth / pStats.maxHealth;
@@ -355,7 +408,6 @@ namespace Amy
                 genkiAverage = 1.0f;
 
             float targetMood = genkiAverage * pStats.maxMood;
-
 
             if (pStats.checkStatusEffect(PlayerStatusFX.Relaxed))
                 targetMood *= 1.2f;
@@ -378,77 +430,59 @@ namespace Amy
             if (pStats.checkStatusEffect(PlayerStatusFX.Horny))
                 targetMood *= 0.9f;
 
-            if (pStats.checkVibe(VibeType.Peaceful))
-                targetMood = Mathf.Clamp(targetMood, pStats.maxMood * 0.5f, pStats.maxMood);
+            if (pStats.checkVibe(VibeType.Safe))
+                targetMood = Mathf.Clamp(targetMood, pStats.maxMood * 0.25f, pStats.maxMood);
 
             pStats.currentMood = Mathf.Lerp(pStats.currentMood, targetMood, Time.deltaTime * 1.2f);
-            pStats.currentMood = Mathf.Clamp(pStats.currentMood, 0, genkiAverage * pStats.maxMood);
-
-
             pStats.clampValues();
-            // pStats.currentMood = genkiAverage * pStats.maxMood;
         }
 
-        public void vibeCheck(Player pl)
+        public void processHealing(Player pl)
         {
-            //Only run this one once in a while.
             PlayerStatus pStats = pl.getStatus();
 
-            if ( pStats.checkVibe(VibeType.Scary))
+            const float baseHealFac = 0.075f;
+
+            float moodFac = pStats.currentMood / pStats.maxMood;
+            float healthFac = pStats.currentHealth / pStats.maxHealth;
+
+            if (healthFac < 0.999f)
             {
-
-                float stressFactor = 0.02f;
-
-                //Little bunny scares easier
-                if (currentCharacter == PlayableCharacter.Cream)
-                    stressFactor = 0.2f;
-
-                playerStress += Time.deltaTime * stressFactor;
-
-                if (playerStress > 1.0f)
+                if (pStats.currentStamina > 0.01f)
                 {
-                    if (!pStats.checkStatusEffect(PlayerStatusFX.Scared) || pStats.scaredTimeLeft < 0.5f)
-                    {
-                            pStats.setStatusEffect(PlayerStatusFX.Scared);
-                            pl.updateExpression();
-                            pStats.scaredTimeLeft = 10.0f;
-                    }
+                    pStats.currentHealth += (Time.deltaTime * baseHealFac) * moodFac;
+                    pStats.currentStamina -= (Time.deltaTime * baseHealFac);
                 }
             }
-
-
-            if (pStats.checkVibe(VibeType.Dark) && currentCharacter == PlayableCharacter.Cream)
+            else
             {
-
-                //Little bunny scared of the dark, the poor dear.
-
-                if (!pStats.checkStatusEffect(PlayerStatusFX.Scared) || pStats.scaredTimeLeft < 0.5f)
-                {
-                        pStats.setStatusEffect(PlayerStatusFX.Scared);
-                        pl.updateExpression();
-                        pStats.scaredTimeLeft = 10.0f;
-                }
+                pStats.currentHealth = pStats.maxHealth;
             }
-
         }
 
 
-        public void calculateSleeping(PlayerStatus pStats)
+
+        public void processSleeping(PlayerStatus pStats, float time = 1.0f)
         {
+            const float staminaHealRate = 0.1f;
+            const float healthHealRate = 0.1f;
+
             if(pStats.checkStatusEffect(PlayerStatusFX.Scared) || pStats.checkStatusEffect(PlayerStatusFX.Tired))
             {
                 pStats.unSetStatusEffect(PlayerStatusFX.Scared);
                 pStats.unSetStatusEffect(PlayerStatusFX.Tired);
             }
 
-            if (!pStats.checkStatusEffect(PlayerStatusFX.Relaxed))
-                pStats.setStatusEffect(PlayerStatusFX.Relaxed);
-
-            if (pStats.currentStamina < pStats.maxStamina)
-                pStats.currentStamina += (Time.deltaTime * 0.05f) * (pStats.currentMood/pStats.maxMood);
-
-            calculateHealing(pStats);
-            calculateMood(pStats);
+            if(pStats.currentStamina < pStats.maxStamina)
+            {
+                pStats.currentStamina += staminaHealRate * (Time.deltaTime * time);
+                pStats.clampValues();
+            }
+            else if(pStats.currentHealth < pStats.maxHealth)
+            {
+                pStats.currentHealth += healthHealRate * (Time.deltaTime * time);
+                pStats.clampValues();
+            }
         }
 
 
@@ -522,7 +556,7 @@ namespace Amy
             return mPlayerInstance;
         }
 
-        
+
         public void PlayerDieRespawn(PlayerKilled.DeathType type)
         {
             Timing.RunCoroutine(doPlayerRespawnSequence(type));
@@ -561,6 +595,20 @@ namespace Amy
             mPlayerInstance.changeCurrentMode(PlayerModes.KILLED);
         }
 
+        public void inflictScaredStatus(Player pl, float time = 5.0f)
+        {
+            PlayerStatus pStats = pl.getStatus();
+            
+            if (!pStats.checkStatusEffect(PlayerStatusFX.Scared) && pStats.scaredTimeLeft < 0.01f)
+            {
+                pStats.setStatusEffect(PlayerStatusFX.Scared);
+                pl.mVoice.playVoice(pl.mVoice.scared, true);
+                pl.updateExpression();
+            }
+
+            pStats.scaredTimeLeft = time;
+        }
+
 
         //TODO: add different respawn situations.
         public IEnumerator<float> doPlayerRespawnSequence(PlayerKilled.DeathType type)
@@ -586,37 +634,89 @@ namespace Amy
 
             yield return Timing.WaitForSeconds(1.1f);
             //MusicManager.Instance.restartMusic();
-            MusicManager.Instance.fadeBGM(1.0f, 0.01f);
+
+
+            if (mPlayerInstance)
+                GameObject.Destroy(mPlayerInstance.gameObject);
 
             //Lose money for getting owned.
             ringCount = 0;
+
+            if(type == PlayerKilled.DeathType.Falling || type == PlayerKilled.DeathType.Drowned)
+            {
+                getCurrentPlayerStatus().currentHealth -= getCurrentPlayerStatus().maxHealth * 0.25f;
+                
+                if(getCurrentPlayerStatus().currentHealth > 0.0f)
+                {
+                    spawnPlayerAtCheckpoint();
+                    yield return 0f;
+
+                    PlayerManager.Instance.spawnPlayerAtCheckpoint();
+
+                    yield return Timing.WaitForSeconds(1.0f);
+
+                    UIManager.Instance.fadeScreen(true, 1.0f, false);
+
+                    yield return Timing.WaitForSeconds(1.1f);
+
+                    GameManager.Instance.playerInputDisabled = false;
+                    GameManager.Instance.cameraInputDisabled = false;
+
+                    yield break;
+                }
+            }
+
 
             getCurrentPlayerStatus().currentHealth = getCurrentPlayerStatus().maxHealth * 0.5f;
             getCurrentPlayerStatus().currentStamina = getCurrentPlayerStatus().maxStamina * 0.5f;
 
             if(type == PlayerKilled.DeathType.Corrupted)
             {
-                getCurrentPlayerStatus().currentStamina = getCurrentPlayerStatus().maxStamina * 0.1f;
-                getCurrentPlayerStatus().setStatusEffect(PlayerStatusFX.Tired);
+                getCurrentPlayerStatus().currentStamina = 0.0f;
                 getCurrentPlayerStatus().unSetStatusEffect(PlayerStatusFX.Scared);
             }
 
-            if(mPlayerInstance)
-                GameObject.Destroy(mPlayerInstance.gameObject);
+           
+
+
 
             yield return 0f;
 
 
-            yield return Timing.WaitForSeconds(2.0f);
+            processSleeping(getCurrentPlayerStatus());
+
+            if (currentCharacter == PlayableCharacter.Amy)
+                currentCharacter = PlayableCharacter.Cream;
+            else if (currentCharacter == PlayableCharacter.Cream)
+                currentCharacter = PlayableCharacter.Amy;
+
+            Timing.RunCoroutine(setupWakeupScene());
+
+        }
+
+        public void wakeupScene()
+        {
+            
+            Timing.RunCoroutine(setupWakeupScene());
+        }
+        
+        public IEnumerator<float> setupWakeupScene()
+        {
+            yield return 0f;
+            UIManager.Instance.fadeScreen(false, 0.5f, false);
+            yield return Timing.WaitForSeconds(0.5f);
 
             SceneManager.LoadScene("AmyRoom");
             yield return Timing.WaitForSeconds(0.2f);
-            GameObject.Instantiate(GameManager.Instance.systemData.Cutscene_AmyWakeup);
+
+            if(currentCharacter == PlayableCharacter.Amy)
+                GameObject.Instantiate(GameManager.Instance.systemData.Cutscene_AmyWakeup);
+
+            if(currentCharacter == PlayableCharacter.Cream)
+                GameObject.Instantiate(GameManager.Instance.systemData.Cutscene_CreamWakeup);
 
             UIManager.Instance.fadeScreen(true, 3.0f);
         }
-        
-
 
         public void characterSwitch(PlayableCharacter newChar)
         {
@@ -651,7 +751,6 @@ namespace Amy
             GameManager.Instance.playerInputDisabled = false;
             GameManager.Instance.cameraInputDisabled = false;
         }
-
 
 
     }

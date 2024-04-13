@@ -17,11 +17,12 @@ namespace Amy
             SystemData mTarget = (SystemData)target;
 
             DrawDefaultInspector();
-
+            /*
             if (GUILayout.Button("Copy Hitbox Data Amy -> Cream"))
             {
                 mTarget.CreamParams.hitBoxes = mTarget.AmyParams.hitBoxes;
             }
+            */
         }
 
     }

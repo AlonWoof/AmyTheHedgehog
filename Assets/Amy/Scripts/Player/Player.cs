@@ -101,6 +101,7 @@ namespace Amy
 		public bool isHammerSpin = false;
 		public float mutekiTimer = 0.0f;
 		public float attackTimer = 0.0f;
+		public float interactTimeout = 0.0f;
 		public float hammerJumpCharge = 0.0f;
 		public int framesAirborne = 0;
 
@@ -426,6 +427,9 @@ namespace Amy
 		void Update()
 		{
 
+			if (GameManager.Instance.gamePaused)
+				return;
+
 			float runAnimProgress = Mathf.Abs(acceleration.z);
 
 			float runAnimSpeed = acceleration.z;
@@ -500,11 +504,18 @@ namespace Amy
 			if (attackTimer > 0.0f && dmg.damageType != DamageType.Crush)
 				return false;
 
+			PlayerStatus pstats = getStatus();
+
 			int rings = PlayerManager.Instance.getRings();
+			float moodFac = pstats.currentMood / pstats.maxMood;
 
 			//Rings protect you from ouchies.
 			if (rings > 0)
 				dmg.damageAmount *= 0.5f;
+
+			//Can tolerate pain better if feeling good.
+			if(moodFac > 0.75f)
+				dmg.damageAmount *= 0.85f;
 
 			float force = 16.0f;
 
@@ -513,9 +524,7 @@ namespace Amy
 
 			if (currentMode == PlayerModes.NORMAL || currentMode == PlayerModes.FLY)
             {
-				PlayerStatus pstats = getStatus();
-
-
+				
 
 				if (currentMode == PlayerModes.NORMAL && force > 1.0f)
 				{
@@ -531,13 +540,12 @@ namespace Amy
 
 				if (currentMode == PlayerModes.FLY)
 				{
-					mAnimator.CrossFade("Ears_Normal", 0.25f);
 					modeHurt.setKnockBack(transform.position + Vector3.up, 3.0f);
+					updateEars();
 				}
 
 
 				pstats.currentHealth -= (dmg.damageAmount * multiplier);
-				pstats.currentMood -= pstats.maxMood * 0.1f;
 				pstats.clampValues();
 
 				if (rings > 0)
@@ -610,6 +618,9 @@ namespace Amy
 
         private void LateUpdate()
         {
+			if (GameManager.Instance.gamePaused)
+				return;
+
 			doLeanAnimation();
 
 			//if (acceleration.z > 0.5f)
@@ -626,6 +637,17 @@ namespace Amy
 				mAnimator.Play("Face_Kowaii");
 			else
 				mAnimator.Play("Face_Neutral");
+		}
+
+		public void updateEars()
+        {
+			//For creamy's floppy bunny ears~
+
+			if(currentMode == PlayerModes.FLY)
+				mAnimator.CrossFade("Ears_Flying", 0.25f);
+			else
+				mAnimator.CrossFade("Ears_Normal", 0.25f);
+
 		}
 
         void debugControls()
@@ -680,6 +702,9 @@ namespace Amy
 
 			refreshMode();
 			updateExpression();
+
+			if (mChara == PlayableCharacter.Cream)
+				updateEars();
 		}
 
 		public void CalcSlope()
@@ -1172,6 +1197,42 @@ namespace Amy
 			}
 		}
 
+		public void checkForInteract()
+		{
+			if (interactTimeout > 0.0f)
+			{
+				interactTimeout -= Time.deltaTime;
+				return;
+			}
+
+			if (!isOnGround)
+				return;
+
+			if (acceleration.z > 0.5f)
+				return;
+
+
+			if (Input.GetButtonDown("Action"))
+			{
+				if(areaDetector.closestActivatible)
+                {
+					Activatible a = areaDetector.closestActivatible;
+
+					a.Activate(this);
+					interactTimeout = 1.0f;
+
+					if (a.turnAroundPlayer)
+					{
+						Vector3 targetDir = Helper.getDirectionTo(transform.position + Vector3.up * 0.5f, a.transform.position);
+						targetDir.y = 0;
+
+						direction = targetDir;
+					}
+				}
+			}
+
+		}
+
 		public void checkForHammerJump()
         {
 			if (acceleration.z < 5.3f)
@@ -1332,7 +1393,7 @@ namespace Amy
 			stickAngle =  Vector3.ClampMagnitude(new Vector3(h, 0f, v), 1.0f);
 			stickPower = stickAngle.magnitude;
 
-			Debug.Log(stickPower);
+			//Debug.Log(stickPower);
 
 			Vector3 targetDirection = stickAngle;
 			Quaternion targetRotation = Quaternion.LookRotation(targetDirection, Vector3.up);
@@ -1360,8 +1421,8 @@ namespace Amy
 
 			leanAmount = Mathf.Clamp(leanAmount, -1.0f, 1.0f);
 
-			if(Mathf.Abs(turningFactor) > 0.5f)
-				Debug.Log("TURNING: " + turningFactor);
+			//if(Mathf.Abs(turningFactor) > 0.5f)
+				//Debug.Log("TURNING: " + turningFactor);
 
 			//Debug.Log(Vector3.Dot(direction, prev_direction));
 

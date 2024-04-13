@@ -11,12 +11,12 @@ namespace Amy
 
 	public class PlayerAreaDetector : PlayerMode
 	{
-		public List<NPC> nearbyNPCs;
 		public List<Enemy> nearbyEnemies;
 		public List<Vibes> nearbyVibes;
+		public List<Activatible> nearbyActivatibles;
 
 		public Enemy closestEnemy = null;
-		public NPC closestNPC = null;
+		public Activatible closestActivatible = null;
 
 		public float detectRadius = 20.0f;
 
@@ -27,8 +27,8 @@ namespace Amy
 	    {
 			getBaseComponents();
 			nearbyEnemies = new List<Enemy>();
-			nearbyNPCs = new List<NPC>();
 			nearbyVibes = new List<Vibes>();
+			nearbyActivatibles = new List<Activatible>();
 			refreshLists();
 		}
 	
@@ -49,7 +49,7 @@ namespace Amy
 			if(Time.frameCount % 30 == 0)
             {
 				refreshClosestEnemy();
-				refreshClosestNPC();
+				refreshClosestActivatible();
 			}
 
 
@@ -59,15 +59,15 @@ namespace Amy
 
 		void refreshLists()
         {
-			nearbyNPCs.Clear();
+			nearbyActivatibles.Clear();
 			nearbyEnemies.Clear();
 			nearbyVibes.Clear();
 
-			foreach(NPC n in FindObjectsOfType<NPC>())
+			foreach(Activatible a in FindObjectsOfType<Activatible>())
             {
-				if(Vector3.Distance(transform.position, n.transform.position) < detectRadius)
+				if(Vector3.Distance(transform.position, a.transform.position) < detectRadius)
                 {
-					nearbyNPCs.Add(n);
+					nearbyActivatibles.Add(a);
                 }
             }
 
@@ -95,9 +95,9 @@ namespace Amy
 
 		}
 
-		public int getNearbyNPCCount()
+		public int getNearbyActivatiblesCount()
         {
-			return nearbyNPCs.Count;
+			return nearbyActivatibles.Count;
 		}
 
 		public int getNearbyVibesCount()
@@ -107,7 +107,7 @@ namespace Amy
 
 		public int getNearbyActorCount()
         {
-			return getNearbyNPCCount() + getNearbyEnemyCount();
+			return getNearbyEnemyCount();
         }
 
 		public void updateVibes()
@@ -125,19 +125,21 @@ namespace Amy
             }
         }
 
-		public void refreshClosestNPC()
+		public void refreshClosestActivatible()
         {
-			closestNPC = null;
+			closestActivatible = null;
 			float bestDist = 16.0f;
 
-			foreach (NPC e in nearbyNPCs)
+			foreach (Activatible e in nearbyActivatibles)
 			{
 				float dst = Vector3.Distance(e.transform.position, transform.position + (Vector3.up * 0.5f));
 
-				if (dst < bestDist)
+				if (dst < bestDist && e.canActivate(mPlayer))
 				{
 					bestDist = dst;
-					closestNPC = e;
+					closestActivatible = e;
+
+					Debug.Log(closestActivatible.interactionLabel);
 				}
 			}
 		}
@@ -171,7 +173,7 @@ namespace Amy
 
             }
 
-			Debug.Log("BEST ANGLE: " + bestAngle);
+			//Debug.Log("BEST ANGLE: " + bestAngle);
 
 
 

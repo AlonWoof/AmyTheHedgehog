@@ -5,11 +5,10 @@ using MEC;
 using UnityEngine.Audio;
 using UnityEngine.SceneManagement;
 
+
 /* Copyright 2022 Jennifer Haden */
 namespace Amy
 {
-
-
 
     [System.Serializable]
     public class GameConfig
@@ -46,6 +45,7 @@ namespace Amy
 
         public bool isLoading = false;
         public bool cutsceneMode = false;
+        public bool gamePaused = false;
 
         public GameConfig config;
         public SystemData systemData;
@@ -82,6 +82,10 @@ namespace Amy
 
             Application.targetFrameRate = Screen.currentResolution.refreshRate * 2;
             QualitySettings.vSyncCount = 0;
+
+            #if !UNITY_EDITOR
+                GameManager.Instance.loadScene("AmyRoom");
+            #endif
 
 
         }
@@ -120,7 +124,9 @@ namespace Amy
 
             analogStickState = new bool[8];
             analogStickFirstFrame = new bool[8];
-            
+
+            SaveGame.loadGame(0);
+            PlayerManager.Instance.wakeupScene();
 
             //loadScene(UnityEngine.SceneManagement.SceneManager.GetActiveScene().name);
         }
@@ -191,8 +197,37 @@ namespace Amy
     	{
             checkController();
             debugFunctions();
+            checkPauseGame();
 
             systemData.AUDIO_GameSFXMixer.SetFloat("GameSFXVolume", gameSFXVolume);
+        }
+
+        void checkPauseGame()
+        {
+            if (cutsceneMode)
+                return;
+
+            if (isLoading)
+                return;
+
+            if (cameraInputDisabled || playerInputDisabled)
+                return;
+
+            if (!Input.GetButtonDown("Pause"))
+                return;
+
+            if(!gamePaused)
+            {
+                Time.timeScale = 0.0f;
+                mainCamera.GetComponent<Cinemachine.CinemachineBrain>().m_UpdateMethod = Cinemachine.CinemachineBrain.UpdateMethod.LateUpdate;
+                gamePaused = true;
+            }
+            else
+            {
+                Time.timeScale = 1.0f;
+                mainCamera.GetComponent<Cinemachine.CinemachineBrain>().m_UpdateMethod = Cinemachine.CinemachineBrain.UpdateMethod.FixedUpdate;
+                gamePaused = false;
+            }
         }
 
         void debugFunctions()
@@ -206,13 +241,12 @@ namespace Amy
                // PlayerManager.Instance.reloadCurrentSave();
             }
 
-            //ZA WARUDO!
+            //Save and load test
             if (Input.GetKey(KeyCode.F5))
-                Time.timeScale = Mathf.Lerp(Time.timeScale, 0.01f, Time.unscaledDeltaTime * 3.0f);
+                SaveGame.writeSaveGame(0);
 
-            //Toki wo ugoki dasu
             if (Input.GetKey(KeyCode.F6))
-                Time.timeScale = Mathf.Lerp(Time.timeScale, 1.0f, Time.unscaledDeltaTime * 3.0f);
+                SaveGame.loadGame(0);
 
             //How fucking brutal
             if (Input.GetKey(KeyCode.F7))
@@ -376,6 +410,9 @@ namespace Amy
 
 
             yield return Timing.WaitForSeconds(0.5f);
+
+            //Auto-save
+            SaveGame.writeSaveGame(0);
 
             //UIManager.Instance.hideGameOverScreen();
 
