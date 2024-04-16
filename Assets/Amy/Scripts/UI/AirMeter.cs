@@ -8,7 +8,7 @@ namespace Amy
 
     public class AirMeter : MonoBehaviour
     {
-        /*
+        
         public Image airMeter_circle;
         public CanvasGroup mCanvas;
         Player mPlayer;
@@ -20,7 +20,7 @@ namespace Amy
         {
 
         }
-
+        
         // Update is called once per frame
         void Update()
         {
@@ -32,7 +32,7 @@ namespace Amy
             }
 
 
-            if(mPlayer.airLeft >= mPlayer.lungCapacity)
+            if(mPlayer.airLeft >= mPlayer.calculateLungCapacity())
             {
                 mCanvas.alpha = Mathf.Lerp(mCanvas.alpha, 0.0f, Time.deltaTime * 16.0f);
                 transform.localScale = Vector3.Lerp(transform.localScale, Vector3.one * 2.0f, Time.deltaTime * 8.0f);
@@ -43,12 +43,12 @@ namespace Amy
                 transform.localScale = Vector3.Lerp(transform.localScale, Vector3.one, Time.deltaTime * 16.0f);
             }
 
-            float airFac = mPlayer.airLeft / mPlayer.lungCapacity;
+            float airFac = mPlayer.airLeft / mPlayer.calculateLungCapacity();
 
             airMeter_circle.fillAmount = airFac;
             airMeter_circle.color = colorGradient.Evaluate(airFac);
         }
-
-        */
+        
+        
     }
 }

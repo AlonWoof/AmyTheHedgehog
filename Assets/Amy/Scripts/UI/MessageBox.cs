@@ -159,13 +159,13 @@ namespace Amy
         // Update is called once per frame
         void Update()
         {
-            Vector3 npos = GameManager.Instance.mainCamera.WorldToScreenPoint(worldPosition);
-            npos.x = Mathf.Clamp(npos.x, 378.0f, 1550.0f);
-            npos.y = Mathf.Clamp(npos.y, 175.0f, 915.0f);
+           // Vector3 npos = GameManager.Instance.mainCamera.WorldToScreenPoint(worldPosition);
+            //npos.x = Mathf.Clamp(npos.x, 378.0f, 1550.0f);
+            //npos.y = Mathf.Clamp(npos.y, 175.0f, 915.0f);
 
            // Debug.Log("X: " + npos.x + " Y: " + npos.y);
 
-            transform.position = Vector3.Lerp(transform.position, npos, 0.5f);
+           // transform.position = Vector3.Lerp(transform.position, npos, 0.5f);
 
             if (Input.GetKeyDown("t"))
                 Timing.RunCoroutine(doShowMessage(testData));
@@ -697,7 +697,9 @@ namespace Amy
         public CoroutineHandle ShowMessageBox(Message mg, Vector3 pos, Talker tk = null)
         {
             talker = tk;
-            callbackTarget = tk.gameObject;
+
+            if(talker != null)
+                callbackTarget = tk.gameObject;
 
             worldPosition = pos;
 
@@ -707,12 +709,11 @@ namespace Amy
                     talker.vCam.m_Priority = 30;
 
 
-                Player player = FindObjectOfType<Player>();
+                Player player = PlayerManager.Instance.getPlayer();
 
                 if (player != null)
                 {
-                    //player.lookAt(talker.transform.position + Vector3.up);
-
+                    player.lookAt(talker.transform.position);
 
                     if (player.currentMode != PlayerModes.CUTSCENE && !GameManager.Instance.playerInputDisabled && player.currentMode != PlayerModes.LISTENING)
                     {

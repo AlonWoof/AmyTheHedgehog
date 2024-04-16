@@ -38,6 +38,31 @@ public static class Helper
         return Vector3.Distance(zeroAltitude(a), zeroAltitude(b));
     }
 
+    public static float secondsToFrames(float seconds)
+    {
+        return seconds * Application.targetFrameRate;
+    }
+
+    public static float minutesToFrames(float minutes)
+    {
+        return minutes * secondsToFrames(60);
+    }
+
+    public static float hoursToFrames(float hours)
+    {
+        return hours * minutesToFrames(60);
+    }
+
+    public static float minutesToSeconds(float minutes)
+    {
+        return minutes * 60.0f;
+    }
+
+    public static float hoursToSeconds(float hours)
+    {
+        return minutesToSeconds(60) * hours;
+    }
+
     public static float AngleDir(Vector3 fwd, Vector3 targetDir, Vector3 up)
     {
         Vector3 perp = Vector3.Cross(fwd, targetDir);

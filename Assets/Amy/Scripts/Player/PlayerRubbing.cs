@@ -72,7 +72,6 @@ namespace Amy
 
 		public IEnumerator<float> cancelCaught()
         {
-			mPlayer.getStatus().currentMood *= 0.5f;
 			mAnimator.CrossFade("Idle", 0.2f);
 			yield return Timing.WaitForSeconds(0.1f);
 			mPlayer.changeCurrentMode(PlayerModes.NORMAL);
@@ -85,9 +84,9 @@ namespace Amy
 
 			float healMult = mAnimator.GetFloat("animSpeed");
 
-			if (pstats.currentMood < pstats.maxMood)
+			if (pstats.currentHealth < pstats.maxHealth)
             {
-				pstats.currentMood += Time.deltaTime * healthRecoveryRate * healMult;
+				pstats.currentHealth += Time.deltaTime * healthRecoveryRate * healMult;
 				pstats.currentStamina -= Time.deltaTime * staminaDrainRate * healMult;
 				mPlayer.updateHealth();
 			}
@@ -95,12 +94,12 @@ namespace Amy
 			if (timeTilOrgasm > 0.0f)
 				timeTilOrgasm -= Time.deltaTime;
 
-			if (mPlayer.areaDetector.getNearbyActorCount() > 0)
+			/*if (mPlayer.areaDetector.getNearbyActorCount() > 0)
 			{
 				timeTilOrgasm = 10.0f;
 				Timing.RunCoroutine(cancelCaught());
 				
-			}
+			}*/
 
 			if (timeTilOrgasm <= 0.0f)
             {

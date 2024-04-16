@@ -142,6 +142,8 @@ namespace Amy
 			writer.Write(pStats.currentHealth);
 			writer.Write(pStats.currentStamina);
 			writer.Write(pStats.statusFX);
+			writer.Write(pStats.sickTimeLeft);
+			writer.Write(pStats.timeSpentResting);
         }
 
 		public static void readPlayerStatus(PlayerStatus pStats, ref BinaryReader reader)
@@ -149,6 +151,8 @@ namespace Amy
 			pStats.currentHealth = reader.ReadSingle();
 			pStats.currentStamina = reader.ReadSingle();
 			pStats.statusFX = reader.ReadInt32();
+			pStats.sickTimeLeft = reader.ReadSingle();
+			pStats.timeSpentResting = reader.ReadSingle();
 		}
 
 		public float calcTimeInFrames()

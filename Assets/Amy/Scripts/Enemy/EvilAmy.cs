@@ -59,6 +59,8 @@ namespace Amy
 
 		int lastVoice = 0;
 
+		CoroutineHandle currentModeRoutine;
+
 		// Start is called before the first frame update
 		void Start()
 	    {
@@ -117,15 +119,21 @@ namespace Amy
 			if (newMode == currentMode)
 				return;
 
-			switch(newMode)
+			if (currentModeRoutine.IsValid)
+			{
+				Timing.KillCoroutines(currentModeRoutine);
+			}
+
+
+			switch (newMode)
             {
 				case EvilAmyMode.Wander:
-					Timing.RunCoroutine(doStartWander());
+					currentModeRoutine = Timing.RunCoroutine(doStartWander());
 					break;
 				case EvilAmyMode.Search:
 					break;
 				case EvilAmyMode.Chase:
-					Timing.RunCoroutine(doStartChase());
+					currentModeRoutine = Timing.RunCoroutine(doStartChase());
 					break;
             }
         }
@@ -238,8 +246,11 @@ namespace Amy
 					{
 						rnd = Random.Range(0, vo_search.Length - 1);
 
-						if (rnd == lastVoice)
-							rnd = Random.Range(0, vo_search.Length - 1);
+						if (vo_search.Length > 1)
+						{
+							if (rnd == lastVoice)
+								rnd = Random.Range(0, vo_search.Length - 1);
+						}
 
 						voice.volume = 1.0f;
 						clip = vo_search[Random.Range(0, vo_search.Length - 1)];
@@ -250,8 +261,11 @@ namespace Amy
 					{
 						rnd = Random.Range(0, vo_wander.Length - 1);
 
-						if (rnd == lastVoice)
-							rnd = Random.Range(0, vo_wander.Length - 1);
+						if (vo_wander.Length > 1)
+						{
+							while (rnd == lastVoice)
+								rnd = Random.Range(0, vo_wander.Length - 1);
+						}
 
 						voice.volume = 0.75f;
 						clip = vo_wander[Random.Range(0, vo_wander.Length - 1)];
@@ -263,9 +277,13 @@ namespace Amy
 				return;
 
 			lastVoice = rnd;
+			voice.pitch = 1.0f;
+			//voice.clip = clip;
+			voice.Play();
+			//voice.time = clip.length;
 
-			voice.PlayOneShot(clip);
-        }
+			//voice.PlayOneShot(clip);
+		}
 
 		//FUCKING RUN
 

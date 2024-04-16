@@ -83,7 +83,10 @@ namespace Amy
 			if (mPlayer.currentMode != PlayerModes.SLINGSHOT)
 			{
 				enabled = false;
-				aimer.slingshot_model.SetActive(false);
+
+				if(aimer)
+					aimer.slingshot_model.SetActive(false);
+
 				return;
 			}
 
@@ -117,8 +120,11 @@ namespace Amy
 
         private void OnDisable()
         {
-			aimer.gameObject.SetActive(false);
-			aimer.slingshot_model.SetActive(false);
+			if (aimer)
+			{
+				aimer.gameObject.SetActive(false);
+				aimer.slingshot_model.SetActive(false);
+			}
 		}
 
         private void Update()

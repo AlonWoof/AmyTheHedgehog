@@ -64,7 +64,8 @@ namespace Amy
             if (deathType == DeathType.Drowned)
             {
                 //Replace with actual voice and animation
-                mPlayer.mVoice.playVoice(mPlayer.mVoice.largePain, true);
+                // mPlayer.mVoice.playVoice(mPlayer.mVoice.largePain, true);
+                mRigidBody.useGravity = false;
                 mAnimator.Play("Die_Start");
             }
 
@@ -108,6 +109,8 @@ namespace Amy
 
         private void FixedUpdate()
         {
+            if (deathType == DeathType.Drowned)
+                return;
 
             mPlayer.CalcVerticalVelocity();
             mPlayer.applyFriction();

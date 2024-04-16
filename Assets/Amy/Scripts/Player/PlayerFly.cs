@@ -29,6 +29,9 @@ namespace Amy
 		Vector3 mDesiredMovement;
 		Vector3 mCurrentMovement;
 
+		float fxSpawnTimeout = 0.1f;
+		
+
 		// Start is called before the first frame update
 		void Start()
 	    {
@@ -103,7 +106,7 @@ namespace Amy
 			horizMovement.y = 0.0f;
 
 			//mAnimator.SetFloat("fly_speed", horizMovement.magnitude / 4.0f);
-			mAnimator.SetFloat("animSpeed", 1.0f + horizMovement.magnitude / 4.0f);
+			//mAnimator.SetFloat("animSpeed", 1.0f + horizMovement.magnitude / 4.0f);
 			//mAnimator.SetFloat("y_accel", vertMovement);
 
 			mAnimator.SetFloat("fly_z", horizMovement.magnitude * 0.25f);
@@ -111,6 +114,9 @@ namespace Amy
 			mAnimator.SetFloat("fly_speed", Mathf.Clamp(mRigidBody.velocity.magnitude * 0.5f, 1.0f, 4.0f));
 
 			mPlayer.hipBoneTransform.position += hoverOffset * (Vector3.up * 0.1f);
+
+			if (fxSpawnTimeout > 0.0f)
+				fxSpawnTimeout -= Time.deltaTime;
 		}
 
 		private void FixedUpdate()
@@ -147,6 +153,8 @@ namespace Amy
 
 		void calculateVerticalVelocity()
 		{
+			const float flyStaminaDrain = 0.05f;
+
 			Vector3 cpos = transform.position;
 			Vector3 velo = mRigidBody.velocity;
 
@@ -155,6 +163,7 @@ namespace Amy
 			if (mDesiredMovement.magnitude > 0.1f)
 			{
 				fly_left -= Time.fixedDeltaTime * mDesiredMovement.magnitude;
+				mPlayer.getStatus().currentStamina -= (Time.fixedDeltaTime * mDesiredMovement.magnitude) * flyStaminaDrain;
 
 				if (fly_left < 0.0f)
 					fly_left = 0.0f;
@@ -200,6 +209,17 @@ namespace Amy
 			transform.rotation = Quaternion.Lerp(transform.rotation, newRot, Time.deltaTime * 4.0f);
 
 			hoverOffset = Mathf.Sin(Time.time);
+		}
+
+		public void earFlap()
+        {
+			if (fxSpawnTimeout > 0.0f)
+				return;
+
+			GameObject inst = GameObject.Instantiate(GameManager.Instance.systemData.RES_AmyPlayerFX.fx_creamEarFlap);
+			inst.transform.position = transform.position;
+			fxSpawnTimeout = 0.2f;
+
 		}
 	}
 }

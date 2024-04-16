@@ -91,12 +91,14 @@ namespace Amy
         void Update()
     	{
            // RenderSettings.fogColor = currentFogColor * RenderSettings.ambientSkyColor;// sky.ambColorGradient.Evaluate(sky.calcTime);
-            RenderSettings.fogColor = currentFogColor * RenderSettings.ambientIntensity;// sky.ambColorGradient.Evaluate(sky.calcTime);
+            // sky.ambColorGradient.Evaluate(sky.calcTime);
 
             //RenderSettings.fogColor = currentFogColor;
 
             if (hasDayNightCycle)
             {
+                RenderSettings.fogColor = currentFogColor * RenderSettings.ambientIntensity;
+
                 if (PlayerManager.Instance.isNightTime)
                 {
                     lighting_night.ApplyToScene();

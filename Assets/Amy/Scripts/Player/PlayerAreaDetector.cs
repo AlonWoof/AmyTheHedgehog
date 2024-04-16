@@ -19,6 +19,7 @@ namespace Amy
 		public Activatible closestActivatible = null;
 
 		public float detectRadius = 20.0f;
+		public float lookRadius = 5.0f;
 
 		float timeTilUpdate = 3.0f;
 
@@ -142,6 +143,11 @@ namespace Amy
 					Debug.Log(closestActivatible.interactionLabel);
 				}
 			}
+
+			if (closestActivatible)
+			{
+				mPlayer.lookAt(closestActivatible.transform.position);
+			}
 		}
 
 		public void refreshClosestEnemy()
@@ -171,6 +177,15 @@ namespace Amy
 					closestEnemy = e;
                 }
 
+            }
+
+
+			if(closestEnemy)
+            {
+				if(Vector3.Distance(transform.position + (Vector3.up * (mPlayer.mParam.height * 0.75f)), closestEnemy.transform.position) > lookRadius * 1.5f)
+                {
+					mPlayer.lookAt(closestEnemy.transform.position);
+                }
             }
 
 			//Debug.Log("BEST ANGLE: " + bestAngle);

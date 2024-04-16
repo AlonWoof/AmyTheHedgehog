@@ -14,6 +14,7 @@ namespace Amy
 
         public Canvas mainCanvas;
         public GameObject ingameHUD;
+        public MessageBox messageBox;
 
         Fader mFader;
 
@@ -34,6 +35,7 @@ namespace Amy
             //mIngameHUD = inst.GetComponentInChildren<IngameHUD>();
             mainCanvas = inst.GetComponent<Canvas>();
             mHudGroup = inst.GetComponentInChildren<CanvasGroup>();
+            messageBox = inst.GetComponentInChildren<MessageBox>();
 
             DontDestroyOnLoad(inst.gameObject);
         }

@@ -8,11 +8,11 @@ namespace Amy
     
     public class FlyMeter : MonoBehaviour
     {
-        /*
+        
         public Image airMeter_circle;
         public CanvasGroup mCanvas;
         Player mPlayer;
-        PlayerFlying mFlying;
+        PlayerFly mFlying;
 
         public Gradient colorGradient;
 
@@ -33,7 +33,7 @@ namespace Amy
 
             if(!mFlying)
             {
-                mFlying = mPlayer.GetComponent<PlayerFlying>();
+                mFlying = mPlayer.GetComponent<PlayerFly>();
                 mCanvas.alpha = 0.0f;
                 return;
             }
@@ -57,6 +57,6 @@ namespace Amy
             airMeter_circle.color = colorGradient.Evaluate(airFac);
         }
 
-        */
+        
     }
 }

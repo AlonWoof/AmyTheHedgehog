@@ -14,7 +14,8 @@ namespace Amy
     {
 		None,
 		PlayerInstance,
-		PlayerStatus,
+		AmyStatus,
+		CreamStatus,
 		SceneInfo,
 		PageCount
     }
@@ -69,16 +70,101 @@ namespace Amy
 
 			PlayerStatus pstats = player.getStatus();
 
-			string dbgstr = "DEBUG INFO\n\n";
+			string dbgstr = "DEBUG INFO " + (int)currentPage + "/" + ((int)DebugInfoPage.PageCount-1) + "\n\n";
 
 			switch(currentPage)
             {
 				case DebugInfoPage.PlayerInstance:
 					dbgstr += getPlayerInstanceInfo();
 					break;
-            }
+
+				case DebugInfoPage.AmyStatus:
+					dbgstr += getPlayerStatus(PlayableCharacter.Amy);
+					break;
+
+				case DebugInfoPage.CreamStatus:
+					dbgstr += getPlayerStatus(PlayableCharacter.Cream);
+					break;
+			}
 
 			dbg_text.text = dbgstr;
+		}
+
+		string getPlayerStatus(PlayableCharacter mChara)
+        {
+			PlayerStatus pstats = PlayerManager.Instance.getCharacterStatus(mChara);
+
+			string dbgstr = "";
+
+			switch(mChara)
+            {
+				case PlayableCharacter.Amy:
+					dbgstr += "<color=#F6A3BBFF>AMY ";
+					break;
+				case PlayableCharacter.Cream:
+					dbgstr += "<color=#F8E0B8FF>CREAM ";
+					break;
+			}
+
+			dbgstr += "STATUS</color>\n";
+
+			if (PlayerManager.Instance.currentCharacter != mChara)
+				dbgstr += "\n(Currently Resting)\n\n";
+			else
+				dbgstr += "\n\n\n";
+
+			dbgstr += "Health: " + pstats.currentHealth + " / " + pstats.maxHealth + "\n";
+			dbgstr += "Stamina: " + pstats.currentStamina + " / " + pstats.maxStamina + "\n";
+			dbgstr += "Mood: " + pstats.currentMood + " / " + pstats.maxMood + "\n\n";
+
+			dbgstr += "Status Effects: ";
+
+			if (pstats.checkStatusEffect(PlayerStatusFX.Relaxed))
+				dbgstr += "Relaxed ";
+
+			if (pstats.checkStatusEffect(PlayerStatusFX.Scared))
+				dbgstr += "Scared ";
+
+			if (pstats.checkStatusEffect(PlayerStatusFX.Tired))
+				dbgstr += "Tired ";
+
+			if (pstats.checkStatusEffect(PlayerStatusFX.Dirty))
+				dbgstr += "Dirty ";
+
+			if (pstats.checkStatusEffect(PlayerStatusFX.Horny))
+				dbgstr += "Horny ";
+
+			if (pstats.checkStatusEffect(PlayerStatusFX.Sick))
+				dbgstr += "Sick ";
+
+			dbgstr += "\n\nVibes: ";
+
+			if(pstats.checkVibe(VibeType.Safe))
+				dbgstr += "Safe ";
+
+			if (pstats.checkVibe(VibeType.Pretty))
+				dbgstr += "Pretty ";
+
+			if (pstats.checkVibe(VibeType.Fun))
+				dbgstr += "Fun ";
+
+			if (pstats.checkVibe(VibeType.Dark))
+				dbgstr += "Dark ";
+
+			if (pstats.checkVibe(VibeType.Scary))
+				dbgstr += "Scary ";
+
+			if (pstats.checkVibe(VibeType.Dirty))
+				dbgstr += "Dirty ";
+
+			dbgstr += "\nScared Time Left: " + pstats.scaredTimeLeft;
+			dbgstr += "\nSick Time Left: " + pstats.sickTimeLeft;
+			dbgstr += "\nDirtyness: " + pstats.dirtiness;
+
+			dbgstr += "\nTime Spent Resting: " + pstats.timeSpentResting;
+			//dbgstr += "\n Good Food Time Left: " + pstats.goodFoodTimeLeft;
+
+			return dbgstr;
 		}
 
 		string getPlayerInstanceInfo()
@@ -88,10 +174,6 @@ namespace Amy
 			PlayerStatus pstats = player.getStatus();
 
 			string dbgstr = "";
-
-			dbgstr += "Health: " + pstats.currentHealth + " / " + pstats.maxHealth + "\n";
-			dbgstr += "Stamina: " + pstats.currentStamina + " / " + pstats.maxStamina + "\n";
-			dbgstr += "Mood: " + pstats.currentMood + " / " + pstats.maxMood + "\n\n";
 
 			dbgstr += "Mode: " + player.dbg_getModeString() + "\n";
 			dbgstr += "Accel \n X: " + player.acceleration.x +
@@ -115,6 +197,7 @@ namespace Amy
 			dbgstr += "attackTimer: " + player.attackTimer + "\n";
 			dbgstr += "framesAirborne: " + player.framesAirborne + "\n";
 			dbgstr += "hammerJumpCharge: " + player.hammerJumpCharge + "\n";
+			dbgstr += "canAirAttack: " + player.canAirAttack + "\n";
 
 			return dbgstr;
 		}

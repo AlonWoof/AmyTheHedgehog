@@ -72,6 +72,7 @@ namespace Amy
 		public WeaponTrailFX fx_hammerTrail;
 		public ThirdPersonCamera tpc;
 		public PlayerVoice mVoice;
+		public ActorLookAtController lookAtController;
 
 		//Character Data
 		public PlayerParameters mParam;
@@ -99,14 +100,17 @@ namespace Amy
 		public bool isHammerJumping = false;
 		public bool isAttacking = false;
 		public bool isHammerSpin = false;
+		public bool canAirAttack = false;
 		public float mutekiTimer = 0.0f;
 		public float attackTimer = 0.0f;
 		public float interactTimeout = 0.0f;
 		public float hammerJumpCharge = 0.0f;
+		public float airLeft = 0.0f;
 		public int framesAirborne = 0;
+		public float lookTimeLeft = 0.0f;
 
 		public float stickTimeout = 0.0f;
-		public float jumpTimer = 1.0f;
+		public float jumpTimer = 0.0f;
 
 		public Transform hipBoneTransform;
 		public Transform headBoneTransform;
@@ -130,6 +134,7 @@ namespace Amy
 		public PlayerSlingshot modeSlingshot;
 		public PlayerClimb modeLadder;
 		public PlayerRubbing modeRubbing;
+		public PlayerListening modeListening;
 		public PlayerHurt modeHurt;
 		public PlayerKilled modeKilled;
 		public PlayerDebugMove modeDebug;
@@ -250,11 +255,6 @@ namespace Amy
 			newPlayer.fx_hammerTrail = wfx.GetComponent<WeaponTrailFX>();
 			newPlayer.fx_hammerTrail.weaponNode = newPlayer.getBoneByName("HurtBox_Hammer");
 
-			//Status effects
-			foreach(StatusEffect s in PlayerManager.Instance.gameObject.GetComponentsInChildren<StatusEffect>())
-            {
-				s.setPlayer(newPlayer);
-            }
 
 			return newPlayer;
 		}
@@ -269,6 +269,7 @@ namespace Amy
 			modeSlingshot = gameObject.AddComponent<PlayerSlingshot>();
 			modeLadder = gameObject.AddComponent<PlayerClimb>();
 			modeRubbing = gameObject.AddComponent<PlayerRubbing>();
+			modeListening = gameObject.AddComponent<PlayerListening>();
 			modeHurt = gameObject.AddComponent<PlayerHurt>();
 			modeKilled = gameObject.AddComponent<PlayerKilled>();
 			modeDebug = gameObject.AddComponent<PlayerDebugMove>();
@@ -284,6 +285,7 @@ namespace Amy
 			modeSlingshot.enabled = false;
 			modeLadder.enabled = false;
 			modeRubbing.enabled = false;
+			modeListening.enabled = false;
 			modeHurt.enabled = false;
 			modeKilled.enabled = false;
 			modeDebug.enabled = false;
@@ -327,6 +329,10 @@ namespace Amy
 					modeRubbing.enabled = true;
 					break;
 
+				case PlayerModes.LISTENING:
+					modeListening.enabled = true;
+					break;
+
 				case PlayerModes.HURT:
 					modeHurt.enabled = true;
 					break;
@@ -346,6 +352,7 @@ namespace Amy
 			mRigidBody = GetComponent<Rigidbody>();
 			mAnimator = GetComponent<Animator>();
 			mVoice = GetComponent<PlayerVoice>();
+			lookAtController = GetComponent<ActorLookAtController>();
 		}
 
 		void getPlayerBones()
@@ -370,6 +377,28 @@ namespace Amy
 			return null;
 		}
 
+		public void lookAt(Vector3 lookPos, float time = 1.0f)
+        {
+			if (!lookAtController)
+				return;
+
+			lookAtController.desiredLookAt = lookPos;
+			lookAtController.lookingAtTarget = true;
+			lookTimeLeft = time;
+
+		}
+
+		public void freeLookAt()
+        {
+			if (!lookAtController)
+				return;
+
+			lookAtController.desiredLookAt = transform.forward * 0.2f + transform.up * (mParam.height * 0.75f);
+			lookAtController.lookingAtTarget = false;
+			lookTimeLeft = 0.0f;
+			//lookAtController.eyeLook.overrideLook = false;
+			//lookAtController.eyeLook.look_x_left = 0.0f;
+		}
 
 		void doLeanAnimation()
         {
@@ -471,9 +500,21 @@ namespace Amy
 				}
 			}
 
+			if(lookTimeLeft > 0.0f)
+            {
+				lookTimeLeft -= Time.deltaTime;
+
+				if(lookTimeLeft <= 0.0f)
+                {
+					freeLookAt();
+                }
+            }
+
 			mAnimator.SetFloat("y_accel", speed.y);
 			mAnimator.SetFloat("z_accel", runAnimProgress);
 			mAnimator.SetFloat("run_anim_speed", runAnimSpeed);
+
+			updateWaterFX();
 
 			debugControls();
 		}
@@ -773,6 +814,70 @@ namespace Amy
 			return water_y - transform.position.y;
 		}
 
+		public void updateWaterFX()
+		{
+
+			float depth = getWaterDepth();
+
+			
+			if (depth > 0.0f && depth < mParam.height)
+			{
+				//fx_waterWadingFX.gameObject.SetActive(true);
+
+				Vector3 wpos = transform.position;
+				wpos.y = getWaterYPos();
+			}
+			else
+			{
+				//fx_waterWadingFX.transform.position = Vector3.down * 100000.0f;
+			}
+
+
+			if (depth > 0.5f)
+			{
+				//fx_wetDirty.inWater = true;
+				//fx_wetDirty.wetLevel = 0.75f;
+
+				if (PlayerManager.Instance.getCharacterStatus(mChara).dirtiness > 0.0f)
+					PlayerManager.Instance.getCharacterStatus(mChara).dirtiness -= Time.deltaTime * 0.5f;
+			}
+			else
+			{
+				//fx_wetDirty.inWater = false;
+			}
+
+			if (depth > mParam.height * 1.1f)
+			{
+				airLeft -= Time.deltaTime;
+
+				if (airLeft < 0.0f)
+					airLeft = 0.0f;
+
+				if (airLeft <= 0.0f)
+				{
+					modeKilled.deathType = PlayerKilled.DeathType.Drowned;
+					changeCurrentMode(PlayerModes.KILLED);
+				}
+
+			}
+			if (depth < mParam.height)
+			{
+				airLeft += Time.deltaTime * 5.0f;
+
+				if (airLeft > calculateLungCapacity())
+					airLeft = calculateLungCapacity();
+			}
+
+		}
+
+		public float calculateLungCapacity()
+        {
+			PlayerStatus pStats = getStatus();
+			float staminaHealthAvg = (pStats.maxHealth + pStats.maxStamina) * 0.5f;
+
+			return staminaHealthAvg * 0.5f;
+		}
+
 		public void CalcVerticalVelocity()
 		{
 			float gravityMult = mParam.gravityMult;
@@ -897,8 +1002,9 @@ namespace Amy
 						{
 							isHammerJumping = false;
 							isOnGround = true;
+							canAirAttack = true;
 
-							if(currentMode != PlayerModes.HURT && currentMode != PlayerModes.KILLED)
+							if (currentMode != PlayerModes.HURT && currentMode != PlayerModes.KILLED)
 								mAnimator.Play("Land");
 
 							acceleration.y = 0.0f;
@@ -956,12 +1062,16 @@ namespace Amy
 			if (!isOnGround && !ignoreGrounded)
 				return false;
 
+
 			float slopeMult = Mathf.Clamp01(1.0f + slopeAmount);
 
 			if (slopeMult < 0.45f && isOnGround)
 				return false;
 
 			if (PlayerManager.Instance.isHubRoom)
+				return false;
+
+			if (GameManager.Instance.playerInputDisabled)
 				return false;
 
 			return true;
@@ -1137,6 +1247,7 @@ namespace Amy
 			mAnimator.Play("AirAttack");
 			isHammerSpin = true;
 			isAttacking = true;
+			canAirAttack = false;
 			attackTimer = 0.6f;
 
 			if (fx_hammerTrail)
@@ -1199,6 +1310,9 @@ namespace Amy
 
 		public void checkForInteract()
 		{
+			if (GameManager.Instance.playerInputDisabled)
+				return;
+
 			if (interactTimeout > 0.0f)
 			{
 				interactTimeout -= Time.deltaTime;
@@ -1210,6 +1324,8 @@ namespace Amy
 
 			if (acceleration.z > 0.5f)
 				return;
+
+
 
 
 			if (Input.GetButtonDown("Action"))
@@ -1235,6 +1351,9 @@ namespace Amy
 
 		public void checkForHammerJump()
         {
+			if (GameManager.Instance.playerInputDisabled)
+				return;
+
 			if (acceleration.z < 5.3f)
 			{
 				hammerJumpCharge = 0.0f;
@@ -1268,6 +1387,9 @@ namespace Amy
 
 		public void checkForGroundAttack()
         {
+			if (GameManager.Instance.playerInputDisabled)
+				return;
+
 			if (acceleration.magnitude > 1.0f || !isOnGround)
 				return;
 
@@ -1283,6 +1405,9 @@ namespace Amy
 
 		public void checkForRunningGroundAttack()
         {
+			if (GameManager.Instance.playerInputDisabled)
+				return;
+
 			if (acceleration.magnitude < 1.0f || !isOnGround)
 				return;
 
@@ -1301,14 +1426,24 @@ namespace Amy
 
 		public void checkForAirAttack()
         {
+			if (GameManager.Instance.playerInputDisabled)
+				return;
+
 			if (PlayerManager.Instance.isHubRoom)
 				return;
 
 			if (!PlayerManager.Instance.hasHammer)
 				return;
 
+			if (!canAirAttack)
+				return;
+
+			//Get this poor girl some rest jeez...
+			if (getStatus().checkStatusEffect(PlayerStatusFX.Tired))
+				return;
+
 			//if (isAttacking && !isOnGround)
-				//updateHoming();
+			//updateHoming();
 
 			if (Input.GetButtonDown("Attack"))
 				airHammerAttack();
@@ -1326,10 +1461,12 @@ namespace Amy
 
 		public void checkForJump()
         {
+
+
 			if (Input.GetButtonDown("Jump") && canJump(false))
 				Jump(false);
 
-			if (!Input.GetButton("Jump") && !isHammerJumping)
+			if (!Input.GetButton("Jump") && !isHammerJumping && framesAirborne > 5)
 				jumpTimer = 0.0f;
 
 			if (jumpTimer > 0.0f)
@@ -1338,7 +1475,10 @@ namespace Amy
 
 		public void checkForFlying()
         {
-			if (getAltitudeFromGround() > 0.4f && mChara == PlayableCharacter.Cream)
+			if (GameManager.Instance.playerInputDisabled)
+				return;
+
+			if (getAltitudeFromGround() > mParam.height && mChara == PlayableCharacter.Cream)
 			{
 				if (Input.GetButtonDown("Jump"))
 				{
@@ -1350,6 +1490,9 @@ namespace Amy
 
 		public void checkForSlingshot()
         {
+			if (GameManager.Instance.playerInputDisabled)
+				return;
+
 			if (Input.GetAxis("Shoot") < 0.5f)
 				return;
 

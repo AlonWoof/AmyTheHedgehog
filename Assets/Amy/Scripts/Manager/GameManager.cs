@@ -83,9 +83,7 @@ namespace Amy
             Application.targetFrameRate = Screen.currentResolution.refreshRate * 2;
             QualitySettings.vSyncCount = 0;
 
-            #if !UNITY_EDITOR
-                GameManager.Instance.loadScene("AmyRoom");
-            #endif
+
 
 
         }
@@ -126,7 +124,10 @@ namespace Amy
             analogStickFirstFrame = new bool[8];
 
             SaveGame.loadGame(0);
+
+            #if !UNITY_EDITOR
             PlayerManager.Instance.wakeupScene();
+            #endif
 
             //loadScene(UnityEngine.SceneManagement.SceneManager.GetActiveScene().name);
         }
@@ -417,9 +418,9 @@ namespace Amy
             //UIManager.Instance.hideGameOverScreen();
 
             //Night chance?
-            float rng = Random.Range(0, 100.0f);
+            int rng = Random.Range(0, 64);
 
-            if (rng < 50.0f)
+            if (rng == 13)
                 PlayerManager.Instance.isNightTime = true;
             else
                 PlayerManager.Instance.isNightTime = false;

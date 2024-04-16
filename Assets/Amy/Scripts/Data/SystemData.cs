@@ -16,8 +16,11 @@ namespace Amy
         public GameObject prop_amyCloth;
         public GameObject prop_creamCloth;
 
+        public GameObject fx_creamEarFlap;
+
         public GameObject basicSlingshotProjectile;
     }
+
 
     [System.Serializable]
     [CreateAssetMenu(fileName = "SystemData", menuName = "SystemData", order = 51)]

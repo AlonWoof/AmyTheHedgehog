@@ -18,6 +18,7 @@ namespace Amy
         None
     }
 
+    [System.Flags]
     public enum PlayerStatusFX
     {
         None = 0,
@@ -52,6 +53,9 @@ namespace Amy
         public int currentVibes;
         public float scaredTimeLeft = 0.0f;
         public float goodFoodTimeLeft = 0.0f;
+        public float sickTimeLeft = 0.0f;
+
+        public float timeSpentResting = 0.0f;
 
         public PlayerStatus makeCopy()
         {
@@ -328,8 +332,12 @@ namespace Amy
         {
             PlayerStatus pStats = pl.getStatus();
             const float scaredStaminaDrain = 0.25f;
+            const float sickStaminaDrain = 0.35f;
 
-            if(pStats.checkStatusEffect(PlayerStatusFX.Scared))
+            if (currentCharacter == pl.mChara)
+                pStats.timeSpentResting = 0.0f;
+
+            if (pStats.checkStatusEffect(PlayerStatusFX.Scared))
             {
                 if(pStats.currentStamina > 0.02f)
                 {
@@ -366,6 +374,41 @@ namespace Amy
                     pStats.unSetStatusEffect(PlayerStatusFX.Tired);
                 }
             }
+
+            if(pStats.checkStatusEffect(PlayerStatusFX.Sick))
+            {
+                //Shouldn't be out and about while sick, young lady....
+                if (pl.acceleration.magnitude > 2.0f && !pStats.checkVibe(VibeType.Safe))
+                {
+                    if (pStats.currentStamina > 0.02f)
+                    {
+                        pStats.currentStamina -= (sickStaminaDrain * Time.deltaTime);
+                    }
+                    else if (pStats.currentHealth > 0.0f)
+                    {
+                        pStats.currentHealth -= sickStaminaDrain * Time.deltaTime;
+                        pl.updateHealth();
+                    }
+                }
+            }
+
+            if(pStats.checkStatusEffect(PlayerStatusFX.Dirty))
+            {
+                if(pStats.dirtiness < 0.1f)
+                {
+                    pStats.unSetStatusEffect(PlayerStatusFX.Dirty);
+                }
+
+                if(Time.frameCount % 3600 == 0)
+                {
+                    //1/64 chance of getting sick every 30 seconds while dirty.
+                    if(Random.Range(0, 64) == 4)
+                    {
+                        pStats.setStatusEffect(PlayerStatusFX.Sick);
+                        pStats.sickTimeLeft = Random.Range(Helper.minutesToSeconds(18), Helper.minutesToSeconds(36));
+                    }
+                }
+            }
         }
 
         public void processVibes(Player pl)
@@ -391,6 +434,21 @@ namespace Amy
             if(pStats.checkVibe(VibeType.Safe))
             {
                 
+            }
+
+            if(pStats.checkVibe(VibeType.Dirty))
+            {
+                const float baseDirtPerSpeed = 0.02f;
+
+                if(pl.acceleration.magnitude > 0.1f)
+                {
+                    pStats.dirtiness += Time.deltaTime * (baseDirtPerSpeed * pl.acceleration.magnitude);
+                }
+
+                if(pStats.dirtiness > 1.0f && !pStats.checkStatusEffect(PlayerStatusFX.Dirty))
+                {
+                    pStats.setStatusEffect(PlayerStatusFX.Dirty);
+                }
             }
         }
 
@@ -466,8 +524,9 @@ namespace Amy
         {
             const float staminaHealRate = 0.1f;
             const float healthHealRate = 0.1f;
+            pStats.timeSpentResting += (Time.deltaTime * time);
 
-            if(pStats.checkStatusEffect(PlayerStatusFX.Scared) || pStats.checkStatusEffect(PlayerStatusFX.Tired))
+            if (pStats.checkStatusEffect(PlayerStatusFX.Scared) || pStats.checkStatusEffect(PlayerStatusFX.Tired))
             {
                 pStats.unSetStatusEffect(PlayerStatusFX.Scared);
                 pStats.unSetStatusEffect(PlayerStatusFX.Tired);
@@ -482,6 +541,16 @@ namespace Amy
             {
                 pStats.currentHealth += healthHealRate * (Time.deltaTime * time);
                 pStats.clampValues();
+            }
+
+            if(pStats.checkStatusEffect(PlayerStatusFX.Sick))
+            {
+                pStats.sickTimeLeft -= (Time.deltaTime * time);
+
+                if(pStats.sickTimeLeft < 0.0f)
+                {
+                    pStats.unSetStatusEffect(PlayerStatusFX.Sick);
+                }
             }
         }
 
