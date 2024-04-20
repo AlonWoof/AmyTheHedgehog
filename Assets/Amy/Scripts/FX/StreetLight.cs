@@ -16,6 +16,8 @@ namespace Amy
 		public GameObject onModel;
 		public GameObject offModel;
 
+		public bool isOn = false;
+
 		SceneInfo scn;
 
 	    void Start()
@@ -43,5 +45,28 @@ namespace Amy
 				offModel.SetActive(true);
 			}
 	    }
+
+
+		public void turnOn()
+        {
+			if(!isOn)
+            {
+				onModel.SetActive(true);
+				offModel.SetActive(false);
+			}
+
+			isOn = true;
+		}
+
+		public void turnOff()
+        {
+			if (isOn)
+			{
+				onModel.SetActive(false);
+				offModel.SetActive(true);
+			}
+
+			isOn = false;
+		}
 	}
 }

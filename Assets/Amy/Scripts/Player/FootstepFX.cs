@@ -8,6 +8,7 @@ public enum TerrainType
     Default,
     Grass,
     Stone,
+    Metal,
     Dirt,
     Wood,
     Water
@@ -20,6 +21,7 @@ public class FootstepFXRes
     public GameObject res_FootFX_Default;
     public GameObject res_FootFX_Dirt;
     public GameObject res_FootFX_Stone;
+    public GameObject res_FootFX_Metal;
     public GameObject res_FootFX_Grass;
     public GameObject res_FootFX_Water;
 
@@ -32,6 +34,7 @@ public class FootstepFXRes
         GameObject.Instantiate(res_FootFX_Default);
         GameObject.Instantiate(res_FootFX_Dirt);
         GameObject.Instantiate(res_FootFX_Grass);
+        GameObject.Instantiate(res_FootFX_Metal);
         GameObject.Instantiate(res_FootFX_Stone);
         GameObject.Instantiate(res_FootFX_Water);
 
@@ -154,6 +157,9 @@ public class FootstepFX : MonoBehaviour
 
         if (currentTerrain == TerrainType.Grass)
             SpawnFX(pos, footFXRes.res_FootFX_Grass);
+
+        if (currentTerrain == TerrainType.Metal)
+            SpawnFX(pos, footFXRes.res_FootFX_Metal);
 
 
         if (currentTerrain == TerrainType.Water)

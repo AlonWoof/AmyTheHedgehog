@@ -123,8 +123,6 @@ namespace Amy
             analogStickState = new bool[8];
             analogStickFirstFrame = new bool[8];
 
-            SaveGame.loadGame(0);
-
             #if !UNITY_EDITOR
             PlayerManager.Instance.wakeupScene();
             #endif
@@ -203,6 +201,20 @@ namespace Amy
             systemData.AUDIO_GameSFXMixer.SetFloat("GameSFXVolume", gameSFXVolume);
         }
 
+        public void pauseGame()
+        {
+            Time.timeScale = 0.0f;
+            mainCamera.GetComponent<Cinemachine.CinemachineBrain>().m_UpdateMethod = Cinemachine.CinemachineBrain.UpdateMethod.LateUpdate;
+            gamePaused = true;
+        }
+
+        public void unPauseGame()
+        {
+            Time.timeScale = 1.0f;
+            mainCamera.GetComponent<Cinemachine.CinemachineBrain>().m_UpdateMethod = Cinemachine.CinemachineBrain.UpdateMethod.FixedUpdate;
+            gamePaused = false;
+        }
+
         void checkPauseGame()
         {
             if (cutsceneMode)
@@ -219,15 +231,11 @@ namespace Amy
 
             if(!gamePaused)
             {
-                Time.timeScale = 0.0f;
-                mainCamera.GetComponent<Cinemachine.CinemachineBrain>().m_UpdateMethod = Cinemachine.CinemachineBrain.UpdateMethod.LateUpdate;
-                gamePaused = true;
+                pauseGame();
             }
             else
             {
-                Time.timeScale = 1.0f;
-                mainCamera.GetComponent<Cinemachine.CinemachineBrain>().m_UpdateMethod = Cinemachine.CinemachineBrain.UpdateMethod.FixedUpdate;
-                gamePaused = false;
+                unPauseGame();
             }
         }
 

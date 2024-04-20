@@ -53,8 +53,8 @@ namespace Amy
         MessageBoxStyle style = MessageBoxStyle.Default;
         MessageBoxLocation location = MessageBoxLocation.Bottom;
 
-        [TextArea(5, 5)]
-        public List<string> messages;
+        [TextArea(1, 2)]
+        public List<string> messages = new List<string>{ "This Message is a Test. This Sausage is the Last. Yeah..." };
         public List<Choice> choices;
 
         public AudioClip voice;

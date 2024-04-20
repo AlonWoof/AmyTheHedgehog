@@ -31,6 +31,17 @@ namespace Amy
         GoodFood = 64
     }
 
+    public enum ExitLevelType
+    {
+        NORMAL,
+        WARP
+    }
+    [System.Serializable]
+    public class DayEvents
+    {
+        public bool stationCircleNight = false;
+    };
+
     [System.Serializable]
     public class PlayerStatus
     {
@@ -56,6 +67,7 @@ namespace Amy
         public float sickTimeLeft = 0.0f;
 
         public float timeSpentResting = 0.0f;
+
 
         public PlayerStatus makeCopy()
         {
@@ -167,6 +179,7 @@ namespace Amy
         public Transform playerCheckpoint;
 
         public int lastExit = 0;
+        public ExitLevelType exitType;
 
         public float playerDirtiness = 0.0f;
         public float playerStress = 0.0f;
@@ -182,13 +195,14 @@ namespace Amy
         public bool isHubRoom = false;
         public bool isNightTime = false;
         public bool ringLeftChannel = false;
-        
+
+        public DayEvents todayEvents;
 
         private void Awake()
         {
-
             AmyStatus = GameManager.getSystemData().AmyParams.baseStats.makeCopy();
             CreamStatus = GameManager.getSystemData().CreamParams.baseStats.makeCopy();
+            todayEvents = new DayEvents();
 
             GameObject inst = new GameObject("CHECKPOINT");
             DontDestroyOnLoad(inst);
@@ -220,6 +234,19 @@ namespace Amy
             cutsceneFlags = new List<StoryFlag>();
             AmyStatus = GameManager.getSystemData().AmyParams.baseStats.makeCopy();
             CreamStatus = GameManager.getSystemData().CreamParams.baseStats.makeCopy();
+        }
+
+
+        public void randomizeDayEvents()
+        {
+
+            todayEvents.stationCircleNight = false;
+
+
+            int rng = Random.Range(0, 64);
+
+            if (rng == 13)
+                todayEvents.stationCircleNight = true;
         }
 
     	// Update is called once per frame
@@ -394,11 +421,6 @@ namespace Amy
 
             if(pStats.checkStatusEffect(PlayerStatusFX.Dirty))
             {
-                if(pStats.dirtiness < 0.1f)
-                {
-                    pStats.unSetStatusEffect(PlayerStatusFX.Dirty);
-                }
-
                 if(Time.frameCount % 3600 == 0)
                 {
                     //1/64 chance of getting sick every 30 seconds while dirty.
@@ -408,7 +430,23 @@ namespace Amy
                         pStats.sickTimeLeft = Random.Range(Helper.minutesToSeconds(18), Helper.minutesToSeconds(36));
                     }
                 }
+
+                if (pStats.dirtiness < 0.1f)
+                {
+                    pStats.unSetStatusEffect(PlayerStatusFX.Dirty);
+                }
             }
+            else
+            {
+                if (pStats.dirtiness > 0.9f)
+                {
+                    pStats.setStatusEffect(PlayerStatusFX.Dirty);
+                }
+            }
+
+
+
+
         }
 
         public void processVibes(Player pl)
@@ -444,11 +482,6 @@ namespace Amy
                 {
                     pStats.dirtiness += Time.deltaTime * (baseDirtPerSpeed * pl.acceleration.magnitude);
                 }
-
-                if(pStats.dirtiness > 1.0f && !pStats.checkStatusEffect(PlayerStatusFX.Dirty))
-                {
-                    pStats.setStatusEffect(PlayerStatusFX.Dirty);
-                }
             }
         }
 
@@ -471,10 +504,10 @@ namespace Amy
                 targetMood *= 1.2f;
 
             if (pStats.checkStatusEffect(PlayerStatusFX.GoodFood))
-                targetMood *= 1.5f;
+                targetMood *= 1.2f;
 
             if (pStats.checkStatusEffect(PlayerStatusFX.Tired))
-                targetMood *= 0.75f;
+                targetMood *= 0.5f;
 
             if (pStats.checkStatusEffect(PlayerStatusFX.Sick))
                 targetMood *= 0.65f;
@@ -618,9 +651,17 @@ namespace Amy
 
 
             mPlayerInstance = Player.Spawn(playerCheckpoint.transform.position, playerCheckpoint.transform.forward, currentCharacter);
-            
+
             //saveGame.lastScene = SceneManager.GetActiveScene().name;
             // saveGame.lastExit = lastExit;
+
+            if(exitType == ExitLevelType.WARP)
+            {
+                mPlayerInstance.startWarpExit();
+            }
+
+            exitType = ExitLevelType.NORMAL;
+            
 
             return mPlayerInstance;
         }
@@ -736,18 +777,14 @@ namespace Amy
             }
 
 
-            getCurrentPlayerStatus().currentHealth = getCurrentPlayerStatus().maxHealth * 0.5f;
-            getCurrentPlayerStatus().currentStamina = getCurrentPlayerStatus().maxStamina * 0.5f;
+            getCurrentPlayerStatus().currentHealth = getCurrentPlayerStatus().maxHealth * 0.1f;
+            getCurrentPlayerStatus().currentStamina = getCurrentPlayerStatus().maxStamina * 0.1f;
 
             if(type == PlayerKilled.DeathType.Corrupted)
             {
-                getCurrentPlayerStatus().currentStamina = 0.0f;
+                getCurrentPlayerStatus().currentStamina = -10.0f;
                 getCurrentPlayerStatus().unSetStatusEffect(PlayerStatusFX.Scared);
             }
-
-           
-
-
 
             yield return 0f;
 
@@ -758,6 +795,8 @@ namespace Amy
                 currentCharacter = PlayableCharacter.Cream;
             else if (currentCharacter == PlayableCharacter.Cream)
                 currentCharacter = PlayableCharacter.Amy;
+
+            randomizeDayEvents();
 
             Timing.RunCoroutine(setupWakeupScene());
 

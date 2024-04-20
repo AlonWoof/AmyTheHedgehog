@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using MEC;
 
 //////////////////////////////////////
 //         2023 AlonWoof            //
@@ -20,7 +21,7 @@ namespace Amy
 	    // Start is called before the first frame update
 	    void Start()
 	    {
-	        
+			Timing.KillCoroutines();
 	    }
 	
 	    // Update is called once per frame
@@ -32,6 +33,7 @@ namespace Amy
             {
 
 				PlayerManager.Instance.PlayerDieRespawn(PlayerKilled.DeathType.Corrupted);
+				PlayerManager.Instance.exitType = ExitLevelType.NORMAL;
 				//enabled = false;
 				triggered = true;
 				//Application.Quit();

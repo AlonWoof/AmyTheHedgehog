@@ -13,7 +13,7 @@ namespace Amy
 	public class Activatible : MonoBehaviour
 	{
 
-		public float range = 5.0f;
+		public float range = 3.0f;
 		public float priority = 0.0f;
 		public string interactionLabel = "Talk";
 
@@ -29,7 +29,7 @@ namespace Amy
 
 				//Debug.Log(Vector3.Dot(-pl.transform.forward, transform.forward));
 
-				if (Vector3.Dot(-pl.transform.forward, transform.forward) < 0.75f)
+				if (Vector3.Dot(-pl.transform.forward, transform.forward) < 0.5f)
 					return false;
 			}
 
@@ -48,5 +48,14 @@ namespace Amy
 
 			onActivate.Invoke();
         }
-	}
+
+        public void OnDrawGizmos()
+        {
+			Gizmos.color = Color.red;
+			Gizmos.DrawWireSphere(transform.position, range);
+
+			Gizmos.color = Color.blue;
+			Gizmos.DrawLine(transform.position, transform.position + transform.forward);
+        }
+    }
 }

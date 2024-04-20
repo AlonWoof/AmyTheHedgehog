@@ -21,14 +21,14 @@ namespace Amy
 	    void Start()
 	    {
 			
-			isNight = !PlayerManager.Instance.isNightTime;
+			isNight = !PlayerManager.Instance.todayEvents.stationCircleNight;
 
 		}
 	
 	    // Update is called once per frame
 	    void Update()
 	    {
-	        if(!isNight && PlayerManager.Instance.isNightTime)
+	        if(!isNight && PlayerManager.Instance.todayEvents.stationCircleNight)
             {
 				if (dayObject)
 					dayObject.SetActive(false);
@@ -38,8 +38,8 @@ namespace Amy
 
 				isNight = true;
             }
-			else if(isNight && !PlayerManager.Instance.isNightTime)
-            {
+			else if(isNight && !PlayerManager.Instance.todayEvents.stationCircleNight)
+			{
 				if (dayObject)
 					dayObject.SetActive(true);
 

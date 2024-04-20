@@ -13,6 +13,10 @@ namespace Amy
         public GameObject fx_pikoHammerHit;
         public GameObject fx_pikoHammerJump;
         public GameObject fx_pikoHammerTrail;
+
+        public GameObject fx_amyMagicCircle;
+        public GameObject fx_creamMagicCircle;
+
         public GameObject prop_amyCloth;
         public GameObject prop_creamCloth;
 

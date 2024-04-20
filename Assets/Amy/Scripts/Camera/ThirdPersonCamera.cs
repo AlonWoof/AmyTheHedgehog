@@ -54,7 +54,7 @@ namespace Amy
         private void Awake()
         {
 			vCam = gameObject.AddComponent<CinemachineVirtualCamera>();
-            colMask = 1 << LayerMask.NameToLayer("Collision");
+            colMask = 1 << LayerMask.NameToLayer("Collision") | LayerMask.NameToLayer("CameraCollision");
 
             Cursor.lockState = CursorLockMode.Locked;
             Cursor.visible = false;
@@ -176,6 +176,23 @@ namespace Amy
 
             if (currentAngle.x < -maxPitch * 1.5f)
                 currentAngle.x = -maxPitch * 1.5f;
+
+            
+
+            if (GameManager.Instance.gamePaused)
+            {
+                if (Input.GetButton("Jump"))
+                    pauseZoomAmount -= Time.unscaledDeltaTime;
+
+                if (Input.GetButton("Attack"))
+                    pauseZoomAmount += Time.unscaledDeltaTime;
+
+                pauseZoomAmount = Mathf.Clamp01(pauseZoomAmount);
+            }
+            else
+                pauseZoomAmount = 0.25f;
+
+
         }
 
         void updateLookPosition()

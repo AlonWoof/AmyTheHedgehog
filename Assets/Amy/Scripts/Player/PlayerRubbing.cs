@@ -21,8 +21,17 @@ namespace Amy
 		public float healthRecoveryRate = 0.8f;
 		public float staminaDrainRate = 0.1f;
 
-	    // Start is called before the first frame update
-	    void Start()
+		enum MasturbationPhase
+        {
+			Main,
+			Close,
+			Cum
+        }
+
+		MasturbationPhase phase = MasturbationPhase.Main;
+
+		// Start is called before the first frame update
+		void Start()
 	    {
 	        
 	    }
@@ -37,24 +46,35 @@ namespace Amy
 				return;
 			}
 
+			
+
 			//Sometimes a girl needs a little break~
 
 			Timing.RunCoroutine(doStartRubbing());
-
+			
 		}
 
 		public IEnumerator<float> doStartRubbing()
 		{
+			mPlayer.clearAccel();
+			mPlayer.clearSpeed();
+
 			timeTilOrgasm = Random.Range(10.0f, 20.0f);
+			phase = MasturbationPhase.Main;
 
 			bool cancel = false;
 
 
-			mAnimator.CrossFade("Rubbing",0.2f);
+			mAnimator.Play("Rubbing_Start");
 
-			yield return Timing.WaitForSeconds(0.1f);
+			while (mAnimator.IsInTransition(0))
+			{
+				yield return Timing.WaitForSeconds(0.1f);
+			}
 
-			mPlayer.updateExpression();
+			mAnimator.CrossFade("Face_Ecchi", 0.25f);
+
+			//mPlayer.updateExpression();
 
 		}
 
@@ -83,6 +103,12 @@ namespace Amy
 			PlayerStatus pstats = mPlayer.getStatus();
 
 			float healMult = mAnimator.GetFloat("animSpeed");
+
+			if(phase == MasturbationPhase.Main && timeTilOrgasm < 5.0f)
+            {
+				mAnimator.CrossFade("Rubbing_Close", 0.2f);
+				phase = MasturbationPhase.Close;
+            }
 
 			if (pstats.currentHealth < pstats.maxHealth)
             {

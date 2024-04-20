@@ -49,10 +49,11 @@ namespace Amy
 
 			if(Time.frameCount % 30 == 0)
             {
-				refreshClosestEnemy();
-				refreshClosestActivatible();
+
 			}
 
+			refreshClosestEnemy();
+			refreshClosestActivatible();
 
 			updateVibes();
 

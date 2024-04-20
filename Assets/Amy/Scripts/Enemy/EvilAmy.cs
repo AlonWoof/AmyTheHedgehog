@@ -194,7 +194,7 @@ namespace Amy
 				timePlayerVisible += Time.deltaTime;
 				lookDirection = Helper.getDirectionTo(transform.position, pl.transform.position);
 
-				if (timePlayerVisible > 1.0f)
+				if (timePlayerVisible > 0.25f)
 				{
 					changeMode(EvilAmyMode.Chase);
 					return;

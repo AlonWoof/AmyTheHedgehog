@@ -148,7 +148,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3448190080084845382}
-  - component: {fileID: 365245874088850929}
+  - component: {fileID: 5123100612104480596}
   m_Layer: 10
   m_Name: City_StreetLamp
   m_TagString: Untagged
@@ -172,7 +172,7 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: -89.98, y: 0, z: 0}
---- !u!114 &365245874088850929
+--- !u!114 &5123100612104480596
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -181,11 +181,12 @@ MonoBehaviour:
   m_GameObject: {fileID: 2791190909259691640}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2729dc8c465ea5944bf89ed4ce322d96, type: 3}
+  m_Script: {fileID: 11500000, guid: ead0f8b99b1cfd04297529c3e4969717, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  dayObject: {fileID: 8987036985511569285}
-  nightObject: {fileID: 3503190392079645432}
+  onModel: {fileID: 3503190392079645432}
+  offModel: {fileID: 8987036985511569285}
+  isOn: 0
 --- !u!1001 &4349558908125890473
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -267,7 +268,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: 2e2f623837f842645a86c417dcff3a1f, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 2e2f623837f842645a86c417dcff3a1f, type: 3}
@@ -294,6 +295,22 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 0.003024846, y: 0.003024845, z: 0.033115633}
   m_Center: {x: 0.000000008032657, y: 0.00000007124616, z: 0.016399994}
+--- !u!208 &5248369260142274890
+NavMeshObstacle:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3503190392079645432}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Shape: 1
+  m_Extents: {x: 0.001, y: 0.001, z: 0.017}
+  m_MoveThreshold: 0.1
+  m_Carve: 1
+  m_CarveOnlyStationary: 1
+  m_Center: {x: 0, y: 0, z: 0.016}
+  m_TimeToStationary: 0.5
 --- !u!1001 &8104569838426118868
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -398,3 +415,19 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 0.003024846, y: 0.003024845, z: 0.033115633}
   m_Center: {x: 0.000000008032657, y: 0.00000007124616, z: 0.016399994}
+--- !u!208 &704351817712535295
+NavMeshObstacle:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8987036985511569285}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Shape: 1
+  m_Extents: {x: 0.001, y: 0.001, z: 0.017}
+  m_MoveThreshold: 0.1
+  m_Carve: 1
+  m_CarveOnlyStationary: 1
+  m_Center: {x: 0, y: 0, z: 0.016}
+  m_TimeToStationary: 0.5

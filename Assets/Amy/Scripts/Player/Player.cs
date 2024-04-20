@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using MEC;
 
 //////////////////////////////////////
 //         2023 AlonWoof            //
@@ -255,6 +256,11 @@ namespace Amy
 			newPlayer.fx_hammerTrail = wfx.GetComponent<WeaponTrailFX>();
 			newPlayer.fx_hammerTrail.weaponNode = newPlayer.getBoneByName("HurtBox_Hammer");
 
+			inst.AddComponent<WetFX>();
+			DirtFX dirt = inst.AddComponent<DirtFX>();
+			dirt.mChara = chara;
+
+			newPlayer.airLeft = newPlayer.calculateLungCapacity();
 
 			return newPlayer;
 		}
@@ -377,7 +383,7 @@ namespace Amy
 			return null;
 		}
 
-		public void lookAt(Vector3 lookPos, float time = 1.0f)
+		public void lookAt(Vector3 lookPos, float time = 0.25f)
         {
 			if (!lookAtController)
 				return;
@@ -414,6 +420,95 @@ namespace Amy
 
 			headBoneTransform.rotation = headBoneTransform.rotation * Quaternion.Euler(0, Mathf.Clamp(-angle * 5.0f, -40, 40), 0);
 		}
+
+		public bool canWarp()
+        {
+			if (currentMode != PlayerModes.NORMAL)
+				return false;
+
+			if (!isOnGround)
+				return false;
+
+			if (Vector3.Dot(groundNormal, Vector3.up) < 0.25f)
+				return false;
+
+			if (getStatus().checkStatusEffect(PlayerStatusFX.Scared))
+				return false;
+
+			return true;
+        }
+
+
+		public void startWarp(string sceneName, int exitNum = 0)
+        {
+
+			Timing.RunCoroutine(doWarp(sceneName, exitNum));
+        }
+
+		public IEnumerator<float> doWarp(string sceneName, int exitNum = 0)
+        {
+			GameManager.Instance.playerInputDisabled = true;
+			changeCurrentMode(PlayerModes.CUTSCENE);
+
+			clearAccel();
+			clearSpeed();
+			updatePosition();
+
+			GameObject inst = null;
+			
+			if(mChara == PlayableCharacter.Amy)
+				inst = GameObject.Instantiate(GameManager.Instance.systemData.RES_AmyPlayerFX.fx_amyMagicCircle);
+			else
+				inst = GameObject.Instantiate(GameManager.Instance.systemData.RES_AmyPlayerFX.fx_creamMagicCircle);
+
+			inst.transform.position = transform.position;
+			inst.transform.rotation = transform.rotation;
+			inst.transform.SetParent(transform);
+			mAnimator.Play("Kaeru_Start");
+
+			yield return Timing.WaitForSeconds(3.0f);
+
+			PlayerManager.Instance.exitType = ExitLevelType.WARP;
+			PlayerManager.Instance.lastExit = exitNum;
+			GameManager.Instance.loadScene(sceneName, true);
+        }
+
+		public void startWarpExit()
+        {
+			Timing.RunCoroutine(doWarpExit());
+        }
+
+		public IEnumerator<float> doWarpExit()
+        {
+			yield return Timing.WaitForSeconds(1.5f);
+
+			GameManager.Instance.playerInputDisabled = true;
+			
+
+			clearAccel();
+			clearSpeed();
+			updatePosition();
+			isOnGround = true;
+			//framesAirborne = 0;
+			
+
+			mAnimator.Play("Exit_Warp");
+
+			while (!mAnimator.IsInTransition(0))
+			{
+				if(currentMode != PlayerModes.CUTSCENE)
+					changeCurrentMode(PlayerModes.CUTSCENE);
+
+				yield return 0f;
+			}
+
+			yield return Timing.WaitForSeconds(0.5f);
+
+			GameManager.Instance.playerInputDisabled = false;
+			changeCurrentMode(PlayerModes.NORMAL);
+
+		}
+
 
 		public PlayerStatus getStatus()
         {
@@ -1326,8 +1421,6 @@ namespace Amy
 				return;
 
 
-
-
 			if (Input.GetButtonDown("Action"))
 			{
 				if(areaDetector.closestActivatible)
@@ -1699,6 +1792,7 @@ namespace Amy
 		public void clearSpeed()
         {
 			speed = Vector3.zero;
+			mRigidBody.velocity = speed;
         }
 
 		public void clearAccel()

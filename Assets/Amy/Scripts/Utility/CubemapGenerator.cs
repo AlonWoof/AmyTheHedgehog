@@ -63,7 +63,7 @@ public class CubemapGenerator : MonoBehaviour
 		cam.transform.position = transform.position;
 		cam.transform.rotation = transform.rotation;
 
-		cam.tag = "";
+		//cam.tag = "";
 		cam.RenderToCubemap(cb);
 		
 
