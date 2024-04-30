@@ -17,6 +17,7 @@ namespace Amy
 		AmyStatus,
 		CreamStatus,
 		SceneInfo,
+		EventInfo,
 		PageCount
     }
 	public class HUD_DebugInfo : MonoBehaviour
@@ -84,6 +85,10 @@ namespace Amy
 
 				case DebugInfoPage.CreamStatus:
 					dbgstr += getPlayerStatus(PlayableCharacter.Cream);
+					break;
+
+				case DebugInfoPage.EventInfo:
+					dbgstr += getEventInfo();
 					break;
 			}
 
@@ -167,6 +172,8 @@ namespace Amy
 			return dbgstr;
 		}
 
+
+
 		string getPlayerInstanceInfo()
         {
 
@@ -198,6 +205,17 @@ namespace Amy
 			dbgstr += "framesAirborne: " + player.framesAirborne + "\n";
 			dbgstr += "hammerJumpCharge: " + player.hammerJumpCharge + "\n";
 			dbgstr += "canAirAttack: " + player.canAirAttack + "\n";
+
+			return dbgstr;
+		}
+
+		string getEventInfo()
+		{
+			string dbgstr = "";
+
+			dbgstr += "EVENT INFO: \n\n";
+
+			dbgstr += "stationCircleNight: " + PlayerManager.Instance.todayEvents.stationCircleNight;
 
 			return dbgstr;
 		}

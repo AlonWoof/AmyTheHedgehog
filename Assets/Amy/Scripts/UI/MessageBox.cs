@@ -222,6 +222,8 @@ namespace Amy
         string preCleanString(string input)
         {
 
+            return input;
+
             if (input.Contains("♪"))
             {
                 input = input.Replace("♪", "\n");
@@ -449,13 +451,12 @@ namespace Amy
             myText.text = "";
 
 
-            fullMessage = replaceTagsWithChars(fullMessage);
+            //fullMessage = replaceTagsWithChars(fullMessage);
 
             int total = fullMessage.Length;
             Debug.Log("STARTING MESSAGE - Total : " + total);
 
             string toPrint = "";
-            textProgress = 0;
             currentTime = 0.0f;
 
             bool freeToSkip = false;
@@ -476,12 +477,12 @@ namespace Amy
 
                 string tmp = getNextPart();
 
-                toPrint += preCleanString(tmp);
+                toPrint = preCleanString(tmp);
 
-                if (!unclosedColorTag)
-                    myText.text = toPrint;
-                else
-                    myText.text = toPrint + "</color>";
+                //if (!unclosedColorTag)
+                    myText.text = getNextPart();
+                //else
+                //    myText.text = toPrint + "</color>";
 
                 float skipSpeed = 1.0f;
 
@@ -499,9 +500,6 @@ namespace Amy
                 yield return 0f;
 
             }
-
-
-
 
             if (talker != null)
                 talker.stopTalking();
@@ -550,25 +548,16 @@ namespace Amy
 
         public string getNextPart()
         {
-            //textProgress = 
 
             int newProg = Mathf.RoundToInt(currentTime * charsPerSecond);
-            //s newProg = Mathf.Clamp(newProg, 0, fullMessage.Length - textProgress);
 
-            string ret = "";
+            if(Time.frameCount % 10 == 0)
+                textProgress++;
 
-            if (newProg > textProgress)
-            {
-                if (!voiceSource.isPlaying)
-                    voiceSource.Play();
+            return fullMessage.Insert(textProgress, "<color=#00000000>") + "</color>";
 
-                ret = fullMessage.Substring(textProgress, newProg - textProgress);
-                textProgress = newProg;
-                //Debug.Log("Prog: " + textProgress + " New: " + newProg + " Ret: " + ret);
-            }
-
-            return ret;
         }
+
 
 
         IEnumerator<float> doShowMessage(Message data)
@@ -578,6 +567,7 @@ namespace Amy
             GameManager.Instance.playerInputDisabled = true;
 
             messageInProgress = true;
+            textProgress = 0;
 
             doneIndicator.SetActive(false);
             nextArrow.SetActive(false);
@@ -617,7 +607,6 @@ namespace Amy
             {
                 bool last = false;
                 
-
                 if (i == (data.messages.Count - 1))
                 {
                     last = true;
@@ -628,7 +617,6 @@ namespace Amy
 
                 while (action.IsRunning)
                 {
-
                     yield return 0f;
                 }
 

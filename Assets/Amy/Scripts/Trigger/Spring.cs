@@ -52,9 +52,12 @@ namespace Amy
             if (!p)
                 return;
 
+            p.clearAccel();
+            p.clearSpeed();
+
             p.changeCurrentMode(PlayerModes.SPRING);
             p.modeSpring.setSpringVelocity(transform.up, power);
-            p.transform.position = transform.position;
+            p.transform.position = transform.position + transform.up * 0.5f;
 
             if(springFX)
             {

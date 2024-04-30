@@ -39,7 +39,10 @@ namespace Amy
 		public Color defaultColor;
 		public Color unavailableColor;
 
-		public AudioSource selectSound;
+		public AudioSource sfx;
+		public AudioClip moveSound;
+		public AudioClip pauseSound;
+		public AudioClip confirmSound;
 
 		int currentChoice = 0;
 
@@ -65,6 +68,7 @@ namespace Amy
 				if (!pauseText.activeInHierarchy)
 				{
 					pauseText.SetActive(true);
+					sfx.PlayOneShot(pauseSound);
 					updateAvailibility();
 					currentChoice = 0;
 				}
@@ -123,6 +127,7 @@ namespace Amy
 			{
 				currentChoice--;
 				//selectSound.Play();
+				sfx.PlayOneShot(moveSound);
 				clampValues();
 
 				//Skiparoo
@@ -138,6 +143,7 @@ namespace Amy
 			{
 				currentChoice++;
 				//selectSound.Play();
+				sfx.PlayOneShot(moveSound);
 				clampValues();
 
 				//Skiparoo
@@ -196,6 +202,8 @@ namespace Amy
 					Application.Quit();
 					break;
 			}
-        }
+
+			sfx.PlayOneShot(confirmSound);
+		}
 	}
 }

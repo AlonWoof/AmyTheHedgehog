@@ -37,7 +37,7 @@ namespace Amy
         const float defaultHeightOffset = 0.55f;
         const float crouchedHeightOffset = 0.35f;
 
-        LayerMask colMask;
+        public LayerMask colMask;
 
         Vector3 desiredPosition;
 
@@ -54,7 +54,7 @@ namespace Amy
         private void Awake()
         {
 			vCam = gameObject.AddComponent<CinemachineVirtualCamera>();
-            colMask = 1 << LayerMask.NameToLayer("Collision") | LayerMask.NameToLayer("CameraCollision");
+            colMask = LayerMask.GetMask("Collision", "CameraCollision");
 
             Cursor.lockState = CursorLockMode.Locked;
             Cursor.visible = false;
@@ -95,6 +95,9 @@ namespace Amy
 
         void pausedUpdate()
         {
+            if (!playerTransform)
+                return;
+
             updateLookPosition();
             updateDesiredPosition();
         }

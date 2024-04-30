@@ -1,6 +1,6 @@
 // Made with Amplify Shader Editor v1.9.1.8
 // Available at the Unity Asset Store - http://u3d.as/y3X 
-Shader "AlonWoof/Dolphin/EnvMap_Transparent"
+Shader "AlonWoof/Dolphin/EnvMap/Transparent"
 {
 	Properties
 	{

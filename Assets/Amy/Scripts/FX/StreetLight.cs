@@ -34,7 +34,7 @@ namespace Amy
 				return;
             }
 
-			if(PlayerManager.Instance.isNightTime)
+			if(isOn)
             {
 				onModel.SetActive(true);
 				offModel.SetActive(false);

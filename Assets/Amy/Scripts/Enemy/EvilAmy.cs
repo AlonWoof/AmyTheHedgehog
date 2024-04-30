@@ -279,10 +279,10 @@ namespace Amy
 			lastVoice = rnd;
 			voice.pitch = 1.0f;
 			//voice.clip = clip;
-			voice.Play();
+			//voice.Play();
 			//voice.time = clip.length;
 
-			//voice.PlayOneShot(clip);
+			voice.PlayOneShot(clip);
 		}
 
 		//FUCKING RUN

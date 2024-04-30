@@ -34,7 +34,21 @@ namespace Amy
                     Debug.Log(AssetDatabase.GUIDToAssetPath(guid));
                 }
 
+                int exit = door.destinationExit;
+
                 EditorSceneManager.OpenScene(scnpath);
+
+
+                foreach (Exit e in FindObjectsOfType<Exit>())
+                {
+
+                    if (e.exitNumber == exit)
+                    {
+                        SceneView.lastActiveSceneView.pivot = e.transform.position + Vector3.up;
+                        SceneView.lastActiveSceneView.LookAt(e.transform.position + Vector3.up + e.transform.forward);
+                        SceneView.lastActiveSceneView.Repaint();
+                    }
+                }
             }
 
         }

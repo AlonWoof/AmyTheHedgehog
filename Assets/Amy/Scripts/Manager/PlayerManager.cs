@@ -186,13 +186,14 @@ namespace Amy
         public float lastOrgasmCooldown = 0.0f;
 
         public int ringBank = 0;
-        int ringCount = 0;
+        public int ringCount = 0;
         public float stealthIndex = 0.0f;
 
         public bool playerHasStealthCamo = false;
 
         //Scene flags
-        public bool isHubRoom = false;
+        public bool isHubWorld = false;
+        public bool isSmallRoom = false;
         public bool isNightTime = false;
         public bool ringLeftChannel = false;
 
@@ -476,11 +477,15 @@ namespace Amy
 
             if(pStats.checkVibe(VibeType.Dirty))
             {
-                const float baseDirtPerSpeed = 0.02f;
+                const float baseDirtPerSpeed = 0.002f;
 
-                if(pl.acceleration.magnitude > 0.1f)
+                Vector3 spd = pl.acceleration;
+                spd.y = 0;
+
+                if (spd.magnitude > 0.1f)
                 {
-                    pStats.dirtiness += Time.deltaTime * (baseDirtPerSpeed * pl.acceleration.magnitude);
+
+                    pStats.dirtiness += Time.deltaTime * (baseDirtPerSpeed * spd.magnitude);
                 }
             }
         }
@@ -690,9 +695,38 @@ namespace Amy
                 ringCount = 0;
         }
 
+        public void subtractTotalRings(int n)
+        {
+            if(ringCount < n)
+            {
+                ringCount = 0;
+                n -= ringCount;
+            }
+            else
+            {
+                ringCount -= n;
+                return;
+            }
+
+            ringBank -= n;
+
+            ringBank = Mathf.Clamp(ringBank, 0, 999999);
+        }
+
         public int getRings()
         {
             return ringCount;
+        }
+
+        public void transferRingsToBank()
+        {
+            ringBank += ringCount;
+            ringCount = 0;
+        }
+
+        public int getTotalRings()
+        {
+            return ringCount + ringBank;
         }
         
         //I would give this a more fitting name but I want to pay homage to SA1's hilarious kill function name (killHimP())
@@ -749,8 +783,6 @@ namespace Amy
             if (mPlayerInstance)
                 GameObject.Destroy(mPlayerInstance.gameObject);
 
-            //Lose money for getting owned.
-            ringCount = 0;
 
             if(type == PlayerKilled.DeathType.Falling || type == PlayerKilled.DeathType.Drowned)
             {
@@ -788,6 +820,29 @@ namespace Amy
 
             yield return 0f;
 
+            while (GameManager.Instance.gameSFXVolume > -80.0f)
+            {
+                GameManager.Instance.gameSFXVolume = Mathf.Lerp(GameManager.Instance.gameSFXVolume, -81.0f, Time.unscaledDeltaTime * 3);
+
+                yield return 0f;
+            }
+
+            if (ringBank > 0)
+            {
+                GameObject inst = GameObject.Instantiate(GameManager.Instance.systemData.RES_ReduceMoneyScene);
+
+                ReduceMoneyScene reduceMoney = inst.GetComponentInChildren<ReduceMoneyScene>();
+
+                //Lose money for getting owned.
+                CoroutineHandle ch = reduceMoney.startReduceMoney(50);
+
+                while (ch.IsRunning)
+                {
+                    yield return 0f;
+                }
+
+                Destroy(inst);
+            }
 
             processSleeping(getCurrentPlayerStatus());
 
@@ -815,13 +870,22 @@ namespace Amy
             yield return Timing.WaitForSeconds(0.5f);
 
             SceneManager.LoadScene("AmyRoom");
-            yield return Timing.WaitForSeconds(0.2f);
+            yield return Timing.WaitForSeconds(1.0f);
 
-            if(currentCharacter == PlayableCharacter.Amy)
+            while (GameManager.Instance.gameSFXVolume < -0.01f)
+            {
+                GameManager.Instance.gameSFXVolume = Mathf.Lerp(GameManager.Instance.gameSFXVolume, 0.0f, Time.unscaledDeltaTime * 3);
+
+                yield return 0f;
+            }
+
+            if (currentCharacter == PlayableCharacter.Amy)
                 GameObject.Instantiate(GameManager.Instance.systemData.Cutscene_AmyWakeup);
 
             if(currentCharacter == PlayableCharacter.Cream)
                 GameObject.Instantiate(GameManager.Instance.systemData.Cutscene_CreamWakeup);
+
+            yield return Timing.WaitForSeconds(0.5f);
 
             UIManager.Instance.fadeScreen(true, 3.0f);
         }

@@ -13,7 +13,7 @@ namespace Amy
 	public class CityLightController : MonoBehaviour
 	{
 	    // Start is called before the first frame update
-	    void Awake()
+	    void Start()
 	    {
 			if (PlayerManager.Instance.todayEvents.stationCircleNight)
 				turnOnAllLights();

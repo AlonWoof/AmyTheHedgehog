@@ -16,6 +16,7 @@ namespace Amy
 
         public WaterDistortPostProcess waterDistort;
         public AudioSource waterAmb;
+        public GameObject underwaterFX;
 
     	// Start is called before the first frame update
     	void Start()
@@ -36,12 +37,20 @@ namespace Amy
             {
                 GameManager.Instance.systemData.AUDIO_GameSFXMixer.SetFloat("LowPass", 1000.0f);
                 waterDistort.enabled = true;
+
+                if(!underwaterFX.activeInHierarchy)
+                    underwaterFX.SetActive(true);
+
                 waterAmb.volume = 0.05f;
             }
             else
             {
                 GameManager.Instance.systemData.AUDIO_GameSFXMixer.SetFloat("LowPass", 22000.00f);
                 waterDistort.enabled = false;
+
+                if (underwaterFX.activeInHierarchy)
+                    underwaterFX.SetActive(false);
+
                 waterAmb.volume = 0.0f;
             }
     	}

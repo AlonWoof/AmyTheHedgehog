@@ -148,6 +148,7 @@ namespace Amy
 			if (closestActivatible)
 			{
 				mPlayer.lookAt(closestActivatible.transform.position);
+				UIManager.Instance.contextButton.setActionText(closestActivatible.interactionLabel);
 			}
 		}
 

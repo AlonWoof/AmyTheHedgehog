@@ -18,6 +18,7 @@ namespace Amy
         public Talker tk;
 
         public ActorLookAtController lookAt;
+        public NPCPath path;
         public float lookAtRange = 4.0f;
         
 
@@ -25,7 +26,9 @@ namespace Amy
     	void Awake()
     	{
             mDirection = transform.forward;
-            
+
+            if(!path)
+                path = transform.parent.GetComponentInChildren<NPCPath>();
 
         }
 
@@ -57,7 +60,7 @@ namespace Amy
 
         private void LateUpdate()
         {
-            transform.rotation = Quaternion.Lerp(transform.rotation, Quaternion.LookRotation(mDirection, Vector3.up), Time.deltaTime * rotationSpeed);
+           // transform.rotation = Quaternion.Lerp(transform.rotation, Quaternion.LookRotation(mDirection, Vector3.up), Time.deltaTime * rotationSpeed);
         }
 
         public void turnLookAt(Vector3 lookPos)
@@ -77,15 +80,40 @@ namespace Amy
 
         public void genericTalk()
         {
-            Player mPlayer = PlayerManager.Instance.getPlayer();
+            Timing.RunCoroutine(doGenericTalk());        
+        }
 
+        IEnumerator<float> doGenericTalk()
+        {
+            Player mPlayer = PlayerManager.Instance.getPlayer();
             Message msg = AmyMessage;
 
             if (PlayerManager.Instance.currentCharacter == PlayableCharacter.Cream)
                 msg = CreamMessage;
 
-            UIManager.Instance.messageBox.ShowMessageBox(msg, Vector3.zero, tk);
+            CoroutineHandle msgProc = UIManager.Instance.messageBox.showMessageBox(msg);
 
+            if (path)
+                path.disableMovement();
+
+            bool wasNormal = false;
+
+            if (mPlayer.currentMode == PlayerModes.NORMAL)
+            {
+                mPlayer.changeCurrentMode(PlayerModes.LISTENING);
+                wasNormal = true;
+            }
+
+            while(msgProc.IsRunning)
+            {
+                yield return 0f;
+            }
+
+            if (path)
+                path.enableMovement();
+
+            if (wasNormal)
+                mPlayer.changeCurrentMode(PlayerModes.NORMAL);
         }
 
 

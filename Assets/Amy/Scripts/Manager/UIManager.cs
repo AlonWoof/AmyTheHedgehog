@@ -14,7 +14,8 @@ namespace Amy
 
         public Canvas mainCanvas;
         public GameObject ingameHUD;
-        public MessageBox messageBox;
+        public DialogBox messageBox;
+        public ContextButton contextButton;
 
         Fader mFader;
 
@@ -35,7 +36,8 @@ namespace Amy
             //mIngameHUD = inst.GetComponentInChildren<IngameHUD>();
             mainCanvas = inst.GetComponent<Canvas>();
             mHudGroup = inst.GetComponentInChildren<CanvasGroup>();
-            messageBox = inst.GetComponentInChildren<MessageBox>();
+            messageBox = inst.GetComponentInChildren<DialogBox>();
+            contextButton = inst.GetComponentInChildren<ContextButton>();
 
             DontDestroyOnLoad(inst.gameObject);
         }

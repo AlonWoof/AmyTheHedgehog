@@ -53,7 +53,8 @@ namespace Amy
         //Only show it if story flag hash is true
         public int titleCardStoryFlagHash = -1;
 
-        public bool isHubRoom = false;
+        public bool isHubWorld = false;
+        public bool isSmallRoom = false;
         public bool isOutdoors = true;
         
         public bool freezeTime = false;

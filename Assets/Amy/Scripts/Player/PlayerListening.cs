@@ -12,9 +12,12 @@ namespace Amy
 	public class PlayerListening : PlayerMode
 	{
 
-		
 
-	    // Start is called before the first frame update
+
+		// Start is called before the first frame update
+
+		bool hasFinishedAnim = false;
+
 	    void Start()
 	    {
 			getBaseComponents();
@@ -30,7 +33,13 @@ namespace Amy
 				return;
 			}
 
-			startListeningAnimation();
+			mPlayer.clearAccel();
+			mPlayer.clearSpeed();
+			hasFinishedAnim = false;
+
+			//startListeningAnimation();
+			mAnimator.Play("Idle");
+			Invoke("startListeningAnimation", 0.2f);
 		}
 
         private void OnDisable()
@@ -43,17 +52,10 @@ namespace Amy
 
         void startListeningAnimation()
         {
-			if(mPlayer.lastMode == PlayerModes.NORMAL)
-            {
-				mAnimator.CrossFade("Listening", 0.2f);
-            }
-        }
-
-		// Update is called once per frame
-		void Update()
-	    {
-	        
-	    }
+			//mAnimator.Play("Listening");
+			//mAnimator.SetFloat("run_anim_speed", 0.5f);
+			mAnimator.CrossFade("Listening", 0.2f);
+		}
 
 		private void FixedUpdate()
 		{

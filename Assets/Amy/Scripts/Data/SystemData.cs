@@ -14,8 +14,12 @@ namespace Amy
         public GameObject fx_pikoHammerJump;
         public GameObject fx_pikoHammerTrail;
 
+        public GameObject fx_cunnyDrip;
+
         public GameObject fx_amyMagicCircle;
+        public GameObject fx_amyWarpIn;
         public GameObject fx_creamMagicCircle;
+        public GameObject fx_creamWarpIn;
 
         public GameObject prop_amyCloth;
         public GameObject prop_creamCloth;
@@ -47,6 +51,9 @@ namespace Amy
         public GameObject RES_RingTobitiri;
         public GameObject RES_RingTobitiriFX;
 
+        [Header("UI")]
+        public GameObject RES_RingBankTransferScene;
+        public GameObject RES_ReduceMoneyScene;
 
         [Header("Audio")]
 

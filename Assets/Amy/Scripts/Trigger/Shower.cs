@@ -65,6 +65,7 @@ namespace Amy
 			//Time to take a shower.
 			//Wower.
 			pl.mAnimator.Play("Shower_Start");
+			pl.areaDetector.enabled = false;
 
 			yield return Timing.WaitForSeconds(5);
 
@@ -84,6 +85,7 @@ namespace Amy
 			pl.updateExpression();
 			GameManager.Instance.cutsceneMode = false;
 			GameManager.Instance.playerInputDisabled = false;
+			pl.areaDetector.enabled = true;
 
 			Timing.WaitForSeconds(1.0f);
 			isOn = false;

@@ -14,7 +14,7 @@ namespace Amy
     {
 		public GameObject ingameModel;
 		public RuntimeAnimatorController ingameAnimator;
-		//public CharacterPhysicsData jiggleData;
+		public CharacterPhysicsData jiggleData;
 		public HitboxData[] hitBoxes;
 
 		public float height = 1.0f;
@@ -194,8 +194,8 @@ namespace Amy
 			anim.runtimeAnimatorController = cpar.ingameAnimator;
 			anim.applyRootMotion = false;
 
-			//CharacterPhysics jiggles = inst.AddComponent<CharacterPhysics>();
-			//jiggles.mData = cpar.jiggleData;
+			CharacterPhysics jiggles = inst.AddComponent<CharacterPhysics>();
+			jiggles.mData = cpar.jiggleData;
 
 			FootstepFX footsteps = inst.AddComponent<FootstepFX>();
 			footsteps.isPlayer = true;
@@ -471,7 +471,8 @@ namespace Amy
 			PlayerManager.Instance.exitType = ExitLevelType.WARP;
 			PlayerManager.Instance.lastExit = exitNum;
 			GameManager.Instance.loadScene(sceneName, true);
-        }
+
+		}
 
 		public void startWarpExit()
         {
@@ -490,8 +491,18 @@ namespace Amy
 			updatePosition();
 			isOnGround = true;
 			//framesAirborne = 0;
-			
 
+			GameObject fx = null;
+
+			if(mChara == PlayableCharacter.Cream)
+			fx = GameObject.Instantiate(GameManager.Instance.systemData.RES_AmyPlayerFX.fx_creamWarpIn);
+				else
+			fx = GameObject.Instantiate(GameManager.Instance.systemData.RES_AmyPlayerFX.fx_amyWarpIn);
+			
+			
+			fx.transform.position = transform.position;
+			
+			
 			mAnimator.Play("Exit_Warp");
 
 			while (!mAnimator.IsInTransition(0))
@@ -1163,7 +1174,7 @@ namespace Amy
 			if (slopeMult < 0.45f && isOnGround)
 				return false;
 
-			if (PlayerManager.Instance.isHubRoom)
+			if (PlayerManager.Instance.isSmallRoom)
 				return false;
 
 			if (GameManager.Instance.playerInputDisabled)
@@ -1232,7 +1243,7 @@ namespace Amy
 			if (isAttacking)
 				return;
 
-			if (PlayerManager.Instance.isHubRoom)
+			if (PlayerManager.Instance.isSmallRoom)
 				return;
 
 			if (!PlayerManager.Instance.hasHammer)
@@ -1274,7 +1285,7 @@ namespace Amy
 			if (isAttacking)
 				return;
 
-			if (PlayerManager.Instance.isHubRoom)
+			if (PlayerManager.Instance.isSmallRoom)
 				return;
 
 			if (!PlayerManager.Instance.hasHammer)
@@ -1456,7 +1467,7 @@ namespace Amy
 			if(!isOnGround)
 				hammerJumpCharge = 0.0f;
 
-			if (PlayerManager.Instance.isHubRoom)
+			if (PlayerManager.Instance.isSmallRoom)
 				return;
 
 			if (!PlayerManager.Instance.hasHammer)
@@ -1486,7 +1497,7 @@ namespace Amy
 			if (acceleration.magnitude > 1.0f || !isOnGround)
 				return;
 
-			if (PlayerManager.Instance.isHubRoom)
+			if (PlayerManager.Instance.isSmallRoom)
 				return;
 
 			if (!PlayerManager.Instance.hasHammer)
@@ -1504,7 +1515,7 @@ namespace Amy
 			if (acceleration.magnitude < 1.0f || !isOnGround)
 				return;
 
-			if (PlayerManager.Instance.isHubRoom)
+			if (PlayerManager.Instance.isSmallRoom)
 				return;
 
 			if (!PlayerManager.Instance.hasHammer)
@@ -1522,7 +1533,7 @@ namespace Amy
 			if (GameManager.Instance.playerInputDisabled)
 				return;
 
-			if (PlayerManager.Instance.isHubRoom)
+			if (PlayerManager.Instance.isSmallRoom)
 				return;
 
 			if (!PlayerManager.Instance.hasHammer)
@@ -1589,7 +1600,7 @@ namespace Amy
 			if (Input.GetAxis("Shoot") < 0.5f)
 				return;
 
-			if (PlayerManager.Instance.isHubRoom)
+			if (PlayerManager.Instance.isSmallRoom)
 				return;
 
 			if (!PlayerManager.Instance.hasSlingshot)
@@ -1679,7 +1690,7 @@ namespace Amy
 
 			acceleration.z += forward_accel * Time.deltaTime;
 
-			if (PlayerManager.Instance.isHubRoom)
+			if (PlayerManager.Instance.isSmallRoom)
 				acceleration.z = Mathf.Clamp(acceleration.z, 0, 1.2f);
 		}
 

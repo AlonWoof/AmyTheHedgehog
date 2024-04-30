@@ -198,7 +198,8 @@ namespace Amy
             debugFunctions();
             checkPauseGame();
 
-            systemData.AUDIO_GameSFXMixer.SetFloat("GameSFXVolume", gameSFXVolume);
+            
+            systemData.AUDIO_GameSFXMixer.SetFloat("GameSFXVolume",  gameSFXVolume);
         }
 
         public void pauseGame()
@@ -244,29 +245,36 @@ namespace Amy
             if (Input.GetKeyDown(KeyCode.F1))
                 loadScene(UnityEngine.SceneManagement.SceneManager.GetActiveScene().name);
 
-            if (Input.GetKeyDown(KeyCode.F3))
-            {
-               // PlayerManager.Instance.loadSavedGame(0, true);
-               // PlayerManager.Instance.reloadCurrentSave();
-            }
-
-            //Save and load test
-            if (Input.GetKey(KeyCode.F5))
-                SaveGame.writeSaveGame(0);
-
-            if (Input.GetKey(KeyCode.F6))
-                SaveGame.loadGame(0);
-
-            //How fucking brutal
-            if (Input.GetKey(KeyCode.F7))
-                PlayerManager.Instance.killHer();    
-
 
             if (Input.GetKeyDown(KeyCode.F2))
             {
                 Timing.KillCoroutines();
                 SceneManager.LoadScene("MapSelect");
             }
+
+            //F3 reserved for DebugInfo pages
+
+            //Switch girls.
+            if (Input.GetKeyDown(KeyCode.F4))
+            {
+                if(PlayerManager.Instance.currentCharacter == PlayableCharacter.Amy)
+                    PlayerManager.Instance.characterSwitch(PlayableCharacter.Cream);
+                else
+                    PlayerManager.Instance.characterSwitch(PlayableCharacter.Amy);
+            }
+
+            //Randomize Day Events
+            if(Input.GetKeyDown(KeyCode.F6))
+            {
+                PlayerManager.Instance.randomizeDayEvents();
+            }
+
+            //How fucking brutal
+            if (Input.GetKey(KeyCode.F7))
+                PlayerManager.Instance.killHer();    
+
+
+
 
             //Emergency exit key
             if (Input.GetButton("RightBumper") && Input.GetButton("LeftBumper") && Input.GetButtonDown("Action"))
@@ -375,8 +383,18 @@ namespace Amy
 
         public void loadScene(string sceneName, bool whiteFade = false, float delayBeforeLoading = 0.0f)
         {
+            //Special exceptions...
+
+            if(PlayerManager.Instance.todayEvents.stationCircleNight)
+            {
+                if (sceneName.ToLower() == "city")
+                    sceneName = "City_Night";
+            }
+
+
             Timing.RunCoroutine(loadSceneRoutine(sceneName, whiteFade, delayBeforeLoading), Segment.RealtimeUpdate);
         }
+
 
         public static SystemData getSystemData()
         {
@@ -420,8 +438,7 @@ namespace Amy
 
             yield return Timing.WaitForSeconds(0.5f);
 
-            //Auto-save
-            SaveGame.writeSaveGame(0);
+
 
             //UIManager.Instance.hideGameOverScreen();
 
@@ -463,7 +480,8 @@ namespace Amy
             }
 
             bool playerShouldSpawn = true;
-            PlayerManager.Instance.isHubRoom = false;
+            PlayerManager.Instance.isSmallRoom = false;
+            PlayerManager.Instance.isHubWorld = false;
 
             SceneInfo scn = FindObjectOfType<SceneInfo>();
 
@@ -476,8 +494,11 @@ namespace Amy
 
                 //PlayerManager.Instance.isOutdoors = scn.isOutdoors;
 
-                if(scn.isHubRoom)
-                    PlayerManager.Instance.isHubRoom = true;
+                if(scn.isSmallRoom)
+                    PlayerManager.Instance.isSmallRoom = true;
+
+                if (scn.isHubWorld)
+                    PlayerManager.Instance.isHubWorld = true;
 
             }
             else
@@ -487,7 +508,30 @@ namespace Amy
                 playerShouldSpawn = false;
             }
 
+            //Do with a fancy coroutine cutscene of rings being deposited.
+            if (PlayerManager.Instance.isHubWorld && PlayerManager.Instance.getRings() > 0)
+            {
+                GameObject inst = GameObject.Instantiate(systemData.RES_RingBankTransferScene);
+
+                BankTransferScene bankTransfer = inst.GetComponentInChildren<BankTransferScene>();
+
+                CoroutineHandle ch = bankTransfer.startRingBankTransfer();
+
+                while(ch.IsRunning)
+                {
+                    yield return 0f;
+                }
+
+                Destroy(inst);
+            }
+            
+
+            //Auto-save
+            SaveGame.writeSaveGame(0);
+
             float waitTime = 0.1f;
+
+
 
             if (playerShouldSpawn)
             {
@@ -545,9 +589,11 @@ namespace Amy
             {
                 MusicManager.Instance.changeSongs(scn.bgmData);
 
-                if (scn.isHubRoom)
-                    PlayerManager.Instance.isHubRoom = true;
+                if (scn.isSmallRoom)
+                    PlayerManager.Instance.isSmallRoom = true;
 
+                if (scn.isHubWorld)
+                    PlayerManager.Instance.isHubWorld = true;
             }
             else
             {

@@ -21,6 +21,8 @@ namespace Amy
 		public float healthRecoveryRate = 0.8f;
 		public float staminaDrainRate = 0.1f;
 
+		public GameObject cunnyDripFX;
+
 		enum MasturbationPhase
         {
 			Main,
@@ -46,10 +48,16 @@ namespace Amy
 				return;
 			}
 
-			
+			if(!cunnyDripFX)
+            {
+				cunnyDripFX = GameObject.Instantiate(GameManager.Instance.systemData.RES_AmyPlayerFX.fx_cunnyDrip);
+				cunnyDripFX.transform.SetParent(mPlayer.getBoneByName("hips"));
+				cunnyDripFX.transform.localPosition = Vector3.zero;
+				cunnyDripFX.transform.localRotation = Quaternion.identity;
+
+			}
 
 			//Sometimes a girl needs a little break~
-
 			Timing.RunCoroutine(doStartRubbing());
 			
 		}
@@ -71,6 +79,8 @@ namespace Amy
 			{
 				yield return Timing.WaitForSeconds(0.1f);
 			}
+			cunnyDripFX.SetActive(true);
+
 
 			mAnimator.CrossFade("Face_Ecchi", 0.25f);
 
@@ -84,6 +94,10 @@ namespace Amy
 
 			PlayerManager.Instance.lastOrgasmCooldown = 60.0f * Random.Range(10, 15);
 
+			mAnimator.Play("Rubbing_Cum");
+			yield return Timing.WaitForSeconds(2.5f);
+
+			cunnyDripFX.SetActive(false);
 			mAnimator.CrossFade("Idle", 0.2f);
 			yield return Timing.WaitForSeconds(0.1f);
 			mPlayer.changeCurrentMode(PlayerModes.NORMAL);
@@ -104,9 +118,9 @@ namespace Amy
 
 			float healMult = mAnimator.GetFloat("animSpeed");
 
-			if(phase == MasturbationPhase.Main && timeTilOrgasm < 5.0f)
+			if(phase == MasturbationPhase.Main && timeTilOrgasm < 7.5f)
             {
-				mAnimator.CrossFade("Rubbing_Close", 0.2f);
+				mAnimator.CrossFade("Rubbing_Close", 1.0f);
 				phase = MasturbationPhase.Close;
             }
 
@@ -119,6 +133,11 @@ namespace Amy
 
 			if (timeTilOrgasm > 0.0f)
 				timeTilOrgasm -= Time.deltaTime;
+
+			if (timeTilOrgasm < 2.0f)
+				mAnimator.SetFloat("animSpeed", 1.5f);
+			else
+				mAnimator.SetFloat("animSpeed", 1.0f);
 
 			/*if (mPlayer.areaDetector.getNearbyActorCount() > 0)
 			{
