@@ -107,6 +107,8 @@ namespace Amy
 
 		public static void writeSaveGame(int saveIndex)
 		{
+			GameObject.Instantiate(GameManager.Instance.systemData.RES_NowSaving);
+
 			string dataPath = Application.persistentDataPath + "/AmySavey" + saveIndex + ".dat";
 			Debug.Log(dataPath);
 
@@ -143,7 +145,10 @@ namespace Amy
 			writer.Write(pStats.currentStamina);
 			writer.Write(pStats.statusFX);
 			writer.Write(pStats.sickTimeLeft);
+			writer.Write(pStats.recentOrgasmTimeLeft);
+			writer.Write(pStats.goodFoodTimeLeft);
 			writer.Write(pStats.timeSpentResting);
+			
         }
 
 		public static void readPlayerStatus(PlayerStatus pStats, ref BinaryReader reader)
@@ -152,6 +157,8 @@ namespace Amy
 			pStats.currentStamina = reader.ReadSingle();
 			pStats.statusFX = reader.ReadInt32();
 			pStats.sickTimeLeft = reader.ReadSingle();
+			pStats.recentOrgasmTimeLeft = reader.ReadSingle();
+			pStats.goodFoodTimeLeft = reader.ReadSingle();
 			pStats.timeSpentResting = reader.ReadSingle();
 		}
 

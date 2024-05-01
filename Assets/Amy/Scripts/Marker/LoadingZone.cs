@@ -52,8 +52,7 @@ namespace Amy
 
         IEnumerator<float> sceneTransitionCutscene()
         {
-            GameManager.Instance.cameraInputDisabled = true;
-            GameManager.Instance.playerInputDisabled = true;
+            GameManager.Instance.disableInput();
             GameManager.Instance.cutsceneMode = true;
 
             if (vCam)

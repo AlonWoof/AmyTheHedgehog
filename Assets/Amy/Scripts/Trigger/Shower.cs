@@ -58,7 +58,7 @@ namespace Amy
 			const float cleanDirtRate = 1.0f;
 
 			GameManager.Instance.cutsceneMode = true;
-			GameManager.Instance.playerInputDisabled = true;
+			GameManager.Instance.disablePlayerInput();
 			yield return Timing.WaitForSeconds(1);
 			wetfx.desiredWetness = 1.0f;
 
@@ -84,7 +84,7 @@ namespace Amy
 			pl.mAnimator.CrossFade("Idle", 0.2f);
 			pl.updateExpression();
 			GameManager.Instance.cutsceneMode = false;
-			GameManager.Instance.playerInputDisabled = false;
+			GameManager.Instance.enablePlayerInput();
 			pl.areaDetector.enabled = true;
 
 			Timing.WaitForSeconds(1.0f);

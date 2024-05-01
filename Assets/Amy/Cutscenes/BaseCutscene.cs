@@ -25,6 +25,7 @@ namespace Amy
 
         protected bool sceneInProgress = false;
         protected bool sceneSkipped = false;
+        protected bool canSkipScene = false;
 
         public string hashOverride;
         public bool useStoryFlag = true;
@@ -36,6 +37,14 @@ namespace Amy
     	{
             if (mPlayer == null)
                 getPlayerInstance();
+
+            if (cutsceneThread.IsValid)
+            {
+                if (cutsceneThread.IsRunning)
+                {
+                    handleInput();
+                }
+            }
         }
 
 
@@ -74,9 +83,27 @@ namespace Amy
             Timing.KillCoroutines(cutsceneThread);
         }
 
-        public void skipCutscene()
+        protected void enableSkip()
         {
-            sceneSkipped = true;
+            canSkipScene = true;
+        }
+
+        protected void disableSkip()
+        {
+            canSkipScene = false;
+        }
+
+        protected virtual void skipCutscene()
+        {
+            endCutscene();
+        }
+
+        public void handleInput()
+        {
+            if(Input.GetButtonDown("Pause") && canSkipScene)
+            {
+                skipCutscene();
+            }
         }
 
         protected virtual IEnumerator<float> doCutscene()

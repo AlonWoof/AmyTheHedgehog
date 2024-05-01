@@ -28,7 +28,8 @@ namespace Amy
         Dirty = 8,
         Horny = 16,
         Sick = 32,
-        GoodFood = 64
+        GoodFood = 64,
+        RecentOrgasm = 128
     }
 
     public enum ExitLevelType
@@ -40,6 +41,8 @@ namespace Amy
     public class DayEvents
     {
         public bool stationCircleNight = false;
+        public bool yumeShower = false;
+        public int luckyNumber = 0;
     };
 
     [System.Serializable]
@@ -64,6 +67,7 @@ namespace Amy
         public int currentVibes;
         public float scaredTimeLeft = 0.0f;
         public float goodFoodTimeLeft = 0.0f;
+        public float recentOrgasmTimeLeft = 0.0f;
         public float sickTimeLeft = 0.0f;
 
         public float timeSpentResting = 0.0f;
@@ -88,6 +92,7 @@ namespace Amy
 
             ns.scaredTimeLeft = scaredTimeLeft;
             ns.goodFoodTimeLeft = goodFoodTimeLeft;
+            ns.recentOrgasmTimeLeft = recentOrgasmTimeLeft;
 
             ns.statusFX = statusFX;
             ns.currentVibes = currentVibes;
@@ -97,6 +102,15 @@ namespace Amy
 
         public void clampValues()
         {
+            if (currentMood != currentMood)
+                currentMood = 0;
+
+            if (currentHealth != currentHealth)
+                currentMood = 0;
+
+            if (currentStamina != currentStamina)
+                currentMood = 0;
+
             currentHealth = Mathf.Clamp(currentHealth, 0, maxHealth);
             currentStamina = Mathf.Clamp(currentStamina, 0, maxStamina);
             currentMood = Mathf.Clamp(currentMood, 0, maxMood);
@@ -106,6 +120,11 @@ namespace Amy
         public bool checkStatusEffect(PlayerStatusFX fx)
         {
             return ((statusFX & (int)fx) == (int)fx);
+        }
+
+        public bool checkStatusEffect(int fx)
+        {
+            return ((statusFX & fx) == fx);
         }
 
         public void setStatusEffect(PlayerStatusFX fx)
@@ -122,6 +141,11 @@ namespace Amy
         public bool checkVibe(VibeType v)
         {
             return ((currentVibes & (int)v) == (int)v);
+        }
+
+        public bool checkVibe(int v)
+        {
+            return ((currentVibes & v) == v);
         }
 
         public void setVibe(VibeType v)
@@ -204,6 +228,7 @@ namespace Amy
             AmyStatus = GameManager.getSystemData().AmyParams.baseStats.makeCopy();
             CreamStatus = GameManager.getSystemData().CreamParams.baseStats.makeCopy();
             todayEvents = new DayEvents();
+            randomizeDayEvents();
 
             GameObject inst = new GameObject("CHECKPOINT");
             DontDestroyOnLoad(inst);
@@ -242,12 +267,23 @@ namespace Amy
         {
 
             todayEvents.stationCircleNight = false;
+            todayEvents.yumeShower = false;
 
 
             int rng = Random.Range(0, 64);
 
             if (rng == 13)
+            {
                 todayEvents.stationCircleNight = true;
+            }
+
+            rng = Random.Range(0, 64);
+
+            if (rng == 7)
+                todayEvents.yumeShower = true;
+
+
+            todayEvents.luckyNumber = Random.Range(0, 99);
         }
 
     	// Update is called once per frame
@@ -367,7 +403,7 @@ namespace Amy
 
             if (pStats.checkStatusEffect(PlayerStatusFX.Scared))
             {
-                if(pStats.currentStamina > 0.02f)
+                if(pStats.currentStamina > 0.01f)
                 {
                     pStats.currentStamina -= (scaredStaminaDrain * Time.deltaTime);
                 }
@@ -386,6 +422,19 @@ namespace Amy
                     pStats.unSetStatusEffect(PlayerStatusFX.Scared);
                     pl.updateExpression();
                 }
+            }
+
+            if(pStats.checkStatusEffect(PlayerStatusFX.RecentOrgasm))
+            {
+                if (pStats.recentOrgasmTimeLeft > 0.0f)
+                {
+                    pStats.recentOrgasmTimeLeft -= Time.deltaTime;
+                }
+                else
+                {
+                    pStats.unSetStatusEffect(PlayerStatusFX.RecentOrgasm);
+                }
+             
             }
 
             if((pStats.currentStamina / pStats.maxStamina) < 0.125f)
@@ -496,12 +545,18 @@ namespace Amy
 
             float moodFac = pStats.currentMood / pStats.maxMood;
             float healthFac = pStats.currentHealth / pStats.maxHealth;
-            float staminaFac = pStats.currentStamina / pStats.currentStamina;
+            float staminaFac = pStats.currentStamina / pStats.maxStamina;
 
-            float genkiAverage = (staminaFac + healthFac + healthFac) * 0.3333333f;
+            float genkiAverage = (staminaFac + healthFac) * 0.5f;
+            
 
             if (genkiAverage > 0.95f)
                 genkiAverage = 1.0f;
+
+            if (genkiAverage != genkiAverage)
+                genkiAverage = 0.0f;
+
+            genkiAverage = Mathf.Clamp01(genkiAverage);
 
             float targetMood = genkiAverage * pStats.maxMood;
 
@@ -509,6 +564,9 @@ namespace Amy
                 targetMood *= 1.2f;
 
             if (pStats.checkStatusEffect(PlayerStatusFX.GoodFood))
+                targetMood *= 1.2f;
+
+            if (pStats.checkStatusEffect(PlayerStatusFX.RecentOrgasm))
                 targetMood *= 1.2f;
 
             if (pStats.checkStatusEffect(PlayerStatusFX.Tired))
@@ -542,7 +600,7 @@ namespace Amy
             float moodFac = pStats.currentMood / pStats.maxMood;
             float healthFac = pStats.currentHealth / pStats.maxHealth;
 
-            if (healthFac < 0.999f)
+            if (healthFac < 0.99999f)
             {
                 if (pStats.currentStamina > 0.01f)
                 {
@@ -554,6 +612,8 @@ namespace Amy
             {
                 pStats.currentHealth = pStats.maxHealth;
             }
+
+            pl.updateHealth();
         }
 
 
@@ -757,9 +817,8 @@ namespace Amy
         //TODO: add different respawn situations.
         public IEnumerator<float> doPlayerRespawnSequence(PlayerKilled.DeathType type)
         {
-           
-            GameManager.Instance.cameraInputDisabled = true;
-            GameManager.Instance.playerInputDisabled = true;
+
+            GameManager.Instance.disableInput();
 
             yield return 0f;
 
@@ -801,8 +860,7 @@ namespace Amy
 
                     yield return Timing.WaitForSeconds(1.1f);
 
-                    GameManager.Instance.playerInputDisabled = false;
-                    GameManager.Instance.cameraInputDisabled = false;
+                    GameManager.Instance.enableInput();
 
                     yield break;
                 }
@@ -897,8 +955,7 @@ namespace Amy
 
         IEnumerator<float> doCharacterSwitch(PlayableCharacter newChar)
         {
-            GameManager.Instance.playerInputDisabled = true;
-            GameManager.Instance.cameraInputDisabled = true;
+            GameManager.Instance.disableInput();
 
             UIManager.Instance.fadeScreen(false, 0.5f, false);
             yield return Timing.WaitForSeconds(0.6f);
@@ -920,8 +977,7 @@ namespace Amy
             UIManager.Instance.fadeScreen(true, 0.5f, false);
             yield return Timing.WaitForSeconds(0.5f);
 
-            GameManager.Instance.playerInputDisabled = false;
-            GameManager.Instance.cameraInputDisabled = false;
+            GameManager.Instance.enableInput();
         }
 
 

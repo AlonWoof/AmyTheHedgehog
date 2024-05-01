@@ -80,11 +80,14 @@ namespace Amy
 
             //GameManager.Instance.loadTitleScreen();
 
-            Application.targetFrameRate = Screen.currentResolution.refreshRate * 2;
+            Application.targetFrameRate = Mathf.RoundToInt((float)Screen.currentResolution.refreshRate * 1.25f);
+            Time.fixedDeltaTime = 1.0f / ((float)Application.targetFrameRate);
+            Time.maximumDeltaTime = Time.fixedDeltaTime * 0.5f;
             QualitySettings.vSyncCount = 0;
 
 
-
+            Debug.Log("Target Refresh Rate: " + Application.targetFrameRate);
+            Debug.Log("Fixed Timestep: " + Time.fixedDeltaTime);
 
         }
 
@@ -215,6 +218,39 @@ namespace Amy
             mainCamera.GetComponent<Cinemachine.CinemachineBrain>().m_UpdateMethod = Cinemachine.CinemachineBrain.UpdateMethod.FixedUpdate;
             gamePaused = false;
         }
+
+        public void enablePlayerInput()
+        {
+            playerInputDisabled = false;
+        }
+
+        public void disablePlayerInput()
+        {
+            playerInputDisabled = true;
+        }
+
+        public void enableCameraInput()
+        {
+            cameraInputDisabled = false;
+        }
+
+        public void disableCameraInput()
+        {
+            cameraInputDisabled = true;
+        }
+
+        public void disableInput()
+        {
+            disablePlayerInput();
+            disableCameraInput();
+        }
+
+        public void enableInput()
+        {
+            enablePlayerInput();
+            enableCameraInput();
+        }
+
 
         void checkPauseGame()
         {
@@ -526,9 +562,6 @@ namespace Amy
             }
             
 
-            //Auto-save
-            SaveGame.writeSaveGame(0);
-
             float waitTime = 0.1f;
 
 
@@ -562,8 +595,10 @@ namespace Amy
             if (PlayerManager.Instance.mPlayerInstance)
                 PlayerManager.Instance.mPlayerInstance.changeCurrentMode(PlayerModes.NORMAL);
 
+            //Auto-save
+            SaveGame.writeSaveGame(0);
 
-           // EnemyManager.Instance.currentEnemyPhase = ENEMY_PHASE.PHASE_SNEAK;
+            // EnemyManager.Instance.currentEnemyPhase = ENEMY_PHASE.PHASE_SNEAK;
 
             UIManager.Instance.fadeScreen(true, 0.75f);
             yield return Timing.WaitForSeconds(0.75f);

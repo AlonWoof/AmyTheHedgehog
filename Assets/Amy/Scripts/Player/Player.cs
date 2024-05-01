@@ -447,7 +447,7 @@ namespace Amy
 
 		public IEnumerator<float> doWarp(string sceneName, int exitNum = 0)
         {
-			GameManager.Instance.playerInputDisabled = true;
+			GameManager.Instance.disablePlayerInput();
 			changeCurrentMode(PlayerModes.CUTSCENE);
 
 			clearAccel();
@@ -483,7 +483,7 @@ namespace Amy
         {
 			yield return Timing.WaitForSeconds(1.5f);
 
-			GameManager.Instance.playerInputDisabled = true;
+			GameManager.Instance.disablePlayerInput();
 			
 
 			clearAccel();
@@ -515,7 +515,7 @@ namespace Amy
 
 			yield return Timing.WaitForSeconds(0.5f);
 
-			GameManager.Instance.playerInputDisabled = false;
+			GameManager.Instance.enablePlayerInput();
 			changeCurrentMode(PlayerModes.NORMAL);
 
 		}

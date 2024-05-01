@@ -160,6 +160,10 @@ namespace Amy
 
 			foreach(Enemy e in nearbyEnemies)
             {
+
+				if (e == null)
+					continue;
+
 				float dst = Vector3.Distance(e.transform.position, transform.position + (Vector3.up * 0.5f));
 				float ang_cam = Vector3.Dot(Camera.main.transform.forward, Helper.getDirectionTo(Camera.main.transform.position, e.transform.position).normalized);
 				float ang_player = Vector3.Dot(transform.forward, Helper.getDirectionTo(transform.position, e.transform.position).normalized);

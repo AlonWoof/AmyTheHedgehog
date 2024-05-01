@@ -97,6 +97,8 @@ namespace Amy
 			mAnimator.Play("Rubbing_Cum");
 			yield return Timing.WaitForSeconds(2.5f);
 
+			mPlayer.getStatus().setStatusEffect(PlayerStatusFX.RecentOrgasm);
+			mPlayer.getStatus().recentOrgasmTimeLeft = Random.Range(Helper.minutesToSeconds(5), Helper.minutesToSeconds(10));
 			cunnyDripFX.SetActive(false);
 			mAnimator.CrossFade("Idle", 0.2f);
 			yield return Timing.WaitForSeconds(0.1f);
@@ -110,6 +112,30 @@ namespace Amy
 			yield return Timing.WaitForSeconds(0.1f);
 			mPlayer.changeCurrentMode(PlayerModes.NORMAL);
 		}
+
+		public bool canMasturbate()
+        {
+			PlayerStatus pstats = mPlayer.getStatus();
+
+			if (mPlayer.mChara != PlayableCharacter.Amy)
+				return false;
+
+			if (mPlayer.areaDetector.getNearbyActorCount() > 0)
+				return false;
+
+			if (pstats.checkVibe(VibeType.Dirty) || 
+				pstats.checkVibe(VibeType.Scary))
+				return false;
+
+			if(pstats.checkStatusEffect(PlayerStatusFX.Scared) || 
+				pstats.checkStatusEffect(PlayerStatusFX.Dirty) || 
+				pstats.checkStatusEffect(PlayerStatusFX.RecentOrgasm))
+				return false;
+
+
+
+			return true;
+        }
 
 		// Update is called once per frame
 		void Update()
@@ -146,9 +172,11 @@ namespace Amy
 				
 			}*/
 
-			if (timeTilOrgasm <= 0.0f)
+			if (timeTilOrgasm < 0.0f)
             {
-				pstats.currentHealth += pstats.maxHealth * 0.25f;
+
+				timeTilOrgasm = 0.0f;
+				pstats.currentHealth += pstats.maxHealth * 0.2f;
 				mPlayer.updateHealth();
 
 				Timing.RunCoroutine(doOrgasm());

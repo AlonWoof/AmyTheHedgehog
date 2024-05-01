@@ -19,9 +19,20 @@ namespace Amy
 	    {
 			getBaseComponents();
 	    }
-	
-	    // Update is called once per frame
-	    void Update()
+
+        private void OnEnable()
+        {
+            if(mPlayer.currentMode != PlayerModes.NORMAL)
+            {
+				enabled = false;
+				return;
+            }
+
+			idleCounter = 0.0f;
+        }
+
+        // Update is called once per frame
+        void Update()
 	    {
 
 			if (GameManager.Instance.gamePaused)
@@ -76,21 +87,9 @@ namespace Amy
 
 			if (!mPlayer.isOnGround || mPlayer.isSliding)
 				idleCounter = 0.0f;
-
-
-			if (idleCounter > 5.0f)
-			{
-				PlayerStatus pstats = mPlayer.getStatus();
-
-				if (pstats.currentMood == pstats.maxMood)
-				{
-					if (pstats.currentHealth < pstats.maxHealth)
-					{
-						pstats.currentHealth += (Time.deltaTime * 0.5f);
-					}
-				}
-			}
 		}
+
+
 
         void handleInput()
         {
@@ -98,13 +97,21 @@ namespace Amy
 				return;
 
 
-			if (Input.GetButtonDown("LockOn") && idleCounter > 5.0f && mPlayer.areaDetector.getNearbyActorCount() == 0)
+			if (idleCounter > 5.0f)
             {
 				//if(mPlayer.getStatus().currentMood < mPlayer.getStatus().maxMood && mPlayer.acceleration.magnitude < 0.001f)
 				// {
-				if (PlayerManager.Instance.lastOrgasmCooldown <= 0.0f)
+
+				if (PlayerManager.Instance.todayEvents.luckyNumber % 3 == 0)
 				{
-					mPlayer.changeCurrentMode(PlayerModes.RUBBING);
+					if (mPlayer.modeRubbing.canMasturbate())
+					{
+						UIManager.Instance.contextButton.setActionText("Rub It?");
+						if (Input.GetButtonDown("Action"))
+						{
+							mPlayer.changeCurrentMode(PlayerModes.RUBBING);
+						}
+					}
 				}
                 //}
             }

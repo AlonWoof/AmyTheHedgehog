@@ -277,7 +277,7 @@ namespace Amy
 				return;
 
 			lastVoice = rnd;
-			voice.pitch = 1.0f;
+			voice.pitch = Random.Range(0.95f, 1.05f);
 			//voice.clip = clip;
 			//voice.Play();
 			//voice.time = clip.length;
@@ -351,12 +351,11 @@ namespace Amy
         {
 			//ZA WARUDO
 			Time.timeScale = 0.0f;
-			GameManager.Instance.playerInputDisabled = true;
-			GameManager.Instance.cameraInputDisabled = true;
+			GameManager.Instance.disableInput();
 
 			GameObject.Instantiate(textureFucker);
 
-			MusicManager.Instance.fadeBGM(0.0f, 0.01f);
+			MusicManager.Instance.killBGM(true);
 			MusicManager.Instance.bgm.volume = 0.0f;
 
 			MusicManager.Instance.changeSongs(null, 0.3f);

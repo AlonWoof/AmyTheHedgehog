@@ -28,7 +28,7 @@ namespace Amy
 	    // Update is called once per frame
 	    void Update()
 	    {
-			testInput();
+			//testInput();
 
 		}
 
@@ -57,7 +57,7 @@ namespace Amy
         {
 			bool inputState = GameManager.Instance.playerInputDisabled;
 
-			GameManager.Instance.playerInputDisabled = true;
+			GameManager.Instance.disablePlayerInput();
 
 			myText.text = "";
 			mAnimator.Play("Appear");
@@ -87,7 +87,8 @@ namespace Amy
 
 			yield return Timing.WaitForSeconds(0.2f);
 
-			GameManager.Instance.playerInputDisabled = inputState;
+			if (!inputState)
+				GameManager.Instance.enablePlayerInput();
 		}
 
 		IEnumerator<float> doPrint(string str)

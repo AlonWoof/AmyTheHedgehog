@@ -27,11 +27,14 @@ namespace Amy
 		}
 	
 
+
 		protected override IEnumerator<float> doCutscene()
 		{
+
+
 			GameManager.Instance.cutsceneMode = true;
-			GameManager.Instance.cameraInputDisabled = true;
-			GameManager.Instance.playerInputDisabled = true;
+			GameManager.Instance.disableInput();
+
 
 			if (mPlayer)
 			{
@@ -45,8 +48,12 @@ namespace Amy
 
 			wakeupCam_anim.Play("Start");
 			UIManager.Instance.fadeScreen(true, 3.0f, false);
+			
+			enableSkip();
 
 			yield return Timing.WaitForSeconds(5.0f);
+
+			
 
 			sleepyAmyAnimator.Play("WakeUp");
 			yield return Timing.WaitForSeconds(6.0f);
@@ -71,10 +78,29 @@ namespace Amy
 			yield return Timing.WaitForSeconds(1.5f);
 
 			GameManager.Instance.cutsceneMode = false;
-			GameManager.Instance.cameraInputDisabled = false;
-			GameManager.Instance.playerInputDisabled = false;
+			GameManager.Instance.enableInput();
 
 			endCutscene();
 		}
-	}
+
+        protected override void skipCutscene()
+        {
+            base.skipCutscene();
+
+			GameManager.Instance.enableInput();
+
+			PlayerManager.Instance.playerCheckpoint.transform.position = checkpoint.transform.position;
+			PlayerManager.Instance.playerCheckpoint.transform.rotation = checkpoint.transform.rotation;
+
+
+			mPlayer = PlayerManager.Instance.spawnPlayerAtCheckpoint();
+
+			sleepyAmyAnimator.gameObject.SetActive(false);
+			wakeup_ZoomCam.SetActive(false);
+			mPlayer.tpc.centerBehindPlayer();
+
+			UIManager.Instance.fadeScreen(true, 1.0f);
+		}
+
+    }
 }

@@ -35,18 +35,20 @@ namespace Amy
 					desiredWetness = 1.0f;
 					currentWetness = 1.0f;
 				}
-            }
 
-			if(desiredWetness > 0.0f)
-            {
-				desiredWetness -= Time.deltaTime * 0.05f;
+				if (desiredWetness > 0.0f)
+				{
+					desiredWetness -= Time.deltaTime * 0.05f;
 
+				}
+				else
+				{
+					desiredWetness = 0.0f;
+
+				}
 			}
-			else
-            {
-				desiredWetness = 0.0f;
 
-			}
+
 
 			currentWetness = Mathf.Lerp(currentWetness, desiredWetness, 0.125f);
 

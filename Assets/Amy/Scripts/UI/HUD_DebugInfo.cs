@@ -142,6 +142,9 @@ namespace Amy
 			if (pstats.checkStatusEffect(PlayerStatusFX.Sick))
 				dbgstr += "Sick ";
 
+			if (pstats.checkStatusEffect(PlayerStatusFX.RecentOrgasm))
+				dbgstr += "RecentOrgasm ";
+
 			dbgstr += "\n\nVibes: ";
 
 			if(pstats.checkVibe(VibeType.Safe))
@@ -164,6 +167,8 @@ namespace Amy
 
 			dbgstr += "\nScared Time Left: " + pstats.scaredTimeLeft;
 			dbgstr += "\nSick Time Left: " + pstats.sickTimeLeft;
+			dbgstr += "\nRecent Orgasm Time Left: " + pstats.recentOrgasmTimeLeft;
+			dbgstr += "\nGood Food Time Left: " + pstats.goodFoodTimeLeft;
 			dbgstr += "\nDirtyness: " + pstats.dirtiness;
 
 			dbgstr += "\nTime Spent Resting: " + pstats.timeSpentResting;
@@ -213,9 +218,12 @@ namespace Amy
 		{
 			string dbgstr = "";
 
-			dbgstr += "EVENT INFO: \n\n";
+			dbgstr += "EVENT INFO: \n";
 
-			dbgstr += "stationCircleNight: " + PlayerManager.Instance.todayEvents.stationCircleNight;
+			dbgstr += "\nstationCircleNight: " + PlayerManager.Instance.todayEvents.stationCircleNight;
+			dbgstr += "\nyumeShower: " + PlayerManager.Instance.todayEvents.yumeShower;
+
+			dbgstr += "\n\nluckyNumber: " + PlayerManager.Instance.todayEvents.luckyNumber;
 
 			return dbgstr;
 		}

@@ -564,7 +564,7 @@ namespace Amy
         {
             bool inputState = GameManager.Instance.playerInputDisabled;
 
-            GameManager.Instance.playerInputDisabled = true;
+            GameManager.Instance.disablePlayerInput();
 
             messageInProgress = true;
             textProgress = 0;
@@ -664,7 +664,8 @@ namespace Amy
 
 
 
-                GameManager.Instance.playerInputDisabled = inputState;
+                if (!inputState)
+                    GameManager.Instance.enablePlayerInput();
 
                 if (data.onEndMessage != null)
                     data.onEndMessage.Invoke();

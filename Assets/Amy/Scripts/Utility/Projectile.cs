@@ -18,6 +18,15 @@ namespace Amy
         public LayerMask colMask;
         public DamageTeam team;
 
+        public float homingAmount = 0.1f;
+        public float homingRange = 3.0f;
+
+        List<Enemy> enemyTargets;
+        List<Player> playerTargets;
+
+        Enemy closestEnemy;
+        Player closestPlayer;
+
         // Start is called before the first frame update
         void Start()
         {
@@ -36,13 +45,17 @@ namespace Amy
                     break;
             }
 
-            
 
+            buildPlayerList();
+            buildEnemyList();
         }
 
         private void Update()
         {
             gameObject.layer = LayerMask.NameToLayer("Projectile");
+
+            if(team != DamageTeam.Enemy)
+                homeOnEnemy();
         }
 
         // Update is called once per frame
@@ -56,6 +69,50 @@ namespace Amy
                 Die();
         }
 
+        void buildEnemyList()
+        {
+            if (enemyTargets == null)
+                enemyTargets = new List<Enemy>();
+
+            enemyTargets.Clear();
+
+            foreach(Enemy e in FindObjectsOfType<Enemy>())
+            {
+                enemyTargets.Add(e);
+            }
+        }
+
+        void buildPlayerList()
+        {
+            if (playerTargets == null)
+                playerTargets = new List<Player>();
+
+            playerTargets.Clear();
+
+            foreach (Player e in FindObjectsOfType<Player>())
+            {
+                playerTargets.Add(e);
+            }
+        }
+
+        void homeOnEnemy()
+        {
+            Vector3 dirTo;
+
+            Vector3 start = transform.position;
+
+            RaycastHit hitInfo = new RaycastHit();
+
+            if(Physics.SphereCast(start, 0.5f, transform.forward, out hitInfo, homingRange))
+            {
+                if(hitInfo.collider.GetComponentInChildren<Enemy>())
+                {
+                    dirTo = Helper.getDirectionTo(transform.position, hitInfo.point);
+                    transform.rotation = Quaternion.Lerp(transform.rotation, Quaternion.LookRotation(dirTo), Time.deltaTime * homingAmount);
+                }
+            }
+
+        }
 
         private void OnTriggerEnter(Collider other)
         {
