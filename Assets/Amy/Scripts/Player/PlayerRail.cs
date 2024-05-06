@@ -198,7 +198,7 @@ namespace Amy
 			mPlayer.changeCurrentMode(PlayerModes.NORMAL);
 			mPlayer.mAnimator.Play("Jump");
 			mPlayer.Jump(true);
-			mPlayer.acceleration.y += mSpeed * 0.25f;
+			mPlayer.acceleration.y += mSpeed;
 			mPlayer.acceleration.z = mSpeed * 0.5f;
 			mPlayer.isOnGround = false;
 			mPlayer.framesAirborne = 10;

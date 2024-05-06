@@ -51,6 +51,9 @@ namespace Amy
         public GameObject RES_RingTobitiri;
         public GameObject RES_RingTobitiriFX;
 
+        public GameObject RES_GenericHitFX;
+        public GameObject RES_SpikesHitFX;
+
         [Header("UI")]
         public GameObject RES_userInterface;
         public GameObject RES_RingBankTransferScene;

@@ -13,16 +13,24 @@ namespace Amy
 	{
 
 		public float idleCounter = 0.0f;
+		public float groundedTimer = 0.0f;
+
+		public GameObject dbg_safePos;
 
 	    // Start is called before the first frame update
 	    void Start()
 	    {
 			getBaseComponents();
-	    }
+
+			dbg_safePos = new GameObject("SafeSphere");
+
+		}
 
         private void OnEnable()
         {
-            if(mPlayer.currentMode != PlayerModes.NORMAL)
+			getBaseComponents();
+
+			if (mPlayer.currentMode != PlayerModes.NORMAL)
             {
 				enabled = false;
 				return;
@@ -81,12 +89,17 @@ namespace Amy
 
 
 			idleCounter += Time.deltaTime;
+			groundedTimer += Time.deltaTime;
 
 			if (mPlayer.acceleration.magnitude > 0.01f)
 				idleCounter = 0.0f;
 
 			if (!mPlayer.isOnGround || mPlayer.isSliding)
 				idleCounter = 0.0f;
+
+
+			if (!mPlayer.isOnGround)
+				groundedTimer = 0.0f;
 		}
 
 
@@ -96,6 +109,12 @@ namespace Amy
 			if (GameManager.Instance.playerInputDisabled)
 				return;
 
+
+			if (groundedTimer > 5.0f)
+			{
+				mPlayer.lastSafeGroundPosition = transform.position;
+				dbg_safePos.transform.position = mPlayer.lastSafeGroundPosition;
+			}
 
 			if (idleCounter > 5.0f)
             {

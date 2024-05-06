@@ -94,6 +94,8 @@ namespace Amy
 
             float knockDecay = 8.0f;
 
+            checkForKillTrigger();
+
             if (hurt.knockPower > 0.0f)
             {
                 hurt.knockPower -= (knockDecay * Time.fixedDeltaTime);
@@ -118,6 +120,28 @@ namespace Amy
             mPlayer.updateRotation();
         }
 
+
+        void checkForKillTrigger()
+        {
+            Vector3 yeetDirection = -transform.forward;
+
+            Vector3 start = transform.position + yeetDirection * 5.0f;
+            Vector3 end = start + (Vector3.down * 128.0f);
+
+            RaycastHit hitInfo = new RaycastHit();
+
+            Debug.DrawLine(start, end, Color.yellow, 1.0f);
+
+            if (Physics.Linecast(start, end, out hitInfo))
+            {
+                if (hitInfo.collider.GetComponentInChildren<FallingKillPlane>())
+                {
+                    knockPower *= 0.95f;
+
+                    Debug.DrawLine(start, end, Color.red, 10.0f);
+                }
+            }
+        }
 
     }
 }

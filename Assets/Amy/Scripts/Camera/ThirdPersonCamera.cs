@@ -184,11 +184,14 @@ namespace Amy
 
             if (GameManager.Instance.gamePaused)
             {
-                if (Input.GetButton("Jump"))
-                    pauseZoomAmount -= Time.unscaledDeltaTime;
+                float rightTrigger = Input.GetAxis("Right Trigger");
+                float leftTrigger = Input.GetAxis("Left Trigger");
 
-                if (Input.GetButton("Attack"))
-                    pauseZoomAmount += Time.unscaledDeltaTime;
+                if(rightTrigger > 0.0f)
+                    pauseZoomAmount -= (rightTrigger * Time.unscaledDeltaTime);
+
+                if (leftTrigger > 0.0f)
+                    pauseZoomAmount += (leftTrigger * Time.unscaledDeltaTime);
 
                 pauseZoomAmount = Mathf.Clamp01(pauseZoomAmount);
             }

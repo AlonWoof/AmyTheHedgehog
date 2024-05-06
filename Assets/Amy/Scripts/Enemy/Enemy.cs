@@ -46,9 +46,6 @@ namespace Amy
 			}
 		}
 
-
-
-
 		public bool takeDamage(Damage dmg)
         {
 

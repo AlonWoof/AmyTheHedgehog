@@ -58,12 +58,12 @@ namespace Amy
 	    // Update is called once per frame
 	    void Update()
 	    {
-
+			doPlayerCheckOnRail();
 		}
 
         private void FixedUpdate()
         {
-			doPlayerCheckOnRail();
+			
 
 		}
 
@@ -91,9 +91,14 @@ namespace Amy
 				return;
 			}
 
+			if (PlayerManager.Instance.currentCharacter != PlayableCharacter.Amy)
+				return;
+
 			if (!PlayerManager.Instance.hasCloth)
 				return;
 
+
+			LayerMask mask = LayerMask.GetMask("Actor");
 
 			for (int i = 0; i < points.Length - 1; i++)
 			{
@@ -103,15 +108,16 @@ namespace Amy
 
 				RaycastHit hitInfo = new RaycastHit();
 
-				if(Physics.SphereCast(start, 1.0f, Helper.getDirectionTo(start,end), out hitInfo, Vector3.Distance(start,end)))
+				
+
+				if(Physics.SphereCast(start, 2.0f, Helper.getDirectionTo(start,end), out hitInfo, Vector3.Distance(start,end), mask))
                 {
 					if(hitInfo.collider.GetComponent<Player>())
                     {
-						
 
 						Player pl = hitInfo.collider.GetComponent<Player>();
 
-						if (pl.currentMode == PlayerModes.NORMAL)
+						if (pl.currentMode == PlayerModes.NORMAL && pl.speed.y < 0.1f)
 						{
 
 							float d = Vector3.Distance(start, hitInfo.point);
@@ -120,9 +126,10 @@ namespace Amy
 
 							Vector3 pos = getPosOnRailFromDistance(getDistanceFromNode(i) + d);
 
-							if (railProgress < 0.8f)
+							if (railProgress < 0.9f)
 							{
 								pl.changeCurrentMode(PlayerModes.RAIL);
+								pl.direction = Helper.getDirectionTo(start, end);
 								pl.modeRail.MountRail(this, pos);
 								pl.modeRail.railDistance = getDistanceFromNode(i) + d;
 							}

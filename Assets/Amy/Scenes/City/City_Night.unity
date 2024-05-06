@@ -16,10 +16,10 @@ RenderSettings:
   serializedVersion: 9
   m_Fog: 1
   m_FogColor: {r: 0, g: 0, b: 0, a: 1}
-  m_FogMode: 3
-  m_FogDensity: 0.02
-  m_LinearFogStart: -10
-  m_LinearFogEnd: 512
+  m_FogMode: 1
+  m_FogDensity: 0.03
+  m_LinearFogStart: 8
+  m_LinearFogEnd: 30
   m_AmbientSkyColor: {r: 0.028746877, g: 0.039175756, b: 0.3207547, a: 1}
   m_AmbientEquatorColor: {r: 0.071155205, g: 0.10412959, b: 0.3679245, a: 1}
   m_AmbientGroundColor: {r: 0.0244749, g: 0.05733404, b: 0.20754719, a: 1}
@@ -97,7 +97,7 @@ LightmapSettings:
     m_ExportTrainingData: 0
     m_TrainingDataDestination: TrainingData
     m_LightProbeSampleCountMultiplier: 4
-  m_LightingDataAsset: {fileID: 0}
+  m_LightingDataAsset: {fileID: 112000000, guid: 8b7f442d2776e604488c19d784793fb6, type: 2}
   m_LightingSettings: {fileID: 4890085278179872738, guid: a06c4973a18b4564a9b11c1fa99c01d6, type: 2}
 --- !u!196 &4
 NavMeshSettings:
@@ -238,7 +238,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 139825921}
   m_LocalRotation: {x: -0.7071068, y: -0, z: -0, w: 0.7071068}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: 2.273, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
@@ -3866,7 +3866,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1471240738}
   m_LocalRotation: {x: 0.60261256, y: -0.14877295, z: 0.115609914, w: 0.77547354}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: 3.38, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
@@ -4757,6 +4757,10 @@ PrefabInstance:
     - target: {fileID: 630964614, guid: 845966627e3036c498c9e5c1d100f62a, type: 3}
       propertyPath: m_IsActive
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 18798046892856886, guid: 845966627e3036c498c9e5c1d100f62a, type: 3}
+      propertyPath: m_Enabled
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 488544193931331397, guid: 845966627e3036c498c9e5c1d100f62a, type: 3}
       propertyPath: m_BoundingSphereOverride.w
@@ -5682,3 +5686,39 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   range: 7
   vibeFlags: 1
+--- !u!1 &5790377348304881330 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 8446586463992290522, guid: 845966627e3036c498c9e5c1d100f62a, type: 3}
+  m_PrefabInstance: {fileID: 5790377348304881325}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &5790377348304881331 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 6672896850180055854, guid: 845966627e3036c498c9e5c1d100f62a, type: 3}
+  m_PrefabInstance: {fileID: 5790377348304881325}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &5790377348304881332
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5790377348304881330}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d3d5b22bda95ace4aae1128234e25ce8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  defaultType: 3
+--- !u!114 &5790377348304881333
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5790377348304881331}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d3d5b22bda95ace4aae1128234e25ce8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  defaultType: 0

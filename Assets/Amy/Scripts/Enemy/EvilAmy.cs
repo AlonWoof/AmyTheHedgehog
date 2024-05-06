@@ -128,12 +128,12 @@ namespace Amy
 			switch (newMode)
             {
 				case EvilAmyMode.Wander:
-					currentModeRoutine = Timing.RunCoroutine(doStartWander());
+					currentModeRoutine = Timing.RunCoroutine(doStartWander().CancelWith(gameObject));
 					break;
 				case EvilAmyMode.Search:
 					break;
 				case EvilAmyMode.Chase:
-					currentModeRoutine = Timing.RunCoroutine(doStartChase());
+					currentModeRoutine = Timing.RunCoroutine(doStartChase().CancelWith(gameObject));
 					break;
             }
         }
@@ -341,7 +341,7 @@ namespace Amy
         {
             if(other.gameObject.GetComponent<Player>())
             {
-				Timing.RunCoroutine(doDeathSequence(), Segment.RealtimeUpdate);
+				Timing.RunCoroutine(doDeathSequence().CancelWith(gameObject), Segment.RealtimeUpdate);
             }
 
         }

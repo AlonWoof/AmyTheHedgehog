@@ -16,7 +16,9 @@ namespace Amy
         public float lifetime = 100.0f;
 
         public LayerMask colMask;
-        public DamageTeam team;
+
+        public bool hurtsPlayer = false;
+        public bool hurtsEnemy = false;
 
         public float homingAmount = 0.1f;
         public float homingRange = 3.0f;
@@ -27,24 +29,13 @@ namespace Amy
         Enemy closestEnemy;
         Player closestPlayer;
 
+        Damage dmg;
+
         // Start is called before the first frame update
         void Start()
         {
             body = GetComponent<Rigidbody>();
-
-            switch(team)
-            {
-                case DamageTeam.None:
-                    colMask = LayerMask.GetMask("Collision", "PlayerHitbox", "EnemyHitbox");
-                    break;
-                case DamageTeam.Player:
-                    colMask = LayerMask.GetMask("Collision", "EnemyHitbox");
-                    break;
-                case DamageTeam.Enemy:
-                    colMask = LayerMask.GetMask("Collision", "PlayerHitbox");
-                    break;
-            }
-
+            dmg = GetComponentInChildren<Damage>();
 
             buildPlayerList();
             buildEnemyList();
@@ -54,7 +45,7 @@ namespace Amy
         {
             gameObject.layer = LayerMask.NameToLayer("Projectile");
 
-            if(team != DamageTeam.Enemy)
+            if(hurtsEnemy)
                 homeOnEnemy();
         }
 
@@ -62,6 +53,8 @@ namespace Amy
         void FixedUpdate()
         {
             body.velocity = transform.forward * speed;
+
+            body.angularVelocity *= 0.25f;
 
             lifetime -= Time.fixedDeltaTime;
 
@@ -118,6 +111,20 @@ namespace Amy
         {
             if (other.gameObject.layer == LayerMask.NameToLayer("Collision"))
                 lifetime = Time.deltaTime * 1.5f;
+
+
+            Enemy e = other.GetComponentInChildren<Enemy>();
+            Player p = other.GetComponentInChildren<Player>();
+
+            if (e && hurtsEnemy)
+            {
+                lifetime = Time.deltaTime * 1.5f;
+            }
+
+            if (p && hurtsPlayer)
+            {
+                lifetime = Time.deltaTime * 1.5f;
+            }
         }
 
         private void OnCollisionEnter(Collision collision)
@@ -129,6 +136,19 @@ namespace Amy
             }
 
             if (collision.collider.GetComponent<Hitbox>())
+            {
+                lifetime = Time.deltaTime * 1.5f;
+            }
+
+            Enemy e = collision.collider.GetComponentInChildren<Enemy>();
+            Player p = collision.collider.GetComponentInChildren<Player>();
+
+            if (e && hurtsEnemy)
+            {
+                lifetime = Time.deltaTime * 1.5f;
+            }
+
+            if (p && hurtsPlayer)
             {
                 lifetime = Time.deltaTime * 1.5f;
             }

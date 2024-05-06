@@ -68,7 +68,7 @@ namespace Amy
 
             GameManager.Instance.cutsceneMode = true;
             sceneInProgress = true;
-            cutsceneThread = Timing.RunCoroutine(doCutscene());
+            cutsceneThread = Timing.RunCoroutine(doCutscene().CancelWith(gameObject));
             onStartScene.Invoke();
         }
 

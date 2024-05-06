@@ -58,11 +58,11 @@ namespace Amy
 
 			if(thinkHandle == null)
             {
-				thinkHandle = Timing.RunCoroutine(think());
+				thinkHandle = Timing.RunCoroutine(think().CancelWith(gameObject));
             }
 			else if (!thinkHandle.IsRunning || !thinkHandle.IsValid)
             {
-				thinkHandle = Timing.RunCoroutine(think());
+				thinkHandle = Timing.RunCoroutine(think().CancelWith(gameObject));
 			}
 
 			transform.rotation = Quaternion.Lerp(transform.rotation,Quaternion.LookRotation(currentDirection.normalized, Vector3.up), Time.deltaTime * 16.0f);

@@ -80,7 +80,7 @@ namespace Amy
 
         public void genericTalk()
         {
-            Timing.RunCoroutine(doGenericTalk());        
+            Timing.RunCoroutine(doGenericTalk().CancelWith(gameObject));        
         }
 
         IEnumerator<float> doGenericTalk()

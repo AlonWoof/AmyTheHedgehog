@@ -229,6 +229,23 @@ namespace Amy
 
 			Physics.IgnoreCollision(c, mCol);
 
+			Projectile p = bullet.GetComponentInChildren<Projectile>();
+
+			if(p)
+            {
+				p.hurtsPlayer = false;
+				p.hurtsEnemy = true;
+
+				Damage d = bullet.GetComponentInChildren<Damage>();
+
+				if (d)
+				{
+					d.hurtsEnemy = true;
+					d.hurtsPlayer = false;
+					d.damageAmount = 10.0f;
+				}
+            }
+
 			bullet.transform.position = weapon_node.transform.position + weapon_node.transform.up * 0.1f;
 
 			bullet.transform.LookAt(aimer.target_node.transform,Vector3.up);
@@ -261,6 +278,9 @@ namespace Amy
 			float sensitivity = 512;
 
 			if (GameManager.Instance.cameraInputDisabled)
+				return;
+
+			if (GameManager.Instance.gamePaused)
 				return;
 
 			float shoot = Input.GetAxis("Shoot");

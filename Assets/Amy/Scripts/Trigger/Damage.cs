@@ -33,6 +33,7 @@ namespace Amy
 	{
 
 		public float damageAmount = 0.0f;
+		public float bounceAmount = 0.0f;
 		public DamageType damageType = DamageType.Neutral;
 
 		public bool hurtsPlayer = false;
@@ -95,6 +96,14 @@ namespace Amy
 					return;
 
 				onContact.Invoke();
+
+				Player pl = PlayerManager.Instance.mPlayerInstance;
+
+				if(bounceAmount > 0.0f)
+                {
+					pl.acceleration *= 0.5f;
+					pl.acceleration.y = bounceAmount;
+                }
 
 				if (collisionFX)
 				{

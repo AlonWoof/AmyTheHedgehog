@@ -14,6 +14,7 @@ GameObject:
   - component: {fileID: 6553749580567412952}
   - component: {fileID: 6553749580567412953}
   - component: {fileID: 5715522542084349264}
+  - component: {fileID: 3552412995387820431}
   m_Layer: 0
   m_Name: EnemyTestBullet
   m_TagString: Untagged
@@ -34,6 +35,7 @@ Transform:
   m_Children:
   - {fileID: 6291375162441864997}
   - {fileID: 5338416006847758544}
+  - {fileID: 8307519821779821377}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -112,9 +114,9 @@ Rigidbody:
   m_AngularDrag: 0.05
   m_UseGravity: 0
   m_IsKinematic: 0
-  m_Interpolate: 0
+  m_Interpolate: 1
   m_Constraints: 0
-  m_CollisionDetection: 1
+  m_CollisionDetection: 2
 --- !u!114 &5715522542084349264
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -129,13 +131,60 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   body: {fileID: 0}
   onCollisionFX: {fileID: 2918217833887393753, guid: d33456c229855fa418ca39780257460e, type: 3}
-  speed: 15
+  speed: 30
   spread: 0
-  lifetime: 100
+  lifetime: 20
   colMask:
     serializedVersion: 2
     m_Bits: 1152
-  team: 2
+  hurtsPlayer: 1
+  hurtsEnemy: 0
+  homingAmount: 0
+  homingRange: 0
+--- !u!114 &3552412995387820431
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6553749580567412958}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f9e67f0182f5756408748ee443fb2986, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  prefabToSpawn: {fileID: 2246085364400740206, guid: 8ac414a3a37e0004d839710a0171c015, type: 3}
+  trigger: 1
+--- !u!1 &6760286022098957912
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8307519821779821377}
+  m_Layer: 0
+  m_Name: src
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8307519821779821377
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6760286022098957912}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: -100}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 6553749580567412933}
+  m_RootOrder: 2
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &7083271332789837668
 GameObject:
   m_ObjectHideFlags: 0
@@ -179,7 +228,7 @@ SphereCollider:
   m_IsTrigger: 1
   m_Enabled: 1
   serializedVersion: 2
-  m_Radius: 0.05
+  m_Radius: 0.1
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!114 &1821240989768413580
 MonoBehaviour:
@@ -194,11 +243,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   damageAmount: 5
+  bounceAmount: 0
   damageType: 1
   hurtsPlayer: 1
   hurtsEnemy: 0
-  useSourceDir: 0
-  source: {fileID: 0}
+  useSourceDir: 1
+  source: {fileID: 6760286022098957912}
   collisionFX: {fileID: 0}
   onContact:
     m_PersistentCalls:

@@ -58,7 +58,7 @@ namespace Amy
 			}
 
 			//Sometimes a girl needs a little break~
-			Timing.RunCoroutine(doStartRubbing());
+			Timing.RunCoroutine(doStartRubbing().CancelWith(gameObject));
 			
 		}
 
@@ -179,7 +179,7 @@ namespace Amy
 				pstats.currentHealth += pstats.maxHealth * 0.2f;
 				mPlayer.updateHealth();
 
-				Timing.RunCoroutine(doOrgasm());
+				Timing.RunCoroutine(doOrgasm().CancelWith(gameObject));
             }
 
 

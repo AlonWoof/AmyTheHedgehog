@@ -59,7 +59,10 @@ namespace Amy
 
             Player mPlayer = other.GetComponent<Player>();
 
-            if (mPlayer.mutekiTimer > 0.01f && tobitiri)
+            if (mPlayer.currentMode == PlayerModes.HURT && tobitiri)
+                return;
+
+            if (mPlayer.currentMode == PlayerModes.KILLED)
                 return;
 
             PlayerManager.Instance.addRings(1);

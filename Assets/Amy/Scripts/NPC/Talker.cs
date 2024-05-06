@@ -88,7 +88,7 @@ namespace Amy
 
         public void Talk()
         {
-            Timing.RunCoroutine(doStartTalking());
+            Timing.RunCoroutine(doStartTalking().CancelWith(gameObject));
 
         }
 

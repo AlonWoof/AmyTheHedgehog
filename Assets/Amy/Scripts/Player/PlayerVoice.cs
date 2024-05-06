@@ -69,7 +69,7 @@ namespace Amy
 
         public void playVoiceDelayed(float delay, AudioClip[] voices, bool canInterrupt = false)
         {
-            Timing.RunCoroutine(doDelayedVoice(delay, voices, canInterrupt));
+            Timing.RunCoroutine(doDelayedVoice(delay, voices, canInterrupt).CancelWith(gameObject));
 
         }
 

@@ -42,13 +42,30 @@ namespace Amy
 
 		}
 
+		public void setKnockBackDirectional(Vector3 dir, float power = 5.0f)
+        {
+			knockPower = power;
+			knockOrigin = (transform.position - dir) + (Vector3.up * 2.0f);
+			mPlayer.acceleration.y = power * 0.65f;
+			hurtAnimTimer = 0.25f;
+
+
+			mAnimator.Play("Hurt");
+		}
+
 		public void setKnockBack(Vector3 origin, float power = 5.0f)
 		{
+
+
 			knockPower = power;
 			knockOrigin = origin;
 			mPlayer.acceleration.y = power * 0.65f;
 			hurtAnimTimer = 0.25f;
 
+
+			Vector3 dir = Helper.getDirectionTo(transform.position, knockOrigin);
+			dir.y = 0.0f;
+			mPlayer.setAngleInstantly(dir.normalized);
 
 			mAnimator.Play("Hurt");
 		}
@@ -79,6 +96,8 @@ namespace Amy
 			
 
 			float knockDecay = 8.0f;
+
+			checkForKillTrigger();
 
 			if (knockPower > 0.0f)
 			{
@@ -134,6 +153,10 @@ namespace Amy
 					//mPlayer.isBallMode = false;
 					mPlayer.changeCurrentMode(PlayerModes.NORMAL);
 					mAnimator.Play("Hurt_Land");
+
+					knockPower *= 0.9f;
+					mPlayer.acceleration *= 0.5f;
+
 					mPlayer.isOnGround = true;
 				}
 
@@ -143,6 +166,8 @@ namespace Amy
 					mAnimator.Play("Hurt_Land");
 					mPlayer.isOnGround = true;
 				}
+
+
 
 				mPlayer.groundNormal = hitInfo.normal;
 				framesAirborne = 0;
@@ -165,6 +190,29 @@ namespace Amy
 			}
 
 		}
+
+		//Because this pissed me off SO MUCH in Sonic Heroes...
+		void checkForKillTrigger()
+        {
+			Vector3 yeetDirection = -transform.forward;
+
+			Vector3 start = transform.position + yeetDirection * 5.0f;
+			Vector3 end = start + (Vector3.down * 128.0f);
+
+			RaycastHit hitInfo = new RaycastHit();
+
+			Debug.DrawLine(start, end, Color.yellow, 1.0f);
+
+			if(Physics.Linecast(start, end, out hitInfo))
+            {
+				if(hitInfo.collider.GetComponentInChildren<FallingKillPlane>())
+                {
+					knockPower *= 0.95f;
+
+					Debug.DrawLine(start, end, Color.red, 10.0f);
+				}
+            }
+        }
 
 		// Update is called once per frame
 		void Update()

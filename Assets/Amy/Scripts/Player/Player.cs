@@ -75,6 +75,9 @@ namespace Amy
 		public PlayerVoice mVoice;
 		public ActorLookAtController lookAtController;
 
+		//Amy-specific
+		public AmyHammer mAmyHammer;
+
 		//Character Data
 		public PlayerParameters mParam;
 		public PlayableCharacter mChara;
@@ -86,6 +89,7 @@ namespace Amy
 		public Vector3 direction = Vector3.zero;
 		public Vector3 prev_direction = Vector3.zero;
 		public Vector3 groundNormal = Vector3.up;
+		public Vector3 lastSafeGroundPosition;
 		public float slopeAmount = 0.0f;
 
 		public Vector3 stickAngle;
@@ -166,8 +170,8 @@ namespace Amy
 
 			CapsuleCollider col = inst.AddComponent<CapsuleCollider>();
 			col.radius = 0.25f;
-			col.height = amy_height * 0.5f;
-			col.center = (Vector3.up * amy_height) * 0.5f;
+			col.height = amy_height * 0.7f;
+			col.center = (Vector3.up * amy_height) * 0.7f;
 
 			// A super slippery physic material for platformer gameplay
 			PhysicMaterial playerMat = new PhysicMaterial();
@@ -255,6 +259,8 @@ namespace Amy
 			GameObject wfx = GameObject.Instantiate(GameManager.Instance.systemData.RES_AmyPlayerFX.fx_pikoHammerTrail);
 			newPlayer.fx_hammerTrail = wfx.GetComponent<WeaponTrailFX>();
 			newPlayer.fx_hammerTrail.weaponNode = newPlayer.getBoneByName("HurtBox_Hammer");
+
+			newPlayer.mAmyHammer = inst.GetComponentInChildren<AmyHammer>();
 
 			inst.AddComponent<WetFX>();
 			DirtFX dirt = inst.AddComponent<DirtFX>();
@@ -582,14 +588,20 @@ namespace Amy
             {
 				attackTimer -= Time.deltaTime;
 
-				if(attackTimer <= 0.0f)
+
+				if (attackTimer <= 0.0f)
                 {
+
+
 					isAttacking = false;
 					isHammerSpin = false;
 					attackTimer = 0.0f;
 
 					if (fx_hammerTrail)
 						fx_hammerTrail.disableFX();
+
+					if (mAmyHammer)
+						mAmyHammer.disableHurtbox();
 				}
             }
 
@@ -643,6 +655,15 @@ namespace Amy
 
 		}
 
+		public GameObject spawnFX(GameObject fx, float zoffs = 0.0f)
+        {
+			GameObject inst = GameObject.Instantiate(fx);
+			inst.transform.position = transform.position + Vector3.up * zoffs;
+			inst.transform.rotation = transform.rotation;
+
+			return inst;
+        }
+
 		public bool takeDamage(Damage dmg, float multiplier = 1.0f)
         {
 			if (mutekiTimer > 0.0f && dmg.damageType != DamageType.Crush)
@@ -650,6 +671,9 @@ namespace Amy
 
 			if (attackTimer > 0.0f && dmg.damageType != DamageType.Crush)
 				return false;
+
+			if (dmg.damageType == DamageType.Neutral)
+				spawnFX(GameManager.Instance.systemData.RES_GenericHitFX);		
 
 			PlayerStatus pstats = getStatus();
 
@@ -669,7 +693,7 @@ namespace Amy
 			if (rings > 0)
 				force *= 0.75f;
 
-			if (currentMode == PlayerModes.NORMAL || currentMode == PlayerModes.FLY)
+			if (currentMode == PlayerModes.NORMAL || currentMode == PlayerModes.FLY || currentMode == PlayerModes.SLINGSHOT)
             {
 				
 
@@ -677,7 +701,17 @@ namespace Amy
 				{
 					if (dmg.useSourceDir)
 					{
-						modeHurt.setKnockBack(dmg.transform.position, force);
+						Vector3 dir = Helper.getDirectionTo(transform.position, dmg.source.transform.position);
+						modeHurt.setKnockBack(dmg.source.transform.position, force);
+						
+					}
+					else if(!isOnGround)
+					{
+						Vector3 knockDir = Helper.getDirectionTo(transform.position, lastSafeGroundPosition);
+						knockDir.y = 0;
+
+						modeHurt.setKnockBackDirectional(knockDir.normalized, force);
+						Debug.DrawLine(transform.position, transform.position + knockDir.normalized, Color.yellow, 30.0f);
 					}
 					else
                     {
@@ -689,6 +723,11 @@ namespace Amy
 				{
 					modeHurt.setKnockBack(transform.position + Vector3.up, 3.0f);
 					updateEars();
+				}
+
+				if (currentMode == PlayerModes.SLINGSHOT)
+				{
+					modeHurt.setKnockBack(transform.position + Vector3.up, 3.0f);
 				}
 
 
@@ -726,7 +765,7 @@ namespace Amy
 			if (rings > 0)
 				damageRingScatter();
 
-			mutekiTimer = 0.75f;
+			mutekiTimer = 2.75f;
 			return true;
 		}
 
@@ -780,7 +819,7 @@ namespace Amy
 				mAnimator.Play("Face_Ecchi");
 			else if (currentMode == PlayerModes.HURT)
 				mAnimator.Play("Face_Itai");
-			else if(getStatus().checkStatusEffect(PlayerStatusFX.Scared))
+			else if(getStatus().checkStatusEffect(PlayerStatusFX.Scared) || currentMode == PlayerModes.KILLED)
 				mAnimator.Play("Face_Kowaii");
 			else
 				mAnimator.Play("Face_Neutral");
@@ -1055,7 +1094,14 @@ namespace Amy
 			}
 		}
 
-		void getGroundNormal()
+        private void OnDrawGizmos()
+        {
+			Gizmos.color = Color.yellow;
+
+			Gizmos.DrawWireSphere(lastSafeGroundPosition, 0.5f);
+        }
+
+        void getGroundNormal()
 		{
 			Vector3 start = transform.position + WorldToPlayerSpace(Vector3.up * 0.5f);
 			Vector3 end = transform.position - WorldToPlayerSpace(Vector3.up * 0.2f);
@@ -1063,8 +1109,7 @@ namespace Amy
 			//start += mRigidBody.velocity * Time.deltaTime;
 			//end += mRigidBody.velocity * Time.deltaTime;
 
-			Debug.DrawLine(start, end, Color.green, 10.0f);
-
+			//Debug.DrawLine(start, end, Color.green, 10.0f);
 
 			RaycastHit hitInfo = new RaycastHit();
 
@@ -1090,7 +1135,7 @@ namespace Amy
 
 					new_ground = norm;
 
-					Debug.DrawLine(hitInfo.point, hitInfo.point + norm, Color.red, 10.2f);
+					//Debug.DrawLine(hitInfo.point, hitInfo.point + norm, Color.red, 10.2f);
 				}
 
 				//Debug.Log("DIFF: " + Vector3.Dot(Vector3.up, new_ground));
@@ -1257,7 +1302,10 @@ namespace Amy
 			getStatus().clampValues();
 			attackTimer = 0.6f;
 
-			if(fx_hammerTrail)
+			if (mAmyHammer)
+				mAmyHammer.enableHurtbox();
+
+			if (fx_hammerTrail)
 				fx_hammerTrail.enableFX();
 
 			mVoice.playVoiceDelayed(Random.Range(0.05f, 0.1f), mVoice.groundAttack, true);
@@ -1299,6 +1347,9 @@ namespace Amy
 			getStatus().currentStamina -= hammerAttackStaminaCost;
 			getStatus().clampValues();
 			attackTimer = 0.6f;
+
+			if (mAmyHammer)
+				mAmyHammer.enableHurtbox();
 
 			if (fx_hammerTrail)
 				fx_hammerTrail.enableFX();
@@ -1355,6 +1406,9 @@ namespace Amy
 			isAttacking = true;
 			canAirAttack = false;
 			attackTimer = 0.6f;
+
+			if (mAmyHammer)
+				mAmyHammer.enableHurtbox();
 
 			if (fx_hammerTrail)
 				fx_hammerTrail.enableFX();

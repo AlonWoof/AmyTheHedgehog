@@ -11,6 +11,14 @@ using UnityEngine;
 namespace Amy
 {
 
+	public enum EnemyAlertPhase
+    {
+		CLEAR,
+		WARNING,
+		EVASION,
+		ALERT
+    }
+
 	public class EnemyHelpers
 	{
 		public static bool isPlayerVisible(Player pl, Transform eye, float fov, float dist)
@@ -33,9 +41,12 @@ namespace Amy
 			{
 				Hitbox hit = hitInfo.collider.GetComponentInChildren<Hitbox>();
 
-				if (hit.isPlayerHitbox)
+				if (hit)
 				{
-					return true;
+					if (hit.isPlayerHitbox)
+					{
+						return true;
+					}
 				}
 			}
 

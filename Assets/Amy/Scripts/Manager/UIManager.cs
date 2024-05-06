@@ -21,6 +21,8 @@ namespace Amy
 
         CanvasGroup mHudGroup;
 
+        public bool hudEnabled = true;
+
         public void Init()
         {
             Debug.Log("UI Manager Initialized...");
@@ -46,7 +48,7 @@ namespace Amy
     	void Update()
     	{
             
-            if (PlayerManager.Instance.getPlayer(false) == null || GameManager.Instance.cutsceneMode || GameManager.Instance.playerInputDisabled)
+            if (PlayerManager.Instance.getPlayer(false) == null || GameManager.Instance.cutsceneMode || GameManager.Instance.playerInputDisabled || Input.GetButton("Select") || !hudEnabled)
             {
                 mHudGroup.alpha = 0;
             }

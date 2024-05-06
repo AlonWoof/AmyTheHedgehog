@@ -42,7 +42,7 @@ namespace Amy
 			mAgent = GetComponent<NavMeshAgent>();
 			mAnimator = GetComponentInChildren<Animator>();
 			buildWaypointList();
-			currentRoutine = Timing.RunCoroutine(goToPointRoutine(findNextWaypoint()));
+			currentRoutine = Timing.RunCoroutine(goToPointRoutine(findNextWaypoint()).CancelWith(gameObject));
 
 			mAgent.speed = moveSpeed;
 			mAgent.stoppingDistance = 0.0f;
@@ -77,7 +77,7 @@ namespace Amy
 				if(!currentRoutine.IsRunning)
                 {
 					previousWaypoints.Clear();
-					currentRoutine = Timing.RunCoroutine(goToPointRoutine(findNextWaypoint()));
+					currentRoutine = Timing.RunCoroutine(goToPointRoutine(findNextWaypoint()).CancelWith(gameObject));
 				}
 
 			}
@@ -158,7 +158,7 @@ namespace Amy
 			updatePreviousWaypointList();
 			previousWaypoints.Add(w);
 
-			currentRoutine = Timing.RunCoroutine(goToPointRoutine(findNextWaypoint()));
+			currentRoutine = Timing.RunCoroutine(goToPointRoutine(findNextWaypoint()).CancelWith(gameObject));
 		}
 
 		void updatePreviousWaypointList()

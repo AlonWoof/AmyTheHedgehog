@@ -1,11 +1,13 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.Events;
+using MEC;
 
 //////////////////////////////////////
-//         2023 AlonWoof            //
+//         2024 AlonWoof            //
 //////////////////////////////////////
 
 namespace Amy
@@ -63,14 +65,23 @@ namespace Amy
 
 			if (GameManager.Instance.gamePaused)
 			{
-				pauseMenuGroup.alpha = Mathf.Lerp(pauseMenuGroup.alpha, 1.0f, 0.25f);
 
-				if (!pauseText.activeInHierarchy)
+				if (Input.GetButton("Select") || !UIManager.Instance.hudEnabled)
 				{
-					pauseText.SetActive(true);
-					sfx.PlayOneShot(pauseSound);
-					updateAvailibility();
-					currentChoice = 0;
+					pauseMenuGroup.alpha = 0.0f;
+				}
+				else
+				{
+
+					pauseMenuGroup.alpha = Mathf.Lerp(pauseMenuGroup.alpha, 1.0f, 0.25f);
+
+					if (!pauseText.activeInHierarchy)
+					{
+						pauseText.SetActive(true);
+						sfx.PlayOneShot(pauseSound);
+						updateAvailibility();
+						currentChoice = 0;
+					}
 				}
 			}
 
@@ -122,6 +133,10 @@ namespace Amy
 			if (selectionDisabled)
 				return;
 
+			if(Input.GetButtonDown("RightBumper"))
+            {
+				Timing.RunCoroutine(doScreenshot(), Segment.RealtimeUpdate);
+            }
 
 			if (Input.GetKeyDown(KeyCode.W) || GameManager.Instance.isAnalogDown(AnalogStickDirection.leftStick_Up))
 			{
@@ -204,6 +219,33 @@ namespace Amy
 			}
 
 			sfx.PlayOneShot(confirmSound);
+		}
+
+		public IEnumerator<float> doScreenshot()
+        {
+			UIManager.Instance.hudEnabled = false;
+
+			yield return Timing.WaitForSeconds(0.01f);
+
+			string screenLocation = Environment.GetFolderPath(Environment.SpecialFolder.MyPictures);
+			screenLocation += "/Amy the Hedgehog/";
+
+			if (!System.IO.Directory.Exists(screenLocation))
+			{
+				System.IO.Directory.CreateDirectory(screenLocation);
+            }
+
+			string fileName = "AmyScreenshot_" + System.DateTime.Now.ToFileTime() + ".png";
+
+			ScreenCapture.CaptureScreenshot(screenLocation + fileName, 2);
+			yield return Timing.WaitForSeconds(0.01f);
+
+			UIManager.Instance.fadeScreen(false, 0.01f, true);
+			yield return Timing.WaitForSeconds(0.02f);
+			UIManager.Instance.fadeScreen(true, 0.68f, true);
+
+			yield return Timing.WaitForSeconds(0.75f);
+			UIManager.Instance.hudEnabled = true;
 		}
 	}
 }

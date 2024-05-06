@@ -47,7 +47,7 @@ namespace Amy
 			Player pl = PlayerManager.Instance.getPlayer();
 			isOn = true;
 
-			Timing.RunCoroutine(takeAShower(pl));
+			Timing.RunCoroutine(takeAShower(pl).CancelWith(gameObject));
         }
 
 		IEnumerator<float> takeAShower(Player pl)
