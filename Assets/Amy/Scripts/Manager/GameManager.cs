@@ -17,6 +17,7 @@ namespace Amy
         public float desiredFOV = 60.0f;
         public float lookSensitivity = 1.0f;
         public bool pitchInvert = false;
+        public bool yawInvert = false;
     }
 
     public enum AnalogStickDirection
@@ -428,6 +429,8 @@ namespace Amy
             }
 
 
+            
+
             Timing.RunCoroutine(loadSceneRoutine(sceneName, whiteFade, delayBeforeLoading), Segment.RealtimeUpdate);
         }
 
@@ -493,7 +496,6 @@ namespace Amy
                 load = UnityEngine.SceneManagement.SceneManager.LoadSceneAsync("default");
             }
 
-            
 
             while (!load.isDone)
             {

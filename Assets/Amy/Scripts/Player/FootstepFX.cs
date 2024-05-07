@@ -22,6 +22,7 @@ public class FootstepFXRes
     public GameObject res_FootFX_Dirt;
     public GameObject res_FootFX_Stone;
     public GameObject res_FootFX_Metal;
+    public GameObject res_FootFX_Wood;
     public GameObject res_FootFX_Grass;
     public GameObject res_FootFX_Water;
 
@@ -33,6 +34,7 @@ public class FootstepFXRes
     {
         GameObject.Instantiate(res_FootFX_Default);
         GameObject.Instantiate(res_FootFX_Dirt);
+        GameObject.Instantiate(res_FootFX_Wood);
         GameObject.Instantiate(res_FootFX_Grass);
         GameObject.Instantiate(res_FootFX_Metal);
         GameObject.Instantiate(res_FootFX_Stone);
@@ -148,6 +150,9 @@ public class FootstepFX : MonoBehaviour
 
         if (currentTerrain == TerrainType.Default)
             SpawnFX(pos, footFXRes.res_FootFX_Default);
+
+        if (currentTerrain == TerrainType.Wood)
+            SpawnFX(pos, footFXRes.res_FootFX_Wood);
 
         if (currentTerrain == TerrainType.Dirt)
             SpawnFX(pos, footFXRes.res_FootFX_Dirt);

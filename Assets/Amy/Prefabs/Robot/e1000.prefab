@@ -1012,6 +1012,7 @@ MonoBehaviour:
   SearchVoice: []
   DamageVoice: []
   DestroyedVoice: []
+  source: {fileID: 0}
 --- !u!82 &5420804752517467324
 AudioSource:
   m_ObjectHideFlags: 0
@@ -1033,9 +1034,9 @@ AudioSource:
   Priority: 128
   DopplerLevel: 0
   MinDistance: 8
-  MaxDistance: 64
+  MaxDistance: 500
   Pan2D: 0
-  rolloffMode: 1
+  rolloffMode: 0
   BypassEffects: 0
   BypassListenerEffects: 0
   BypassReverbZones: 0
@@ -1248,10 +1249,12 @@ MonoBehaviour:
   alertPhase: 0
   lastKnownPosition: {x: 0, y: 0, z: 0}
   isAiming: 0
+  directionLock: 0
   aimPosition: {x: 0, y: 0, z: 0}
   moveSpeed: 1.5
   sightRange: 32
-  sightFOV: 60
+  sightFOV: 45
+  rangeOutDistance: 60
   shootTimer: 0
   hasPatrolRoute: 1
   patrolRoute:
@@ -1260,6 +1263,8 @@ MonoBehaviour:
   gunProjectile: {fileID: 6553749580567412958, guid: 6f949b8fc71ef24439aa980bc9044a30, type: 3}
   deathExplosionFX: {fileID: 2764034310646716747, guid: 609ef2ded293f9c45a4f153596fea2e5, type: 3}
   damageHitFX: {fileID: 5107431883354244529, guid: 024844d8ec99c034cb5acb8adbf5989f, type: 3}
+  footstepFX: {fileID: 380413854014310127, guid: c79645f7dc61d2643b7260a0e053defc, type: 3}
+  fallOverFX: {fileID: 4935991313374986590, guid: 6316e7a1d25208247a0716fd63b1cb31, type: 3}
   leftGun: {fileID: 535922011542313485}
   rightGun: {fileID: 3995791931040465387}
   bodyNode: {fileID: 2678056209405508131}

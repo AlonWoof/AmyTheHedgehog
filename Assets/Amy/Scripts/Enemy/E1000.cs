@@ -38,11 +38,14 @@ namespace Amy
 		public Vector3 lastKnownPosition;
 
 		public bool isAiming = false;
+		public bool directionLock = false;
 		public Vector3 aimPosition;
 
 		public float moveSpeed = 3.0f;
 		public float sightRange = 16.0f;
 		public float sightFOV = 60.0f;
+
+		public float rangeOutDistance = 60.0f;
 
 		public float shootTimer = 0.0f;
 
@@ -52,6 +55,8 @@ namespace Amy
 		public GameObject gunProjectile;
 		public GameObject deathExplosionFX;
 		public GameObject damageHitFX;
+		public GameObject footstepFX;
+		public GameObject fallOverFX;
 
 		public Transform leftGun;
 		public Transform rightGun;
@@ -147,7 +152,7 @@ namespace Amy
 			for (int i = 0; i < amt; i++)
 			{
 				fireGuns();
-				yield return Timing.WaitForSeconds(0.05f);
+				yield return Timing.WaitForSeconds(0.1f);
 			}
 
         }
@@ -168,6 +173,10 @@ namespace Amy
 					break;
 				case E1000Mode.Pursuit:
 					updatePursuit();
+					break;
+
+				case E1000Mode.Killed:
+					updateKilled();
 					break;
 			}
 
@@ -213,7 +222,7 @@ namespace Amy
 			switch(currentMode)
             {
 				case E1000Mode.Stand:
-
+					
 					break;
 				case E1000Mode.Patrol:
 					startPatrolRoute();
@@ -230,6 +239,11 @@ namespace Amy
 					currentTask = Timing.RunCoroutine(destroyedRoutine().CancelWith(gameObject), gameObject);
 					break;
 			}
+        }
+
+		void updateKilled()
+        {
+			voice.source.pitch = Mathf.Lerp(voice.source.pitch, 0.2f, Time.deltaTime);
         }
 
 		void updateStanding()
@@ -322,7 +336,7 @@ namespace Amy
 			Vector3 velo = mAgent.velocity;
 
 			
-			if(velo.magnitude > 0.1f)
+			if(velo.magnitude > 0.1f && !directionLock)
             {
 				mDirection = velo.normalized;
             }
@@ -432,6 +446,14 @@ namespace Amy
 			mAnimator.Play("Destroy");
 			mAgent.enabled = false;
 
+			spawnFX(fallOverFX, transform);
+
+			if(!voice.source.isPlaying)
+            {
+				//Death sound? Maybe gamma's death noises?
+				//voice.playRandomClip(voice.PursuitVoice);
+            }
+
 			yield return Timing.WaitForSeconds(2.0f);
 
 			//Explode fx
@@ -453,6 +475,7 @@ namespace Amy
 				playerVisible = checkForPlayer();
 				float dst = Helper.horizontalDistance(transform.position, lastKnownPosition);
 
+
 				if (!playerVisible)
 				{
 					isAiming = false;
@@ -471,15 +494,43 @@ namespace Amy
 				{
 					Vector3 aimAhead = pl.speed * 0.5f;
 
-					aimPosition = Vector3.Lerp(aimPosition, lastKnownPosition + aimAhead, 0.12f);
+					aimPosition = Vector3.Lerp(aimPosition, lastKnownPosition + aimAhead, Time.deltaTime * 3.0f);
 					mAgent.enabled = false;
 					turnTowardsPosition(pl.transform.position);
-					phaseTime = 15.0f;
+
+					if (dst < sightRange)
+						phaseTime = 15.0f;
+
+					
+
 					isAiming = true;
 				}
 
+				//Back up
+				while(dst < 1.0f)
+                {
+					dst = Helper.horizontalDistance(transform.position, lastKnownPosition);
+
+					directionLock = true;
+					Vector3 mDir = Helper.getHorizontalDirectionTo(transform.position, lastKnownPosition);
+					mAgent.SetDestination(transform.position - mDir);
+
+					yield return 0f;
+						
+                }
+
+				directionLock = false;
+
 				shootTimer -= Time.deltaTime;
 				phaseTime -= Time.deltaTime;
+
+				if (dst > rangeOutDistance)
+					phaseTime = 0.0f;
+
+
+				//Have a little mercy, jeez
+				if(pl.currentMode == PlayerModes.HURT)
+					shootTimer = Random.Range(minShootTime, maxShootTime);
 
 				if (shootTimer < 0.0f)
 				{
@@ -490,7 +541,16 @@ namespace Amy
 				yield return 0f;
 			}
 
-			changeMode(lastMode);
+			alertPhase = EnemyAlertPhase.CLEAR;
+
+			if (hasPatrolRoute)
+            {
+				changeMode(E1000Mode.Patrol);
+            }
+			else
+            {
+				changeMode(E1000Mode.Stand);
+            }
 		}
 
 		void spawnFX(GameObject fx, Transform root, float zoffs = 0.0f)
@@ -507,7 +567,7 @@ namespace Amy
 				if (robot == this)
 					continue;
 
-				float maxDist = 32.0f;
+				float maxDist = sightRange * 1.5f;
 
 				if (Vector3.Distance(robot.transform.position, transform.position) > maxDist)
 					continue;
@@ -530,8 +590,8 @@ namespace Amy
 
 			if(alertPhase == EnemyAlertPhase.ALERT)
             {
-				range *= 3.0f;
-				fov *= 0.95f;
+				range *= 2.0f;
+				fov *= 1.2f;
             }
 
 			if(alertPhase == EnemyAlertPhase.EVASION)
@@ -591,6 +651,11 @@ namespace Amy
 			}
 
 			return null;
+		}
+
+		public void footStepSound()
+		{
+			spawnFX(footstepFX, transform, 0);
 		}
 	}
 }

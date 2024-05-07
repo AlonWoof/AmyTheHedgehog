@@ -29,7 +29,6 @@ namespace Amy
 			
 			calcMoodAndExcitement();
 			mAnimator.SetFloat("excitement", excitement);
-			mAnimator.SetFloat("mood", mood);
 	    }
 
 		void calcMoodAndExcitement()

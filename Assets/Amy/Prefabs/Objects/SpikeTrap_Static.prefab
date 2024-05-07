@@ -11,8 +11,8 @@ GameObject:
   - component: {fileID: 1904994915830496101}
   - component: {fileID: 1498758586677171066}
   - component: {fileID: 7991210022057723224}
-  - component: {fileID: 3728632599358994092}
   - component: {fileID: 1448625353870038252}
+  - component: {fileID: 3780073999145354045}
   m_Layer: 0
   m_Name: spikes
   m_TagString: Untagged
@@ -84,19 +84,6 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!65 &3728632599358994092
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3410065222434390542}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Size: {x: 0.007794299, y: 0.0077942987, z: 0.008860488}
-  m_Center: {x: 0, y: -1.9209562e-17, z: 0.0049302443}
 --- !u!208 &1448625353870038252
 NavMeshObstacle:
   m_ObjectHideFlags: 0
@@ -113,6 +100,20 @@ NavMeshObstacle:
   m_CarveOnlyStationary: 1
   m_Center: {x: 0, y: 0, z: 0.0050000004}
   m_TimeToStationary: 0.5
+--- !u!64 &3780073999145354045
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3410065222434390542}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 4
+  m_Convex: 1
+  m_CookingOptions: 30
+  m_Mesh: {fileID: -9113646534211321542, guid: 7732fb8b5b234de48baa8f0a5b6ed614, type: 3}
 --- !u!1 &3728632600425400678
 GameObject:
   m_ObjectHideFlags: 0
@@ -122,8 +123,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3728632600425400679}
-  - component: {fileID: 3728632600425400677}
   - component: {fileID: 3728632600425400676}
+  - component: {fileID: 8316617246193190765}
   m_Layer: 0
   m_Name: GameObject
   m_TagString: Untagged
@@ -145,19 +146,6 @@ Transform:
   m_Father: {fileID: 1904994915830496101}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!65 &3728632600425400677
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3728632600425400678}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 1
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Size: {x: 0.005, y: 0.005, z: 0.0012155153}
-  m_Center: {x: 0, y: 0, z: 0.0102073}
 --- !u!114 &3728632600425400676
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -171,6 +159,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   damageAmount: 10
+  bounceAmount: 0
   damageType: 1
   hurtsPlayer: 1
   hurtsEnemy: 1
@@ -180,6 +169,20 @@ MonoBehaviour:
   onContact:
     m_PersistentCalls:
       m_Calls: []
+--- !u!136 &8316617246193190765
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3728632600425400678}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_Enabled: 1
+  m_Radius: 0.003
+  m_Height: 0.001
+  m_Direction: 2
+  m_Center: {x: 0, y: 0, z: 0.01}
 --- !u!1 &4575562980878896097
 GameObject:
   m_ObjectHideFlags: 0

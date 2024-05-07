@@ -16,6 +16,7 @@ namespace Amy
 	{
 		Continue,
 		Return,
+		Options,
 		Exit
 	}
 
@@ -34,6 +35,7 @@ namespace Amy
 
 		public GameObject pauseText;
 		public CanvasGroup pauseMenuGroup;
+		public OptionsMenu optionsScreen;
 		public List<PauseMenuEntry> menuEntry;
 		public List<Text> menuText;
 
@@ -49,6 +51,7 @@ namespace Amy
 		int currentChoice = 0;
 
 		bool selectionDisabled = false;
+		bool inOptionsMenu = false;
 
 	    // Start is called before the first frame update
 	    void Start()
@@ -57,7 +60,9 @@ namespace Amy
             {
 				menuText[i].text = menuEntry[i].label;
             }
-	    }
+
+			optionsScreen.selectionDisabled = true;
+		}
 	
 	    // Update is called once per frame
 	    void Update()
@@ -66,7 +71,7 @@ namespace Amy
 			if (GameManager.Instance.gamePaused)
 			{
 
-				if (Input.GetButton("Select") || !UIManager.Instance.hudEnabled)
+				if (Input.GetButton("Select") || !UIManager.Instance.hudEnabled || inOptionsMenu)
 				{
 					pauseMenuGroup.alpha = 0.0f;
 				}
@@ -78,6 +83,7 @@ namespace Amy
 					if (!pauseText.activeInHierarchy)
 					{
 						pauseText.SetActive(true);
+						optionsScreen.selectionDisabled = true;
 						sfx.PlayOneShot(pauseSound);
 						updateAvailibility();
 						currentChoice = 0;
@@ -88,12 +94,32 @@ namespace Amy
 			if (!GameManager.Instance.gamePaused && pauseText.activeInHierarchy)
 			{
 				selectionDisabled = false;
+				inOptionsMenu = false;
 				pauseMenuGroup.alpha = Mathf.Lerp(pauseMenuGroup.alpha, 0.0f, 0.25f);
 
 				if(pauseMenuGroup.alpha < 0.001f)
 					pauseText.SetActive(false);
 			}
 
+
+			if(inOptionsMenu)
+            {
+				if(optionsScreen.selectionDisabled)
+					optionsScreen.selectionDisabled = false;
+
+				if (!optionsScreen.gameObject.activeInHierarchy)
+					optionsScreen.gameObject.SetActive(true);
+			}
+			else if (!inOptionsMenu)
+            {
+				if(!optionsScreen.selectionDisabled)
+					optionsScreen.selectionDisabled = true;
+			}
+
+			if(optionsScreen.canvasGroup.alpha < 0.01f && !inOptionsMenu)
+            {
+				optionsScreen.gameObject.SetActive(false);
+            }
 
 			if (!GameManager.Instance.gamePaused)
 				return;
@@ -119,6 +145,8 @@ namespace Amy
         }
 
 
+
+
 		void clampValues()
         {
 			if (currentChoice > (menuEntry.Count - 1))
@@ -132,6 +160,14 @@ namespace Amy
         {
 			if (selectionDisabled)
 				return;
+
+			if (inOptionsMenu)
+			{
+				if (Input.GetButtonDown("Cancel"))
+					inOptionsMenu = false;
+
+				return;
+			}
 
 			if(Input.GetButtonDown("RightBumper"))
             {
@@ -211,6 +247,9 @@ namespace Amy
 				case PauseMenuChoices.Return:
 					GameManager.Instance.unPauseGame();
 					PlayerManager.Instance.getPlayer().startWarp("WarpCenter", 7);
+					break;
+				case PauseMenuChoices.Options:
+					inOptionsMenu = true;
 					break;
 				case PauseMenuChoices.Exit:
 					SaveGame.writeSaveGame(0);

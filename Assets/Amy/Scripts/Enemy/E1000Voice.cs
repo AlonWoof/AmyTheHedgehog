@@ -18,12 +18,12 @@ namespace Amy
 		public AudioClip[] DamageVoice;
 		public AudioClip[] DestroyedVoice;
 
-		AudioSource voice;
+		public AudioSource source;
 
 	    // Start is called before the first frame update
 	    void Start()
 	    {
-			voice = gameObject.GetComponent<AudioSource>();
+			source = gameObject.GetComponent<AudioSource>();
 	    }
 	
 	    // Update is called once per frame
@@ -36,11 +36,13 @@ namespace Amy
         {
 			int rng = Random.Range(0, clipList.Length);
 
-			if (voice.isPlaying && !canInterrupt)
+			if (source.isPlaying && !canInterrupt)
 				return;
 
-			voice.Stop();
-			voice.PlayOneShot(clipList[rng]);
+			source.Stop();
+			source.PlayOneShot(clipList[rng]);
         }
+
+
 	}
 }

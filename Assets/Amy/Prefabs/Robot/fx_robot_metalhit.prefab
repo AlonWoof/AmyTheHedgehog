@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 4503371235790032278}
   - component: {fileID: 4586297656101322531}
   - component: {fileID: 403848596437133744}
+  - component: {fileID: 425453296704798916}
   m_Layer: 0
   m_Name: fx_robot_metalhit
   m_TagString: Untagged
@@ -42,7 +43,7 @@ AudioSource:
   m_Enabled: 1
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: -935626757514685551, guid: 6d820247d60a3ed4bb236244fa4897ce, type: 2}
-  m_audioClip: {fileID: 8300000, guid: 6eb6da4b22164414caf29820911d04a2, type: 3}
+  m_audioClip: {fileID: 0}
   m_PlayOnAwake: 1
   m_Volume: 1
   m_Pitch: 1
@@ -52,7 +53,7 @@ AudioSource:
   SpatializePostEffects: 0
   Priority: 128
   DopplerLevel: 1
-  MinDistance: 1
+  MinDistance: 5
   MaxDistance: 500
   Pan2D: 0
   rolloffMode: 0
@@ -88,7 +89,7 @@ AudioSource:
     m_Curve:
     - serializedVersion: 3
       time: 0
-      value: 0
+      value: 1
       inSlope: 0
       outSlope: 0
       tangentMode: 0
@@ -146,3 +147,21 @@ MonoBehaviour:
   randomRange: 0
   destroyOnDisable: 0
   infiniteTime: 0
+--- !u!114 &425453296704798916
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5107431883354244529}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7e6c6ffd6c9375f4695984cdb5cdb7c3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  playOnAwake: 1
+  pitchMin: 1.12
+  pitchMax: 0.95
+  clips:
+  - {fileID: 8300000, guid: 2e2e8dcfb70348e42959df204e375916, type: 3}
+  source: {fileID: 4586297656101322531}

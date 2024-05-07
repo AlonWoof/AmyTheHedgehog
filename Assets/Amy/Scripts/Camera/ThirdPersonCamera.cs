@@ -162,7 +162,7 @@ namespace Amy
 
 
             currentAngle.x += camY * (Time.unscaledDeltaTime * (sensitivity * 0.85f)) * GameManager.Instance.config.lookSensitivity * (GameManager.Instance.config.pitchInvert ? -1.0f : 1.0f);
-            currentAngle.y += camX * (Time.unscaledDeltaTime * sensitivity) * (GameManager.Instance.config.lookSensitivity * -1.0f);
+            currentAngle.y += camX * (Time.unscaledDeltaTime * sensitivity) * (GameManager.Instance.config.lookSensitivity * -1.0f) * (GameManager.Instance.config.yawInvert ? -1.0f : 1.0f);
 
             //currentAngle.x += camY * (Time.unscaledDeltaTime * (sensitivity * 0.85f)) * 0.75f;
             //currentAngle.y += camX * (Time.unscaledDeltaTime * sensitivity) * 0.75f;
@@ -256,7 +256,7 @@ namespace Amy
         {
 
             //Adjust FOV
-            float currentFOV = 60.0f; //GameManager.Instance.config.desiredFOV;
+            float currentFOV = GameManager.Instance.config.desiredFOV;
 
             if (playerIsCrouched)
                 currentFOV *= 0.8f;
@@ -290,7 +290,7 @@ namespace Amy
         public void updateDesiredPositionPaused()
         {
             //Adjust FOV
-            float currentFOV = 60.0f; //GameManager.Instance.config.desiredFOV;
+            float currentFOV = GameManager.Instance.config.desiredFOV;
 
             if (playerIsCrouched)
                 currentFOV *= 0.8f;

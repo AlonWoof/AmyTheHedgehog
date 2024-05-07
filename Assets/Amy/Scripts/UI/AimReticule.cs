@@ -15,6 +15,8 @@ namespace Amy
 		SlingshotAimer aimer;
 		public CanvasGroup alphaGroup;
 
+		bool slingshotMode = false;
+
 	    // Start is called before the first frame update
 	    void Start()
 	    {
@@ -46,15 +48,22 @@ namespace Amy
             {
 				transform.position = new Vector3(0, -1000000.0f, 0);
 				alphaGroup.alpha = Mathf.Lerp(alphaGroup.alpha, 0, Time.deltaTime * 8.0f);
+				slingshotMode = false;
 				return;
 			}
+
+
 
 			Vector3 screenPos = GameManager.Instance.mainCamera.WorldToScreenPoint(aimer.target_node.transform.position);
 
 			if (Vector3.Distance(transform.position, screenPos) > 1000.0f)
 				transform.position = screenPos;
 
-			
+			if (aimer.gameObject.activeInHierarchy && !slingshotMode)
+			{
+				slingshotMode = true;
+				transform.position = screenPos;
+			}
 
 			if (alphaGroup.alpha > 0.99f)
 				alphaGroup.alpha = 1.0f;
@@ -63,7 +72,7 @@ namespace Amy
 				alphaGroup.alpha = Mathf.Lerp(alphaGroup.alpha, 1.0f, Time.deltaTime * 8.0f);
 			}
 
-			transform.position = Vector3.Lerp(transform.position, screenPos, Time.fixedDeltaTime * 4.0f);
+			transform.position = Vector3.Lerp(transform.position, screenPos, Time.deltaTime * 16.0f);
 
 
         }

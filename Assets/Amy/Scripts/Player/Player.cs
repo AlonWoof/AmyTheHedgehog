@@ -632,6 +632,10 @@ namespace Amy
 			mAnimator.SetFloat("z_accel", runAnimProgress);
 			mAnimator.SetFloat("run_anim_speed", runAnimSpeed);
 
+			float moodFac = (getStatus().currentMood / getStatus().maxMood);
+
+			mAnimator.SetFloat("mood", moodFac);
+
 			updateWaterFX();
 
 			debugControls();
@@ -727,7 +731,10 @@ namespace Amy
 
 				if (currentMode == PlayerModes.SLINGSHOT)
 				{
-					modeHurt.setKnockBack(transform.position + Vector3.up, 3.0f);
+					modeSlingshot.aim_y += Random.Range(-15.0f, 15.0f);
+					modeSlingshot.aim_x += Random.Range(-5.0f, 5.0f);
+
+					
 				}
 
 
@@ -738,7 +745,10 @@ namespace Amy
 					pstats.currentHealth = Mathf.Clamp(pstats.currentHealth, 1, pstats.maxHealth);
 
 				if (pstats.currentHealth > 0)
-					changeCurrentMode(PlayerModes.HURT);
+				{
+					if(currentMode != PlayerModes.SLINGSHOT)
+						changeCurrentMode(PlayerModes.HURT);
+				}
 				else
 				{
 					modeKilled.deathType = PlayerKilled.DeathType.Normal;
@@ -761,6 +771,8 @@ namespace Amy
 
 				updateHealth();
 			}
+
+
 
 			if (rings > 0)
 				damageRingScatter();
@@ -1660,7 +1672,7 @@ namespace Amy
 			if (!PlayerManager.Instance.hasSlingshot)
 				return;
 
-			if (speed.magnitude > 0.1f)
+			if (speed.magnitude > 5.3f)
 				return;
 
 			if (!isOnGround)

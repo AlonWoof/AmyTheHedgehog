@@ -91,6 +91,8 @@ namespace Amy
 			}
 
 			GameManager.Instance.changeCameraBlendMode(GameManager.blend_mode.fast);
+			mPlayer.clearAccel();
+			mPlayer.clearSpeed();
 
 			mAnimator.Play("Slingshot_Start");
 
@@ -100,6 +102,24 @@ namespace Amy
 
 			aim_x = (Quaternion.LookRotation(transform.forward).eulerAngles.y);
 			aim_y = 0;
+
+			if(mPlayer.areaDetector.closestEnemy)
+            {
+				Enemy e = mPlayer.areaDetector.closestEnemy;
+
+				Vector3 enemyDir = Helper.getDirectionTo(aimer.transform.position, e.transform.position);
+
+				aimer.transform.rotation = Quaternion.LookRotation(enemyDir.normalized);
+
+				aim_x = aimer.transform.rotation.eulerAngles.y;
+
+				float ang = aimer.transform.rotation.eulerAngles.x;
+
+				if (ang > 180)
+					ang -= 360.0f;
+
+				aim_y = -ang;
+			}
 
 			if(Input.GetAxis("Shoot") > 0.1f)
             {
@@ -423,7 +443,7 @@ namespace Amy
 
 
 			aim_y += camY * (Time.unscaledDeltaTime * (sensitivity * 0.85f)) * GameManager.Instance.config.lookSensitivity * (GameManager.Instance.config.pitchInvert ? -1.0f : 1.0f);
-			aim_x += camX * (Time.unscaledDeltaTime * (sensitivity * 0.85f)) * GameManager.Instance.config.lookSensitivity;
+			aim_x += camX * (Time.unscaledDeltaTime * (sensitivity * 0.85f)) * GameManager.Instance.config.lookSensitivity * (GameManager.Instance.config.yawInvert ? -1.0f : 1.0f);
 
 
 

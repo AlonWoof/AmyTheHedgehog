@@ -11,9 +11,14 @@ namespace Amy
         public Rigidbody body;
         public GameObject onCollisionFX;
 
+        Vector3 startPos;
+        float currentDist;
+
         public float speed = 6.0f;
         public float spread = 0.0f;
         public float lifetime = 100.0f;
+        public float effectiveRange = 64.0f;
+        public float maxTargetDistance = 32.0f;
 
         public LayerMask colMask;
 
@@ -37,6 +42,8 @@ namespace Amy
             body = GetComponent<Rigidbody>();
             dmg = GetComponentInChildren<Damage>();
 
+            startPos = transform.position;
+
             buildPlayerList();
             buildEnemyList();
         }
@@ -45,8 +52,17 @@ namespace Amy
         {
             gameObject.layer = LayerMask.NameToLayer("Projectile");
 
-            if(hurtsEnemy)
+            currentDist = Vector3.Distance(startPos, transform.position);
+
+            if(currentDist > effectiveRange)
+            {
+                Destroy(gameObject);
+            }
+
+            if (hurtsEnemy && currentDist < maxTargetDistance)
                 homeOnEnemy();
+
+
         }
 
         // Update is called once per frame

@@ -65,6 +65,9 @@ namespace Amy
             if (mPlayer.currentMode == PlayerModes.KILLED)
                 return;
 
+            if (mPlayer.currentMode == PlayerModes.SLINGSHOT)
+                return;
+
             PlayerManager.Instance.addRings(1);
 
             //PlayerManager.Instance.getCharacterStatus(mPlayer.mChara).currentHealth += 0.05f;
