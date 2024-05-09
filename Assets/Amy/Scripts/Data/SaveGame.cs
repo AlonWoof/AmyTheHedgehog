@@ -62,6 +62,34 @@ namespace Amy
 			return false;
 		}
 
+		public static SaveFileMetadata getFileMetaData(int saveIndex)
+        {
+
+			string dataPath = Application.persistentDataPath + "/AmySavey" + saveIndex + ".dat";
+			Debug.Log(dataPath);
+
+			if (!File.Exists(dataPath))
+			{
+				return null;
+			}
+
+			if (!isSaveValid(saveIndex))
+				return null;
+
+			SaveFileMetadata metaData = new SaveFileMetadata();
+
+			FileStream file = File.OpenRead(dataPath);
+			BinaryReader reader = new BinaryReader(file);
+
+
+			metaData.fileIndex = saveIndex;
+
+			reader.ReadInt32();
+			reader.ReadInt64();
+			metaData.ringBank = reader.ReadInt32();
+
+			return metaData;
+		}
 
 		public static void loadGame(int saveIndex)
         {
@@ -136,6 +164,54 @@ namespace Amy
 				writer.Write(0);
 
 			writer.Close();
+		}
+
+		public static void writeConfigFile()
+		{
+			GameObject.Instantiate(GameManager.Instance.systemData.RES_NowSaving);
+
+			string dataPath = Application.persistentDataPath + "/AmyConfig.dat";
+			Debug.Log(dataPath);
+
+			GameConfig cfg = GameManager.Instance.config;
+
+			FileStream file = File.Create(dataPath);
+			BinaryWriter writer = new BinaryWriter(file);
+			writer.Write(SAVE_VERSION);
+			writer.Write(cfg.desiredFOV);
+			writer.Write(cfg.lookSensitivity);
+			writer.Write(cfg.pitchInvert);
+			writer.Write(cfg.yawInvert);
+
+			//Paddding at the end.
+			for (int i = 0; i < 64; i++)
+				writer.Write(0);
+
+			writer.Close();
+		}
+
+		public static void readConfigFile()
+        {
+			string dataPath = Application.persistentDataPath + "/AmyConfig.dat";
+			Debug.Log(dataPath);
+
+			if (!File.Exists(dataPath))
+			{
+				return;
+			}
+
+			FileStream file = File.OpenRead(dataPath);
+			BinaryReader reader = new BinaryReader(file);
+
+			//Go past the save version
+			int curSaveVersion = reader.ReadInt32();
+
+			GameManager.Instance.config.desiredFOV = reader.ReadSingle();
+			GameManager.Instance.config.lookSensitivity = reader.ReadSingle();
+			GameManager.Instance.config.pitchInvert = reader.ReadBoolean();
+			GameManager.Instance.config.yawInvert = reader.ReadBoolean();
+
+			reader.Close();
 		}
 
 

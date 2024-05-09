@@ -29,7 +29,7 @@ namespace Amy
 	    {
 	        if(wait > 0.0f)
             {
-				wait -= Time.deltaTime;
+				wait -= Time.unscaledDeltaTime;
 				return;
             }
 

@@ -109,6 +109,8 @@ namespace Amy
 			if (GameManager.Instance.playerInputDisabled)
 				return;
 
+			if (GameManager.Instance.gamePaused)
+				return;
 
 			if (groundedTimer > 5.0f)
 			{
@@ -116,7 +118,7 @@ namespace Amy
 				dbg_safePos.transform.position = mPlayer.lastSafeGroundPosition;
 			}
 
-			if (idleCounter > 5.0f)
+			if (idleCounter > 60.0f)
             {
 				//if(mPlayer.getStatus().currentMood < mPlayer.getStatus().maxMood && mPlayer.acceleration.magnitude < 0.001f)
 				// {

@@ -74,6 +74,8 @@ namespace Amy
 		public ThirdPersonCamera tpc;
 		public PlayerVoice mVoice;
 		public ActorLookAtController lookAtController;
+		public GameObject fx_waterWadingFX;
+
 
 		//Amy-specific
 		public AmyHammer mAmyHammer;
@@ -222,7 +224,7 @@ namespace Amy
 			//inst.AddComponent<ActorOpacity>();
 
 
-			//newPlayer.fx_waterWadingFX = GameObject.Instantiate(GameManager.Instance.systemData.RES_WaterWadingFX);
+			newPlayer.fx_waterWadingFX = GameObject.Instantiate(GameManager.Instance.systemData.RES_WaterWadingFX);
 
 			newPlayer.direction = dir;
 
@@ -979,14 +981,16 @@ namespace Amy
 			
 			if (depth > 0.0f && depth < mParam.height)
 			{
-				//fx_waterWadingFX.gameObject.SetActive(true);
+				if(!fx_waterWadingFX.activeInHierarchy)
+					fx_waterWadingFX.gameObject.SetActive(true);
 
 				Vector3 wpos = transform.position;
 				wpos.y = getWaterYPos();
+				fx_waterWadingFX.transform.position = wpos;
 			}
 			else
 			{
-				//fx_waterWadingFX.transform.position = Vector3.down * 100000.0f;
+				fx_waterWadingFX.transform.position = Vector3.down * 100000.0f;
 			}
 
 
@@ -1234,7 +1238,7 @@ namespace Amy
 			if (PlayerManager.Instance.isSmallRoom)
 				return false;
 
-			if (GameManager.Instance.playerInputDisabled)
+			if (GameManager.Instance.playerInputDisabled || GameManager.Instance.gamePaused)
 				return false;
 
 			return true;
@@ -1485,6 +1489,9 @@ namespace Amy
 			if (GameManager.Instance.playerInputDisabled)
 				return;
 
+			if (GameManager.Instance.gamePaused)
+				return;
+
 			if (interactTimeout > 0.0f)
 			{
 				interactTimeout -= Time.deltaTime;
@@ -1521,7 +1528,7 @@ namespace Amy
 
 		public void checkForHammerJump()
         {
-			if (GameManager.Instance.playerInputDisabled)
+			if (GameManager.Instance.playerInputDisabled || GameManager.Instance.gamePaused)
 				return;
 
 			if (acceleration.z < 5.3f)
@@ -1557,7 +1564,7 @@ namespace Amy
 
 		public void checkForGroundAttack()
         {
-			if (GameManager.Instance.playerInputDisabled)
+			if (GameManager.Instance.playerInputDisabled || GameManager.Instance.gamePaused)
 				return;
 
 			if (acceleration.magnitude > 1.0f || !isOnGround)
@@ -1575,7 +1582,7 @@ namespace Amy
 
 		public void checkForRunningGroundAttack()
         {
-			if (GameManager.Instance.playerInputDisabled)
+			if (GameManager.Instance.playerInputDisabled || GameManager.Instance.gamePaused)
 				return;
 
 			if (acceleration.magnitude < 1.0f || !isOnGround)
@@ -1596,7 +1603,7 @@ namespace Amy
 
 		public void checkForAirAttack()
         {
-			if (GameManager.Instance.playerInputDisabled)
+			if (GameManager.Instance.playerInputDisabled || GameManager.Instance.gamePaused)
 				return;
 
 			if (PlayerManager.Instance.isSmallRoom)
@@ -1645,7 +1652,7 @@ namespace Amy
 
 		public void checkForFlying()
         {
-			if (GameManager.Instance.playerInputDisabled)
+			if (GameManager.Instance.playerInputDisabled || GameManager.Instance.gamePaused)
 				return;
 
 			if (getAltitudeFromGround() > mParam.height && mChara == PlayableCharacter.Cream)
@@ -1660,7 +1667,7 @@ namespace Amy
 
 		public void checkForSlingshot()
         {
-			if (GameManager.Instance.playerInputDisabled)
+			if (GameManager.Instance.playerInputDisabled || GameManager.Instance.gamePaused)
 				return;
 
 			if (Input.GetAxis("Shoot") < 0.5f)

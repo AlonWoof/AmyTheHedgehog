@@ -38,7 +38,7 @@ namespace Amy
 
 			if (!aimer)
 			{
-				aimer = FindObjectOfType<SlingshotAimer>();
+				aimer = FindObjectOfType<SlingshotAimer>(true);
 				transform.position = new Vector3(0, -1000000.0f, 0);
 				alphaGroup.alpha = Mathf.Lerp(alphaGroup.alpha, 0, Time.deltaTime * 8.0f);
 				return;

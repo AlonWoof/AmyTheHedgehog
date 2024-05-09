@@ -82,6 +82,20 @@ public static class Helper
         }
     }
 
+    public static int nonRepeatingRandom(int min, int max, int previous, int iter_count = 16)
+    {
+        int r = Random.Range(min, max);
+
+
+        while(iter_count > 0 || r == previous)
+        {
+            r = Random.Range(min, max);
+            iter_count--;
+        }
+
+        return r;
+    }
+
 
     public static Vector3 zeroAltitude(Vector3 a)
     {

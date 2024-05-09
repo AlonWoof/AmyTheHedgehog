@@ -234,6 +234,7 @@ namespace Amy
             DontDestroyOnLoad(inst);
             playerCheckpoint = inst.transform;
 
+            SaveGame.readConfigFile();
             SaveGame.loadGame(0);
         }
 

@@ -47,8 +47,8 @@ namespace Amy
 
         private void OnDisable()
         {
-            
-        }
+			SaveGame.writeConfigFile();
+		}
 
         // Update is called once per frame
         void Update()
@@ -119,7 +119,15 @@ namespace Amy
 					case OptionEntryType.InvertYaw:
 						e.isChecked = GameManager.Instance.config.yawInvert;
 						break;
-                }
+
+					case OptionEntryType.DesiredFOV:
+						e.setSliderRealValue(GameManager.Instance.config.desiredFOV);
+						break;
+
+					case OptionEntryType.LookSensitivity:
+						e.setSliderRealValue(GameManager.Instance.config.lookSensitivity);
+						break;
+				}
             }
         }
 
@@ -138,6 +146,31 @@ namespace Amy
 
 			sfx.PlayOneShot(confirmSound);
 		}
+
+		public void setDefault()
+        {
+			switch(menuEntry[currentChoice].type)
+            {
+				case OptionEntryType.InvertPitch:
+					GameManager.Instance.config.pitchInvert = false;
+					break;
+				case OptionEntryType.InvertYaw:
+					GameManager.Instance.config.yawInvert = false;
+					break;
+				case OptionEntryType.DesiredFOV:
+					GameManager.Instance.config.desiredFOV = 60.0f;
+					break;
+				case OptionEntryType.LookSensitivity:
+					GameManager.Instance.config.lookSensitivity = 1.0f;
+					break;
+
+			}
+
+			updateCheckedStatus();
+			sfx.PlayOneShot(confirmSound);
+		}
+
+
 
 		public void handleInput()
 		{
@@ -185,7 +218,31 @@ namespace Amy
 			if (Input.GetKeyDown(KeyCode.E) || Input.GetButtonDown("Action"))
 			{
 				confirmSelection();
+			}
 
+			if(Input.GetKeyDown(KeyCode.Q) || Input.GetButtonDown("Jump"))
+            {
+				setDefault();
+			}
+
+			if(menuEntry[currentChoice].isSlider)
+            {
+				float x = InputFunctions.getLeftAnalogX();
+
+				if(Mathf.Abs(x) > 0.01f)
+				{ 
+					menuEntry[currentChoice].sliderCurrentValue += x * Time.unscaledDeltaTime;
+
+					switch (menuEntry[currentChoice].type)
+					{
+						case OptionEntryType.DesiredFOV:
+							GameManager.Instance.config.desiredFOV = menuEntry[currentChoice].getSliderRealValue();
+							break;
+						case OptionEntryType.LookSensitivity:
+							GameManager.Instance.config.lookSensitivity = menuEntry[currentChoice].getSliderRealValue();
+							break;
+					}
+				}
 			}
 
 		}

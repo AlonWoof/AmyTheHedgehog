@@ -19,6 +19,18 @@ namespace Amy
             {
                 other.gameObject.GetComponentInChildren<CameraWaterFX>().isInWater = true;
             }
+
+            Rigidbody r = other.GetComponent<Rigidbody>();
+
+            if (r)
+            {
+                if (r.velocity.magnitude > 3.0f)
+                {
+                    GameObject inst = GameObject.Instantiate(GameManager.Instance.systemData.RES_ActorWaterSplashFX);
+                    inst.transform.position = other.transform.position;
+                    inst.transform.rotation = other.transform.rotation;
+                }
+            }
         }
 
 

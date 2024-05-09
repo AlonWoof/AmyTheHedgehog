@@ -163,7 +163,7 @@ namespace Amy
 
 			if (inOptionsMenu)
 			{
-				if (Input.GetButtonDown("Cancel"))
+				if (Input.GetButtonDown("Cancel") || Input.GetButtonDown("Pause"))
 					inOptionsMenu = false;
 
 				return;

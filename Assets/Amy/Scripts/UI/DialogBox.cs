@@ -17,7 +17,11 @@ namespace Amy
 		public Text myText;
 		public int textProgress = 0;
 		public string fullText;
-		public float delay = 0.04f;
+		public float delay = 0.03f;
+
+		const float speed_fast = 0.01f;
+		const float speed_mid = 0.02f;
+		const float speed_slow = 0.04f;
 
 		// Start is called before the first frame update
 		void Start()

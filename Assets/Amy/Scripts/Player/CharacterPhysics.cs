@@ -13,7 +13,7 @@ public class CharacterPhysics : MonoBehaviour
     public Vector3 desiredWind;
 
     DynamicBone[] mBones;
-    DynamicBoneCollider[] mColliders;
+    List<DynamicBoneColliderBase> mColliders;
 
     float weight = 1.0f;
 
@@ -28,6 +28,9 @@ public class CharacterPhysics : MonoBehaviour
             return;
         }
 
+        mColliders = new List<DynamicBoneColliderBase>();
+
+        addColliders();
         addBones();
 
     }
@@ -37,6 +40,19 @@ public class CharacterPhysics : MonoBehaviour
         foreach (DynamicBone d in GetComponents<DynamicBone>())
         {
             Destroy(d);
+        }
+    }
+
+    void addColliders()
+    {
+        foreach(DynamicBoneColliderPreset c in mData.mColliders)
+        {
+            DynamicBoneCollider col = addColliderWithPreset(c);
+
+            if(col)
+            {
+                mColliders.Add(col);
+            }
         }
     }
 
@@ -55,6 +71,15 @@ public class CharacterPhysics : MonoBehaviour
                 db.m_UpdateMode = DynamicBone.UpdateMode.AnimatePhysics;
 
             db.m_UpdateRate = Application.targetFrameRate;
+
+            db.m_Colliders = new List<DynamicBoneColliderBase>();
+
+            db.m_Colliders.Clear();
+
+            foreach(DynamicBoneCollider dbc in mColliders)
+            {
+                db.m_Colliders.Add(dbc);
+            }
         }
 
         mBones = GetComponents<DynamicBone>();
@@ -88,6 +113,24 @@ public class CharacterPhysics : MonoBehaviour
         db.SetWeight(0.25f);
 
         return db;
+    }
+
+    DynamicBoneCollider addColliderWithPreset(DynamicBoneColliderPreset preset)
+    {
+        GameObject bone = findBoneByName(preset.m_Root);
+
+        if (!bone)
+            return null;
+
+        DynamicBoneCollider dbc = bone.AddComponent<DynamicBoneCollider>();
+
+        dbc.m_Bound = preset.m_Bound;
+        dbc.m_Center = preset.m_Center;
+        dbc.m_Direction = preset.m_Direction;
+        dbc.m_Radius = preset.m_Radius;
+
+        return dbc;
+            
     }
 
     public GameObject findBoneByName(string name)

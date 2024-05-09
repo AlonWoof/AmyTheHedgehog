@@ -15,6 +15,8 @@ namespace Amy
         public EyeTarget eyeLook;
         public LookAtIK headLook;
 
+        public Transform overrideTransform;
+
         public bool lookingAtTarget = false;
         public Vector3 desiredLookAt = Vector3.zero;
         public float z_offset = 0.0f;
@@ -59,6 +61,11 @@ namespace Amy
             {
                 eyeLook.overrideLook = true;
                 eyeLook.eyeTarget.transform.position = Vector3.Lerp(eyeLook.eyeTarget.transform.position, desiredLookAt + (z_offset * Vector3.up), Time.deltaTime * 16.0f);
+            }
+
+            if(overrideTransform)
+            {
+                desiredLookAt = overrideTransform.position;
             }
 
             if (Input.GetKey(KeyCode.L))

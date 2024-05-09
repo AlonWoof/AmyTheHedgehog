@@ -255,13 +255,8 @@ namespace Amy
 
         void checkPauseGame()
         {
-            if (cutsceneMode)
-                return;
 
-            if (isLoading)
-                return;
-
-            if (cameraInputDisabled || playerInputDisabled)
+            if (!canPauseGame())
                 return;
 
             if (!Input.GetButtonDown("Pause"))
@@ -275,6 +270,23 @@ namespace Amy
             {
                 unPauseGame();
             }
+        }
+
+        bool canPauseGame()
+        {
+            if (cutsceneMode)
+                return false;
+
+            if (isLoading)
+                return false;
+
+            if (cameraInputDisabled || playerInputDisabled)
+                return false;
+
+            if(!PlayerManager.Instance.mPlayerInstance)
+                return false;
+
+            return true;
         }
 
         void debugFunctions()
@@ -308,10 +320,16 @@ namespace Amy
 
             //How fucking brutal
             if (Input.GetKey(KeyCode.F7))
-                PlayerManager.Instance.killHer();    
+                PlayerManager.Instance.killHer();
 
 
-
+            //Heals
+            if (Input.GetKey(KeyCode.F8))
+            {
+                PlayerStatus pstats = PlayerManager.Instance.getCurrentPlayerStatus();
+                pstats.currentHealth = pstats.maxHealth;
+                pstats.currentStamina = pstats.maxStamina;
+            }
 
             //Emergency exit key
             if (Input.GetButton("RightBumper") && Input.GetButton("LeftBumper") && Input.GetButtonDown("Action"))

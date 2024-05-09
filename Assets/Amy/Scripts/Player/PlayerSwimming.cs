@@ -38,6 +38,10 @@ namespace Amy
             if (mPlayer.currentMode != PlayerModes.SWIMMING)
                 return;
 
+
+            mPlayer.clearAccel();
+            mPlayer.speed = Vector3.zero;
+
             swimSpeed = mPlayer.mParam.swimSpeed;
 
 
