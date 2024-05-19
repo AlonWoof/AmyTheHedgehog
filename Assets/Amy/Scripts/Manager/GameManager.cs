@@ -10,6 +10,16 @@ using UnityEngine.SceneManagement;
 namespace Amy
 {
 
+    public static class SystemColors
+    {
+        public static Color AmyColor = new Color(0.9647059f, 0.6392157f, 0.7333333f);
+        public static Color CreamColor = new Color(0.972549f, 0.8784314f, 0.7215686f);
+
+        public static Color choiceHighlightColor = new Color(1.0f, 1.0f, 1.0f);
+        public static Color choiceDefaultColor = new Color(0.6f, 0.6f, 0.6f);
+        public static Color choiceInactiveColor = new Color();
+    }
+
     [System.Serializable]
     public class GameConfig
     {
@@ -82,6 +92,10 @@ namespace Amy
             //GameManager.Instance.loadTitleScreen();
 
             Application.targetFrameRate = Mathf.RoundToInt((float)Screen.currentResolution.refreshRate * 1.25f);
+
+            //Override for the sake of my Steam Deck for now
+            Application.targetFrameRate = 61;
+
             Time.fixedDeltaTime = 1.0f / ((float)Application.targetFrameRate);
             Time.maximumDeltaTime = Time.fixedDeltaTime * 0.5f;
             QualitySettings.vSyncCount = 0;
@@ -128,7 +142,7 @@ namespace Amy
             analogStickFirstFrame = new bool[8];
 
             #if !UNITY_EDITOR
-            PlayerManager.Instance.wakeupScene();
+            loadScene("Title");
             #endif
 
             //loadScene(UnityEngine.SceneManagement.SceneManager.GetActiveScene().name);
@@ -187,6 +201,11 @@ namespace Amy
         public void Init()
         {
             Debug.Log("GameManager Initialized!");
+        }
+
+        void resetGameState()
+        {
+            gamePaused = false;
         }
 
         // Start is called before the first frame update
@@ -433,6 +452,7 @@ namespace Amy
 
         public void loadTitleScreen()
         {
+            PlayerManager.Instance.saveFileSlot = -1;
             loadScene("Title");
         }
 
@@ -462,6 +482,7 @@ namespace Amy
         {
             yield return Timing.WaitForSeconds(delay);
 
+            gamePaused = false;
             playerInputDisabled = true;
             cameraInputDisabled = true;
             isLoading = true;
@@ -616,7 +637,7 @@ namespace Amy
                 PlayerManager.Instance.mPlayerInstance.changeCurrentMode(PlayerModes.NORMAL);
 
             //Auto-save
-            SaveGame.writeSaveGame(0);
+            SaveGame.writeSaveGame(PlayerManager.Instance.saveFileSlot);
 
             // EnemyManager.Instance.currentEnemyPhase = ENEMY_PHASE.PHASE_SNEAK;
 

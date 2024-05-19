@@ -64,7 +64,7 @@ namespace Amy
 
             soundFX.PlayOneShot(doneSound);
             PlayerManager.Instance.transferRingsToBank();
-            SaveGame.writeSaveGame(0);
+            SaveGame.writeSaveGame(PlayerManager.Instance.saveFileSlot);
             yield return Timing.WaitForSeconds(3.0f);
 
             mAnimator.Play("Disappear");

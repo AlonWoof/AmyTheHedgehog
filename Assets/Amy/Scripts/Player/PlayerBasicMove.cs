@@ -118,12 +118,20 @@ namespace Amy
 				dbg_safePos.transform.position = mPlayer.lastSafeGroundPosition;
 			}
 
-			if (idleCounter > 60.0f)
+			if(idleCounter > 0.5f)
+            {
+				if (Input.GetButtonDown("View"))
+				{
+					mPlayer.changeCurrentMode(PlayerModes.FIRSTPERSON);
+				}
+			}
+
+			if (idleCounter > 1.0f)
             {
 				//if(mPlayer.getStatus().currentMood < mPlayer.getStatus().maxMood && mPlayer.acceleration.magnitude < 0.001f)
 				// {
 
-				if (PlayerManager.Instance.todayEvents.luckyNumber % 3 == 0)
+				if (PlayerManager.Instance.todayEvents.luckyNumber % 3 == 0 || PlayerManager.Instance.getStoryFlag("SADX_NUDE"))
 				{
 					if (mPlayer.modeRubbing.canMasturbate())
 					{

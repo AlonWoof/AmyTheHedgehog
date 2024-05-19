@@ -33,14 +33,16 @@ namespace Amy
 
 		CoroutineHandle currentRoutine;
 		Waypoint currentWaypoint;
-		Animator mAnimator;
+		public Animator mAnimator;
 
 	    // Start is called before the first frame update
 	    void Start()
 	    {
 			currentDirection = transform.forward;
 			mAgent = GetComponent<NavMeshAgent>();
+
 			mAnimator = GetComponentInChildren<Animator>();
+
 			buildWaypointList();
 			currentRoutine = Timing.RunCoroutine(goToPointRoutine(findNextWaypoint()).CancelWith(gameObject));
 

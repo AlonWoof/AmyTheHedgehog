@@ -427,11 +427,13 @@ namespace Amy
 			mAgent.enabled = false;
 			mEnemy.mutekiTimer = 2.5f;
 
-			float knockBackPower = 16.0f;
+			float knockBackPower = 10.0f;
+
+			Vector3 dir = Helper.getDirectionTo(transform.position, PlayerManager.Instance.mPlayerInstance.hipBoneTransform.position);
 
 			while(mEnemy.mutekiTimer > 0.0f)
             {
-				transform.position += ((-transform.forward * mEnemy.mutekiTimer) * (Time.deltaTime * knockBackPower));
+				transform.position += ((-dir * mEnemy.mutekiTimer) * (Time.deltaTime * knockBackPower));
 				yield return 0f;
             }
 

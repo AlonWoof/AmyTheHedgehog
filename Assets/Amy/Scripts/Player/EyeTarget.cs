@@ -21,6 +21,11 @@ namespace Amy
         public Transform eyeTarget;
         public Transform headBone;
 
+        public bool cutsceneOverrideEnable = false;
+        public float cutsceneOverride_x = 0.0f;
+        public float cutsceneOverride_y = 0.0f;
+        
+
         public float look_x = 0.0f;
         public float look_y = 0.0f;
 
@@ -113,8 +118,11 @@ namespace Amy
             {
                 look_x = -Mathf.Clamp(eyeTarget.transform.localPosition.x, -1.0f, 1.0f);
                 look_y = -Mathf.Clamp(eyeTarget.transform.localPosition.y, -1.0f, 1.0f);
-
-
+            }
+            else if(cutsceneOverrideEnable)
+            {
+                look_x = Mathf.Clamp(cutsceneOverride_x, -1.0f, 1.0f);
+                look_y = Mathf.Clamp(cutsceneOverride_y, -1.0f, 1.0f);
             }
 
             look_x_left = look_x * x_mult_left;
@@ -169,9 +177,31 @@ namespace Amy
             leftEyeMat = new List<Material>();
             rightEyeMat = new List<Material>();
 
-            foreach (Renderer r in GetComponentsInChildren<Renderer>())
+            foreach (Renderer r in GetComponentsInChildren<Renderer>(true))
             {
                 foreach (Material m in r.materials)
+                {
+                    if (m.shader.name.ToLower().Contains("eye") && m.name.ToLower().Contains("eye_l"))
+                    {
+                        leftEyeMat.Add(m);
+                    }
+
+                    if (m.shader.name.ToLower().Contains("eye") && m.name.ToLower().Contains("eye_r"))
+                    {
+                        rightEyeMat.Add(m);
+                    }
+                }
+            }
+        }
+
+        void findRightLeftEyeMatEditor()
+        {
+            leftEyeMat = new List<Material>();
+            rightEyeMat = new List<Material>();
+
+            foreach (Renderer r in GetComponentsInChildren<Renderer>())
+            {
+                foreach (Material m in r.sharedMaterials)
                 {
                     if (m.shader.name.ToLower().Contains("eye") && m.name.ToLower().Contains("eye_l"))
                     {
@@ -202,6 +232,28 @@ namespace Amy
                 if (t.gameObject.name.ToLower() == "head")
                     headBone = t;
             }
+        }
+
+        private void OnValidate()
+        {
+
+        }
+
+        private void OnDrawGizmos()
+        {
+#if UNITY_EDITOR
+
+            if (leftEyeMat == null || rightEyeMat == null)
+            {
+                    
+            }
+
+            if (isMobian)
+            {
+                //findRightLeftEyeMat();
+                //updateMobianEyes();
+            }
+#endif
         }
     }
 }

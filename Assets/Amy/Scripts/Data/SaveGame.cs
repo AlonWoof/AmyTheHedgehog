@@ -13,6 +13,13 @@ namespace Amy
 	[System.Serializable]
 	public class StoryFlag
 	{
+
+		public StoryFlag(int hash, bool value)
+        {
+			sceneHash = hash;
+			isFinished = value;
+        }
+
 		public int sceneHash;
 		public bool isFinished;
 	}
@@ -23,18 +30,11 @@ namespace Amy
 
 		public const int SAVE_VERSION = 1;
 
-		public PlayableCharacter currentCharacter;
-		public int ringBank;
-		public PlayerStatus AmyStatus;
-		public PlayerStatus CreamStatus;
 
-		public ProgressData progress;
-		public List<StoryFlag> cutsceneFlags;
-		public long saveTime;
 
 		public SaveGame()
 		{
-			cutsceneFlags = new List<StoryFlag>();
+
 		}
 
 		public static bool isSaveValid(int saveIndex)
@@ -46,6 +46,9 @@ namespace Amy
 			{
 				return false;
 			}
+
+			if (saveIndex < 0)
+				return false;
 
 
 			FileStream file = File.OpenRead(dataPath);
@@ -62,8 +65,28 @@ namespace Amy
 			return false;
 		}
 
+		public static void deleteSaveFile(int saveIndex)
+		{
+			string dataPath = Application.persistentDataPath + "/AmySavey" + saveIndex + ".dat";
+			Debug.Log(dataPath);
+
+			if (!File.Exists(dataPath))
+			{
+				return;
+			}
+
+			if (saveIndex < 0)
+				return;
+
+			File.Delete(dataPath);
+
+		}
+
 		public static SaveFileMetadata getFileMetaData(int saveIndex)
         {
+
+			if (saveIndex < 0)
+				return null;
 
 			string dataPath = Application.persistentDataPath + "/AmySavey" + saveIndex + ".dat";
 			Debug.Log(dataPath);
@@ -85,14 +108,25 @@ namespace Amy
 			metaData.fileIndex = saveIndex;
 
 			reader.ReadInt32();
-			reader.ReadInt64();
+			metaData.lastSaveTime = System.DateTime.FromFileTime(reader.ReadInt64());
 			metaData.ringBank = reader.ReadInt32();
+			metaData.currentCharacter = (PlayableCharacter)reader.ReadInt32();
+
+			metaData.totalHours = reader.ReadInt32();
+			metaData.totalMinutes = reader.ReadInt32();
+			metaData.totalSeconds = Mathf.RoundToInt(reader.ReadSingle());
+
+			reader.Close();
 
 			return metaData;
 		}
 
 		public static void loadGame(int saveIndex)
         {
+
+			if (saveIndex < 0)
+				return;
+
 			string dataPath = Application.persistentDataPath + "/AmySavey" + saveIndex + ".dat";
 			Debug.Log(dataPath);
 
@@ -117,13 +151,31 @@ namespace Amy
 			plman.ringBank = reader.ReadInt32();
 			plman.currentCharacter = (PlayableCharacter)reader.ReadInt32();
 
+			plman.totalHours = reader.ReadInt32();
+			plman.totalMinutes = reader.ReadInt32();
+			plman.totalSeconds = reader.ReadSingle();
+
 			//Progress flags
 			plman.hasHammer = reader.ReadBoolean();
 			plman.hasCloth = reader.ReadBoolean();
 			plman.hasSlingshot = reader.ReadBoolean();
+			plman.isPrologue = reader.ReadBoolean();
 
 			readPlayerStatus(plman.AmyStatus, ref reader);
 			readPlayerStatus(plman.CreamStatus, ref reader);
+
+			int numFlags = reader.ReadInt32();
+
+			if (plman.storyFlags == null)
+				plman.storyFlags = new List<StoryFlag>();
+
+			plman.storyFlags.Clear();
+
+			for(int i = 0; i < numFlags; i++)
+            {
+
+				plman.storyFlags.Add(new StoryFlag(reader.ReadInt32(), reader.ReadBoolean()));
+			}
 
 			reader.Close();
 
@@ -131,10 +183,18 @@ namespace Amy
 
 			plman.processSleeping(plman.AmyStatus, time);
 			plman.processSleeping(plman.CreamStatus, time);
+
+			if(readSADXNudeModData())
+            {
+				plman.setStoryFlag("SADX_NUDE", true);
+            }
 		}
 
 		public static void writeSaveGame(int saveIndex)
 		{
+			if (saveIndex < 0)
+				return;
+
 			GameObject.Instantiate(GameManager.Instance.systemData.RES_NowSaving);
 
 			string dataPath = Application.persistentDataPath + "/AmySavey" + saveIndex + ".dat";
@@ -150,14 +210,27 @@ namespace Amy
 			writer.Write(System.DateTime.Now.ToFileTime());
 			writer.Write(plman.ringBank);
 			writer.Write((int)plman.currentCharacter);
+			writer.Write(plman.totalHours);
+			writer.Write(plman.totalMinutes);
+			writer.Write(plman.totalSeconds);
 
 			//Progress flags
 			writer.Write(plman.hasHammer);
 			writer.Write(plman.hasCloth);
 			writer.Write(plman.hasSlingshot);
+			writer.Write(plman.isPrologue);
 
 			writePlayerStatus(plman.AmyStatus, ref writer);
 			writePlayerStatus(plman.CreamStatus, ref writer);
+
+
+			writer.Write(plman.storyFlags.Count);
+
+			foreach(StoryFlag f in plman.storyFlags)
+            {
+				writer.Write(f.sceneHash);
+				writer.Write(f.isFinished);
+            }
 
 			//Paddding at the end.
 			for (int i = 0; i < 64; i++)
@@ -214,6 +287,29 @@ namespace Amy
 			reader.Close();
 		}
 
+		public static bool readSADXNudeModData()
+        {
+			string dataPath = Application.persistentDataPath + "/../Sonic Adventure/NUDE.dat";
+			Debug.Log(dataPath);
+
+			if (!File.Exists(dataPath))
+			{
+				return false;
+			}
+
+			FileStream file = File.OpenRead(dataPath);
+			BinaryReader reader = new BinaryReader(file);
+
+			//Go past the save version
+			int magic = reader.ReadInt32();
+
+			if (magic != 0x52504C41)
+				return false;
+
+			reader.Close();
+
+			return true;
+		}
 
 		public static void writePlayerStatus(PlayerStatus pStats,ref BinaryWriter writer)
         {
@@ -238,12 +334,5 @@ namespace Amy
 			pStats.timeSpentResting = reader.ReadSingle();
 		}
 
-		public float calcTimeInFrames()
-        {
-			System.DateTime lastDate = System.DateTime.FromFileTime(saveTime);
-
-			Debug.Log("It has been "+ (System.DateTime.Now - lastDate).TotalSeconds + " seconds since last save");
-			return (float)((System.DateTime.Now - lastDate).TotalSeconds * 60.0f);
-		}
 	}
 }

@@ -163,10 +163,14 @@ namespace Amy
             while (isFading)
                 yield return 0f;
 
+            if (!currentBGM)
+                yield break;
+
+            target *= currentBGM.volumeMult;
+
             float totalTime = crossFadeTime;
             float timeLeft = totalTime;
             float vol = bgm.volume;
-
 
             isFading = true;
             while (timeLeft > 0)
@@ -266,12 +270,15 @@ namespace Amy
 
             bgm.Stop();
 
-            if (hasIntro)
+            if (!currentBGM)
+                return;
+
+            if (hasIntro && currentBGM.introClip)
             {
                 bgm.clip = currentBGM.introClip;
                 bgm.loop = false;
             }
-            else
+            else if(currentBGM.mainClip)
             {
                 bgm.clip = currentBGM.mainClip;
                 bgm.loop = true;

@@ -56,6 +56,7 @@ namespace Amy
 			wetfx.desiredWetness = 1.0f;
 
 			const float cleanDirtRate = 1.0f;
+			const float staminaRegenRate = 0.1f;
 
 			GameManager.Instance.cutsceneMode = true;
 			GameManager.Instance.disablePlayerInput();
@@ -72,6 +73,7 @@ namespace Amy
 			while (pl.getStatus().dirtiness > 0.0f)
             {
 				pl.getStatus().dirtiness -= (Time.deltaTime * cleanDirtRate);
+				pl.getStatus().currentStamina += (Time.deltaTime * staminaRegenRate);
 				wetfx.desiredWetness = 1.0f;
 				yield return 0f;
 			}

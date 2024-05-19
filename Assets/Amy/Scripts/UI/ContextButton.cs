@@ -16,7 +16,7 @@ namespace Amy
 		public Animator mAnimator;
 		public Text actionText;
 
-		float timeLeft = 0.0f;
+		public float timeLeft = 0.0f;
 
 	    // Start is called before the first frame update
 	    void Start()
@@ -40,6 +40,11 @@ namespace Amy
         {
 			actionText.text = str;
 			timeLeft = 0.1f;
+        }
+
+		public void clearActionText()
+        {
+			timeLeft = 0.0f;
         }
 	}
 }

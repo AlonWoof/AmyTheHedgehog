@@ -61,8 +61,11 @@ namespace Amy
             if(useStoryFlag)
             {
                 //Do not see it again.
-              //  if (PlayerManager.Instance.saveGame.getCutsceneFlag(getStoryHash()))
-               //     return;
+                if (PlayerManager.Instance.getStoryFlag(getStoryHash()))
+                {
+                    Destroy(gameObject);
+                    return;
+                }
             }
 
 
@@ -72,7 +75,7 @@ namespace Amy
             onStartScene.Invoke();
         }
 
-        public void endCutscene()
+        public virtual void endCutscene()
         {
             if (useStoryFlag)
                 addStoryFlag();
@@ -124,7 +127,7 @@ namespace Amy
 
         public void addStoryFlag()
         {
-            
+            PlayerManager.Instance.setStoryFlag(getStoryHash(), true);
            // PlayerManager.Instance.saveGame.setCutsceneFlag(getStoryHash(),true);
         }
 	}

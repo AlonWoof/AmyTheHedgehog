@@ -56,7 +56,7 @@ public class FootstepFX : MonoBehaviour
     public Vector3 rightFootPos;
     public Vector3 leftFootPos;
 
-    float timeOut = 0.02f;
+    float timeOut = 0.002f;
     float timeLeft = 0.02f;
 
     public float globalVolume = 1.0f;
@@ -133,7 +133,8 @@ public class FootstepFX : MonoBehaviour
         if(timeLeft > 0.0f)
         {
             timeLeft -= Time.deltaTime;
-           // return;
+            //return;
+
         }
 
         timeLeft = timeOut;

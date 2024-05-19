@@ -19,8 +19,8 @@ namespace Amy
 		public Message AmyIntroMessage;
 		public Message CreamIntroMessage;
 
-		public Message[] AmyMessages;
-		public Message[] CreamMessages;
+		public List<Message> AmyMessages;
+		public List<Message> CreamMessages;
 
 		int timesTalkedTo = 0;
 		int lastMessageID = -1;
@@ -37,6 +37,10 @@ namespace Amy
 			//She has a very slim chance of being naked.
 			int rng = Random.Range(0, 64);
 
+			//chance increase if you have my nude mod~
+			if(PlayerManager.Instance.getStoryFlag("SADX_NUDE"))
+				rng = Random.Range(0, 32);
+
 			if(rng == 7)
             {
 				naked = true;
@@ -48,7 +52,7 @@ namespace Amy
 				clothedModel.SetActive(false);
 
 				mAnimator = nudeModel.GetComponent<Animator>();
-
+				addNakedMessages();
 			}
 			else
             {
@@ -56,20 +60,36 @@ namespace Amy
 				clothedModel.SetActive(true);
 
 				mAnimator = clothedModel.GetComponent<Animator>();
+
+				
 			}
 
 		}
 
-		// Start is called before the first frame update
-		void Start()
-	    {
-	        
-	    }
+		void addNakedMessages()
+        {
+			Message mes = new Message();
+
+			mes.messages = new List<string>();
+
+			mes.messages.Add("Yeah, I'm naked this time. Just like you. \nFeels nice, huh?");
+			mes.messages.Add("Of course, some people hate that.\n But they should just leave us alone.");
+
+			AmyMessages.Add(mes);
+
+			mes = new Message();
+			mes.messages = new List<string>();
+
+			mes.messages.Add("You know, in some cultures nudity\n is a sign of innocence and purity.");
+			mes.messages.Add("...Present company definitely proves that point.\n In other words, you're adorable. ");
+
+			CreamMessages.Add(mes);
+		}
 
 
 		public Message getNextMessage()
 		{
-			if (timesTalkedTo == 0)
+			if (timesTalkedTo == -1)
 			{
 				if (PlayerManager.Instance.currentCharacter == PlayableCharacter.Amy)
 					return AmyIntroMessage;
@@ -79,32 +99,28 @@ namespace Amy
 
 			if (PlayerManager.Instance.currentCharacter == PlayableCharacter.Amy)
 			{
-				int rng = Helper.nonRepeatingRandom(0, AmyMessages.Length, lastMessageID);
-				lastMessageID = rng;
 
+				if (timesTalkedTo >= AmyMessages.Count)
+				{
+					timesTalkedTo = 0;
 
-				if (!randomOrder)
-                {
-					rng = timesTalkedTo + 1;
+					if (randomOrder)
+						AmyMessages.Shuffle();
+				}
 
-					rng = Mathf.Clamp(rng, 1, AmyMessages.Length - 1);
-                }
-
-				return AmyMessages[rng];
+				return AmyMessages[timesTalkedTo];
 			}
 			else
 			{
-				int rng = Helper.nonRepeatingRandom(0, CreamMessages.Length, lastMessageID);
-				lastMessageID = rng;
-
-				if (!randomOrder)
+				if (timesTalkedTo >= CreamMessages.Count)
 				{
-					rng = timesTalkedTo + 1;
+					timesTalkedTo = 0;
 
-					rng = Mathf.Clamp(rng, 1, CreamMessages.Length - 1);
+					if (randomOrder)
+						CreamMessages.Shuffle();
 				}
 
-				return CreamMessages[rng];
+				return CreamMessages[timesTalkedTo];
 			}
 		}
 

@@ -47,7 +47,8 @@ namespace Amy
 
         private void OnDisable()
         {
-			SaveGame.writeConfigFile();
+			if(timeout < 0.01f)
+				SaveGame.writeConfigFile();
 		}
 
         // Update is called once per frame

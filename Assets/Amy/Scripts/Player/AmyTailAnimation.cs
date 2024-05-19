@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 //////////////////////////////////////
-//         2023 AlonWoof            //
+//         2024 AlonWoof            //
 //////////////////////////////////////
 
 namespace Amy
@@ -14,7 +14,6 @@ namespace Amy
 
 		public Player player;
 		public float excitement = 1.0f;
-		public float mood = 1.0f;
 
 	    // Start is called before the first frame update
 	    void Start()
@@ -39,18 +38,16 @@ namespace Amy
             }
 			else
             {
-				excitement = Mathf.Lerp(excitement, 0.2f, Time.deltaTime * 0.1f);
+				excitement = Mathf.Lerp(excitement, 0.5f, Time.deltaTime * 0.1f);
             }
 
 			PlayerStatus pstats = PlayerManager.Instance.getCurrentPlayerStatus();
 
-			float fac = ((pstats.currentHealth / pstats.maxHealth) + (pstats.currentMood / pstats.maxMood)) * 0.5f;
+			float fac = (pstats.currentMood / pstats.maxMood);
 
 			excitement *= fac;
 
 			excitement = Mathf.Clamp(excitement, 0.25f, 3.0f);
-
-			mood = Mathf.Lerp(mood, PlayerManager.Instance.AmyStatus.currentMood/PlayerManager.Instance.AmyStatus.maxMood, Time.deltaTime * 1.2f);
 
         }
 	}

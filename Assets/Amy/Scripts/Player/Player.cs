@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using MEC;
+using RootMotion.FinalIK;
 
 //////////////////////////////////////
 //         2023 AlonWoof            //
@@ -52,6 +53,7 @@ namespace Amy
 		RUBBING,
 		HURT,
 		KILLED,
+		FIRSTPERSON,
 		DEBUG_MOVE
     }
 
@@ -75,7 +77,7 @@ namespace Amy
 		public PlayerVoice mVoice;
 		public ActorLookAtController lookAtController;
 		public GameObject fx_waterWadingFX;
-
+		public BipedIK biped;
 
 		//Amy-specific
 		public AmyHammer mAmyHammer;
@@ -104,6 +106,7 @@ namespace Amy
 		//Status indicators
 		public bool isOnGround = false;
 		public bool isSliding = false;
+		public bool isBallMode = false;
 		public bool isHammerJumping = false;
 		public bool isAttacking = false;
 		public bool isHammerSpin = false;
@@ -114,6 +117,7 @@ namespace Amy
 		public float hammerJumpCharge = 0.0f;
 		public float airLeft = 0.0f;
 		public int framesAirborne = 0;
+		public int framesGrounded = 0;
 		public float lookTimeLeft = 0.0f;
 
 		public float stickTimeout = 0.0f;
@@ -144,6 +148,7 @@ namespace Amy
 		public PlayerListening modeListening;
 		public PlayerHurt modeHurt;
 		public PlayerKilled modeKilled;
+		public PlayerFirstPerson modeFirstPerson;
 		public PlayerDebugMove modeDebug;
 		
 
@@ -286,6 +291,7 @@ namespace Amy
 			modeListening = gameObject.AddComponent<PlayerListening>();
 			modeHurt = gameObject.AddComponent<PlayerHurt>();
 			modeKilled = gameObject.AddComponent<PlayerKilled>();
+			modeFirstPerson = gameObject.AddComponent<PlayerFirstPerson>();
 			modeDebug = gameObject.AddComponent<PlayerDebugMove>();
 		}
 
@@ -302,6 +308,7 @@ namespace Amy
 			modeListening.enabled = false;
 			modeHurt.enabled = false;
 			modeKilled.enabled = false;
+			modeFirstPerson.enabled = false;
 			modeDebug.enabled = false;
         }
 
@@ -353,6 +360,10 @@ namespace Amy
 
 				case PlayerModes.KILLED:
 					modeKilled.enabled = true;
+					break;
+
+				case PlayerModes.FIRSTPERSON:
+					modeFirstPerson.enabled = true;
 					break;
 
 				case PlayerModes.DEBUG_MOVE:
@@ -451,6 +462,47 @@ namespace Amy
         {
 
 			Timing.RunCoroutine(doWarp(sceneName, exitNum));
+        }
+
+		Vector3 getMagicCirclePos()
+		{
+			int iterations = 8;
+
+			float ang = 0;
+
+			
+			float highestY = WorldToPlayerSpace(transform.position).y;
+
+			for (int i = 0; i < iterations; i++)
+            {
+				float seg = (360.0f / (float)iterations);
+
+				Vector3 rotatedOffset = Quaternion.Euler(0, seg * i, 0) * (transform.position + (transform.forward * 0.75f));
+
+				Vector3 start = rotatedOffset + transform.up;
+				Vector3 end = rotatedOffset - transform.up;
+
+				Debug.DrawLine(start, end, SystemColors.AmyColor, 10.0f);
+
+				RaycastHit hitInfo = new RaycastHit();
+				LayerMask mask = LayerMask.GetMask("Collision");
+
+				if(Physics.Linecast(start, end, out hitInfo, mask))
+                {
+					Vector3 point = WorldToPlayerSpace(hitInfo.point);
+
+					if(point.y > highestY)
+                    {
+						highestY = point.y;
+					}
+                }
+			}
+
+			Vector3 newPos = WorldToPlayerSpace(transform.position);
+			newPos.y = highestY;
+
+			return PlayerToWorldSpace(newPos);
+
         }
 
 		public IEnumerator<float> doWarp(string sceneName, int exitNum = 0)
@@ -642,6 +694,11 @@ namespace Amy
 
 			debugControls();
 		}
+
+		public void updateBallState()
+        {
+
+        }
 
 		public void updateHealth()
 		{
@@ -902,6 +959,7 @@ namespace Amy
 
 			refreshMode();
 			updateExpression();
+			isBallMode = false;
 
 			if (mChara == PlayableCharacter.Cream)
 				updateEars();
@@ -1075,14 +1133,21 @@ namespace Amy
 		bool checkFallOffWall()
         {
 
-			//Debug.Log("DOT OF WALL: " + Vector3.Dot(groundNormal, Vector3.up));
+			
 
+			float ang = Vector3.Dot(groundNormal, Vector3.up);
+			float tolerance = Mathf.Lerp(0.0f, 10.0f, 1.0f - ang);
 
-			if(Vector3.Dot(groundNormal, Vector3.up) < 0.65f && acceleration.z < 3.0f)
-            {
+			//Debug.Log("DOT OF WALL: " + Vector3.Dot(groundNormal, Vector3.up) + "  TOLERANCE: " + tolerance);
 
-				return true;
-            }
+			if (ang < 0.5f)
+			{
+				if (acceleration.z < tolerance)
+				{
+
+					return true;
+				}
+			}
 
 			return false;
         }
@@ -1091,7 +1156,7 @@ namespace Amy
 		{
 
 
-			if (Vector3.Dot(groundNormal, Vector3.down) > 0.75f && acceleration.z < 3.0f)
+			if (Vector3.Dot(groundNormal, Vector3.down) > 0.75f && acceleration.z < 4.0f)
 			{
 				return true;
 			}
@@ -1164,12 +1229,14 @@ namespace Amy
 				if (Vector3.Dot(groundNormal, new_ground) > 0.25)
                 {
 						groundNormal = new_ground;
+						framesGrounded++;
 
 						if (!isOnGround)
 						{
 							isHammerJumping = false;
 							isOnGround = true;
 							canAirAttack = true;
+							isBallMode = false;
 
 							if (currentMode != PlayerModes.HURT && currentMode != PlayerModes.KILLED)
 								mAnimator.Play("Land");
@@ -1202,6 +1269,7 @@ namespace Amy
 			{
 				groundNormal = Vector3.up;
 				framesAirborne++;
+				framesGrounded = 0;
 
 				//Coyote frames, also prevents state stutter.
 				if (framesAirborne > 10)
@@ -1259,13 +1327,20 @@ namespace Amy
 			if (getStatus().checkStatusEffect(PlayerStatusFX.Tired))
 				jumpPower *= 0.65f;
 
+
+			//if (mChara == PlayableCharacter.Cream)
+			//isBallMode = true;
+
 			acceleration *= 0.8f;
 			acceleration.y = jumpPower;
 			mAnimator.Play("Jump");
 			//mAnimator.Play("Mouth_Jumping");
 			getStatus().currentStamina -= jumpStaimaCost;
 			getStatus().clampValues();
+
+			//if(mChara == PlayableCharacter.Amy)
 			mVoice.playVoiceDelayed(Random.Range(0.05f, 0.1f), mVoice.jumping);
+
 			spawnFX(GameManager.Instance.systemData.RES_AmyPlayerFX.fx_basicJump, transform.position);
 			jumpTimer = mParam.jump_hangTime;
 		}
@@ -1319,7 +1394,10 @@ namespace Amy
 			attackTimer = 0.6f;
 
 			if (mAmyHammer)
+			{
 				mAmyHammer.enableHurtbox();
+				mAmyHammer.hammerDamage.damageAmount = getStatus().baseMeleeDamage;
+			}
 
 			if (fx_hammerTrail)
 				fx_hammerTrail.enableFX();
@@ -1364,8 +1442,12 @@ namespace Amy
 			getStatus().clampValues();
 			attackTimer = 0.6f;
 
+
 			if (mAmyHammer)
+			{
 				mAmyHammer.enableHurtbox();
+				mAmyHammer.hammerDamage.damageAmount = getStatus().baseMeleeDamage * 0.75f;
+			}
 
 			if (fx_hammerTrail)
 				fx_hammerTrail.enableFX();
@@ -1423,8 +1505,12 @@ namespace Amy
 			canAirAttack = false;
 			attackTimer = 0.6f;
 
+
 			if (mAmyHammer)
+			{
 				mAmyHammer.enableHurtbox();
+				mAmyHammer.hammerDamage.damageAmount = getStatus().baseMeleeDamage;
+			}
 
 			if (fx_hammerTrail)
 				fx_hammerTrail.enableFX();
@@ -1487,10 +1573,16 @@ namespace Amy
 		public void checkForInteract()
 		{
 			if (GameManager.Instance.playerInputDisabled)
+			{
+				clearActivatible();
 				return;
+			}
 
 			if (GameManager.Instance.gamePaused)
+			{
+				clearActivatible();
 				return;
+			}
 
 			if (interactTimeout > 0.0f)
 			{
@@ -1513,6 +1605,7 @@ namespace Amy
 
 					a.Activate(this);
 					interactTimeout = 1.0f;
+					UIManager.Instance.contextButton.clearActionText();
 
 					if (a.turnAroundPlayer)
 					{
@@ -1525,6 +1618,20 @@ namespace Amy
 			}
 
 		}
+
+		public void clearActivatible(float timeOut = 0.5f)
+        {
+			interactTimeout = timeOut;
+			UIManager.Instance.contextButton.clearActionText();
+
+
+			if (areaDetector.nearbyActivatibles == null)
+				return;
+
+			areaDetector.closestActivatible = null;
+			areaDetector.nearbyActivatibles.Clear();
+
+        }
 
 		public void checkForHammerJump()
         {
@@ -1659,6 +1766,8 @@ namespace Amy
 			{
 				if (Input.GetButtonDown("Jump"))
 				{
+					//mVoice.playVoiceDelayed(Random.Range(0.05f, 0.1f), mVoice.jumping);
+					
 					changeCurrentMode(PlayerModes.FLY);
 				}
 			}
@@ -1764,7 +1873,7 @@ namespace Amy
 			acceleration.z += forward_accel * Time.deltaTime;
 
 			if (PlayerManager.Instance.isSmallRoom)
-				acceleration.z = Mathf.Clamp(acceleration.z, 0, 1.2f);
+				acceleration.z = Mathf.Clamp(acceleration.z, 0, 1.5f);
 		}
 
 		public void applyFriction()
@@ -2021,6 +2130,8 @@ namespace Amy
 					return "HURT";
 				case PlayerModes.KILLED:
 					return "KILLED";
+				case PlayerModes.FIRSTPERSON:
+					return "FIRSTPERSON";
 				case PlayerModes.DEBUG_MOVE:
 					return "DEBUG_MOVE";
 			}

@@ -15,24 +15,32 @@ namespace Amy
 		public int fileIndex;
 		public int ringBank;
 		public string fileName;
-
-
+		public System.DateTime lastSaveTime;
+		public PlayableCharacter currentCharacter;
+		public int totalHours;
+		public int totalMinutes;
+		public int totalSeconds;
 	};
 
 	public class FileSelectMenuEntry : MonoBehaviour
 	{
 
 		public int fileIndex = 0;
+		public bool isSelected = false;
 		SaveFileMetadata mData;
 
 		public Text label;
 		public Text ringBank;
+		public Text saveTime;
+		public Text characterName;
 		public CanvasGroup infoCanvas;
+
+		public Color mColor = Color.white;
 
 		// Start is called before the first frame update
 		void Start()
 	    {
-			setFileIndex(fileIndex);
+
 	    }
 	
 	    // Update is called once per frame
@@ -41,21 +49,39 @@ namespace Amy
 	        
 	    }
 
+
+
 		public void setFileIndex(int slot)
         {
-
+			fileIndex = slot;
 			mData = SaveGame.getFileMetaData(slot);
 
-			if(mData == null)
+			label.color = mColor;
+			ringBank.color = mColor;
+			saveTime.color = mColor;
+
+			if (mData == null)
             {
-				label.text = "New Game";
+				label.text = "File " + slot.ToString("00") + "         New Game";
 				infoCanvas.alpha = 0.0f;
 				return;
             }
 
 			infoCanvas.alpha = 1.0f;
 			label.text = "File " + mData.fileIndex.ToString("00");
-			PlayerManager.Instance.getTotalRings().ToString("00000");
+			ringBank.text = mData.ringBank.ToString("00000");
+			saveTime.text = mData.lastSaveTime.ToShortDateString();
+
+			if(mData.currentCharacter == PlayableCharacter.Amy)
+            {
+				characterName.text = "Amy";
+				characterName.color = SystemColors.AmyColor;
+            }
+			else if(mData.currentCharacter == PlayableCharacter.Cream)
+            {
+				characterName.text = "Cream";
+				characterName.color = SystemColors.CreamColor;
+			}
 		}
 
 	}

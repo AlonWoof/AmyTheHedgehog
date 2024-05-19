@@ -63,6 +63,9 @@ namespace Amy
         public float lungCapacity = 20.0f;
         public float dirtiness = 0.0f;
 
+        public float baseMeleeDamage = 10.0f;
+        public float baseRangedDamage = 5.0f;
+
         public int statusFX;
         public int currentVibes;
         public float scaredTimeLeft = 0.0f;
@@ -71,6 +74,7 @@ namespace Amy
         public float sickTimeLeft = 0.0f;
 
         public float timeSpentResting = 0.0f;
+
 
 
         public PlayerStatus makeCopy()
@@ -159,26 +163,6 @@ namespace Amy
         }
     }
 
-    [System.Serializable]
-    public class ProgressData
-    {
-        public bool hasHammer = false;
-        public bool hasCloth = false;
-        public bool hasSlingshot = false;
-
-        public ProgressData makeCopy()
-        {
-            ProgressData ret = new ProgressData();
-
-            ret.hasHammer = hasHammer;
-            ret.hasCloth = hasCloth;
-            ret.hasSlingshot = hasSlingshot;
-
-            return ret;
-        }
-    }
-
-
     public class PlayerManager : Singleton<PlayerManager>
 	{
 
@@ -193,7 +177,8 @@ namespace Amy
         public bool hasHammer = false;
         public bool hasCloth = false;
         public bool hasSlingshot = false;
-        public List<StoryFlag> cutsceneFlags;
+        public bool isPrologue = false;
+        public List<StoryFlag> storyFlags;
         public System.DateTime lastSaveTime;
 
 
@@ -211,7 +196,14 @@ namespace Amy
 
         public int ringBank = 0;
         public int ringCount = 0;
+
+        public float totalSeconds = 0.0f;
+        public int totalMinutes = 0;
+        public int totalHours = 0;
+
         public float stealthIndex = 0.0f;
+
+        public int saveFileSlot = -1;
 
         public bool playerHasStealthCamo = false;
 
@@ -223,19 +215,24 @@ namespace Amy
 
         public DayEvents todayEvents;
 
+
         private void Awake()
         {
             AmyStatus = GameManager.getSystemData().AmyParams.baseStats.makeCopy();
             CreamStatus = GameManager.getSystemData().CreamParams.baseStats.makeCopy();
             todayEvents = new DayEvents();
+            storyFlags = new List<StoryFlag>();
+
             randomizeDayEvents();
 
             GameObject inst = new GameObject("CHECKPOINT");
             DontDestroyOnLoad(inst);
             playerCheckpoint = inst.transform;
 
+
+
             SaveGame.readConfigFile();
-            SaveGame.loadGame(0);
+            SaveGame.loadGame(saveFileSlot);
         }
 
 
@@ -251,17 +248,7 @@ namespace Amy
             
     	}
 
-        void setNewGameState()
-        {
-            ringBank = 0;
-            hasHammer = false;
-            hasCloth = false;
-            hasSlingshot = false;
 
-            cutsceneFlags = new List<StoryFlag>();
-            AmyStatus = GameManager.getSystemData().AmyParams.baseStats.makeCopy();
-            CreamStatus = GameManager.getSystemData().CreamParams.baseStats.makeCopy();
-        }
 
 
         public void randomizeDayEvents()
@@ -287,8 +274,48 @@ namespace Amy
             todayEvents.luckyNumber = Random.Range(0, 99);
         }
 
-    	// Update is called once per frame
-    	void Update()
+        public bool getStoryFlag(string name)
+        {
+            return getStoryFlag(Animator.StringToHash(name));
+        }
+
+        //Important flags...
+        //SADX_NUDE - has SADX nude mod installed
+
+
+        public bool getStoryFlag(int hash)
+        {
+
+            foreach(StoryFlag f in storyFlags)
+            {
+                if (f.sceneHash == hash)
+                    return f.isFinished;
+            }
+
+            return false;
+        }
+
+        public void setStoryFlag(string name, bool value)
+        {
+            setStoryFlag(Animator.StringToHash(name), value);
+        }
+
+        public void setStoryFlag(int hash, bool value)
+        {
+            foreach (StoryFlag f in storyFlags)
+            {
+                if (f.sceneHash == hash)
+                {
+                    f.isFinished = value;
+                    return;
+                }
+            }
+
+            storyFlags.Add(new StoryFlag(hash, value));
+        }
+
+        // Update is called once per frame
+        void Update()
     	{
             handleStealthIndex();
 
@@ -303,8 +330,34 @@ namespace Amy
 
             if (currentCharacter != PlayableCharacter.Cream)
                 processSleeping(CreamStatus);
+
+
+            updatePlayTime();
         }
 
+        void updatePlayTime()
+        {
+            if (GameManager.Instance.gamePaused)
+                return;
+
+            //If there's no player, are we really playing?
+            if (!mPlayerInstance)
+                return;
+
+            totalSeconds += Time.deltaTime;
+
+            while(totalSeconds > 60.0f)
+            {
+                totalSeconds -= 60.0f;
+                totalMinutes++;
+            }
+
+            while(totalMinutes > 60)
+            {
+                totalMinutes -= 60;
+                totalHours++;
+            }
+        }
 
         public PlayerStatus getCurrentPlayerStatus()
         {
@@ -708,11 +761,11 @@ namespace Amy
             if (mPlayerInstance != null)
             {
                 //Debug.Log("Destroying duplicate player...");
-                //Destroy(mPlayerInstance.gameObject);
-                mPlayerInstance.transform.position = playerCheckpoint.transform.position;
-                mPlayerInstance.direction = playerCheckpoint.transform.forward;
-                mPlayerInstance.changeCurrentMode(PlayerModes.NORMAL);
-                return mPlayerInstance;
+                Destroy(mPlayerInstance.gameObject);
+                //mPlayerInstance.transform.position = playerCheckpoint.transform.position;
+               // mPlayerInstance.direction = playerCheckpoint.transform.forward;
+               // mPlayerInstance.changeCurrentMode(PlayerModes.NORMAL);
+                //return mPlayerInstance;
             }
 
 
@@ -837,7 +890,7 @@ namespace Amy
 
 
             yield return Timing.WaitForSeconds(1.1f);
-            //MusicManager.Instance.restartMusic();
+            
 
 
             if (mPlayerInstance)
@@ -853,15 +906,17 @@ namespace Amy
                     spawnPlayerAtCheckpoint();
                     yield return 0f;
 
-                    PlayerManager.Instance.spawnPlayerAtCheckpoint();
 
                     yield return Timing.WaitForSeconds(1.0f);
 
                     UIManager.Instance.fadeScreen(true, 1.0f, false);
+                    MusicManager.Instance.restartMusic();
+                    MusicManager.Instance.fadeBGM(1.0f, 0.025f);
 
                     yield return Timing.WaitForSeconds(1.1f);
 
                     GameManager.Instance.enableInput();
+
 
                     yield break;
                 }
@@ -910,22 +965,48 @@ namespace Amy
             else if (currentCharacter == PlayableCharacter.Cream)
                 currentCharacter = PlayableCharacter.Amy;
 
-            randomizeDayEvents();
 
-            Timing.RunCoroutine(setupWakeupScene());
+            Timing.RunCoroutine(setupWakeupScene(false));
 
         }
 
-        public void wakeupScene()
+        public void createBlankSave()
         {
-            
-            Timing.RunCoroutine(setupWakeupScene());
+            ringBank = 0;
+            currentCharacter = PlayableCharacter.Amy;
+
+            //Progress flags
+            hasHammer = false;
+            hasCloth = false;
+            hasSlingshot = false;
+            isPrologue = true;
+
+            AmyStatus = GameManager.getSystemData().AmyParams.baseStats.makeCopy();
+            CreamStatus = GameManager.getSystemData().CreamParams.baseStats.makeCopy();
+
+            storyFlags = new List<StoryFlag>();
+
+        }
+
+        
+
+        //TODO: Replace this with intro cutscene and prologue area.
+        public void startNewGame()
+        {
+            createBlankSave();
+
+            GameManager.Instance.loadScene("Jungle", true);
+        }
+
+        public void wakeupScene(bool whiteFade = false)
+        {
+            Timing.RunCoroutine(setupWakeupScene(whiteFade));
         }
         
-        public IEnumerator<float> setupWakeupScene()
+        public IEnumerator<float> setupWakeupScene(bool whiteFade)
         {
             yield return 0f;
-            UIManager.Instance.fadeScreen(false, 0.5f, false);
+            UIManager.Instance.fadeScreen(false, 0.5f, whiteFade);
             yield return Timing.WaitForSeconds(0.5f);
 
             SceneManager.LoadScene("AmyRoom");
@@ -938,6 +1019,8 @@ namespace Amy
                 yield return 0f;
             }
 
+            randomizeDayEvents();
+
             if (currentCharacter == PlayableCharacter.Amy)
                 GameObject.Instantiate(GameManager.Instance.systemData.Cutscene_AmyWakeup);
 
@@ -946,7 +1029,7 @@ namespace Amy
 
             yield return Timing.WaitForSeconds(0.5f);
 
-            UIManager.Instance.fadeScreen(true, 3.0f);
+            UIManager.Instance.fadeScreen(true, 3.0f, whiteFade);
         }
 
         public void characterSwitch(PlayableCharacter newChar)

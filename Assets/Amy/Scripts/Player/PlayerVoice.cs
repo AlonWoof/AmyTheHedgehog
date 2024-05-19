@@ -45,6 +45,7 @@ namespace Amy
                 voiceSource = inst.AddComponent<AudioSource>();
                 voiceSource.outputAudioMixerGroup = GameManager.Instance.systemData.AUDIO_Group_Voice;
                 voiceSource.spatialBlend = 0.0f;
+                voiceSource.priority = 1;
             }
     	}
 

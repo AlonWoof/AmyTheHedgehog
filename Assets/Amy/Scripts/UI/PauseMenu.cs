@@ -44,9 +44,6 @@ namespace Amy
 		public Color unavailableColor;
 
 		public AudioSource sfx;
-		public AudioClip moveSound;
-		public AudioClip pauseSound;
-		public AudioClip confirmSound;
 
 		int currentChoice = 0;
 
@@ -84,7 +81,7 @@ namespace Amy
 					{
 						pauseText.SetActive(true);
 						optionsScreen.selectionDisabled = true;
-						sfx.PlayOneShot(pauseSound);
+						sfx.PlayOneShot(GameManager.Instance.systemData.AUDIO_pauseSound);
 						updateAvailibility();
 						currentChoice = 0;
 					}
@@ -178,7 +175,7 @@ namespace Amy
 			{
 				currentChoice--;
 				//selectSound.Play();
-				sfx.PlayOneShot(moveSound);
+				sfx.PlayOneShot(GameManager.Instance.systemData.AUDIO_selectSound);
 				clampValues();
 
 				//Skiparoo
@@ -194,7 +191,7 @@ namespace Amy
 			{
 				currentChoice++;
 				//selectSound.Play();
-				sfx.PlayOneShot(moveSound);
+				sfx.PlayOneShot(GameManager.Instance.systemData.AUDIO_selectSound);
 				clampValues();
 
 				//Skiparoo
@@ -252,12 +249,11 @@ namespace Amy
 					inOptionsMenu = true;
 					break;
 				case PauseMenuChoices.Exit:
-					SaveGame.writeSaveGame(0);
-					Application.Quit();
+					SaveGame.writeSaveGame(PlayerManager.Instance.saveFileSlot);
+					GameManager.Instance.loadScene("Title");
 					break;
 			}
-
-			sfx.PlayOneShot(confirmSound);
+			sfx.PlayOneShot(GameManager.Instance.systemData.AUDIO_confirmSound);
 		}
 
 		public IEnumerator<float> doScreenshot()

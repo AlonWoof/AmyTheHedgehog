@@ -150,7 +150,7 @@ namespace Amy
 
 				if (!mPlayer.isOnGround && knockPower < 0.1f)
 				{
-					//mPlayer.isBallMode = false;
+					mPlayer.isBallMode = false;
 					mPlayer.changeCurrentMode(PlayerModes.NORMAL);
 					mAnimator.Play("Hurt_Land");
 

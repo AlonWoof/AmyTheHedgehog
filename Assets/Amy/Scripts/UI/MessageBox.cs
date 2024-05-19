@@ -36,6 +36,9 @@ namespace Amy
     [System.Serializable]
     public class Message
     {
+
+
+
         //TODO: Make a Talker class
         public Talker mTalker;
 
@@ -62,11 +65,11 @@ namespace Amy
         [Range(0, 3)]
         public float voice_pitch = 1.0f;
 
-        public UnityEvent onStartMessage;
-        public UnityEvent onEndMessage;
+        public UnityEvent onStartMessage = new UnityEvent();
+        public UnityEvent onEndMessage = new UnityEvent();
 
-        public UnityEvent onStartPrint;
-        public UnityEvent onEndPrint;
+        public UnityEvent onStartPrint = new UnityEvent();
+        public UnityEvent onEndPrint = new UnityEvent();
     }
 
 

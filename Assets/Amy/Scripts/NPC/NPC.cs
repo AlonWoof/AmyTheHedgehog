@@ -17,6 +17,7 @@ namespace Amy
 
         public Talker tk;
 
+        public Transform headNode;
         public ActorLookAtController lookAt;
         public NPCPath path;
         public float lookAtRange = 4.0f;
@@ -30,6 +31,25 @@ namespace Amy
             if(!path)
                 path = transform.parent.GetComponentInChildren<NPCPath>();
 
+            if(!headNode)
+            {
+                foreach(Transform t in GetComponentsInChildren<Transform>())
+                {
+                    if(t.gameObject.name.ToLower().Contains("head"))
+                    {
+                        headNode = t;
+                    }
+                }
+
+                if(!headNode)
+                {
+                    GameObject inst = new GameObject("head");
+                    inst.transform.SetParent(transform);
+                    inst.transform.position = transform.position;
+                    inst.transform.rotation = transform.rotation;
+                    headNode = inst.transform;
+                }
+            }
         }
 
     	// Update is called once per frame

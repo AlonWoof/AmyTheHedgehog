@@ -100,14 +100,13 @@ GameObject:
   - component: {fileID: 6520535683780218671}
   - component: {fileID: 6520535683780218670}
   - component: {fileID: 6520535683780218665}
-  - component: {fileID: -455483770133401202}
   - component: {fileID: 2483668793535028766}
   - component: {fileID: 7038962225856234440}
   - component: {fileID: 7265809207692442912}
   - component: {fileID: 1649371796451110305}
   - component: {fileID: 3506287731683836181}
-  - component: {fileID: 7241689114789361123}
-  - component: {fileID: 6962288882581888405}
+  - component: {fileID: 3616527547035537784}
+  - component: {fileID: 7633045533533576975}
   m_Layer: 0
   m_Name: CAMERA_MAIN
   m_TagString: MainCamera
@@ -156,7 +155,7 @@ Camera:
     width: 1
     height: 1
   near clip plane: 0.1
-  far clip plane: 1024
+  far clip plane: 5000
   field of view: 60.000004
   orthographic: 0
   orthographic size: 5
@@ -217,23 +216,6 @@ MonoBehaviour:
   m_CameraActivatedEvent:
     m_PersistentCalls:
       m_Calls: []
---- !u!114 &-455483770133401202
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6520535683780218669}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f8672b359c4940841ba606b72d62aa30, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  resWidth: 1920
-  resHeight: 1080
-  enlarge: 2
-  transparent: 0
-  screenshotKey: 289
 --- !u!124 &2483668793535028766
 Behaviour:
   m_ObjectHideFlags: 0
@@ -430,7 +412,7 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
---- !u!65 &7241689114789361123
+--- !u!65 &3616527547035537784
 BoxCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -441,9 +423,9 @@ BoxCollider:
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 0.1, y: 0.1, z: 0.1}
+  m_Size: {x: 0.0001, y: 0.0001, z: 0.0001}
   m_Center: {x: 0, y: 0, z: 0}
---- !u!54 &6962288882581888405
+--- !u!54 &7633045533533576975
 Rigidbody:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}

@@ -1,0 +1,41 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+//////////////////////////////////////
+//         2023 AlonWoof            //
+//////////////////////////////////////
+
+namespace Amy
+{
+
+	public class SleepAction : MonoBehaviour
+	{
+	    // Start is called before the first frame update
+	    void Start()
+	    {
+	        
+	    }
+	
+	    // Update is called once per frame
+	    void Update()
+	    {
+	        
+	    }
+
+
+		public void goToSleep()
+        {
+			GameManager.Instance.cutsceneMode = true;
+			GameManager.Instance.disableInput();
+
+			if (PlayerManager.Instance.currentCharacter == PlayableCharacter.Amy)
+				PlayerManager.Instance.currentCharacter = PlayableCharacter.Cream;
+			else if (PlayerManager.Instance.currentCharacter == PlayableCharacter.Cream)
+				PlayerManager.Instance.currentCharacter = PlayableCharacter.Amy;
+
+
+			PlayerManager.Instance.wakeupScene();	
+        }
+	}
+}

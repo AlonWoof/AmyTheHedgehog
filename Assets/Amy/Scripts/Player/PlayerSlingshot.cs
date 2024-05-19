@@ -262,7 +262,7 @@ namespace Amy
 				{
 					d.hurtsEnemy = true;
 					d.hurtsPlayer = false;
-					d.damageAmount = 10.0f;
+					d.damageAmount = mPlayer.getStatus().baseMeleeDamage;
 				}
             }
 

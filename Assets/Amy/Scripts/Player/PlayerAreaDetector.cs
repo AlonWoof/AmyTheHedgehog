@@ -148,9 +148,42 @@ namespace Amy
 			if (closestActivatible)
 			{
 				mPlayer.lookAt(closestActivatible.transform.position);
-				UIManager.Instance.contextButton.setActionText(closestActivatible.interactionLabel);
+
+				if(mPlayer.interactTimeout <= 0.0f)
+					UIManager.Instance.contextButton.setActionText(closestActivatible.interactionLabel);
 			}
 		}
+
+		public bool isVisibleToNPC(float range = 30.0f)
+        {
+			foreach(NPC n in FindObjectsOfType<NPC>())
+            {
+				Vector3 dir = Helper.getHorizontalDirectionTo(n.transform.position, transform.position);
+
+				if (Vector3.Dot(n.transform.forward, dir) > 0.8f)
+				{
+					float dst = Vector3.Distance(n.transform.position, transform.position);
+
+					if (dst < range)
+					{
+						Vector3 start = n.headNode.transform.position;
+						Vector3 end = transform.position + Vector3.up * 0.5f;
+
+						RaycastHit hitInfo = new RaycastHit();
+
+						if (Physics.Linecast(start, end, out hitInfo))
+						{
+							if (hitInfo.collider.gameObject == gameObject)
+							{
+								return true;
+							}
+						}
+					}
+				}
+            }
+
+			return false;
+        }
 
 		public void refreshClosestEnemy()
         {

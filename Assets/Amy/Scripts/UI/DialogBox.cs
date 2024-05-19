@@ -17,7 +17,7 @@ namespace Amy
 		public Text myText;
 		public int textProgress = 0;
 		public string fullText;
-		public float delay = 0.03f;
+		public float delay = 0.02f;
 
 		const float speed_fast = 0.01f;
 		const float speed_mid = 0.02f;
@@ -52,6 +52,27 @@ namespace Amy
 			}
         }
 
+		public CoroutineHandle showMessageBox(string[] str)
+		{
+			Message m = new Message();
+			m.messages.Clear();
+
+			foreach (string s in str)
+			{
+				m.messages.Add(s);
+			}
+
+			return showMessageBox(m);
+		}
+
+		public CoroutineHandle showMessageBox(string str)
+        {
+			Message m = new Message();
+			m.messages.Clear();
+			m.messages.Add(str);
+
+			return showMessageBox(m);
+        }
 		public CoroutineHandle showMessageBox(Message msg)
 		{
 			return Timing.RunCoroutine(doMessage(msg));
@@ -67,7 +88,7 @@ namespace Amy
 			mAnimator.Play("Appear");
 			yield return Timing.WaitForSeconds(0.5f);
 
-			msg.onStartMessage.Invoke();
+			msg.onStartMessage?.Invoke();
 
 			foreach (string str in msg.messages)
             {
@@ -87,7 +108,9 @@ namespace Amy
 			yield return Timing.WaitForSeconds(0.1f);
 
 			mAnimator.Play("Disappear");
-			msg.onEndMessage.Invoke();
+
+			if (msg.onEndMessage != null)
+				msg.onEndMessage.Invoke();
 
 			yield return Timing.WaitForSeconds(0.2f);
 

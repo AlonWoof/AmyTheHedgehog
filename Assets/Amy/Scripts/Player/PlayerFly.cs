@@ -63,6 +63,7 @@ namespace Amy
 			start_altitude = transform.position.y;
 
 			mRigidBody.velocity = Vector3.Lerp(mRigidBody.velocity, Vector3.zero, 0.5f);
+			mRigidBody.velocity = Vector3.up * 3.0f;
 
 			fly_left = max_fly;
 			mAnimator.CrossFade("Fly_Basic", 0.25f);

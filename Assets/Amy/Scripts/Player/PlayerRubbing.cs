@@ -27,7 +27,8 @@ namespace Amy
         {
 			Main,
 			Close,
-			Cum
+			Cum,
+			Caught
         }
 
 		MasturbationPhase phase = MasturbationPhase.Main;
@@ -108,8 +109,10 @@ namespace Amy
 
 		public IEnumerator<float> cancelCaught()
         {
-			mAnimator.CrossFade("Idle", 0.2f);
-			yield return Timing.WaitForSeconds(0.1f);
+			mAnimator.Play("Hazukashii");
+			yield return Timing.WaitForSeconds(1.0f);
+
+			mAnimator.CrossFade("Idle", 0.25f);
 			mPlayer.changeCurrentMode(PlayerModes.NORMAL);
 		}
 
@@ -123,14 +126,17 @@ namespace Amy
 			if (mPlayer.areaDetector.getNearbyActorCount() > 0)
 				return false;
 
+			if (mPlayer.areaDetector.isVisibleToNPC())
+				return false;
+
 			if (pstats.checkVibe(VibeType.Dirty) || 
 				pstats.checkVibe(VibeType.Scary))
 				return false;
 
-			if(pstats.checkStatusEffect(PlayerStatusFX.Scared) || 
-				pstats.checkStatusEffect(PlayerStatusFX.Dirty) || 
-				pstats.checkStatusEffect(PlayerStatusFX.RecentOrgasm))
-				return false;
+			//if(pstats.checkStatusEffect(PlayerStatusFX.Scared) || 
+			//	pstats.checkStatusEffect(PlayerStatusFX.Dirty) || 
+			//	pstats.checkStatusEffect(PlayerStatusFX.RecentOrgasm))
+			//	return false;
 
 
 
@@ -140,9 +146,18 @@ namespace Amy
 		// Update is called once per frame
 		void Update()
 	    {
+			if (phase == MasturbationPhase.Caught)
+				return;
+
+			if (phase == MasturbationPhase.Cum)
+				return;
+
+
 			PlayerStatus pstats = mPlayer.getStatus();
 
 			float healMult = mAnimator.GetFloat("animSpeed");
+
+
 
 			if(phase == MasturbationPhase.Main && timeTilOrgasm < 7.5f)
             {
@@ -172,6 +187,13 @@ namespace Amy
 				
 			}*/
 
+			if(mPlayer.areaDetector.isVisibleToNPC() && timeTilOrgasm > 0.1f)
+            {
+				phase = MasturbationPhase.Caught;
+				Timing.RunCoroutine(cancelCaught().CancelWith(gameObject));
+				return;
+			}
+
 			if (timeTilOrgasm < 0.0f)
             {
 
@@ -179,6 +201,7 @@ namespace Amy
 				pstats.currentHealth += pstats.maxHealth * 0.2f;
 				mPlayer.updateHealth();
 
+				phase = MasturbationPhase.Cum;
 				Timing.RunCoroutine(doOrgasm().CancelWith(gameObject));
             }
 

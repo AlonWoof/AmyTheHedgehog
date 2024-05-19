@@ -54,7 +54,7 @@ namespace Amy
         private void Awake()
         {
 			vCam = gameObject.AddComponent<CinemachineVirtualCamera>();
-            colMask = LayerMask.GetMask("Collision", "CameraCollision");
+            colMask = LayerMask.GetMask("Collision", "CameraCollision", "NonWalkable");
 
             Cursor.lockState = CursorLockMode.Locked;
             Cursor.visible = false;

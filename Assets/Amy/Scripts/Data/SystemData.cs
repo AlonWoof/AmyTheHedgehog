@@ -55,10 +55,15 @@ namespace Amy
         public GameObject RES_SpikesHitFX;
 
         [Header("UI")]
+
         public GameObject RES_userInterface;
         public GameObject RES_RingBankTransferScene;
         public GameObject RES_ReduceMoneyScene;
         public GameObject RES_NowSaving;
+        public AudioClip AUDIO_pauseSound;
+        public AudioClip AUDIO_confirmSound;
+        public AudioClip AUDIO_selectSound;
+        public AudioClip AUDIO_cancelSound;
 
         [Header("Audio")]
 

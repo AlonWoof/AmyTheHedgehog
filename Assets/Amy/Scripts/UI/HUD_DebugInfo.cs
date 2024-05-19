@@ -200,6 +200,8 @@ namespace Amy
 				"\n Y: " + player.speed.y +
 				"\n Z: " + player.speed.z + "\n\n";
 
+			dbgstr += "Idle Timer: " + player.modeBasic.idleCounter + "\n\n";
+
 
 			dbgstr += "isOnGround: " + player.isOnGround + "\n";
 			dbgstr += "isSliding: " + player.isSliding + "\n";

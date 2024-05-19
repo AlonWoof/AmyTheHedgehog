@@ -16,9 +16,6 @@ namespace Amy
         bool isWaterDeath = false;
         PlayerHurt hurt;
 
-        public float knockPower = 0.0f;
-        public Vector3 knockOrigin;
-
         public enum DeathType
         {
             Normal,
@@ -136,7 +133,7 @@ namespace Amy
             {
                 if (hitInfo.collider.GetComponentInChildren<FallingKillPlane>())
                 {
-                    knockPower *= 0.95f;
+                    hurt.knockPower *= 0.5f;
 
                     Debug.DrawLine(start, end, Color.red, 10.0f);
                 }
