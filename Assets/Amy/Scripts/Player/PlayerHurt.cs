@@ -1,7 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.InputSystem;
 
 //////////////////////////////////////
 //         2023 AlonWoof            //
@@ -69,8 +68,6 @@ namespace Amy
 			mPlayer.setAngleInstantly(dir.normalized);
 
 			mAnimator.Play("Hurt");
-
-			GameManager.Instance.controllerRumble(1.0f, 1.0f, 1.0f);
 		}
 
 		// Update is called once per frame

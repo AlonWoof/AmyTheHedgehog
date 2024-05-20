@@ -4,7 +4,6 @@ using UnityEngine;
 using MEC;
 using UnityEngine.Audio;
 using UnityEngine.SceneManagement;
-using UnityEngine.InputSystem;
 
 
 /* Copyright 2022 Jennifer Haden */
@@ -64,8 +63,6 @@ namespace Amy
 
         bool[] analogStickState;
         bool[] analogStickFirstFrame;
-
-
 
         AudioSource bgmSource;
         AudioSource systemSoundSource;
@@ -171,6 +168,7 @@ namespace Amy
 
             return inst.GetComponent<Camera>();
         }
+
         
 
         public void changeCameraBlendMode(blend_mode mode)
@@ -384,34 +382,6 @@ namespace Amy
             }
 
             setAnalogPressedFlags();
-        }
-
-        public void controllerRumble(float time, float power_left, float power_right)
-        {
-            Timing.RunCoroutine(doControllerRumble(time, power_left, power_right).CancelWith(gameObject), Segment.RealtimeUpdate);
-        }
-
-        IEnumerator<float> doControllerRumble(float time, float power_left, float power_right)
-        {
-            float maxTime = time;
-            Gamepad.current.SetMotorSpeeds(power_left, power_right);
-
-            while(time > 0.0f)
-            {
-                float fac = time / maxTime;
-                float pl = Mathf.Lerp(power_left, 0.0f, fac);
-                float pr = Mathf.Lerp(power_right, 0.0f, fac);
-
-                Gamepad.current.SetMotorSpeeds(pl, pr);
-                Debug.Log("VIB LEFT: " + pl + " RIGHT: " + pr);
-
-                time -= Time.unscaledDeltaTime;
-                yield return 0f;
-            }
-
-            Gamepad.current.SetMotorSpeeds(0.0f, 0.0f);
-
-            yield return 0f;
         }
 
         void setAnalogPressedFlags()

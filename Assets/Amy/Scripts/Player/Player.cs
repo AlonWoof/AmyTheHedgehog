@@ -1334,7 +1334,7 @@ namespace Amy
 			acceleration *= 0.8f;
 			acceleration.y = jumpPower;
 			mAnimator.Play("Jump");
-			mAnimator.Play("Mouth_Jump");
+			//mAnimator.Play("Mouth_Jumping");
 			getStatus().currentStamina -= jumpStaimaCost;
 			getStatus().clampValues();
 
@@ -1366,8 +1366,7 @@ namespace Amy
 			isHammerJumping = true;
 			getStatus().currentStamina -= hammerJumpStaimaCost;
 			getStatus().clampValues();
-			GameManager.Instance.controllerRumble(0.5f, 1.0f, 1.0f);
-			mAnimator.Play("Mouth_Jump");
+			//mAnimator.Play("Mouth_Jumping");
 			mVoice.playVoiceDelayed(Random.Range(0.05f, 0.1f), mVoice.altJumping);
 			spawnFX(GameManager.Instance.systemData.RES_AmyPlayerFX.fx_basicJump, transform.position);
 			spawnFX(GameManager.Instance.systemData.RES_AmyPlayerFX.fx_pikoHammerJump, transform.position + transform.forward + Vector3.up * 0.2f);
@@ -1403,7 +1402,6 @@ namespace Amy
 			if (fx_hammerTrail)
 				fx_hammerTrail.enableFX();
 
-			mAnimator.Play("Mouth_Jump");
 			mVoice.playVoiceDelayed(Random.Range(0.05f, 0.1f), mVoice.groundAttack, true);
 
 
@@ -1437,7 +1435,6 @@ namespace Amy
 
 			//acceleration = Vector3.zero;
 
-			mAnimator.Play("Mouth_Jump");
 			mAnimator.Play("RunningGroundAttack");
 			isHammerSpin = true;
 			isAttacking = true;
@@ -1502,7 +1499,6 @@ namespace Amy
 			if (isAttacking)
 				return;
 
-
 			mAnimator.Play("AirAttack");
 			isHammerSpin = true;
 			isAttacking = true;
@@ -1519,7 +1515,7 @@ namespace Amy
 			if (fx_hammerTrail)
 				fx_hammerTrail.enableFX();
 
-			mAnimator.Play("Mouth_Jump");
+			//mAnimator.Play("Mouth_Jumping");
 			mVoice.playVoiceDelayed(Random.Range(0.05f, 0.1f), mVoice.airAttack, true);
 			//spawnFX(GameManager.Instance.systemData.RES_AmyPlayerFX.fx_basicJump, transform.position);
 			//spawnFX(GameManager.Instance.systemData.RES_AmyPlayerFX.fx_pikoHammerJump, transform.position + transform.forward + Vector3.up * 0.2f);
