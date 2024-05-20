@@ -17,6 +17,7 @@ namespace Amy
 		public GameObject cam1;
 		public GameObject cam2;
 		public GameObject cam3;
+		public GameObject cam3_alt;
 		public GameObject cam4;
 
 		public AudioSource amyVoice;
@@ -24,11 +25,12 @@ namespace Amy
 		public AudioClip amy_are;
 		public AudioClip amy_thinking;
 		public AudioClip amy_nakedKya;
+		public AudioClip amy_thinking2;
 		public AudioClip amy_kokodoko;
 
 		// Start is called before the first frame update
 		void Start()
-	    {
+		{
 			playCutscene();
 			mPlayer = PlayerManager.Instance.getPlayer();
 		}
@@ -44,6 +46,7 @@ namespace Amy
 			cam1.SetActive(false);
 			cam2.SetActive(false);
 			cam3.SetActive(false);
+			cam3_alt.SetActive(false);
 			cam4.SetActive(false);
 
 			if (mPlayer)
@@ -69,10 +72,10 @@ namespace Amy
 			amyVoice.PlayOneShot(amy_are);
 			CoroutineHandle msg = UIManager.Instance.messageBox.showMessageBox("Huh...? Where am I...?");
 
-			while(msg.IsRunning)
-            {
+			while (msg.IsRunning)
+			{
 				yield return 0f;
-            }
+			}
 
 			amyAnimator.CrossFade("LookUp", 0.25f);
 			yield return Timing.WaitForSeconds(0.5f);
@@ -107,6 +110,7 @@ namespace Amy
 				cam3.SetActive(true);
 				amyAnimator.Play("Hazukashii");
 				amyVoice.PlayOneShot(amy_nakedKya);
+				UIManager.Instance.messageBox.setMessageBoxSpeed(DialogBox.speed_fast * 0.5f);
 				msg = UIManager.Instance.messageBox.showMessageBox("WHY AM I NAKED?!?!");
 
 				while (msg.IsRunning)
@@ -116,8 +120,26 @@ namespace Amy
 
 				yield return Timing.WaitForSeconds(0.5f);
 
+				UIManager.Instance.messageBox.setMessageBoxSpeed(DialogBox.speed_mid);
 				amyAnimator.CrossFade("Idle", 0.5f);
 				msg = UIManager.Instance.messageBox.showMessageBox("...I guess that's not important right now.");
+
+				while (msg.IsRunning)
+				{
+					yield return 0f;
+				}
+
+				yield return Timing.WaitForSeconds(0.5f);
+			}
+			else
+			{
+				cam2.SetActive(false);
+				cam3_alt.SetActive(true);
+				amyAnimator.Play("NoGloves");
+				amyVoice.PlayOneShot(amy_thinking2);
+				amyAnimator.Play("word_are");
+
+				msg = UIManager.Instance.messageBox.showMessageBox("Where did my boots and gloves go?\n I'm even more naked than usual...");
 
 				while (msg.IsRunning)
 				{
@@ -135,7 +157,7 @@ namespace Amy
 
 			yield return Timing.WaitForSeconds(0.5f);
 
-
+			UIManager.Instance.messageBox.setMessageBoxSpeed(DialogBox.speed_mid);
 			msg = UIManager.Instance.messageBox.showMessageBox("...I need to figure out just\nwhere the heck I am.");
 
 			yield return Timing.WaitForSeconds(0.5f);
@@ -154,25 +176,25 @@ namespace Amy
 			yield return Timing.WaitForSeconds(0.5f);
 
 			endCutscene();
-			
+
 		}
 
 
 		public override void endCutscene()
-        {
+		{
 			base.endCutscene();
 			GameManager.Instance.loadScene("Jungle");
 		}
 
-        private void LateUpdate()
-        {
+		private void LateUpdate()
+		{
 			if (mPlayer)
 				mPlayer.transform.position = Vector3.up * 10000.0f;
 
 			GameManager.Instance.cutsceneMode = true;
 			GameManager.Instance.disableInput();
-        }
+		}
 
 
-    }
+	}
 }

@@ -80,6 +80,7 @@ namespace Amy
 
         private void LateUpdate()
         {
+
            // transform.rotation = Quaternion.Lerp(transform.rotation, Quaternion.LookRotation(mDirection, Vector3.up), Time.deltaTime * rotationSpeed);
         }
 
