@@ -17,6 +17,10 @@ namespace Amy
 		public GameObject cam1;
 		public GameObject cam2;
 		public GameObject cam3;
+<<<<<<< Updated upstream
+=======
+		public GameObject cam3_alt;
+>>>>>>> Stashed changes
 		public GameObject cam4;
 
 		public AudioSource amyVoice;
@@ -24,6 +28,10 @@ namespace Amy
 		public AudioClip amy_are;
 		public AudioClip amy_thinking;
 		public AudioClip amy_nakedKya;
+<<<<<<< Updated upstream
+=======
+		public AudioClip amy_thinking2;
+>>>>>>> Stashed changes
 		public AudioClip amy_kokodoko;
 
 		// Start is called before the first frame update
@@ -44,6 +52,10 @@ namespace Amy
 			cam1.SetActive(false);
 			cam2.SetActive(false);
 			cam3.SetActive(false);
+<<<<<<< Updated upstream
+=======
+			cam3_alt.SetActive(false);
+>>>>>>> Stashed changes
 			cam4.SetActive(false);
 
 			if (mPlayer)
@@ -107,6 +119,10 @@ namespace Amy
 				cam3.SetActive(true);
 				amyAnimator.Play("Hazukashii");
 				amyVoice.PlayOneShot(amy_nakedKya);
+<<<<<<< Updated upstream
+=======
+				UIManager.Instance.messageBox.setMessageBoxSpeed(DialogBox.speed_fast * 0.5f);
+>>>>>>> Stashed changes
 				msg = UIManager.Instance.messageBox.showMessageBox("WHY AM I NAKED?!?!");
 
 				while (msg.IsRunning)
@@ -116,6 +132,10 @@ namespace Amy
 
 				yield return Timing.WaitForSeconds(0.5f);
 
+<<<<<<< Updated upstream
+=======
+				UIManager.Instance.messageBox.setMessageBoxSpeed(DialogBox.speed_mid);
+>>>>>>> Stashed changes
 				amyAnimator.CrossFade("Idle", 0.5f);
 				msg = UIManager.Instance.messageBox.showMessageBox("...I guess that's not important right now.");
 
@@ -126,6 +146,26 @@ namespace Amy
 
 				yield return Timing.WaitForSeconds(0.5f);
 			}
+<<<<<<< Updated upstream
+=======
+			else
+            {
+				cam2.SetActive(false);
+				cam3_alt.SetActive(true);
+				amyAnimator.Play("NoGloves");
+				amyVoice.PlayOneShot(amy_thinking2);
+				amyAnimator.Play("word_are");
+				
+				msg = UIManager.Instance.messageBox.showMessageBox("Where did my boots and gloves go?\n I'm even more naked than usual...");
+
+				while (msg.IsRunning)
+				{
+					yield return 0f;
+				}
+
+				yield return Timing.WaitForSeconds(0.5f);
+			}
+>>>>>>> Stashed changes
 
 			amyAnimator.CrossFade("Idle", 0.5f);
 
@@ -135,7 +175,11 @@ namespace Amy
 
 			yield return Timing.WaitForSeconds(0.5f);
 
+<<<<<<< Updated upstream
 
+=======
+			UIManager.Instance.messageBox.setMessageBoxSpeed(DialogBox.speed_mid);
+>>>>>>> Stashed changes
 			msg = UIManager.Instance.messageBox.showMessageBox("...I need to figure out just\nwhere the heck I am.");
 
 			yield return Timing.WaitForSeconds(0.5f);

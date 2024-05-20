@@ -19,9 +19,9 @@ namespace Amy
 		public string fullText;
 		public float delay = 0.02f;
 
-		const float speed_fast = 0.01f;
-		const float speed_mid = 0.02f;
-		const float speed_slow = 0.04f;
+		public static float speed_fast = 0.01f;
+		public static float speed_mid = 0.02f;
+		public static float speed_slow = 0.04f;
 
 		// Start is called before the first frame update
 		void Start()
@@ -35,6 +35,11 @@ namespace Amy
 			//testInput();
 
 		}
+
+		public void setMessageBoxSpeed(float spd)
+        {
+			delay = spd;
+        }
 
 		void testInput()
         {
@@ -75,8 +80,16 @@ namespace Amy
         }
 		public CoroutineHandle showMessageBox(Message msg)
 		{
-			return Timing.RunCoroutine(doMessage(msg));
+			return Timing.RunCoroutine(doMessage(msg), gameObject);
         }
+
+		public void cancelMessage()
+        {
+			Timing.KillCoroutines(gameObject);
+			fullText = "";
+			text
+			mAnimator.Play("Disappear");
+		}
 
 		IEnumerator<float> doMessage(Message msg)
         {

@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using MEC;
+using UnityEngine.InputSystem;
 
 //////////////////////////////////////
 //         2024 AlonWoof            //
@@ -98,6 +99,8 @@ namespace Amy
 			mAnimator.Play("Rubbing_Cum");
 			yield return Timing.WaitForSeconds(2.5f);
 
+			GameManager.Instance.controllerRumble(1.0f, 1.0f, 1.0f);
+
 			mPlayer.getStatus().setStatusEffect(PlayerStatusFX.RecentOrgasm);
 			mPlayer.getStatus().recentOrgasmTimeLeft = Random.Range(Helper.minutesToSeconds(5), Helper.minutesToSeconds(10));
 			cunnyDripFX.SetActive(false);
@@ -105,6 +108,20 @@ namespace Amy
 			yield return Timing.WaitForSeconds(0.1f);
 			mPlayer.changeCurrentMode(PlayerModes.NORMAL);
 
+			yield return Timing.WaitForSeconds(Random.Range(3.0f, 6.0f));
+
+			int aftershock = Random.Range(2, 8);
+
+			while (aftershock > 0)
+			{
+				cunnyDripFX.SetActive(true);
+				GameManager.Instance.controllerRumble(0.5f, 0.05f, 0.06f);
+				aftershock--;
+				yield return Timing.WaitForSeconds(Random.Range(3.0f, 6.0f));
+				cunnyDripFX.SetActive(false);
+			}
+
+			cunnyDripFX.SetActive(false);
 		}
 
 		public IEnumerator<float> cancelCaught()
@@ -155,7 +172,9 @@ namespace Amy
 
 			PlayerStatus pstats = mPlayer.getStatus();
 
-			float healMult = mAnimator.GetFloat("animSpeed");
+			float healMult = mAnimator.GetFloat("animProgress");
+
+			Gamepad.current.SetMotorSpeeds(healMult, healMult);
 
 
 
