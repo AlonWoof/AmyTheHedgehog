@@ -22,6 +22,8 @@ namespace Amy
 
 		public int sceneHash;
 		public bool isFinished;
+
+		public static int SADX_NUDE = Animator.StringToHash("SADX_NUDE");
 	}
 
 	[System.Serializable]
@@ -186,7 +188,7 @@ namespace Amy
 
 			if(readSADXNudeModData())
             {
-				plman.setStoryFlag("SADX_NUDE", true);
+				plman.setStoryFlag(StoryFlag.SADX_NUDE, true);
             }
 		}
 
@@ -222,7 +224,6 @@ namespace Amy
 
 			writePlayerStatus(plman.AmyStatus, ref writer);
 			writePlayerStatus(plman.CreamStatus, ref writer);
-
 
 			writer.Write(plman.storyFlags.Count);
 
@@ -320,6 +321,16 @@ namespace Amy
 			writer.Write(pStats.recentOrgasmTimeLeft);
 			writer.Write(pStats.goodFoodTimeLeft);
 			writer.Write(pStats.timeSpentResting);
+
+			if (pStats.items == null)
+				pStats.items = new List<ItemData>();
+
+			writer.Write(pStats.items.Count);
+
+			foreach(ItemData i in pStats.items)
+            {
+				writer.Write(i.getHash()); 
+            }
 			
         }
 
@@ -332,6 +343,25 @@ namespace Amy
 			pStats.recentOrgasmTimeLeft = reader.ReadSingle();
 			pStats.goodFoodTimeLeft = reader.ReadSingle();
 			pStats.timeSpentResting = reader.ReadSingle();
+
+			if (pStats.items == null)
+				pStats.items = new List<ItemData>();
+
+			pStats.items.Clear();
+
+			int numItems = reader.ReadInt32();
+
+			if (numItems > 0)
+			{
+				for (int i = 0; i < numItems; i++)
+				{
+					ItemData d = ItemData.getItemData(reader.ReadInt32());
+
+					if(d != null)
+						pStats.items.Add(d);
+				}
+			}
+
 		}
 
 	}

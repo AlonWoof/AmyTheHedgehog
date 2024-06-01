@@ -122,7 +122,7 @@ namespace Amy
 
 		private void FixedUpdate()
         {
-			if (GameManager.Instance.gamePaused)
+			if (GameManager.Instance.gamePaused || PlayerManager.Instance.itemMenuOpen)
 				return;
 
 			calculateVerticalVelocity();
@@ -197,7 +197,7 @@ namespace Amy
 		// Update is called once per frame
 		void Update()
 	    {
-			if (GameManager.Instance.gamePaused)
+			if (GameManager.Instance.gamePaused || PlayerManager.Instance.itemMenuOpen)
 				return;
 
 			handleInput();

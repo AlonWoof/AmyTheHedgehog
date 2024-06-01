@@ -63,6 +63,7 @@ namespace Amy
 					{
 						isOn = true;
 						onActivate.Invoke();
+						GameManager.Instance.controllerRumble(0.2f, 0.1f, 0.1f);
 
 						mPlayer.acceleration *= 0.5f;
 

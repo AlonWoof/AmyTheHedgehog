@@ -269,6 +269,7 @@ namespace Amy
 
 			newPlayer.mAmyHammer = inst.GetComponentInChildren<AmyHammer>();
 
+
 			inst.AddComponent<WetFX>();
 			DirtFX dirt = inst.AddComponent<DirtFX>();
 			dirt.mChara = chara;
@@ -378,6 +379,7 @@ namespace Amy
 			mAnimator = GetComponent<Animator>();
 			mVoice = GetComponent<PlayerVoice>();
 			lookAtController = GetComponent<ActorLookAtController>();
+			biped = GetComponent<BipedIK>();
 		}
 
 		void getPlayerBones()
@@ -622,7 +624,7 @@ namespace Amy
 		void Update()
 		{
 
-			if (GameManager.Instance.gamePaused)
+			if (GameManager.Instance.gamePaused || PlayerManager.Instance.itemMenuOpen)
 				return;
 
 			float runAnimProgress = Mathf.Abs(acceleration.z);
@@ -875,7 +877,7 @@ namespace Amy
 
         private void LateUpdate()
         {
-			if (GameManager.Instance.gamePaused)
+			if (GameManager.Instance.gamePaused || PlayerManager.Instance.itemMenuOpen)
 				return;
 
 			doLeanAnimation();
@@ -887,13 +889,25 @@ namespace Amy
 		public void updateExpression()
         {
 			if (currentMode == PlayerModes.RUBBING)
+			{
 				mAnimator.Play("Face_Ecchi");
+			}
 			else if (currentMode == PlayerModes.HURT)
+			{
 				mAnimator.Play("Face_Itai");
-			else if(getStatus().checkStatusEffect(PlayerStatusFX.Scared) || currentMode == PlayerModes.KILLED)
+			}
+			else if (getStatus().checkStatusEffect(PlayerStatusFX.Scared) || currentMode == PlayerModes.KILLED)
+			{
 				mAnimator.Play("Face_Kowaii");
+			}
+			else if (getStatus().checkStatusEffect(PlayerStatusFX.Horny))
+			{
+				mAnimator.Play("Face_Horny");
+			}
 			else
+			{
 				mAnimator.Play("Face_Neutral");
+			}
 		}
 
 		public void updateEars()
@@ -1306,7 +1320,7 @@ namespace Amy
 			if (PlayerManager.Instance.isSmallRoom)
 				return false;
 
-			if (GameManager.Instance.playerInputDisabled || GameManager.Instance.gamePaused)
+			if (GameManager.Instance.playerInputDisabled || GameManager.Instance.gamePaused || PlayerManager.Instance.itemMenuOpen)
 				return false;
 
 			return true;
@@ -1366,7 +1380,7 @@ namespace Amy
 			isHammerJumping = true;
 			getStatus().currentStamina -= hammerJumpStaimaCost;
 			getStatus().clampValues();
-			GameManager.Instance.controllerRumble(0.5f, 1.0f, 1.0f);
+			GameManager.Instance.controllerRumble(0.2f, 0.6f, 0.6f);
 			mAnimator.Play("Mouth_Jump");
 			mVoice.playVoiceDelayed(Random.Range(0.05f, 0.1f), mVoice.altJumping);
 			spawnFX(GameManager.Instance.systemData.RES_AmyPlayerFX.fx_basicJump, transform.position);
@@ -1582,7 +1596,7 @@ namespace Amy
 				return;
 			}
 
-			if (GameManager.Instance.gamePaused)
+			if (GameManager.Instance.gamePaused || PlayerManager.Instance.itemMenuOpen)
 			{
 				clearActivatible();
 				return;
@@ -1639,7 +1653,7 @@ namespace Amy
 
 		public void checkForHammerJump()
         {
-			if (GameManager.Instance.playerInputDisabled || GameManager.Instance.gamePaused)
+			if (GameManager.Instance.playerInputDisabled || GameManager.Instance.gamePaused || PlayerManager.Instance.itemMenuOpen)
 				return;
 
 			if (acceleration.z < 5.3f)
@@ -1675,7 +1689,7 @@ namespace Amy
 
 		public void checkForGroundAttack()
         {
-			if (GameManager.Instance.playerInputDisabled || GameManager.Instance.gamePaused)
+			if (GameManager.Instance.playerInputDisabled || GameManager.Instance.gamePaused || PlayerManager.Instance.itemMenuOpen)
 				return;
 
 			if (acceleration.magnitude > 1.0f || !isOnGround)
@@ -1693,7 +1707,7 @@ namespace Amy
 
 		public void checkForRunningGroundAttack()
         {
-			if (GameManager.Instance.playerInputDisabled || GameManager.Instance.gamePaused)
+			if (GameManager.Instance.playerInputDisabled || GameManager.Instance.gamePaused || PlayerManager.Instance.itemMenuOpen)
 				return;
 
 			if (acceleration.magnitude < 1.0f || !isOnGround)
@@ -1714,7 +1728,7 @@ namespace Amy
 
 		public void checkForAirAttack()
         {
-			if (GameManager.Instance.playerInputDisabled || GameManager.Instance.gamePaused)
+			if (GameManager.Instance.playerInputDisabled || GameManager.Instance.gamePaused || PlayerManager.Instance.itemMenuOpen)
 				return;
 
 			if (PlayerManager.Instance.isSmallRoom)
@@ -1763,7 +1777,7 @@ namespace Amy
 
 		public void checkForFlying()
         {
-			if (GameManager.Instance.playerInputDisabled || GameManager.Instance.gamePaused)
+			if (GameManager.Instance.playerInputDisabled || GameManager.Instance.gamePaused || PlayerManager.Instance.itemMenuOpen)
 				return;
 
 			if (getAltitudeFromGround() > mParam.height && mChara == PlayableCharacter.Cream)
@@ -1780,7 +1794,7 @@ namespace Amy
 
 		public void checkForSlingshot()
         {
-			if (GameManager.Instance.playerInputDisabled || GameManager.Instance.gamePaused)
+			if (GameManager.Instance.playerInputDisabled || GameManager.Instance.gamePaused || PlayerManager.Instance.itemMenuOpen)
 				return;
 
 			if (Input.GetAxis("Shoot") < 0.5f)

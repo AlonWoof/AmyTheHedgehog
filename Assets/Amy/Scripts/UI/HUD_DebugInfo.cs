@@ -16,6 +16,7 @@ namespace Amy
 		PlayerInstance,
 		AmyStatus,
 		CreamStatus,
+		InventoryInfo,
 		SceneInfo,
 		EventInfo,
 		PageCount
@@ -85,6 +86,10 @@ namespace Amy
 
 				case DebugInfoPage.CreamStatus:
 					dbgstr += getPlayerStatus(PlayableCharacter.Cream);
+					break;
+
+				case DebugInfoPage.InventoryInfo:
+					dbgstr += getInventoryInfo();
 					break;
 
 				case DebugInfoPage.EventInfo:
@@ -212,6 +217,22 @@ namespace Amy
 			dbgstr += "framesAirborne: " + player.framesAirborne + "\n";
 			dbgstr += "hammerJumpCharge: " + player.hammerJumpCharge + "\n";
 			dbgstr += "canAirAttack: " + player.canAirAttack + "\n";
+
+			return dbgstr;
+		}
+
+		string getInventoryInfo()
+        {
+			player = PlayerManager.Instance.getPlayer();
+			PlayerStatus pstats = player.getStatus();
+
+			string dbgstr = "INVENTORY: \n\n";
+
+			foreach(ItemData i in pstats.items)
+            {
+				dbgstr += "   " + i.name + "\n";
+
+            }
 
 			return dbgstr;
 		}

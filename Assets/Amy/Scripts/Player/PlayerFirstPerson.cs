@@ -184,6 +184,9 @@ namespace Amy
 
             mAnimator.SetInteger("idleAnimation", 0);
 
+            mPlayer.tpc.disableCameraCollision();
+            mPlayer.biped.fixTransforms = false;
+
             if (mPlayer.lastMode != PlayerModes.SWIMMING)
                 mAnimator.CrossFade("Idle", 0.1f);
 
@@ -241,6 +244,8 @@ namespace Amy
             br.m_DefaultBlend.m_Style = CinemachineBlendDefinition.Style.Cut;
 
             mPlayer.changeCurrentMode(mPlayer.lastMode);
+            mPlayer.tpc.enableCameraCollision();
+            mPlayer.biped.fixTransforms = true;
 
             GameManager.Instance.playerInputDisabled = false;
             GameManager.Instance.cameraInputDisabled = false;

@@ -93,7 +93,6 @@ namespace Amy
 
             //GameManager.Instance.loadTitleScreen();
 
-            Application.targetFrameRate = Mathf.RoundToInt((float)Screen.currentResolution.refreshRate * 1.25f);
 
             //Override for the sake of my Steam Deck for now
             Application.targetFrameRate = 61;
@@ -144,7 +143,7 @@ namespace Amy
             analogStickFirstFrame = new bool[8];
 
             #if !UNITY_EDITOR
-            loadScene("Title");
+            loadTitleScreen();
             #endif
 
             //loadScene(UnityEngine.SceneManagement.SceneManager.GetActiveScene().name);
@@ -306,6 +305,9 @@ namespace Amy
             if(!PlayerManager.Instance.mPlayerInstance)
                 return false;
 
+            if (PlayerManager.Instance.itemMenuOpen)
+                return false;
+
             return true;
         }
 
@@ -349,6 +351,15 @@ namespace Amy
                 PlayerStatus pstats = PlayerManager.Instance.getCurrentPlayerStatus();
                 pstats.currentHealth = pstats.maxHealth;
                 pstats.currentStamina = pstats.maxStamina;
+            }
+
+            //ALL the things
+            if (Input.GetKeyDown(KeyCode.F9))
+            {
+                foreach(ItemData i in systemData.itemData)
+                {
+                    PlayerManager.Instance.mPlayerInstance.getStatus().addItem(i.getHash());
+                }
             }
 
             //Emergency exit key
@@ -512,6 +523,7 @@ namespace Amy
             yield return Timing.WaitForSeconds(delay);
 
             gamePaused = false;
+            PlayerManager.Instance.itemMenuOpen = false;
             playerInputDisabled = true;
             cameraInputDisabled = true;
             isLoading = true;

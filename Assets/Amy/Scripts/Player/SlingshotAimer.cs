@@ -48,7 +48,7 @@ namespace Amy
 
 			homePosWorld = slingshot_sling.transform.parent.TransformPoint(localHomePos);
 
-			if (GameManager.Instance.gamePaused)
+			if (GameManager.Instance.gamePaused || PlayerManager.Instance.itemMenuOpen)
 				vCam.enabled = false;
 			else
 				vCam.enabled = true;

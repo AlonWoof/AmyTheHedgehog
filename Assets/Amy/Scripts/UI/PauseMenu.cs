@@ -26,12 +26,11 @@ namespace Amy
 		public string label;
 		public PauseMenuChoices choice;
 		public bool isAvailable = true;
+		public bool isVisible = true;
     }
 
 	public class PauseMenu : MonoBehaviour
 	{
-
-
 
 		public GameObject pauseText;
 		public CanvasGroup pauseMenuGroup;
@@ -50,6 +49,8 @@ namespace Amy
 		bool selectionDisabled = false;
 		bool inOptionsMenu = false;
 
+		const int defaultSize = 8;
+
 	    // Start is called before the first frame update
 	    void Start()
 	    {
@@ -65,7 +66,7 @@ namespace Amy
 	    void Update()
 	    {
 
-			if (GameManager.Instance.gamePaused)
+			if (GameManager.Instance.gamePaused )
 			{
 
 				if (Input.GetButton("Select") || !UIManager.Instance.hudEnabled || inOptionsMenu)
@@ -137,7 +138,15 @@ namespace Amy
                 {
 					if(!PlayerManager.Instance.getPlayer().canWarp())
 						entry.isAvailable = false;
+
+					if (PlayerManager.Instance.isPrologue)
+						entry.isVisible = false;
+					else
+						entry.isVisible = true;
                 }
+
+				if (!entry.isVisible)
+					entry.isAvailable = false;
             }
         }
 
@@ -227,6 +236,17 @@ namespace Amy
 					t.color = unavailableColor;
 				else
 					t.color = defaultColor;
+
+				if (menuEntry[i].isVisible && !t.gameObject.activeInHierarchy)
+				{
+					t.gameObject.SetActive(true);
+					t.rectTransform.sizeDelta = new Vector2(t.rectTransform.sizeDelta.x, defaultSize);
+				}
+				else if (!menuEntry[i].isVisible && t.gameObject.activeInHierarchy)
+				{
+					t.gameObject.SetActive(false);
+					t.rectTransform.sizeDelta = new Vector2(t.rectTransform.sizeDelta.x, 0);
+				}
 			}
 
 			menuText[currentChoice].transform.localScale = Vector3.Lerp(menuText[currentChoice].transform.localScale, Vector3.one * 1.2f, 0.25f);
@@ -250,7 +270,7 @@ namespace Amy
 					break;
 				case PauseMenuChoices.Exit:
 					SaveGame.writeSaveGame(PlayerManager.Instance.saveFileSlot);
-					GameManager.Instance.loadScene("Title");
+					GameManager.Instance.loadTitleScreen();
 					break;
 			}
 			sfx.PlayOneShot(GameManager.Instance.systemData.AUDIO_confirmSound);

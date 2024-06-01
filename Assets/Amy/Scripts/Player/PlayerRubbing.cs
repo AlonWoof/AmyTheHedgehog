@@ -102,6 +102,15 @@ namespace Amy
 			GameManager.Instance.controllerRumble(1.0f, 1.0f, 1.0f);
 
 			mPlayer.getStatus().setStatusEffect(PlayerStatusFX.RecentOrgasm);
+
+			float effectTime = Helper.minutesToSeconds(5);
+
+			//Really hit the spot <3
+			if (mPlayer.getStatus().checkStatusEffect(PlayerStatusFX.Horny))
+				effectTime = Helper.minutesToSeconds(10);
+
+			mPlayer.getStatus().unSetStatusEffect(PlayerStatusFX.Horny);
+
 			mPlayer.getStatus().recentOrgasmTimeLeft = Random.Range(Helper.minutesToSeconds(5), Helper.minutesToSeconds(10));
 			cunnyDripFX.SetActive(false);
 			mAnimator.CrossFade("Idle", 0.2f);
@@ -129,6 +138,8 @@ namespace Amy
 			mAnimator.Play("Hazukashii");
 			yield return Timing.WaitForSeconds(1.0f);
 
+			mPlayer.getStatus().setStatusEffect(PlayerStatusFX.Horny);
+
 			mAnimator.CrossFade("Idle", 0.25f);
 			mPlayer.changeCurrentMode(PlayerModes.NORMAL);
 		}
@@ -150,12 +161,16 @@ namespace Amy
 				pstats.checkVibe(VibeType.Scary))
 				return false;
 
-			//if(pstats.checkStatusEffect(PlayerStatusFX.Scared) || 
-			//	pstats.checkStatusEffect(PlayerStatusFX.Dirty) || 
-			//	pstats.checkStatusEffect(PlayerStatusFX.RecentOrgasm))
-			//	return false;
+			if(pstats.checkStatusEffect(PlayerStatusFX.Scared) || 
+				pstats.checkStatusEffect(PlayerStatusFX.Dirty) || 
+				pstats.checkStatusEffect(PlayerStatusFX.RecentOrgasm))
+				return false;
 
+			if (pstats.checkStatusEffect(PlayerStatusFX.Horny))
+				return true;
 
+			if (PlayerManager.Instance.todayEvents.luckyNumber % 3 != 0)
+				return false;
 
 			return true;
         }

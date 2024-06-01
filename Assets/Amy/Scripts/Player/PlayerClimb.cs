@@ -36,7 +36,7 @@ namespace Amy
 			if (!currentLadder)
 				return;
 
-			if (GameManager.Instance.gamePaused)
+			if (GameManager.Instance.gamePaused || PlayerManager.Instance.itemMenuOpen)
 				return;
 
 			handleInput();

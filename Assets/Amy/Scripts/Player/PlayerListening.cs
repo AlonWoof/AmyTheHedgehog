@@ -59,7 +59,7 @@ namespace Amy
 
 		private void FixedUpdate()
 		{
-			if (GameManager.Instance.gamePaused)
+			if (GameManager.Instance.gamePaused || PlayerManager.Instance.itemMenuOpen)
 				return;
 
 			mPlayer.CalcVerticalVelocity();

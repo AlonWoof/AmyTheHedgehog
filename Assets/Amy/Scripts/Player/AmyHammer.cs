@@ -32,6 +32,9 @@ namespace Amy
 	    {
 			getBaseComponents();
 
+			if (!mPlayer)
+				return;
+
 			hammerNode = mPlayer.getBoneByName("weapon");
 
 			if (!hammerNode)
@@ -58,6 +61,10 @@ namespace Amy
 
         private void Update()
         {
+			if (!mPlayer)
+				return;
+
+			
 
 			currentScale = mPlayer.mAnimator.GetFloat("hammerScale");
 
@@ -120,6 +127,9 @@ namespace Amy
 
 		public void updateChargeFX()
         {
+			if (!mPlayer)
+				return;
+
 			if (mPlayer.hammerJumpCharge < 0.01f)
 			{
 				chargeFXCurrentOpacity = Mathf.Lerp(chargeFXCurrentOpacity, 0.0f, 0.15f);

@@ -4,7 +4,7 @@ using UnityEngine;
 using MEC;
 
 //////////////////////////////////////
-//         2023 AlonWoof            //
+//         2024 AlonWoof            //
 //////////////////////////////////////
 
 namespace Amy
@@ -54,7 +54,9 @@ namespace Amy
 				mPlayer.transform.position = Vector3.up * 1000000.0f;
 			}
 
-			yield return Timing.WaitForSeconds(11.0f);
+			yield return Timing.WaitForSeconds(10.5f);
+			amyAnimator.Play("Face_WakeUp");
+			yield return Timing.WaitForSeconds(0.5f);
 			amyVoice.volume = 0.15f;
 			amyVoice.PlayOneShot(amy_wakingUp);
 
@@ -70,7 +72,7 @@ namespace Amy
 			amyAnimator.Play("word_are");
 			amyVoice.volume = 0.5f;
 			amyVoice.PlayOneShot(amy_are);
-			CoroutineHandle msg = UIManager.Instance.messageBox.showMessageBox("Huh...? Where am I...?");
+			CoroutineHandle msg = UIManager.Instance.messageBox.showMessageBox("Huh...? Where am I...?", SpeakerProfile.Amy);
 
 			while (msg.IsRunning)
 			{
@@ -87,7 +89,7 @@ namespace Amy
 			yield return Timing.WaitForSeconds(1.0f);
 			amyAnimator.Play("word_jungle");
 			amyVoice.PlayOneShot(amy_thinking);
-			msg = UIManager.Instance.messageBox.showMessageBox("Some kind of jungle?");
+			msg = UIManager.Instance.messageBox.showMessageBox("Some kind of jungle?", SpeakerProfile.Amy);
 
 			while (msg.IsRunning)
 			{
@@ -97,7 +99,7 @@ namespace Amy
 			if (!SaveGame.readSADXNudeModData())
 			{
 				amyAnimator.Play("word_are");
-				msg = UIManager.Instance.messageBox.showMessageBox("...Also...");
+				msg = UIManager.Instance.messageBox.showMessageBox("...Also...", SpeakerProfile.Amy);
 
 				while (msg.IsRunning)
 				{
@@ -110,8 +112,9 @@ namespace Amy
 				cam3.SetActive(true);
 				amyAnimator.Play("Hazukashii");
 				amyVoice.PlayOneShot(amy_nakedKya);
+				UIManager.Instance.messageBox.setTextColorTint(SystemColors.AmyColor);
 				UIManager.Instance.messageBox.setMessageBoxSpeed(DialogBox.speed_fast * 0.5f);
-				msg = UIManager.Instance.messageBox.showMessageBox("WHY AM I NAKED?!?!");
+				msg = UIManager.Instance.messageBox.showMessageBox("WHY AM I NAKED?!?!", SpeakerProfile.Amy);
 
 				while (msg.IsRunning)
 				{
@@ -120,9 +123,10 @@ namespace Amy
 
 				yield return Timing.WaitForSeconds(0.5f);
 
+				UIManager.Instance.messageBox.setTextColorTint(SystemColors.AmyColor);
 				UIManager.Instance.messageBox.setMessageBoxSpeed(DialogBox.speed_mid);
 				amyAnimator.CrossFade("Idle", 0.5f);
-				msg = UIManager.Instance.messageBox.showMessageBox("...I guess that's not important right now.");
+				msg = UIManager.Instance.messageBox.showMessageBox("...I guess that's not important right now.", SpeakerProfile.Amy);
 
 				while (msg.IsRunning)
 				{
@@ -135,11 +139,11 @@ namespace Amy
 			{
 				cam2.SetActive(false);
 				cam3_alt.SetActive(true);
-				amyAnimator.Play("NoGloves");
+				amyAnimator.CrossFade("NoGloves", 0.5f);
 				amyVoice.PlayOneShot(amy_thinking2);
 				amyAnimator.Play("word_are");
 
-				msg = UIManager.Instance.messageBox.showMessageBox("Where did my boots and gloves go?\n I'm even more naked than usual...");
+				msg = UIManager.Instance.messageBox.showMessageBox("Where did my boots and gloves go?\n I'm even more naked than usual...", SpeakerProfile.Amy);
 
 				while (msg.IsRunning)
 				{
@@ -158,7 +162,7 @@ namespace Amy
 			yield return Timing.WaitForSeconds(0.5f);
 
 			UIManager.Instance.messageBox.setMessageBoxSpeed(DialogBox.speed_mid);
-			msg = UIManager.Instance.messageBox.showMessageBox("...I need to figure out just\nwhere the heck I am.");
+			msg = UIManager.Instance.messageBox.showMessageBox("...I need to figure out just\nwhere the heck I am.", SpeakerProfile.Amy);
 
 			yield return Timing.WaitForSeconds(0.5f);
 			amyAnimator.Play("word_jungle");

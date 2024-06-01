@@ -34,11 +34,13 @@ namespace Amy
         private void Awake()
         {
 
+			timesTalkedTo = -1;
+
 			//She has a very slim chance of being naked.
 			int rng = Random.Range(0, 64);
 
 			//chance increase if you have my nude mod~
-			if(PlayerManager.Instance.getStoryFlag("SADX_NUDE"))
+			if(PlayerManager.Instance.getStoryFlag(StoryFlag.SADX_NUDE))
 				rng = Random.Range(0, 32);
 
 			if(rng == 7)

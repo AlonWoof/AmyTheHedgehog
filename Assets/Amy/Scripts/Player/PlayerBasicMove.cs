@@ -43,7 +43,7 @@ namespace Amy
         void Update()
 	    {
 
-			if (GameManager.Instance.gamePaused)
+			if (GameManager.Instance.gamePaused || PlayerManager.Instance.itemMenuOpen)
 				return;
 
 			handleInput();
@@ -71,7 +71,7 @@ namespace Amy
 
         private void FixedUpdate()
         {
-			if (GameManager.Instance.gamePaused)
+			if (GameManager.Instance.gamePaused || PlayerManager.Instance.itemMenuOpen)
 				return;
 
 			mPlayer.CalcVerticalVelocity();
@@ -82,7 +82,7 @@ namespace Amy
 
         private void LateUpdate()
         {
-			if (GameManager.Instance.gamePaused)
+			if (GameManager.Instance.gamePaused || PlayerManager.Instance.itemMenuOpen)
 				return;
 
 			mPlayer.checkIfUnderwater();
@@ -109,7 +109,7 @@ namespace Amy
 			if (GameManager.Instance.playerInputDisabled)
 				return;
 
-			if (GameManager.Instance.gamePaused)
+			if (GameManager.Instance.gamePaused || PlayerManager.Instance.itemMenuOpen)
 				return;
 
 			if (groundedTimer > 5.0f)
@@ -126,23 +126,21 @@ namespace Amy
 				}
 			}
 
-			if (idleCounter > 1.0f)
-            {
-				//if(mPlayer.getStatus().currentMood < mPlayer.getStatus().maxMood && mPlayer.acceleration.magnitude < 0.001f)
-				// {
+			float masturbateTime = 30.0f;
 
-				if (PlayerManager.Instance.todayEvents.luckyNumber % 3 == 0 || PlayerManager.Instance.getStoryFlag("SADX_NUDE"))
+			if (mPlayer.getStatus().checkStatusEffect(PlayerStatusFX.Horny))
+				masturbateTime = 5.0f;
+
+			if (idleCounter > masturbateTime)
+            {
+				if (mPlayer.modeRubbing.canMasturbate())
 				{
-					if (mPlayer.modeRubbing.canMasturbate())
+					UIManager.Instance.contextButton.setActionText("Rub It?");
+					if (Input.GetButtonDown("Action"))
 					{
-						UIManager.Instance.contextButton.setActionText("Rub It?");
-						if (Input.GetButtonDown("Action"))
-						{
-							mPlayer.changeCurrentMode(PlayerModes.RUBBING);
-						}
+						mPlayer.changeCurrentMode(PlayerModes.RUBBING);
 					}
 				}
-                //}
             }
 		}
 

@@ -16,6 +16,7 @@ namespace Amy
         public GameObject ingameHUD;
         public DialogBox messageBox;
         public ContextButton contextButton;
+        public ItemMenu itemMenu;
 
         Fader mFader;
 
@@ -37,9 +38,10 @@ namespace Amy
             mFader = inst.GetComponentInChildren<Fader>();
             //mIngameHUD = inst.GetComponentInChildren<IngameHUD>();
             mainCanvas = inst.GetComponent<Canvas>();
-            mHudGroup = inst.GetComponentInChildren<CanvasGroup>();
-            messageBox = inst.GetComponentInChildren<DialogBox>();
-            contextButton = inst.GetComponentInChildren<ContextButton>();
+            mHudGroup = inst.GetComponentInChildren<CanvasGroup>(true);
+            messageBox = inst.GetComponentInChildren<DialogBox>(true);
+            contextButton = inst.GetComponentInChildren<ContextButton>(true);
+            itemMenu = inst.GetComponentInChildren<ItemMenu>(true);
 
             DontDestroyOnLoad(inst.gameObject);
         }
@@ -48,7 +50,7 @@ namespace Amy
     	void Update()
     	{
             
-            if (PlayerManager.Instance.getPlayer(false) == null || GameManager.Instance.cutsceneMode || GameManager.Instance.playerInputDisabled || Input.GetButton("Select") || !hudEnabled)
+            if (PlayerManager.Instance.getPlayer(false) == null || GameManager.Instance.cutsceneMode || GameManager.Instance.playerInputDisabled || !hudEnabled)
             {
                 mHudGroup.alpha = 0;
             }

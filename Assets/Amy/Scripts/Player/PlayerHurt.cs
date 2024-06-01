@@ -79,7 +79,7 @@ namespace Amy
 			if (mPlayer.currentMode != PlayerModes.HURT)
 				return;
 
-			if (GameManager.Instance.gamePaused)
+			if (GameManager.Instance.gamePaused || PlayerManager.Instance.itemMenuOpen)
 				return;
 
 			Vector3 dir = Helper.getDirectionTo(transform.position, knockOrigin);
@@ -118,7 +118,7 @@ namespace Amy
 		private void FixedUpdate()
 		{
 
-			if (GameManager.Instance.gamePaused)
+			if (GameManager.Instance.gamePaused || PlayerManager.Instance.itemMenuOpen)
 				return;
 
 			mPlayer.CalcVerticalVelocity();

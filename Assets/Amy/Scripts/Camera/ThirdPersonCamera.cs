@@ -50,6 +50,7 @@ namespace Amy
         public bool playerIsCrouched = false;
 
         CameraDOFBox dof;
+        Collider camCollider;
 
         private void Awake()
         {
@@ -60,6 +61,7 @@ namespace Amy
             Cursor.visible = false;
 
             dof = FindObjectOfType<CameraDOFBox>();
+            camCollider = GameManager.Instance.mainCamera.GetComponent<Collider>();
         }
 
         // Start is called before the first frame update
@@ -89,7 +91,7 @@ namespace Amy
             interpolate();
             handlePlayerActions();
 
-            if (GameManager.Instance.gamePaused)
+            if (GameManager.Instance.gamePaused || PlayerManager.Instance.itemMenuOpen)
                 pausedUpdate();
         }
 
@@ -102,13 +104,24 @@ namespace Amy
             updateDesiredPosition();
         }
 
+        public void disableCameraCollision()
+        {
+            camCollider.isTrigger = true;
+        }
+
+        public void enableCameraCollision()
+        {
+            camCollider.isTrigger = false;
+        }
+
+
         // Update is called once per frame
         void FixedUpdate()
 		{
 			if (!playerTransform)
 				return;
 
-            if (GameManager.Instance.gamePaused)
+            if (GameManager.Instance.gamePaused || PlayerManager.Instance.itemMenuOpen)
                 return;
 
             updateLookPosition();
@@ -154,8 +167,8 @@ namespace Amy
             {
                 if (!Input.GetButton("Zoom"))
                 {
-                    camX = Input.GetAxisRaw("Right Analog X");
-                    camY = Input.GetAxisRaw("Right Analog Y");
+                    camX = -1.0f * Input.GetAxisRaw("Right Analog X");
+                    camY = -1.0f * Input.GetAxisRaw("Right Analog Y");
                     sensitivity = 128;
                 }
             }
@@ -182,7 +195,7 @@ namespace Amy
 
             
 
-            if (GameManager.Instance.gamePaused)
+            if (GameManager.Instance.gamePaused || PlayerManager.Instance.itemMenuOpen)
             {
                 float rightTrigger = Input.GetAxis("Right Trigger");
                 float leftTrigger = Input.GetAxis("Left Trigger");
@@ -275,7 +288,7 @@ namespace Amy
 
             float t = Time.fixedUnscaledDeltaTime;
 
-            if (GameManager.Instance.gamePaused)
+            if (GameManager.Instance.gamePaused || PlayerManager.Instance.itemMenuOpen)
                 t = Time.unscaledDeltaTime;
 
             if (!lockPosition)
@@ -309,7 +322,7 @@ namespace Amy
 
             float t = Time.fixedUnscaledDeltaTime;
 
-            if (GameManager.Instance.gamePaused)
+            if (GameManager.Instance.gamePaused || PlayerManager.Instance.itemMenuOpen)
                 t = Time.unscaledDeltaTime;
 
             if (!lockPosition)
@@ -372,7 +385,7 @@ namespace Amy
 
             targetOffset = Vector3.Lerp(offset_near, offset_far, speedFac);
 
-            if (GameManager.Instance.gamePaused)
+            if (GameManager.Instance.gamePaused || PlayerManager.Instance.itemMenuOpen)
                 targetOffset = Vector3.Lerp(pauseZoom_near, pauseZoom_far, pauseZoomAmount);
 
 

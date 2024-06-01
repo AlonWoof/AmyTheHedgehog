@@ -10,6 +10,15 @@ using MEC;
 
 namespace Amy
 {
+	[System.Serializable]
+	public enum SpeakerProfile
+    {
+		Default,
+		Amy,
+		Cream,
+		Yume,
+		Suika
+    }
 
 	public class DialogBox : MonoBehaviour
 	{
@@ -57,7 +66,12 @@ namespace Amy
 			}
         }
 
-		public CoroutineHandle showMessageBox(string[] str)
+		public void setTextColorTint(Color color)
+        {
+			myText.color = color;
+        }
+
+		public CoroutineHandle showMessageBox(string[] str, SpeakerProfile profile = SpeakerProfile.Default)
 		{
 			Message m = new Message();
 			m.messages.Clear();
@@ -67,20 +81,35 @@ namespace Amy
 				m.messages.Add(s);
 			}
 
-			return showMessageBox(m);
+			return showMessageBox(m, profile);
 		}
 
-		public CoroutineHandle showMessageBox(string str)
-        {
+		public CoroutineHandle showMessageBox(string str, SpeakerProfile profile = SpeakerProfile.Default)
+		{
 			Message m = new Message();
 			m.messages.Clear();
 			m.messages.Add(str);
 
-			return showMessageBox(m);
+			return showMessageBox(m, profile);
         }
-		public CoroutineHandle showMessageBox(Message msg)
+		public CoroutineHandle showMessageBox(Message msg, SpeakerProfile profile = SpeakerProfile.Default)
 		{
+			setTextColorTint(getProfileColor(profile));
+
 			return Timing.RunCoroutine(doMessage(msg), gameObject);
+        }
+
+		Color getProfileColor(SpeakerProfile profile)
+        {
+			switch(profile)
+            {
+				case SpeakerProfile.Amy:
+					return Color.Lerp(SystemColors.AmyColor, Color.white, 0.25f);
+				case SpeakerProfile.Cream:
+					return Color.Lerp(SystemColors.CreamColor, Color.white, 0.25f);
+			}
+
+			return Color.white;
         }
 
 		public void cancelMessage()
@@ -128,6 +157,8 @@ namespace Amy
 
 			if (!inputState)
 				GameManager.Instance.enablePlayerInput();
+
+			setTextColorTint(Color.white);
 		}
 
 		IEnumerator<float> doPrint(string str)

@@ -54,6 +54,9 @@ namespace Amy
         public GameObject RES_GenericHitFX;
         public GameObject RES_SpikesHitFX;
 
+        [Header("Item")]
+        public List<ItemData> itemData;
+
         [Header("UI")]
 
         public GameObject RES_userInterface;

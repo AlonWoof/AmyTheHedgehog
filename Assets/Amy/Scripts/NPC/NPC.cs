@@ -12,6 +12,8 @@ namespace Amy
         public Vector3 mDirection;
         const float rotationSpeed = 3.0f;
 
+        public SpeakerProfile speakerProfile;
+
         public Message AmyMessage;
         public Message CreamMessage;
 
@@ -112,7 +114,7 @@ namespace Amy
             if (PlayerManager.Instance.currentCharacter == PlayableCharacter.Cream)
                 msg = CreamMessage;
 
-            CoroutineHandle msgProc = UIManager.Instance.messageBox.showMessageBox(msg);
+            CoroutineHandle msgProc = UIManager.Instance.messageBox.showMessageBox(msg, speakerProfile);
 
             if (path)
                 path.disableMovement();

@@ -8,7 +8,7 @@ using System.Runtime.InteropServices;
 using System.Runtime.Serialization.Formatters.Binary;
 using Unity.Collections;
 
-/* Copyright 2021 Jennifer Haden */
+/* Copyright 2024 Jennifer Haden */
 namespace Amy
 {
     public enum PlayableCharacter
@@ -75,7 +75,7 @@ namespace Amy
 
         public float timeSpentResting = 0.0f;
 
-
+        public List<ItemData> items;
 
         public PlayerStatus makeCopy()
         {
@@ -101,6 +101,13 @@ namespace Amy
             ns.statusFX = statusFX;
             ns.currentVibes = currentVibes;
 
+            ns.items = new List<ItemData>();
+
+            foreach(ItemData i in items)
+            {
+                ns.items.Add(ItemData.getItemData(i.getHash()));
+            }
+
             return ns;
         }
 
@@ -119,6 +126,27 @@ namespace Amy
             currentStamina = Mathf.Clamp(currentStamina, 0, maxStamina);
             currentMood = Mathf.Clamp(currentMood, 0, maxMood);
             dirtiness = Mathf.Clamp01(dirtiness);
+        }
+
+        public bool addItem(string itemName)
+        {
+            return addItem(Animator.StringToHash(itemName.ToLower()));
+        }
+
+        public bool addItem(int itemHash)
+        {
+            ItemData i = ItemData.getItemData(itemHash);
+
+            if (i == null)
+                return false;
+
+            if(items.Count >= 10)
+            {
+                return false;
+            }
+
+            items.Add(i);
+            return true;
         }
 
         public bool checkStatusEffect(PlayerStatusFX fx)
@@ -213,6 +241,8 @@ namespace Amy
         public bool isNightTime = false;
         public bool ringLeftChannel = false;
 
+        public bool itemMenuOpen = false;
+
         public DayEvents todayEvents;
 
 
@@ -249,8 +279,6 @@ namespace Amy
     	}
 
 
-
-
         public void randomizeDayEvents()
         {
 
@@ -272,6 +300,14 @@ namespace Amy
 
 
             todayEvents.luckyNumber = Random.Range(0, 99);
+
+            rng = Random.Range(0, 40);
+
+            //Sometimes she gets like that.
+            if(rng == 12)
+            {
+                AmyStatus.setStatusEffect(PlayerStatusFX.Horny);
+            }
         }
 
         public bool getStoryFlag(string name)
@@ -333,11 +369,31 @@ namespace Amy
 
 
             updatePlayTime();
+
+            handleItemMenu();
         }
+
+        void handleItemMenu()
+        {
+            ItemMenu itm = UIManager.Instance.itemMenu;
+
+            if(canOpenItemMenu() && Input.GetButtonDown("Select"))
+            {
+                if (!itemMenuOpen)
+                {
+                    openItemMenu();
+                }
+                else
+                {
+                    closeItemMenu();
+                }
+            }
+        }
+
 
         void updatePlayTime()
         {
-            if (GameManager.Instance.gamePaused)
+            if (GameManager.Instance.gamePaused || PlayerManager.Instance.itemMenuOpen)
                 return;
 
             //If there's no player, are we really playing?
@@ -451,6 +507,8 @@ namespace Amy
             PlayerStatus pStats = pl.getStatus();
             const float scaredStaminaDrain = 0.25f;
             const float sickStaminaDrain = 0.35f;
+            const float goodFoodStaminaHeal = 0.2f;
+            const float orgasmHealthHeal = 0.2f;
 
             if (currentCharacter == pl.mChara)
                 pStats.timeSpentResting = 0.0f;
@@ -483,6 +541,8 @@ namespace Amy
                 if (pStats.recentOrgasmTimeLeft > 0.0f)
                 {
                     pStats.recentOrgasmTimeLeft -= Time.deltaTime;
+                    pStats.currentHealth += orgasmHealthHeal * Time.deltaTime;
+                    pl.updateHealth();
                 }
                 else
                 {
@@ -491,7 +551,23 @@ namespace Amy
              
             }
 
-            if((pStats.currentStamina / pStats.maxStamina) < 0.125f)
+            if (pStats.checkStatusEffect(PlayerStatusFX.GoodFood))
+            {
+                if (pStats.goodFoodTimeLeft > 0.0f)
+                {
+                    pStats.goodFoodTimeLeft -= Time.deltaTime;
+
+                    pStats.currentStamina += goodFoodStaminaHeal * Time.deltaTime;
+                    pl.updateHealth();
+                }
+                else
+                {
+                    pStats.unSetStatusEffect(PlayerStatusFX.GoodFood);
+                }
+
+            }
+
+            if ((pStats.currentStamina / pStats.maxStamina) < 0.125f)
             {
                 if(!pStats.checkStatusEffect(PlayerStatusFX.Tired))
                 {
@@ -645,11 +721,39 @@ namespace Amy
             pStats.clampValues();
         }
 
+        public string getMoodLabel()
+        {
+            PlayerStatus pStats = getCurrentPlayerStatus();
+
+            float fac = (pStats.currentMood / pStats.maxMood);
+
+            
+
+            if (fac > 0.8f)
+            {
+                return "<color=#FFEF08>Happy!</color>";
+            }
+            else if(fac > 0.5f)
+            {
+                return "<color=#F3CC7A>OK!</color>";
+            }
+            else if (fac > 0.1f)
+            {
+                return "<color=#E17555>Bad...</color>";
+            }
+            else if(fac < 0.1f)
+            {
+                return "<color=#B09790>No more please...</color>";
+            }
+
+            return "???";
+        }
+
         public void processHealing(Player pl)
         {
             PlayerStatus pStats = pl.getStatus();
 
-            const float baseHealFac = 0.075f;
+            const float baseHealFac = 0.125f;
 
             float moodFac = pStats.currentMood / pStats.maxMood;
             float healthFac = pStats.currentHealth / pStats.maxHealth;
@@ -842,6 +946,68 @@ namespace Amy
         {
             return ringCount + ringBank;
         }
+
+        public bool canOpenItemMenu()
+        {
+            if (GameManager.Instance.playerInputDisabled)
+                return false;
+
+            if (!mPlayerInstance)
+                return false;
+
+            if (mPlayerInstance.currentMode != PlayerModes.NORMAL)
+                return false;
+
+            if (GameManager.Instance.gamePaused)
+                return false;
+
+            return true;
+        }
+
+        public void openItemMenu()
+        {
+
+            ItemMenu itm = UIManager.Instance.itemMenu;
+
+            itm.openMenu();
+        }
+
+        public void closeItemMenu()
+        {
+
+            ItemMenu itm = UIManager.Instance.itemMenu;
+
+            itm.closeMenu();
+        }
+
+        public void useItem(string itemName)
+        {
+            useItem(Animator.StringToHash(itemName.ToLower()));
+        }
+
+        public void useItem(int itemHash)
+        {
+            PlayerStatus pstats = mPlayerInstance.getStatus();
+
+            foreach (ItemData i in pstats.items)
+            {
+                if (i.getHash() == itemHash)
+                {
+                    useItem(i);
+                }
+            }
+        }
+
+        public void useItem(ItemData item)
+        {
+            item.useItem();
+
+            if(item.consumable)
+            {
+                mPlayerInstance.getStatus().items.Remove(item);
+                mPlayerInstance.getStatus().items.TrimExcess();
+            }
+        }
         
         //I would give this a more fitting name but I want to pay homage to SA1's hilarious kill function name (killHimP())
         public void killHer()
@@ -897,7 +1063,7 @@ namespace Amy
                 GameObject.Destroy(mPlayerInstance.gameObject);
 
 
-            if(type == PlayerKilled.DeathType.Falling || type == PlayerKilled.DeathType.Drowned)
+            if(type == PlayerKilled.DeathType.Falling || type == PlayerKilled.DeathType.Drowned || isPrologue)
             {
                 getCurrentPlayerStatus().currentHealth -= getCurrentPlayerStatus().maxHealth * 0.25f;
                 
@@ -919,6 +1085,10 @@ namespace Amy
 
 
                     yield break;
+                }
+                else if(isPrologue)
+                {
+                    getCurrentPlayerStatus().currentHealth = getCurrentPlayerStatus().maxHealth * 0.5f;
                 }
             }
 

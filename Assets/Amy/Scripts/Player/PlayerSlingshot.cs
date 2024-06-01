@@ -300,7 +300,7 @@ namespace Amy
 			if (GameManager.Instance.cameraInputDisabled)
 				return;
 
-			if (GameManager.Instance.gamePaused)
+			if (GameManager.Instance.gamePaused || PlayerManager.Instance.itemMenuOpen)
 				return;
 
 			float shoot = Input.GetAxis("Shoot");
