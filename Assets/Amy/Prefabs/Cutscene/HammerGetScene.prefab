@@ -5954,6 +5954,7 @@ GameObject:
   - component: {fileID: 5564036261400177608}
   - component: {fileID: 7171677534134902877}
   - component: {fileID: 470854951865044123}
+  - component: {fileID: 1675785408770377227}
   m_Layer: 0
   m_Name: Amy
   m_TagString: Untagged
@@ -6012,6 +6013,7 @@ Animator:
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
 --- !u!114 &7579306416723846606
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6078,6 +6080,9 @@ MonoBehaviour:
   overrideLook: 1
   eyeTarget: {fileID: 6357168808703074459}
   headBone: {fileID: 0}
+  cutsceneOverrideEnable: 0
+  cutsceneOverride_x: 0
+  cutsceneOverride_y: 0
   look_x: 0
   look_y: 0
   look_x_left: 0
@@ -6130,7 +6135,7 @@ MonoBehaviour:
   solvers:
     leftFoot:
       executedInEditor: 0
-      IKPosition: {x: -7.7026176, y: -5.555329, z: -22.589613}
+      IKPosition: {x: -6.353685, y: -5.555328, z: -19.791216}
       IKPositionWeight: 0
       root: {fileID: 1344365407090390309}
       target: {fileID: 0}
@@ -6174,7 +6179,7 @@ MonoBehaviour:
       bendGoal: {fileID: 0}
     rightFoot:
       executedInEditor: 0
-      IKPosition: {x: -7.6140385, y: -5.5553293, z: -22.589613}
+      IKPosition: {x: -6.2651057, y: -5.5553284, z: -19.791216}
       IKPositionWeight: 0
       root: {fileID: 1344365407090390309}
       target: {fileID: 0}
@@ -6218,7 +6223,7 @@ MonoBehaviour:
       bendGoal: {fileID: 0}
     leftHand:
       executedInEditor: 0
-      IKPosition: {x: -7.8355465, y: -5.1864686, z: -22.588608}
+      IKPosition: {x: -6.4866138, y: -5.1864676, z: -19.79021}
       IKPositionWeight: 0
       root: {fileID: 1344365407090390309}
       target: {fileID: 0}
@@ -6262,7 +6267,7 @@ MonoBehaviour:
       bendGoal: {fileID: 0}
     rightHand:
       executedInEditor: 0
-      IKPosition: {x: -7.4811096, y: -5.1864686, z: -22.588608}
+      IKPosition: {x: -6.132177, y: -5.1864676, z: -19.79021}
       IKPositionWeight: 0
       root: {fileID: 1344365407090390309}
       target: {fileID: 0}
@@ -6306,7 +6311,7 @@ MonoBehaviour:
       bendGoal: {fileID: 0}
     spine:
       executedInEditor: 0
-      IKPosition: {x: -7.658328, y: -5.151161, z: -22.596985}
+      IKPosition: {x: -6.3093953, y: -5.1511602, z: -19.798588}
       IKPositionWeight: 0
       root: {fileID: 1344365407090390309}
       target: {fileID: 0}
@@ -6317,7 +6322,7 @@ MonoBehaviour:
       bones:
       - transform: {fileID: 4773489399956372903}
         weight: 1
-        solverPosition: {x: -7.658328, y: -5.2117352, z: -22.592573}
+        solverPosition: {x: -6.3093953, y: -5.2117343, z: -19.794176}
         solverRotation: {x: -0.03633356, y: -1.6575806e-17, z: -1.6576013e-17, w: 0.9993397}
         defaultLocalPosition: {x: -3.7740113e-26, y: 0.00047982536, z: -5.5879353e-11}
         defaultLocalRotation: {x: 0.21748614, y: -4.6142722e-17, z: -5.711174e-17, w: 0.97606343}
@@ -6326,7 +6331,7 @@ MonoBehaviour:
         axis: {x: -2.0853366e-18, y: 0.0607345, z: -0.0000012136115}
       - transform: {fileID: 4643786700067713638}
         weight: 1
-        solverPosition: {x: -7.658328, y: -5.151161, z: -22.596985}
+        solverPosition: {x: -6.3093953, y: -5.1511602, z: -19.798588}
         solverRotation: {x: -0.016192079, y: 1.1457262e-22, z: -1.6308588e-23, w: 0.999869}
         defaultLocalPosition: {x: 1.3958672e-26, y: 0.0006073475, z: 0}
         defaultLocalRotation: {x: 0.02014737, y: 1.630535e-17, z: 1.6842215e-17, w: 0.99979705}
@@ -6335,7 +6340,7 @@ MonoBehaviour:
         axis: {x: -1.1917891e-24, y: 0.060685143, z: -0.0024480014}
     lookAt:
       executedInEditor: 0
-      IKPosition: {x: -7.658328, y: -5.151161, z: -19.596985}
+      IKPosition: {x: -6.3093953, y: -5.1511602, z: -16.798588}
       IKPositionWeight: 0
       root: {fileID: 1344365407090390309}
       target: {fileID: 0}
@@ -6445,7 +6450,7 @@ MonoBehaviour:
       transform: {fileID: 1298023297228495043}
       target: {fileID: 0}
       positionOffset: {x: 0, y: 0, z: 0}
-      position: {x: -7.658328, y: -5.253585, z: -22.569101}
+      position: {x: -6.3093953, y: -5.253584, z: -19.770704}
       positionWeight: 0
       rotationOffset: {x: 0, y: 0, z: 0}
       rotation: {x: 330.71274, y: 3.344189e-15, z: 3.3441754e-15}
@@ -6532,6 +6537,19 @@ MonoBehaviour:
   lookingAtTarget: 1
   desiredLookAt: {x: 0, y: 0, z: 0}
   z_offset: 0
+--- !u!114 &1675785408770377227
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1865604719200858015}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 93c651aecdf09bb4089210a1bd2724d4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  rayLength: 1
 --- !u!1 &1889226258941358940
 GameObject:
   m_ObjectHideFlags: 0
@@ -9661,6 +9679,7 @@ Animator:
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
 --- !u!1 &6438711304528932771
 GameObject:
   m_ObjectHideFlags: 0

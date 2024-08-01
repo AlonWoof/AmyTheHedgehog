@@ -152,7 +152,7 @@ namespace Amy
             float camX = 0;
             float camY = 0;
 
-            float sensitivity = 512;
+            float sensitivity = 256;
 
             if (GameManager.Instance.cameraInputDisabled)
                 return;

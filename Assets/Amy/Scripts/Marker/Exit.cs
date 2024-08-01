@@ -13,12 +13,28 @@ namespace Amy
 
         public Transform altCheckpoint;
 
+        public Mesh amyMesh;
+
         private void OnDrawGizmosSelected()
         {
-            gameObject.name = "Exit #" + exitNumber;
 
             Gizmos.color = Color.blue;
             Gizmos.DrawLine(transform.position + Vector3.up * 0.5f, transform.position + Vector3.up * 0.5f + transform.forward);
+
+        }
+
+        private void OnDrawGizmos()
+        {
+            Color drawColor = SystemColors.AmyColor;
+            drawColor.a = 0.5f;
+            Gizmos.color = drawColor;
+            Gizmos.DrawWireMesh(amyMesh, transform.position, transform.rotation * Quaternion.Euler(-90,0,0), Vector3.one * 100.0f);
+
+        }
+
+        void OnValidate()
+        {
+            gameObject.name = "Exit #" + exitNumber;
         }
 
         // Start is called before the first frame update

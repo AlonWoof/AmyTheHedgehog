@@ -111,7 +111,12 @@ namespace Amy
             }
         }
 
+        private void OnValidate()
+        {
+            gameObject.name = "SceneInfo";
+        }
 
-	}
+
+    }
 
 }

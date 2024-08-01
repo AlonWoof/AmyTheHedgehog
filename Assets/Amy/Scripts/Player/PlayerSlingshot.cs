@@ -295,7 +295,7 @@ namespace Amy
 			float camX = 0;
 			float camY = 0;
 
-			float sensitivity = 512;
+			float sensitivity = 256;
 
 			if (GameManager.Instance.cameraInputDisabled)
 				return;
@@ -304,6 +304,14 @@ namespace Amy
 				return;
 
 			float shoot = Input.GetAxis("Shoot");
+
+			if(!GameManager.Instance.usingController)
+            {
+				if (Input.GetButton("MouseShoot"))
+					shoot = 1.0f;
+				else
+					shoot = 0.0f;
+            }
 
 			//You were quick~
 			if(currentState == state.FIRE && afterFireTimeout > 0.05f)

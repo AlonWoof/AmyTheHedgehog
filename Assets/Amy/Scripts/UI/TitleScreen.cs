@@ -46,7 +46,8 @@ namespace Amy
 
 				if (Input.GetButtonDown("Action") || Input.GetButtonDown("Pause"))
 				{
-					titleScreenAnimator.Play("QuickAppear");
+					if(!GameManager.Instance.playerInputDisabled)
+						titleScreenAnimator.Play("QuickAppear");
 				}
 
 			}
@@ -57,6 +58,11 @@ namespace Amy
             {
 				yield return 0f;
             }
+
+			while (GameManager.Instance.playerInputDisabled)
+			{
+				yield return 0f;
+			}
 
 			UIManager.Instance.fadeScreen(false,2.0f, true);
 			GameManager.Instance.loadScene("FileSelect", true);

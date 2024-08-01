@@ -1797,7 +1797,7 @@ namespace Amy
 			if (GameManager.Instance.playerInputDisabled || GameManager.Instance.gamePaused || PlayerManager.Instance.itemMenuOpen)
 				return;
 
-			if (Input.GetAxis("Shoot") < 0.5f)
+			if (Input.GetAxis("Shoot") < 0.5f && !Input.GetButton("MouseShoot"))
 				return;
 
 			if (PlayerManager.Instance.isSmallRoom)

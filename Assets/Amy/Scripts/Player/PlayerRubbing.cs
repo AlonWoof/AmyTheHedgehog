@@ -169,7 +169,7 @@ namespace Amy
 			if (pstats.checkStatusEffect(PlayerStatusFX.Horny))
 				return true;
 
-			if (PlayerManager.Instance.todayEvents.luckyNumber % 3 != 0)
+			if (PlayerManager.Instance.todayEvents.luckyNumber % 3 != 0 && !PlayerManager.Instance.getStoryFlag(StoryFlag.SADX_NUDE))
 				return false;
 
 			return true;
@@ -189,7 +189,8 @@ namespace Amy
 
 			float healMult = mAnimator.GetFloat("animProgress");
 
-			Gamepad.current.SetMotorSpeeds(healMult, healMult);
+			if(Gamepad.current != null)
+				Gamepad.current.SetMotorSpeeds(healMult, healMult);
 
 
 
