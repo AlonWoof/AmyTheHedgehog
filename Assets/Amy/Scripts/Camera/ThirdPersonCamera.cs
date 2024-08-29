@@ -8,6 +8,14 @@ using Cinemachine;
 namespace Amy
 {
 
+    public enum TPCMode
+    {
+        Normal,
+        PauseMenu,
+        CreamFlying,
+        AmyMasturbation
+    }
+
 	public class ThirdPersonCamera : MonoBehaviour
 	{
 		CinemachineVirtualCamera vCam;
@@ -18,8 +26,10 @@ namespace Amy
         public Transform lockedTargetTransform;
 
         public Player mPlayer;
+        public TPCMode mode;
+        public float blendTime = 0.0f;
 
-		public Vector3 targetOffset = new Vector3(0, 0.75f, -1.75f);
+        public Vector3 targetOffset = new Vector3(0, 0.75f, -1.75f);
 
         public Vector3 offset_near = new Vector3(0, 0.75f, -1.75f);
         public Vector3 offset_far = new Vector3(0, 1.5f, -3.5f);
@@ -29,6 +39,7 @@ namespace Amy
         public Vector3 pauseZoom_far = new Vector3(0, 1.5f, -3.5f);
 
         Vector3 lookPosition;
+        Vector3 desiredLookPosition;
 
 		float maxPitch = 50.0f;
 
@@ -195,16 +206,25 @@ namespace Amy
 
             
 
-            if (GameManager.Instance.gamePaused || PlayerManager.Instance.itemMenuOpen)
+            if (mode == TPCMode.PauseMenu)
             {
                 float rightTrigger = Input.GetAxis("Right Trigger");
                 float leftTrigger = Input.GetAxis("Left Trigger");
 
-                if(rightTrigger > 0.0f)
+                float scrollWheel = Input.GetAxis("Mouse ScrollWheel");
+                
+
+
+                if (rightTrigger > 0.0f)
                     pauseZoomAmount -= (rightTrigger * Time.unscaledDeltaTime);
 
                 if (leftTrigger > 0.0f)
                     pauseZoomAmount += (leftTrigger * Time.unscaledDeltaTime);
+
+                if(Mathf.Abs(scrollWheel) > 0.05f)
+                {
+                    pauseZoomAmount += scrollWheel;
+                }
 
                 pauseZoomAmount = Mathf.Clamp01(pauseZoomAmount);
             }
@@ -222,23 +242,33 @@ namespace Amy
                 dof.fxEnabled = false;
             }
 
+
+
             lookPosition = playerTransform.position + (heightOffset * Vector3.up);
+
+
 
 
             if (!mPlayer)
                 return;
 
 
-
-            if (mPlayer.currentMode == PlayerModes.RUBBING)
+            if (mode == TPCMode.AmyMasturbation)
             {
-                lookPosition = mPlayer.hipBoneTransform.position;// + (crouchedHeightOffset * Vector3.up);
+                lookPosition = mPlayer.hipBoneTransform.position;
 
-                if(dof)
+                if (dof)
                 {
                     dof.fxEnabled = true;
                 }
             }
+
+            if (mode == TPCMode.CreamFlying)
+            {
+                lookPosition = playerTransform.position;
+
+            }
+
 
             /*
             if (!mPlayer)
@@ -265,6 +295,12 @@ namespace Amy
             */
         }
 
+        public void changeCameraMode(TPCMode newMode)
+        {
+            mode = newMode;
+            blendTime = 2.0f;
+        }
+
         void updateDesiredPosition()
         {
 
@@ -274,10 +310,13 @@ namespace Amy
             if (playerIsCrouched)
                 currentFOV *= 0.8f;
 
-            if (mPlayer.currentMode == PlayerModes.RUBBING)
+            if (mode == TPCMode.AmyMasturbation)
                 currentFOV = 45.0f;
 
-            vCam.m_Lens.FieldOfView = Mathf.Lerp(vCam.m_Lens.FieldOfView,currentFOV, 0.1f);
+            if (mode == TPCMode.CreamFlying)
+                currentFOV = GameManager.Instance.config.desiredFOV * 1.1f;
+
+            vCam.m_Lens.FieldOfView = Mathf.Lerp(vCam.m_Lens.FieldOfView, currentFOV, 0.1f);
 
             Vector3 translatedOffset = targetOffset;
     
@@ -288,8 +327,10 @@ namespace Amy
 
             float t = Time.fixedUnscaledDeltaTime;
 
-            if (GameManager.Instance.gamePaused || PlayerManager.Instance.itemMenuOpen)
+            if (mode == TPCMode.PauseMenu)
+            {
                 t = Time.unscaledDeltaTime;
+            }
 
             if (!lockPosition)
                 transform.position = Vector3.Lerp(transform.position, desiredPosition, t * 30.0f);
@@ -308,7 +349,7 @@ namespace Amy
             if (playerIsCrouched)
                 currentFOV *= 0.8f;
 
-            if (mPlayer.currentMode == PlayerModes.RUBBING)
+            if (mode == TPCMode.AmyMasturbation)
                 currentFOV = 45.0f;
 
             vCam.m_Lens.FieldOfView = Mathf.Lerp(vCam.m_Lens.FieldOfView, currentFOV, 0.1f);
@@ -322,8 +363,10 @@ namespace Amy
 
             float t = Time.fixedUnscaledDeltaTime;
 
-            if (GameManager.Instance.gamePaused || PlayerManager.Instance.itemMenuOpen)
+            if (mode == TPCMode.PauseMenu)
+            {
                 t = Time.unscaledDeltaTime;
+            }
 
             if (!lockPosition)
                 transform.position = Vector3.Lerp(transform.position, desiredPosition, t * 30.0f);
@@ -374,8 +417,8 @@ namespace Amy
             if (!mPlayer)
                 return;
 
-            if (mPlayer.currentMode == PlayerModes.RUBBING)
-                targetOffset = offset_near * 0.5f;
+
+
 
             //The crouched state is part of the GroundMove component.
             // playerIsCrouched = mPlayer.GetComponent<PlayerBasicMove>().isCrouching;
@@ -383,9 +426,16 @@ namespace Amy
             float speedFac = (mPlayer.acceleration.z / 16.0f);
 
 
-            targetOffset = Vector3.Lerp(offset_near, offset_far, speedFac);
+            if(mode == TPCMode.Normal)
+                targetOffset = Vector3.Lerp(offset_near, offset_far, speedFac);
 
-            if (GameManager.Instance.gamePaused || PlayerManager.Instance.itemMenuOpen)
+            if (mode == TPCMode.CreamFlying)
+                targetOffset = Vector3.Lerp(offset_near * 1.5f, offset_far * 1.5f, speedFac);
+
+            if (mode == TPCMode.AmyMasturbation)
+                targetOffset = offset_near * 0.5f;
+
+            if (mode == TPCMode.PauseMenu)
                 targetOffset = Vector3.Lerp(pauseZoom_near, pauseZoom_far, pauseZoomAmount);
 
 

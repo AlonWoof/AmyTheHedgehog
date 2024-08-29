@@ -25,6 +25,9 @@ namespace Amy
         public GameObject prop_creamCloth;
 
         public GameObject fx_creamEarFlap;
+        public GameObject fx_creamButtSlamAura;
+        public GameObject fx_creamButtSlamImpact;
+        public GameObject fx_creamButtSlamReticule;
 
         public GameObject basicSlingshotProjectile;
     }

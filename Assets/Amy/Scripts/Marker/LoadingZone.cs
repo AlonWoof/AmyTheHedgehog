@@ -50,6 +50,11 @@ namespace Amy
             }
         }
 
+        public void activateWarp()
+        {
+            Timing.RunCoroutine(sceneTransitionCutscene(), Segment.RealtimeUpdate);
+        }
+
         IEnumerator<float> sceneTransitionCutscene()
         {
             GameManager.Instance.disableInput();

@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.Events;
 
 //////////////////////////////////////
-//         2023 AlonWoof            //
+//         2024 AlonWoof            //
 //////////////////////////////////////
 
 namespace Amy
@@ -104,6 +104,22 @@ namespace Amy
 					pl.acceleration *= 0.5f;
 					pl.acceleration.y = bounceAmount;
                 }
+
+				if (collisionFX)
+				{
+					GameObject inst = GameObject.Instantiate(collisionFX);
+					inst.transform.position = Vector3.Lerp(transform.position, other.transform.position, 0.5f);
+				}
+			}
+
+			if(other.GetComponent<Breakable>())
+            {
+				bool success = other.GetComponent<Breakable>().takeDamage(this);
+
+				if (!success)
+					return;
+
+				onContact.Invoke();
 
 				if (collisionFX)
 				{

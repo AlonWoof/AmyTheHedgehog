@@ -28,15 +28,12 @@ Shader "Amy/Player/FX_Blush"
 		uniform sampler2D _MainTex;
 		uniform float4 _MainTex_ST;
 
-		inline half4 LightingUnlit( SurfaceOutput s, half3 lightDir, half atten )
-		{
-			return half4 ( 0, 0, 0, s.Alpha );
-		}
-
 		void surf( Input i , inout SurfaceOutput o )
 		{
 			float4 finalColor8 = ( i.vertexColor * _Color );
-			o.Emission = finalColor8.rgb;
+			float4 temp_output_10_0 = finalColor8;
+			o.Albedo = temp_output_10_0.rgb;
+			o.Emission = temp_output_10_0.rgb;
 			float2 uv_MainTex = i.uv_texcoord * _MainTex_ST.xy + _MainTex_ST.zw;
 			float baseAlpha102 = ( tex2D( _MainTex, uv_MainTex ).r * _Color.a );
 			o.Alpha = baseAlpha102;
@@ -44,7 +41,7 @@ Shader "Amy/Player/FX_Blush"
 
 		ENDCG
 		CGPROGRAM
-		#pragma surface surf Unlit alpha:fade keepalpha fullforwardshadows 
+		#pragma surface surf Lambert alpha:fade keepalpha fullforwardshadows 
 
 		ENDCG
 		Pass
@@ -129,19 +126,20 @@ Node;AmplifyShaderEditor.SamplerNode;2;-2214.802,-539.9205;Inherit;True;Property
 Node;AmplifyShaderEditor.VertexColorNode;3;-2116.399,-353.8524;Inherit;False;0;5;COLOR;0;FLOAT;1;FLOAT;2;FLOAT;3;FLOAT;4
 Node;AmplifyShaderEditor.SimpleMultiplyOpNode;6;-1893.791,-236.0771;Inherit;False;2;2;0;COLOR;0,0,0,0;False;1;COLOR;0,0,0,0;False;1;COLOR;0
 Node;AmplifyShaderEditor.RegisterLocalVarNode;8;-1654.358,-379.7374;Inherit;False;finalColor;-1;True;1;0;COLOR;0,0,0,0;False;1;COLOR;0
-Node;AmplifyShaderEditor.ColorNode;4;-2161.697,-181.7192;Inherit;False;Property;_Color;Color;1;0;Create;True;0;0;0;False;0;False;1,1,1,1;1,0.240566,0.3242744,1;True;0;5;COLOR;0;FLOAT;1;FLOAT;2;FLOAT;3;FLOAT;4
-Node;AmplifyShaderEditor.GetLocalVarNode;10;-560.7574,-193.4802;Inherit;False;8;finalColor;1;0;OBJECT;;False;1;COLOR;0
-Node;AmplifyShaderEditor.StandardSurfaceOutputNode;99;-154.4547,-159.0636;Float;False;True;-1;2;ASEMaterialInspector;0;0;Unlit;Amy/Player/FX_Blush;False;False;False;False;False;False;False;False;False;False;False;False;False;False;True;False;False;False;False;False;False;Back;0;False;;0;False;;False;0;False;;0;False;;False;0;Transparent;0.5;True;True;0;True;Transparent;;Transparent;All;12;all;True;True;True;True;0;False;;False;0;False;;255;False;;255;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;False;2;15;10;25;False;0.5;True;2;5;False;;10;False;;0;0;False;;0;False;;0;False;;0;False;;0;False;0;0,0,0,0;VertexOffset;True;False;Cylindrical;False;True;Relative;0;;0;-1;-1;-1;0;False;0;0;False;;-1;0;False;;0;0;0;False;0.1;False;;0;False;;False;15;0;FLOAT3;0,0,0;False;1;FLOAT3;0,0,0;False;2;FLOAT3;0,0,0;False;3;FLOAT;0;False;4;FLOAT;0;False;6;FLOAT3;0,0,0;False;7;FLOAT3;0,0,0;False;8;FLOAT;0;False;9;FLOAT;0;False;10;FLOAT;0;False;13;FLOAT3;0,0,0;False;11;FLOAT3;0,0,0;False;12;FLOAT3;0,0,0;False;14;FLOAT4;0,0,0,0;False;15;FLOAT3;0,0,0;False;0
-Node;AmplifyShaderEditor.GetLocalVarNode;103;-513.5606,44.4614;Inherit;False;102;baseAlpha;1;0;OBJECT;;False;1;FLOAT;0
+Node;AmplifyShaderEditor.ColorNode;4;-2161.697,-181.7192;Inherit;False;Property;_Color;Color;1;0;Create;True;0;0;0;False;0;False;1,1,1,1;1,0.2405659,0.3242743,0.7490196;True;0;5;COLOR;0;FLOAT;1;FLOAT;2;FLOAT;3;FLOAT;4
 Node;AmplifyShaderEditor.SimpleMultiplyOpNode;5;-1815.801,-468.2235;Inherit;False;2;2;0;FLOAT;0;False;1;FLOAT;0;False;1;FLOAT;0
 Node;AmplifyShaderEditor.RegisterLocalVarNode;102;-1651.923,-567.2231;Inherit;False;baseAlpha;-1;True;1;0;FLOAT;0;False;1;FLOAT;0
+Node;AmplifyShaderEditor.GetLocalVarNode;10;-596.7574,-151.4802;Inherit;False;8;finalColor;1;0;OBJECT;;False;1;COLOR;0
+Node;AmplifyShaderEditor.GetLocalVarNode;103;-607.5606,-41.5386;Inherit;False;102;baseAlpha;1;0;OBJECT;;False;1;FLOAT;0
+Node;AmplifyShaderEditor.StandardSurfaceOutputNode;99;-153.4547,-159.0636;Float;False;True;-1;2;ASEMaterialInspector;0;0;Lambert;Amy/Player/FX_Blush;False;False;False;False;False;False;False;False;False;False;False;False;False;False;True;False;False;False;False;False;False;Back;0;False;;0;False;;False;0;False;;0;False;;False;0;Transparent;0.5;True;True;0;False;Transparent;;Transparent;All;12;all;True;True;True;True;0;False;;False;0;False;;255;False;;255;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;False;2;15;10;25;False;0.5;True;2;5;False;;10;False;;0;0;False;;0;False;;0;False;;0;False;;0;False;0;0,0,0,0;VertexOffset;True;False;Cylindrical;False;True;Relative;0;;-1;-1;-1;-1;0;False;0;0;False;;-1;0;False;;0;0;0;False;0.1;False;;0;False;;False;15;0;FLOAT3;0,0,0;False;1;FLOAT3;0,0,0;False;2;FLOAT3;0,0,0;False;3;FLOAT;0;False;4;FLOAT;0;False;6;FLOAT3;0,0,0;False;7;FLOAT3;0,0,0;False;8;FLOAT;0;False;9;FLOAT;0;False;10;FLOAT;0;False;13;FLOAT3;0,0,0;False;11;FLOAT3;0,0,0;False;12;FLOAT3;0,0,0;False;14;FLOAT4;0,0,0,0;False;15;FLOAT3;0,0,0;False;0
 WireConnection;6;0;3;0
 WireConnection;6;1;4;0
 WireConnection;8;0;6;0
-WireConnection;99;2;10;0
-WireConnection;99;9;103;0
 WireConnection;5;0;2;1
 WireConnection;5;1;4;4
 WireConnection;102;0;5;0
+WireConnection;99;0;10;0
+WireConnection;99;2;10;0
+WireConnection;99;9;103;0
 ASEEND*/
-//CHKSM=62671108001EA415BDCF4D48B00EA070D68A3C04
+//CHKSM=6FF5EC9135BCC679CE92E9998500F63C1F49D00C

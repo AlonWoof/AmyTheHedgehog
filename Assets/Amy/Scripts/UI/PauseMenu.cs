@@ -175,7 +175,7 @@ namespace Amy
 				return;
 			}
 
-			if(Input.GetButtonDown("RightBumper"))
+			if(Input.GetButtonDown("RightBumper") || Input.GetKeyDown(KeyCode.R))
             {
 				Timing.RunCoroutine(doScreenshot(), Segment.RealtimeUpdate);
             }

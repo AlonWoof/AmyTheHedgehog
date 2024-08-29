@@ -92,6 +92,8 @@ namespace Amy
 					dbgstr += getInventoryInfo();
 					break;
 
+
+
 				case DebugInfoPage.EventInfo:
 					dbgstr += getEventInfo();
 					break;
@@ -217,6 +219,8 @@ namespace Amy
 			dbgstr += "framesAirborne: " + player.framesAirborne + "\n";
 			dbgstr += "hammerJumpCharge: " + player.hammerJumpCharge + "\n";
 			dbgstr += "canAirAttack: " + player.canAirAttack + "\n";
+
+			dbgstr += "\n NPCs that can see me: " + player.areaDetector.visibleNPCCount;
 
 			return dbgstr;
 		}

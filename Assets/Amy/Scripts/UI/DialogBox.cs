@@ -5,7 +5,7 @@ using UnityEngine.UI;
 using MEC;
 
 //////////////////////////////////////
-//         2023 AlonWoof            //
+//         2024 AlonWoof            //
 //////////////////////////////////////
 
 namespace Amy
@@ -26,7 +26,7 @@ namespace Amy
 		public Text myText;
 		public int textProgress = 0;
 		public string fullText;
-		public float delay = 0.02f;
+		public float delay = 0.01f;
 
 		public static float speed_fast = 0.01f;
 		public static float speed_mid = 0.02f;

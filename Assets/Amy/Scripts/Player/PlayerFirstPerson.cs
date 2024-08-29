@@ -159,7 +159,7 @@ namespace Amy
                 camRot.y = Mathf.Lerp(camRot.y, 0, 0.25f * Time.deltaTime);
             }
 
-            camRot.x = Mathf.Clamp(camRot.x, -45, 85);
+            camRot.x = Mathf.Clamp(camRot.x, -80, 65);
             camRot.y = Mathf.Clamp(camRot.y, -70, 70);
 
             if (Input.GetButtonDown("View"))

@@ -507,6 +507,7 @@ namespace Amy
             PlayerStatus pStats = pl.getStatus();
             const float scaredStaminaDrain = 0.25f;
             const float sickStaminaDrain = 0.35f;
+            const float embarassedStaminaDrain = 0.1f;
             const float goodFoodStaminaHeal = 0.2f;
             const float orgasmHealthHeal = 0.2f;
 
@@ -596,6 +597,21 @@ namespace Amy
                         pStats.currentHealth -= sickStaminaDrain * Time.deltaTime;
                         pl.updateHealth();
                     }
+                }
+            }
+
+            if(pStats.checkStatusEffect(PlayerStatusFX.Horny))
+            {
+                if (Time.frameCount % 360 == 0)
+                {
+                    if(Random.Range(0, 100) > 50)
+                        pl.cunnyDrip();
+                }
+
+                if(pl.areaDetector.visibleNPCCount > 0)
+                {
+                    //Hazukashii yo... they can all see my omanko dripping...
+                    pStats.currentHealth -= (embarassedStaminaDrain * pl.areaDetector.visibleNPCCount) * Time.deltaTime;
                 }
             }
 

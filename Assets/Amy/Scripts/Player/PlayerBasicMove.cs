@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 //////////////////////////////////////
-//         2023 AlonWoof            //
+//         2024 AlonWoof            //
 //////////////////////////////////////
 
 namespace Amy
@@ -66,6 +66,7 @@ namespace Amy
 			if(mPlayer.mChara == PlayableCharacter.Cream)
             {
 				mPlayer.checkForFlying();
+				mPlayer.checkForButtSlamAttack();
 			}
 		}
 
@@ -138,7 +139,8 @@ namespace Amy
 					UIManager.Instance.contextButton.setActionText("Rub It?");
 					if (Input.GetButtonDown("Action"))
 					{
-						mPlayer.changeCurrentMode(PlayerModes.RUBBING);
+						if(mPlayer.modeRubbing.shouldMasturbate())
+							mPlayer.changeCurrentMode(PlayerModes.RUBBING);
 					}
 				}
             }

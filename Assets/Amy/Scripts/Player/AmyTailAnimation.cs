@@ -14,6 +14,7 @@ namespace Amy
 
 		public Player player;
 		public float excitement = 1.0f;
+		public float desiredExcitement = 1.0f;
 
 	    // Start is called before the first frame update
 	    void Start()
@@ -32,23 +33,33 @@ namespace Amy
 
 		void calcMoodAndExcitement()
         {
-			if(player.speed.z > 2.0f)
+			if(player.acceleration.z > 0.1f)
             {
-				excitement = Mathf.Lerp(excitement, 3.0f, Time.deltaTime * 2.0f);
+				float spd = Mathf.Clamp(player.acceleration.z, 0.2f, 8.0f);
+
+				float spdfac = spd / 8.0f;
+
+				desiredExcitement = 3.5f * spdfac;
             }
 			else
             {
-				excitement = Mathf.Lerp(excitement, 0.5f, Time.deltaTime * 0.1f);
+				desiredExcitement = 0.5f;
             }
+
+			if (player.currentMode == PlayerModes.RUBBING)
+				desiredExcitement = 6.0f;
 
 			PlayerStatus pstats = PlayerManager.Instance.getCurrentPlayerStatus();
 
 			float fac = (pstats.currentMood / pstats.maxMood);
 
-			excitement *= fac;
+			desiredExcitement *= fac;
 
-			excitement = Mathf.Clamp(excitement, 0.25f, 3.0f);
 
+
+			desiredExcitement = Mathf.Clamp(desiredExcitement, 0.25f, 3.0f);
+
+			excitement = Mathf.Lerp(excitement, desiredExcitement, Time.deltaTime);
         }
 	}
 }

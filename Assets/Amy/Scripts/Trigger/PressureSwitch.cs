@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.Events;
 
 //////////////////////////////////////
-//         2023 AlonWoof            //
+//         2024 AlonWoof            //
 //////////////////////////////////////
 
 namespace Amy
@@ -43,7 +43,8 @@ namespace Amy
 
 		void Update()
 		{
-			mAnimator.SetBool("isOn", isOn);
+			if(mAnimator)
+				mAnimator.SetBool("isOn", isOn);
 		}
 
         private void OnTriggerEnter(Collider other)

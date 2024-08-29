@@ -64,7 +64,8 @@ namespace Amy
 			if (!canOpenDoor())
 				return;
 
-			if (PlayerManager.Instance.mPlayerInstance.currentMode != PlayerModes.NORMAL)
+			if (PlayerManager.Instance.mPlayerInstance.currentMode != PlayerModes.NORMAL 
+				&& PlayerManager.Instance.mPlayerInstance.currentMode != PlayerModes.FIRSTPERSON)
 			{
 
 				if (isOpen)

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 //////////////////////////////////////
-//         2023 AlonWoof            //
+//         2024 AlonWoof            //
 //////////////////////////////////////
 
 namespace Amy
@@ -12,6 +12,7 @@ namespace Amy
 	public class FallingWarpUpPlane : MonoBehaviour
 	{
         public float warpYPos = 0.0f;
+        public bool warpToSafePoint = false;
 
         private void OnTriggerEnter(Collider other)
         {
@@ -23,6 +24,11 @@ namespace Amy
                 pos.y = warpYPos;
 
                 pl.transform.position = pos;
+
+                if(warpToSafePoint)
+                {
+                    pl.transform.position = pl.lastSafeGroundPosition;
+                }
             }
         }
     }

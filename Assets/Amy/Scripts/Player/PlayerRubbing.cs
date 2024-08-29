@@ -1,4 +1,4 @@
-using System.Collections;
+ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using MEC;
@@ -32,6 +32,17 @@ namespace Amy
 			Caught
         }
 
+		enum cantMasturbateReason
+        {
+			Generic,
+			Public,
+			Scared,
+			DirtyPlace,
+			DirtyAmy,
+			Tired,
+			Cream
+        }
+
 		MasturbationPhase phase = MasturbationPhase.Main;
 
 		// Start is called before the first frame update
@@ -44,20 +55,22 @@ namespace Amy
 		{
 			getBaseComponents();
 
+			if (!cunnyDripFX)
+			{
+				cunnyDripFX = GameObject.Instantiate(GameManager.Instance.systemData.RES_AmyPlayerFX.fx_cunnyDrip);
+				cunnyDripFX.transform.SetParent(mPlayer.getBoneByName("hips"));
+				cunnyDripFX.transform.localPosition = Vector3.zero;
+				cunnyDripFX.transform.localRotation = Quaternion.identity;
+				cunnyDripFX.SetActive(false);
+			}
+
 			if (mPlayer.currentMode != PlayerModes.RUBBING)
 			{
 				enabled = false;
 				return;
 			}
 
-			if(!cunnyDripFX)
-            {
-				cunnyDripFX = GameObject.Instantiate(GameManager.Instance.systemData.RES_AmyPlayerFX.fx_cunnyDrip);
-				cunnyDripFX.transform.SetParent(mPlayer.getBoneByName("hips"));
-				cunnyDripFX.transform.localPosition = Vector3.zero;
-				cunnyDripFX.transform.localRotation = Quaternion.identity;
 
-			}
 
 			//Sometimes a girl needs a little break~
 			Timing.RunCoroutine(doStartRubbing().CancelWith(gameObject));
@@ -68,6 +81,8 @@ namespace Amy
 		{
 			mPlayer.clearAccel();
 			mPlayer.clearSpeed();
+
+			mPlayer.tpc.changeCameraMode(TPCMode.AmyMasturbation);
 
 			timeTilOrgasm = Random.Range(10.0f, 20.0f);
 			phase = MasturbationPhase.Main;
@@ -89,6 +104,7 @@ namespace Amy
 			//mPlayer.updateExpression();
 
 		}
+
 
 		public IEnumerator<float> doOrgasm()
         {
@@ -115,6 +131,8 @@ namespace Amy
 			cunnyDripFX.SetActive(false);
 			mAnimator.CrossFade("Idle", 0.2f);
 			yield return Timing.WaitForSeconds(0.1f);
+
+			mPlayer.tpc.changeCameraMode(TPCMode.Normal);
 			mPlayer.changeCurrentMode(PlayerModes.NORMAL);
 
 			yield return Timing.WaitForSeconds(Random.Range(3.0f, 6.0f));
@@ -141,29 +159,18 @@ namespace Amy
 			mPlayer.getStatus().setStatusEffect(PlayerStatusFX.Horny);
 
 			mAnimator.CrossFade("Idle", 0.25f);
+			mPlayer.tpc.changeCameraMode(TPCMode.Normal);
 			mPlayer.changeCurrentMode(PlayerModes.NORMAL);
 		}
 
 		public bool canMasturbate()
-        {
+		{
 			PlayerStatus pstats = mPlayer.getStatus();
 
 			if (mPlayer.mChara != PlayableCharacter.Amy)
 				return false;
 
-			if (mPlayer.areaDetector.getNearbyActorCount() > 0)
-				return false;
-
-			if (mPlayer.areaDetector.isVisibleToNPC())
-				return false;
-
-			if (pstats.checkVibe(VibeType.Dirty) || 
-				pstats.checkVibe(VibeType.Scary))
-				return false;
-
-			if(pstats.checkStatusEffect(PlayerStatusFX.Scared) || 
-				pstats.checkStatusEffect(PlayerStatusFX.Dirty) || 
-				pstats.checkStatusEffect(PlayerStatusFX.RecentOrgasm))
+			if (pstats.checkStatusEffect(PlayerStatusFX.RecentOrgasm))
 				return false;
 
 			if (pstats.checkStatusEffect(PlayerStatusFX.Horny))
@@ -173,6 +180,47 @@ namespace Amy
 				return false;
 
 			return true;
+		}
+
+		public bool shouldMasturbate()
+        {
+			PlayerStatus pstats = mPlayer.getStatus();
+
+			if (mPlayer.mChara != PlayableCharacter.Amy)
+				return false;
+
+			if (mPlayer.areaDetector.getNearbyActorCount() > 0)
+			{
+				showCantMasturbateMessage(cantMasturbateReason.Public);
+				return false;
+			}
+
+			if (mPlayer.areaDetector.isVisibleToNPC())
+			{
+				showCantMasturbateMessage(cantMasturbateReason.Public);
+				return false;
+			}
+
+			if (pstats.checkVibe(VibeType.Dirty))
+			{
+				showCantMasturbateMessage(cantMasturbateReason.DirtyPlace);
+				return false;
+			}
+
+			if (pstats.checkVibe(VibeType.Scary) || pstats.checkStatusEffect(PlayerStatusFX.Scared))
+			{
+				showCantMasturbateMessage(cantMasturbateReason.Scared);
+				return false;
+			}
+
+			if (pstats.checkStatusEffect(PlayerStatusFX.Dirty))
+            {
+				showCantMasturbateMessage(cantMasturbateReason.DirtyAmy);
+				return false;
+			}
+
+			return true;
+
         }
 
 		// Update is called once per frame
@@ -242,6 +290,57 @@ namespace Amy
 
 
 	    }
+
+		void showCantMasturbateMessage(cantMasturbateReason reason)
+        {
+			string reasonMessage = "";
+			
+			switch(reason)
+            {
+				case cantMasturbateReason.Generic:
+					reasonMessage = "I can't do that now!";
+					break;
+
+				case cantMasturbateReason.Public:
+					reasonMessage = "There's people around! \n What if someone sees me?";
+					break;
+
+				case cantMasturbateReason.DirtyPlace:
+					reasonMessage = "This place is disgusting! \n Why would I do that here?";
+					break;
+
+				case cantMasturbateReason.DirtyAmy:
+					reasonMessage = "I need a shower first.";
+					break;
+
+				case cantMasturbateReason.Scared:
+					reasonMessage = "I'm too scared!";
+					break;
+
+				case cantMasturbateReason.Tired:
+					reasonMessage = "I'm too tired, even for that...";
+					break;
+
+				case cantMasturbateReason.Cream:
+					reasonMessage = "I can't do that in front of Cream!";
+					break;
+
+			}
+
+			Timing.RunCoroutine(doCantMasturbateMessage(reasonMessage), gameObject);
+        }
+
+		IEnumerator<float> doCantMasturbateMessage(string m)
+        {
+			CoroutineHandle cr = UIManager.Instance.messageBox.showMessageBox(m, SpeakerProfile.Amy);
+
+			while(cr.IsRunning)
+            {
+				yield return 0f;
+            }
+
+
+        }
 
 	}
 }

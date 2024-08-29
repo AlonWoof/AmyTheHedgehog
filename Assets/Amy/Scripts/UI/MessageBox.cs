@@ -57,7 +57,7 @@ namespace Amy
         MessageBoxLocation location = MessageBoxLocation.Bottom;
 
         [TextArea(1, 2)]
-        public List<string> messages = new List<string>{ "This Message is a Test. This Sausage is the Last. Yeah..." };
+        public List<string> messages = new List<string>{ "NULL" };
         public List<Choice> choices;
 
         public AudioClip voice;

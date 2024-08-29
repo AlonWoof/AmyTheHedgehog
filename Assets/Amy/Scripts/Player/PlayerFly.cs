@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 //////////////////////////////////////
-//         2023 AlonWoof            //
+//         2024 AlonWoof            //
 //////////////////////////////////////
 
 namespace Amy
@@ -49,8 +49,8 @@ namespace Amy
 				return;
 			}
 
-			mPlayer.clearAccel();
-			mPlayer.clearSpeed();
+			//mPlayer.clearAccel();
+			//mPlayer.clearSpeed();
 
 			//Unless we add Tails, Cream is the only one who can fly
 			if (mPlayer.mChara != PlayableCharacter.Cream)
@@ -62,12 +62,14 @@ namespace Amy
 			//But let's not get carried away, now. Two is already twice as much as I intended originally.
 			start_altitude = transform.position.y;
 
-			mRigidBody.velocity = Vector3.Lerp(mRigidBody.velocity, Vector3.zero, 0.5f);
-			mRigidBody.velocity = Vector3.up * 3.0f;
+			//mRigidBody.velocity = Vector3.Lerp(mRigidBody.velocity, 3.0f, 0.5f);
+			//mRigidBody.velocity = Vector3.up * 3.0f;
+
 
 			fly_left = max_fly;
 			mAnimator.CrossFade("Fly_Basic", 0.25f);
-			
+			mPlayer.tpc.changeCameraMode(TPCMode.CreamFlying);
+
 		}
 
 		void handleInput()
@@ -140,6 +142,7 @@ namespace Amy
 			if (Physics.Linecast(start, end, out hitInfo, mPlayer.mColMask))
 			{
 				mPlayer.changeCurrentMode(PlayerModes.NORMAL);
+				mPlayer.tpc.changeCameraMode(TPCMode.Normal);
 			}
 		}
 
@@ -149,6 +152,7 @@ namespace Amy
 			if (mPlayer.getWaterDepth() >= mPlayer.headOffsetFromGround)
 			{
 				mPlayer.changeCurrentMode(PlayerModes.SWIMMING);
+				mPlayer.tpc.changeCameraMode(TPCMode.Normal);
 			}
 		}
 
@@ -188,8 +192,14 @@ namespace Amy
 					desiredVelo.y = -4.0f;
 			}
 
+			if(Input.GetButtonDown("Attack"))
+            {
+				mPlayer.changeCurrentMode(PlayerModes.BUTTSLAM);
+				return;
+            }
 
-			mPlayer.setVelocityDirectly(Vector3.Lerp(mRigidBody.velocity, desiredVelo, Time.fixedDeltaTime * 2.0f));
+
+			mPlayer.setVelocityDirectly(Vector3.Lerp(mRigidBody.velocity, desiredVelo, Time.deltaTime * 2.0f));
 			transform.rotation = Quaternion.Lerp(transform.rotation, Quaternion.LookRotation(mPlayer.direction, Vector3.up), Time.deltaTime * 3.0f);
 
 		}

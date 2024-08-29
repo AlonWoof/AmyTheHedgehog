@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 //////////////////////////////////////
-//         2023 AlonWoof            //
+//         2024 AlonWoof            //
 //////////////////////////////////////
 
 namespace Amy
@@ -17,6 +17,8 @@ namespace Amy
 
 		public Enemy closestEnemy = null;
 		public Activatible closestActivatible = null;
+
+		public int visibleNPCCount = 0;
 
 		public float detectRadius = 20.0f;
 		public float lookRadius = 5.0f;
@@ -89,6 +91,7 @@ namespace Amy
 				}
 			}
 
+			isVisibleToNPC();
 		}
 
 		public int getNearbyEnemyCount()
@@ -156,7 +159,10 @@ namespace Amy
 
 		public bool isVisibleToNPC(float range = 30.0f)
         {
-			foreach(NPC n in FindObjectsOfType<NPC>())
+			visibleNPCCount = 0;
+			bool ret = false;
+
+			foreach (NPC n in FindObjectsOfType<NPC>())
             {
 				Vector3 dir = Helper.getHorizontalDirectionTo(n.transform.position, transform.position);
 
@@ -175,14 +181,15 @@ namespace Amy
 						{
 							if (hitInfo.collider.gameObject == gameObject)
 							{
-								return true;
+								ret = true;
+								visibleNPCCount++;
 							}
 						}
 					}
 				}
             }
 
-			return false;
+			return ret;
         }
 
 		public void refreshClosestEnemy()

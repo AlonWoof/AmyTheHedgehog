@@ -17,6 +17,10 @@ namespace Amy
         public Message AmyMessage;
         public Message CreamMessage;
 
+        public bool hasHornyMessage;
+        public Message AmyHornyMessage;
+        public Message SickMessage;
+
         public Talker tk;
 
         public Transform headNode;
@@ -110,6 +114,11 @@ namespace Amy
         {
             Player mPlayer = PlayerManager.Instance.getPlayer();
             Message msg = AmyMessage;
+
+            if(mPlayer.getStatus().checkStatusEffect(PlayerStatusFX.Horny) && hasHornyMessage)
+            {
+                msg = AmyHornyMessage;
+            }    
 
             if (PlayerManager.Instance.currentCharacter == PlayableCharacter.Cream)
                 msg = CreamMessage;

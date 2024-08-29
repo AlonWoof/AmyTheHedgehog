@@ -5,7 +5,7 @@ using MEC;
 using RootMotion.FinalIK;
 
 //////////////////////////////////////
-//         2023 AlonWoof            //
+//         2024 AlonWoof            //
 //////////////////////////////////////
 
 namespace Amy
@@ -46,6 +46,7 @@ namespace Amy
 		RAIL,
 		SWIMMING,
 		FLY,
+		BUTTSLAM,
 		LISTENING,
 		SLINGSHOT,
 		LADDER,
@@ -73,6 +74,7 @@ namespace Amy
 		public Animator mAnimator;
 		public FootstepFX fx_footsteps;
 		public WeaponTrailFX fx_hammerTrail;
+		public GameObject fx_buttSlamReticule;
 		public ThirdPersonCamera tpc;
 		public PlayerVoice mVoice;
 		public ActorLookAtController lookAtController;
@@ -141,6 +143,7 @@ namespace Amy
 		public PlayerSpringBounce modeSpring;
 		public PlayerSwimming modeSwimming;
 		public PlayerFly modeFly;
+		public PlayerButtSlam modeButtSlam;
 		public PlayerRail modeRail;
 		public PlayerSlingshot modeSlingshot;
 		public PlayerClimb modeLadder;
@@ -285,6 +288,7 @@ namespace Amy
 			modeSpring = gameObject.AddComponent<PlayerSpringBounce>();
 			modeSwimming = gameObject.AddComponent<PlayerSwimming>();
 			modeFly = gameObject.AddComponent<PlayerFly>();
+			modeButtSlam = gameObject.AddComponent<PlayerButtSlam>();
 			modeRail = gameObject.AddComponent<PlayerRail>();
 			modeSlingshot = gameObject.AddComponent<PlayerSlingshot>();
 			modeLadder = gameObject.AddComponent<PlayerClimb>();
@@ -302,6 +306,7 @@ namespace Amy
 			modeSpring.enabled = false;
 			modeSwimming.enabled = false;
 			modeFly.enabled = false;
+			modeButtSlam.enabled = false;
 			modeRail.enabled = false;
 			modeSlingshot.enabled = false;
 			modeLadder.enabled = false;
@@ -333,6 +338,10 @@ namespace Amy
 
 				case PlayerModes.FLY:
 					modeFly.enabled = true;
+					break;
+
+				case PlayerModes.BUTTSLAM:
+					modeButtSlam.enabled = true;
 					break;
 
 				case PlayerModes.RAIL:
@@ -694,13 +703,24 @@ namespace Amy
 
 			updateWaterFX();
 
+			updateButtSlamReticule();
+
 			debugControls();
 		}
 
-		public void updateBallState()
-        {
 
-        }
+
+		public void cunnyDrip()
+		{
+			Timing.RunCoroutine(doCunnyDrip());
+		}
+
+		public IEnumerator<float> doCunnyDrip()
+		{
+			modeRubbing.cunnyDripFX.SetActive(true);
+			yield return Timing.WaitForSeconds(Random.Range(2.0f, 6.0f));
+			modeRubbing.cunnyDripFX.SetActive(false);
+		}
 
 		public void updateHealth()
 		{
@@ -1791,6 +1811,84 @@ namespace Amy
 			}
 		}
 
+		public void updateButtSlamReticule()
+        {
+
+			if (mChara != PlayableCharacter.Cream)
+				return;
+
+			if (!fx_buttSlamReticule)
+            {
+				fx_buttSlamReticule = GameObject.Instantiate(GameManager.Instance.systemData.RES_AmyPlayerFX.fx_creamButtSlamReticule);
+				return;
+            }
+
+			bool showReticule = true;
+
+			if (currentMode != PlayerModes.FLY)
+				showReticule = false;
+
+			if (getAltitudeFromGround() < 3.0f)
+				showReticule = false;
+
+			if(showReticule)
+            {
+				if(!fx_buttSlamReticule.activeInHierarchy)
+					fx_buttSlamReticule.SetActive(true);
+
+				Vector3 start = transform.position;
+				Vector3 end = (transform.position + Vector3.down * 128.0f);
+
+				
+
+				RaycastHit hitInfo = new RaycastHit();
+
+				if(Physics.Linecast(start,end,out hitInfo,mColMask))
+                {
+					fx_buttSlamReticule.transform.position = hitInfo.point + (hitInfo.normal * 0.1f);
+					fx_buttSlamReticule.transform.rotation = Quaternion.LookRotation(transform.forward, hitInfo.normal);
+
+					Debug.DrawLine(start, hitInfo.point, Color.blue, 1.1f);
+				}
+				else
+                {
+					fx_buttSlamReticule.transform.position = Vector3.down * 5000.0f;
+                }
+            }
+			else
+            {
+				if (fx_buttSlamReticule.activeInHierarchy)
+					fx_buttSlamReticule.SetActive(false);
+			}
+		}
+		public void checkForButtSlamAttack()
+		{
+			if (GameManager.Instance.playerInputDisabled || GameManager.Instance.gamePaused || PlayerManager.Instance.itemMenuOpen)
+				return;
+
+			if (PlayerManager.Instance.isSmallRoom)
+				return;
+
+			if (isOnGround)
+				return;
+
+			if (framesAirborne < 10)
+				return;
+
+			if (!canAirAttack)
+				return;
+
+			//Get this poor girl some rest jeez...
+			if (getStatus().checkStatusEffect(PlayerStatusFX.Tired))
+				return;
+
+			//if (isAttacking && !isOnGround)
+			//updateHoming();
+
+			if (Input.GetButtonDown("Attack"))
+				changeCurrentMode(PlayerModes.BUTTSLAM);
+		}
+
 
 		public void checkForSlingshot()
         {
@@ -2134,6 +2232,8 @@ namespace Amy
 					return "SWIMMING";
 				case PlayerModes.FLY:
 					return "FLY";
+				case PlayerModes.BUTTSLAM:
+					return "BUTTSLAM";
 				case PlayerModes.LISTENING:
 					return "LISTENING";
 				case PlayerModes.SLINGSHOT:
