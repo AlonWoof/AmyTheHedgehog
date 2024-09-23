@@ -13,6 +13,7 @@ namespace Amy
 	[CustomEditor(typeof(SceneInfo))]
 	public class SceneInfoEditor : Editor
 	{
+        /*
         public override void OnInspectorGUI()
         {
             SceneInfo mInfo = (SceneInfo)target;
@@ -29,5 +30,6 @@ namespace Amy
                 mInfo.lighting_night.getFromScene();
             }
         }
+        */
     }
 }

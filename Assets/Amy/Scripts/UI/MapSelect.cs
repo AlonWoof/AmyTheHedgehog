@@ -258,7 +258,7 @@ namespace Amy
             {
                 int rareChance = Random.Range(0, 100);
 
-                if (rareChance < 10)
+                if (rareChance < 5)
                 {
                     int msg_num = Random.Range(0, rareMessages.Count);
                     loadingText.text = rareMessages[msg_num];

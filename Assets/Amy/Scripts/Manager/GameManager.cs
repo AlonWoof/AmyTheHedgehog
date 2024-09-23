@@ -605,6 +605,7 @@ namespace Amy
             bool playerShouldSpawn = true;
             PlayerManager.Instance.isSmallRoom = false;
             PlayerManager.Instance.isHubWorld = false;
+            PlayerManager.Instance.decidePlayerNPCLocation();
 
             SceneInfo scn = FindObjectOfType<SceneInfo>();
 
@@ -647,6 +648,7 @@ namespace Amy
 
                 Destroy(inst);
             }
+
             
 
             float waitTime = 0.1f;

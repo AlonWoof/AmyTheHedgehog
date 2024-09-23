@@ -19,6 +19,7 @@ namespace Amy
 		public AudioSource sound;
 		public AudioSource interfaceSound;
 		public VideoPlayer player;
+		public GameObject lookTarget;
 
 		public AudioClip onSound;
 		public AudioClip offSound;
@@ -54,6 +55,17 @@ namespace Amy
             {
 				sound.volume = 0.0f;
 				playerMat.SetColor("_EmissionColor", Color.black);
+			}
+
+			if(PlayerManager.Instance.currentCharacter != PlayableCharacter.Amy && PlayerManager.Instance.AmyNPCLocation == PlayerNPCLocation.WatchTV)
+            {
+				turnOn();
+			}
+
+
+			if (PlayerManager.Instance.currentCharacter != PlayableCharacter.Cream && PlayerManager.Instance.CreamNPCLocation == PlayerNPCLocation.WatchTV)
+			{
+				turnOn();
 			}
 
 		}
@@ -110,6 +122,12 @@ namespace Amy
 
 		public void turnOff()
         {
+
+			if (PlayerManager.Instance.AmyNPCLocation == PlayerNPCLocation.WatchTV ||
+			PlayerManager.Instance.CreamNPCLocation == PlayerNPCLocation.WatchTV)
+				return;
+
+
 			Timing.RunCoroutine(turnOffSequence());
 		}
 
@@ -121,9 +139,11 @@ namespace Amy
 			if (interfaceSound && onSound)
 				interfaceSound.PlayOneShot(onSound);
 
+			lookTarget.SetActive(true);
+
 			while (fac < 1.0f)
             {
-				sound.volume = fac * 0.5f;
+				sound.volume = fac * 0.25f;
 				fac += Time.deltaTime * 2.0f;
 				playerMat.SetColor("_EmissionColor", Color.white * fac);
 				yield return 0f;
@@ -140,16 +160,8 @@ namespace Amy
 			if (interfaceSound && offSound)
 				interfaceSound.PlayOneShot(offSound);
 
-
+			lookTarget.SetActive(false);
 			playerMat.SetColor("_EmissionColor", Color.white * 3.0f);
-
-			while (fac < 1.0f)
-			{
-				Color clr = Color.Lerp(Color.white, Color.white * 3.0f, fac);
-				fac += (Time.deltaTime);
-
-				yield return 0f;
-			}
 
 
 			while (fac > 0.0f)

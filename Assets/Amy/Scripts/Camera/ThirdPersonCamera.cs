@@ -432,8 +432,8 @@ namespace Amy
             if (mode == TPCMode.CreamFlying)
                 targetOffset = Vector3.Lerp(offset_near * 1.5f, offset_far * 1.5f, speedFac);
 
-            if (mode == TPCMode.AmyMasturbation)
-                targetOffset = offset_near * 0.5f;
+            //if (mode == TPCMode.AmyMasturbation)
+            //    targetOffset = offset_near * 0.5f;
 
             if (mode == TPCMode.PauseMenu)
                 targetOffset = Vector3.Lerp(pauseZoom_near, pauseZoom_far, pauseZoomAmount);

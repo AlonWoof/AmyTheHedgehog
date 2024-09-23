@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.Events;
 using MEC;
 
 //////////////////////////////////////
@@ -19,6 +20,26 @@ namespace Amy
 		Yume,
 		Suika
     }
+
+	[System.Serializable]
+	public class Message
+	{
+
+		[TextArea(1, 2)]
+		public List<string> messages = new List<string> { "NULL" };
+
+		public AudioClip voice;
+
+		[Range(0, 3)]
+		public float voice_pitch = 1.0f;
+
+		public UnityEvent onStartMessage = new UnityEvent();
+		public UnityEvent onEndMessage = new UnityEvent();
+
+		public UnityEvent onStartPrint = new UnityEvent();
+		public UnityEvent onEndPrint = new UnityEvent();
+	}
+
 
 	public class DialogBox : MonoBehaviour
 	{

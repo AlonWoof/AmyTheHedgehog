@@ -145,7 +145,9 @@ namespace Amy
 			foreach (Player p in playerList)
 			{
 				float dst = Vector3.Distance(transform.position, p.transform.position + Vector3.up * 0.5f);
-				if (dst < closest)
+				float alt_diff = Mathf.Abs(transform.position.y - p.transform.position.y);
+
+				if (dst < closest && alt_diff < 3.0f)
 				{
 					ret = p;
 					closest = dst;

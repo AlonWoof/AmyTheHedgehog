@@ -87,5 +87,15 @@ namespace Amy
         public GameObject Cutscene_AmyWakeup;
         public GameObject Cutscene_CreamWakeup;
 
+        [Header("Message Banks")]
+
+        public MessageBank Messages_AmyNPCDefault;
+        public MessageBank Messages_CreamNPCDefault;
+
+        public MessageBank Messages_AmyNPCShowering;
+        public MessageBank Messages_CreamNPCShowering;
+
+        public MessageBank Messages_AmyNPCWatchingTV;
+        public MessageBank Messages_CreamNPCWatchingTV;
     }
 }

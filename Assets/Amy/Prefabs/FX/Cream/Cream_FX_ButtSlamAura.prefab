@@ -140,7 +140,7 @@ GameObject:
   - component: {fileID: 8713929360864146901}
   - component: {fileID: 8713929360864146902}
   m_Layer: 0
-  m_Name: GameObject
+  m_Name: dmg
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -154,7 +154,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8713929360864146904}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0.00087}
+  m_LocalPosition: {x: 0, y: -0, z: 0.00139}
   m_LocalScale: {x: 0.01, y: 0.010000001, z: 0.010000001}
   m_Children: []
   m_Father: {fileID: 9179639960883341118}
@@ -172,8 +172,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8526c14f270fb3c49a783b5861cf6c92, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  damageAmount: 3
-  bounceAmount: 0
+  damageAmount: 10
+  bounceAmount: 15
   damageType: 6
   hurtsPlayer: 0
   hurtsEnemy: 1
@@ -194,5 +194,5 @@ SphereCollider:
   m_IsTrigger: 1
   m_Enabled: 1
   serializedVersion: 2
-  m_Radius: 0.35960525
+  m_Radius: 0.5
   m_Center: {x: 0, y: 0, z: 0}

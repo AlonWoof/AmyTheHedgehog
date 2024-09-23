@@ -81,6 +81,12 @@ namespace Amy
 
 				mPlayer.acceleration.y = -30.0f;
 
+				if(mPlayer.currentMode != PlayerModes.BUTTSLAM)
+                {
+					buttSlamAura.SetActive(false);
+					yield break;
+				}
+
 				if (mPlayer.framesGrounded > 3)
 					done = true;
 
@@ -98,8 +104,7 @@ namespace Amy
 
 			yield return Timing.WaitForSeconds(0.5f);
 
-			mPlayer.isOnGround = true;
-			mPlayer.canAirAttack = true;
+			mPlayer.resetGroundFlags();
 			mPlayer.changeCurrentMode(PlayerModes.NORMAL);
         }
 

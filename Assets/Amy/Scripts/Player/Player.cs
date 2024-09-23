@@ -74,7 +74,7 @@ namespace Amy
 		public Animator mAnimator;
 		public FootstepFX fx_footsteps;
 		public WeaponTrailFX fx_hammerTrail;
-		public GameObject fx_buttSlamReticule;
+		public ButtSlamReticule fx_buttSlamReticule;
 		public ThirdPersonCamera tpc;
 		public PlayerVoice mVoice;
 		public ActorLookAtController lookAtController;
@@ -246,6 +246,16 @@ namespace Amy
 				t.gameObject.layer = LayerMask.NameToLayer("Actor");
             }
 
+			//So Creamy can aim her ground pounds
+			if(chara == PlayableCharacter.Cream)
+            {
+				GameObject buttTarget = GameObject.Instantiate(GameManager.Instance.systemData.RES_AmyPlayerFX.fx_creamButtSlamReticule);
+				newPlayer.fx_buttSlamReticule = buttTarget.GetComponent<ButtSlamReticule>();
+				newPlayer.fx_buttSlamReticule.mPlayer = newPlayer;
+
+			}
+
+
 			//Let's keep track of the hitboxes~
 			newPlayer.hitBoxes = new List<Hitbox>();
 
@@ -281,6 +291,37 @@ namespace Amy
 
 			return newPlayer;
 		}
+		private void Awake()
+		{
+			addAllModes();
+			getBaseComponents();
+			getPlayerBones();
+			mColMask = LayerMask.GetMask("Collision");
+
+			areaDetector = gameObject.AddComponent<PlayerAreaDetector>();
+		}
+
+		// Start is called before the first frame update
+		void Start()
+		{
+			getBaseComponents();
+			updateExpression();
+		}
+
+		public void resetGroundFlags()
+        {
+			isOnGround = true;
+			canAirAttack = true;
+			isSliding = false;
+			isBallMode = false;
+			isHammerJumping = false;
+			isAttacking = false;
+			isHammerSpin = false;
+			canAirAttack = false;
+			framesAirborne = 0;
+			framesGrounded = 10;
+			jumpTimer = 0.0f;
+	}
 
 		public void addAllModes()
         {
@@ -612,22 +653,7 @@ namespace Amy
 
 
 
-		private void Awake()
-		{
-			addAllModes();
-			getBaseComponents();
-			getPlayerBones();
-			mColMask = LayerMask.GetMask("Collision");
 
-			areaDetector = gameObject.AddComponent<PlayerAreaDetector>();
-		}
-
-		// Start is called before the first frame update
-		void Start()
-		{
-			getBaseComponents();
-			updateExpression();
-		}
 
 		// Update is called once per frame
 		void Update()
@@ -862,7 +888,18 @@ namespace Amy
 			return true;
 		}
 
-		void damageRingScatter()
+
+		public void disableCollision()
+        {
+			mRigidBody.isKinematic = true;
+        }
+
+        public void enableCollision()
+        {
+			mRigidBody.isKinematic = false;
+		}
+
+        void damageRingScatter()
         {
 			int rings = PlayerManager.Instance.getRings();
 
@@ -1275,6 +1312,7 @@ namespace Amy
 							if (currentMode != PlayerModes.HURT && currentMode != PlayerModes.KILLED)
 								mAnimator.Play("Land");
 
+							fixRotation();
 							acceleration.y = 0.0f;
 							acceleration *= 0.95f;
 							speed.y = 0.0f;
@@ -1341,6 +1379,9 @@ namespace Amy
 				return false;
 
 			if (GameManager.Instance.playerInputDisabled || GameManager.Instance.gamePaused || PlayerManager.Instance.itemMenuOpen)
+				return false;
+
+			if (framesAirborne > 0)
 				return false;
 
 			return true;
@@ -1456,6 +1497,27 @@ namespace Amy
 
 				}
             }
+		}
+
+		public void earSpinAttack()
+        {
+			if (isAttacking)
+				return;
+
+			mAnimator.Play("Mouth_Jump");
+			mAnimator.Play("RunningGroundAttack");
+			isHammerSpin = true;
+			isAttacking = true;
+
+			getStatus().currentStamina -= hammerAttackStaminaCost;
+			getStatus().clampValues();
+			attackTimer = 0.6f;
+			stickTimeout = 0.1f;
+			acceleration.z += 3.0f;
+
+			mVoice.playVoiceDelayed(Random.Range(0.05f, 0.1f), mVoice.groundAttack, true);
+
+
 		}
 
 		public void runningGroundAttack()
@@ -1746,6 +1808,28 @@ namespace Amy
 			}
 		}
 
+		public void checkForEarSpinAttack()
+        {
+			if (GameManager.Instance.playerInputDisabled || GameManager.Instance.gamePaused || PlayerManager.Instance.itemMenuOpen)
+				return;
+
+			if (acceleration.magnitude < 3.0f || !isOnGround )
+				return;
+
+			if (PlayerManager.Instance.isSmallRoom)
+				return;
+
+			//Get this poor girl some rest jeez...
+			if (getStatus().checkStatusEffect(PlayerStatusFX.Tired))
+				return;
+
+
+			if (Input.GetButtonDown("Attack"))
+			{
+				earSpinAttack();
+			}
+		}
+
 		public void checkForAirAttack()
         {
 			if (GameManager.Instance.playerInputDisabled || GameManager.Instance.gamePaused || PlayerManager.Instance.itemMenuOpen)
@@ -1813,53 +1897,10 @@ namespace Amy
 
 		public void updateButtSlamReticule()
         {
-
 			if (mChara != PlayableCharacter.Cream)
 				return;
 
-			if (!fx_buttSlamReticule)
-            {
-				fx_buttSlamReticule = GameObject.Instantiate(GameManager.Instance.systemData.RES_AmyPlayerFX.fx_creamButtSlamReticule);
-				return;
-            }
 
-			bool showReticule = true;
-
-			if (currentMode != PlayerModes.FLY)
-				showReticule = false;
-
-			if (getAltitudeFromGround() < 3.0f)
-				showReticule = false;
-
-			if(showReticule)
-            {
-				if(!fx_buttSlamReticule.activeInHierarchy)
-					fx_buttSlamReticule.SetActive(true);
-
-				Vector3 start = transform.position;
-				Vector3 end = (transform.position + Vector3.down * 128.0f);
-
-				
-
-				RaycastHit hitInfo = new RaycastHit();
-
-				if(Physics.Linecast(start,end,out hitInfo,mColMask))
-                {
-					fx_buttSlamReticule.transform.position = hitInfo.point + (hitInfo.normal * 0.1f);
-					fx_buttSlamReticule.transform.rotation = Quaternion.LookRotation(transform.forward, hitInfo.normal);
-
-					Debug.DrawLine(start, hitInfo.point, Color.blue, 1.1f);
-				}
-				else
-                {
-					fx_buttSlamReticule.transform.position = Vector3.down * 5000.0f;
-                }
-            }
-			else
-            {
-				if (fx_buttSlamReticule.activeInHierarchy)
-					fx_buttSlamReticule.SetActive(false);
-			}
 		}
 		public void checkForButtSlamAttack()
 		{
@@ -1875,8 +1916,6 @@ namespace Amy
 			if (framesAirborne < 10)
 				return;
 
-			if (!canAirAttack)
-				return;
 
 			//Get this poor girl some rest jeez...
 			if (getStatus().checkStatusEffect(PlayerStatusFX.Tired))
@@ -2114,6 +2153,14 @@ namespace Amy
 			updateYRotation();
 			updateXZRotation();
 		}
+
+		void fixRotation()
+        {
+			direction.y = 0;
+			direction.Normalize();
+
+			updateRotation();
+        }
 
 		void updateYRotation()
         {

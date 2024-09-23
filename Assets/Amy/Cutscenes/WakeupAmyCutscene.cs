@@ -83,6 +83,14 @@ namespace Amy
 			endCutscene();
 		}
 
+		public override void endCutscene()
+        {
+			base.endCutscene();
+
+			TimedDestroy dest = gameObject.AddComponent<TimedDestroy>();
+			dest.lifetime = 1.0f;
+        }
+
         protected override void skipCutscene()
         {
             base.skipCutscene();
@@ -100,6 +108,9 @@ namespace Amy
 			mPlayer.tpc.centerBehindPlayer();
 
 			UIManager.Instance.fadeScreen(true, 1.0f);
+
+			TimedDestroy dest = gameObject.AddComponent<TimedDestroy>();
+			dest.lifetime = 1.0f;
 		}
 
     }

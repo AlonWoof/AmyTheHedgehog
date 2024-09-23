@@ -6,7 +6,7 @@ using MEC;
 
 namespace Amy
 {
-
+    /*
     //[RequireComponent(typeof(NPC))]
     public class Talker : MonoBehaviour
     {
@@ -141,7 +141,7 @@ namespace Amy
                 {
                     player.changeCurrentMode(PlayerModes.LISTENING);
                 }
-                */
+
 
                 
             }
@@ -170,4 +170,5 @@ namespace Amy
             }
         }
     }
+    */
 }

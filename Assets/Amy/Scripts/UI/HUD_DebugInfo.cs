@@ -252,6 +252,12 @@ namespace Amy
 
 			dbgstr += "\n\nluckyNumber: " + PlayerManager.Instance.todayEvents.luckyNumber;
 
+			if (PlayerManager.Instance.currentCharacter != PlayableCharacter.Amy)
+				dbgstr += "\n\nAmy Location: " + PlayerManager.getPlayerNPCLocationString(PlayerManager.Instance.AmyNPCLocation);
+
+			if (PlayerManager.Instance.currentCharacter != PlayableCharacter.Cream)
+				dbgstr += "\n\nCream Location: " + PlayerManager.getPlayerNPCLocationString(PlayerManager.Instance.CreamNPCLocation);
+
 			return dbgstr;
 		}
 	}

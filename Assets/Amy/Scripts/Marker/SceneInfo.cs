@@ -57,30 +57,14 @@ namespace Amy
         public bool isSmallRoom = false;
         public bool isOutdoors = true;
         
-        public bool freezeTime = false;
-        public bool humanDisguise = false;
         public bool dontSpawnPlayer = false;
 
-        public int forceHour = -1;
-        public int forceMinute = -1;
 
         public BGMData bgmData;
-
-        public Color currentFogColor;
-       // Tenkoku.Core.TenkokuModule sky;
 
         public List<GameObject> preloadObjects;
 
         public float shadow_dist = 1024f;
-
-
-        public bool isNight = false;
-        public bool hasDayNightCycle = false;
-        public LightingProfile lighting_day;
-        public LightingProfile lighting_night;
-
-        public GameObject daySet;
-        public GameObject nightSet;
 
 
         void Awake()
@@ -91,24 +75,8 @@ namespace Amy
         // Update is called once per frame
         void Update()
     	{
-           // RenderSettings.fogColor = currentFogColor * RenderSettings.ambientSkyColor;// sky.ambColorGradient.Evaluate(sky.calcTime);
-            // sky.ambColorGradient.Evaluate(sky.calcTime);
 
-            //RenderSettings.fogColor = currentFogColor;
 
-            if (hasDayNightCycle)
-            {
-                RenderSettings.fogColor = currentFogColor * RenderSettings.ambientIntensity;
-
-                if (PlayerManager.Instance.isNightTime)
-                {
-                    lighting_night.ApplyToScene();
-                }
-                else
-                {
-                    lighting_day.ApplyToScene();
-                }
-            }
         }
 
         private void OnValidate()

@@ -11,6 +11,9 @@ namespace Amy
 
 	public class DashPanel : MonoBehaviour
 	{
+
+		public AudioSource mAudio;
+
 	    // Start is called before the first frame update
 	    void Start()
 	    {
@@ -35,6 +38,9 @@ namespace Amy
 				pl.acceleration.z = 30.0f;
 				pl.stickTimeout = 1.0f;
 				pl.tpc.centerBehindPlayer();
+
+				if(mAudio)
+					mAudio.Play();
             }
         }
     }

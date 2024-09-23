@@ -117,17 +117,30 @@ namespace Amy
 
 			GameManager.Instance.controllerRumble(1.0f, 1.0f, 1.0f);
 
-			mPlayer.getStatus().setStatusEffect(PlayerStatusFX.RecentOrgasm);
-
 			float effectTime = Helper.minutesToSeconds(5);
 
 			//Really hit the spot <3
 			if (mPlayer.getStatus().checkStatusEffect(PlayerStatusFX.Horny))
 				effectTime = Helper.minutesToSeconds(10);
 
-			mPlayer.getStatus().unSetStatusEffect(PlayerStatusFX.Horny);
+			
 
-			mPlayer.getStatus().recentOrgasmTimeLeft = Random.Range(Helper.minutesToSeconds(5), Helper.minutesToSeconds(10));
+			if (mPlayer.getStatus().currentHealth > mPlayer.getStatus().maxHealth * 0.75f)
+			{
+				mPlayer.getStatus().unSetStatusEffect(PlayerStatusFX.Horny);
+				mPlayer.getStatus().setStatusEffect(PlayerStatusFX.RecentOrgasm);
+			}
+			else
+            {
+				mPlayer.getStatus().setStatusEffect(PlayerStatusFX.Horny);
+			}
+
+
+
+
+
+
+				mPlayer.getStatus().recentOrgasmTimeLeft = Random.Range(Helper.minutesToSeconds(5), Helper.minutesToSeconds(10));
 			cunnyDripFX.SetActive(false);
 			mAnimator.CrossFade("Idle", 0.2f);
 			yield return Timing.WaitForSeconds(0.1f);
@@ -174,6 +187,9 @@ namespace Amy
 				return false;
 
 			if (pstats.checkStatusEffect(PlayerStatusFX.Horny))
+				return true;
+
+			if (pstats.currentHealth < pstats.maxHealth * 0.75f)
 				return true;
 
 			if (PlayerManager.Instance.todayEvents.luckyNumber % 3 != 0 && !PlayerManager.Instance.getStoryFlag(StoryFlag.SADX_NUDE))

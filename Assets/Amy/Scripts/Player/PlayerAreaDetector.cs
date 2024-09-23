@@ -17,6 +17,8 @@ namespace Amy
 
 		public Enemy closestEnemy = null;
 		public Activatible closestActivatible = null;
+		public LookPoint closestLookPoint = null;
+
 
 		public int visibleNPCCount = 0;
 
@@ -56,6 +58,7 @@ namespace Amy
 
 			refreshClosestEnemy();
 			refreshClosestActivatible();
+			refreshLookatTarget();
 
 			updateVibes();
 
@@ -91,6 +94,9 @@ namespace Amy
 				}
 			}
 
+			refreshClosestLookPoint();
+			
+			
 			isVisibleToNPC();
 		}
 
@@ -128,6 +134,49 @@ namespace Amy
 					pStats.setVibe(v.vibeFlags);
                 }
             }
+        }
+
+		public void refreshLookatTarget()
+        {
+			if(closestLookPoint)
+            {
+				mPlayer.lookAt(closestLookPoint.transform.position);
+			}
+
+			if (closestActivatible)
+			{
+				mPlayer.lookAt(closestActivatible.transform.position);
+			}
+
+			if (closestEnemy)
+			{
+				if (Vector3.Distance(transform.position + (Vector3.up * (mPlayer.mParam.height * 0.75f)), closestEnemy.transform.position) > lookRadius * 1.5f)
+				{
+					mPlayer.lookAt(closestEnemy.transform.position);
+				}
+			}
+
+		}
+
+		public void refreshClosestLookPoint()
+        {
+			closestLookPoint = null;
+			float bestDist = 16.0f;
+
+			foreach(LookPoint lp in FindObjectsOfType<LookPoint>())
+            {
+				float dst = Vector3.Distance(lp.transform.position, transform.position + (Vector3.up * 0.5f));
+
+				if (dst < lp.lookDistance)
+				{
+					if (dst < bestDist)
+					{
+						bestDist = dst;
+						closestLookPoint = lp;
+
+					}
+				}
+			}
         }
 
 		public void refreshClosestActivatible()
@@ -226,13 +275,7 @@ namespace Amy
             }
 
 
-			if(closestEnemy)
-            {
-				if(Vector3.Distance(transform.position + (Vector3.up * (mPlayer.mParam.height * 0.75f)), closestEnemy.transform.position) > lookRadius * 1.5f)
-                {
-					mPlayer.lookAt(closestEnemy.transform.position);
-                }
-            }
+
 
 			//Debug.Log("BEST ANGLE: " + bestAngle);
 

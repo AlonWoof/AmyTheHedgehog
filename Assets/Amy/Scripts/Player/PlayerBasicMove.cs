@@ -66,6 +66,7 @@ namespace Amy
 			if(mPlayer.mChara == PlayableCharacter.Cream)
             {
 				mPlayer.checkForFlying();
+				mPlayer.checkForEarSpinAttack();
 				mPlayer.checkForButtSlamAttack();
 			}
 		}
@@ -130,7 +131,10 @@ namespace Amy
 			float masturbateTime = 30.0f;
 
 			if (mPlayer.getStatus().checkStatusEffect(PlayerStatusFX.Horny))
-				masturbateTime = 5.0f;
+				masturbateTime = 3.0f;
+
+			if (mPlayer.getStatus().currentHealth < mPlayer.getStatus().maxHealth * 0.75f)
+				masturbateTime = 3.0f;
 
 			if (idleCounter > masturbateTime)
             {

@@ -32,6 +32,15 @@ namespace Amy
         RecentOrgasm = 128
     }
 
+    public enum PlayerNPCLocation
+    {
+        None,
+        Bed,
+        WatchTV,
+        Shower,
+        MAX
+    }
+
     public enum ExitLevelType
     {
         NORMAL,
@@ -212,6 +221,9 @@ namespace Amy
 
         public PlayableCharacter currentCharacter = PlayableCharacter.Amy;
 
+        public PlayerNPCLocation AmyNPCLocation;
+        public PlayerNPCLocation CreamNPCLocation;
+
         //This will be placed at the last safe place/exit
         public Transform playerCheckpoint;
 
@@ -243,6 +255,7 @@ namespace Amy
 
         public bool itemMenuOpen = false;
 
+        public int universeNumber = 0;
         public DayEvents todayEvents;
 
 
@@ -265,18 +278,31 @@ namespace Amy
             SaveGame.loadGame(saveFileSlot);
         }
 
+        public static string getPlayerNPCLocationString(PlayerNPCLocation loc)
+        {
 
+            switch(loc)
+            {
+                case PlayerNPCLocation.None:
+                    return "None";
+                case PlayerNPCLocation.Bed:
+                    return "Sleeping";
+                case PlayerNPCLocation.Shower:
+                    return "Showering";
+                case PlayerNPCLocation.WatchTV:
+                    return "Watching TV";
+                case PlayerNPCLocation.MAX:
+                    return "Fix yer damn code, Jenny";
+            }    
+
+            return "UNKNOWN";
+        }
 
         public void Init()
         {
             Debug.Log("PlayerManager Initialized!");
         }
 
-        // Start is called before the first frame update
-        void Start()
-    	{
-            
-    	}
 
 
         public void randomizeDayEvents()
@@ -350,6 +376,29 @@ namespace Amy
             storyFlags.Add(new StoryFlag(hash, value));
         }
 
+        public void decidePlayerNPCLocation()
+        {
+            if(AmyStatus.currentHealth == AmyStatus.maxHealth && AmyStatus.currentStamina == AmyStatus.maxStamina)
+            {
+                int r = Random.Range((int)PlayerNPCLocation.WatchTV, (int)PlayerNPCLocation.MAX);
+                AmyNPCLocation = (PlayerNPCLocation)r;
+            }
+            else
+            {
+                AmyNPCLocation = PlayerNPCLocation.Bed;
+            }
+
+            if (CreamStatus.currentHealth == CreamStatus.maxHealth && CreamStatus.currentStamina == CreamStatus.maxStamina)
+            {
+                int r = Random.Range((int)PlayerNPCLocation.WatchTV, (int)PlayerNPCLocation.MAX);
+                CreamNPCLocation = (PlayerNPCLocation)r;
+            }
+            else
+            {
+                CreamNPCLocation = PlayerNPCLocation.Bed;
+            }
+        }
+
         // Update is called once per frame
         void Update()
     	{
@@ -369,23 +418,47 @@ namespace Amy
 
 
             updatePlayTime();
-
             handleItemMenu();
+
+            
+        }
+
+        void updateCameraMode()
+        {
+            if (!mPlayerInstance)
+                return;
+
+            if (!mPlayerInstance.tpc)
+                return;
+        
+            if(GameManager.Instance.gamePaused)
+            {
+                if (mPlayerInstance.tpc.mode != TPCMode.PauseMenu)
+                    mPlayerInstance.tpc.changeCameraMode(TPCMode.PauseMenu);
+            }
+            else
+            {
+                if (mPlayerInstance.tpc.mode == TPCMode.PauseMenu)
+                    mPlayerInstance.tpc.changeCameraMode(TPCMode.Normal);
+            }
         }
 
         void handleItemMenu()
         {
             ItemMenu itm = UIManager.Instance.itemMenu;
 
-            if(canOpenItemMenu() && Input.GetButtonDown("Select"))
+            if(canOpenItemMenu())
             {
-                if (!itemMenuOpen)
+                if (Input.GetButtonDown("Select") || Input.GetKeyDown(KeyCode.Tab))
                 {
-                    openItemMenu();
-                }
-                else
-                {
-                    closeItemMenu();
+                    if (!itemMenuOpen)
+                    {
+                        openItemMenu();
+                    }
+                    else
+                    {
+                        closeItemMenu();
+                    }
                 }
             }
         }
@@ -872,6 +945,8 @@ namespace Amy
                 playerCheckpoint.transform.position = mExit.altCheckpoint.transform.position;
                 playerCheckpoint.transform.rotation = mExit.transform.rotation;
             }
+
+            
         }
 
         public Player spawnPlayerAtCheckpoint()
@@ -1161,11 +1236,15 @@ namespace Amy
             ringBank = 0;
             currentCharacter = PlayableCharacter.Amy;
 
+
+
             //Progress flags
             hasHammer = false;
             hasCloth = false;
             hasSlingshot = false;
             isPrologue = true;
+
+            universeNumber = Random.Range(0, 9999);
 
             AmyStatus = GameManager.getSystemData().AmyParams.baseStats.makeCopy();
             CreamStatus = GameManager.getSystemData().CreamParams.baseStats.makeCopy();
@@ -1182,6 +1261,7 @@ namespace Amy
             createBlankSave();
 
             GameManager.Instance.loadScene("Jungle", true);
+
         }
 
         public void wakeupScene(bool whiteFade = false)
@@ -1194,6 +1274,9 @@ namespace Amy
             yield return 0f;
             UIManager.Instance.fadeScreen(false, 0.5f, whiteFade);
             yield return Timing.WaitForSeconds(0.5f);
+
+
+            yield return Timing.WaitForSeconds(3.0f);
 
             SceneManager.LoadScene("AmyRoom");
             yield return Timing.WaitForSeconds(1.0f);

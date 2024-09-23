@@ -9,11 +9,20 @@ public class SpawnEveryInterval : MonoBehaviour
     float timeLeft;
 
     public GameObject objectToSpawn;
+    public bool spawnOnEnable = false;
 
     // Start is called before the first frame update
     void Start()
     {
         timeLeft = Random.Range(interval * 0.25f,interval);
+    }
+
+    private void OnEnable()
+    {
+        if(spawnOnEnable)
+        {
+            spawnObject();
+        }
     }
 
     // Update is called once per frame

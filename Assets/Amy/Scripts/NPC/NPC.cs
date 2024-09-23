@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 using MEC;
 
 /* Copyright 2024 Jennifer Haden */
@@ -21,13 +22,15 @@ namespace Amy
         public Message AmyHornyMessage;
         public Message SickMessage;
 
-        public Talker tk;
-
         public Transform headNode;
-        public ActorLookAtController lookAt;
+        public ActorLookAtController lookAtController;
         public NPCPath path;
         public float lookAtRange = 4.0f;
-        
+        public bool lookAtToggle = true;
+
+
+        public UnityEvent onStartTalk;
+        public UnityEvent onEndTalk;
 
     	// Start is called before the first frame update
     	void Awake()
@@ -58,29 +61,37 @@ namespace Amy
             }
         }
 
-    	// Update is called once per frame
-    	void Update()
-    	{
+        public void enableLook()
+        {
+            lookAtToggle = true;
+        }
 
+        public void disableLook()
+        {
+            lookAtToggle = false;
+        }
+
+        protected void updatelookAt()
+        {
             if (!PlayerManager.Instance.getPlayer())
                 return;
 
-            if (!lookAt)
+            if (!lookAtController)
                 return;
 
             Player pl = PlayerManager.Instance.getPlayer();
 
             float dst = Vector3.Distance(pl.transform.position + Vector3.up * 0.5f, transform.position);
 
-            if(dst < lookAtRange)
+            if (dst < lookAtRange && lookAtToggle)
             {
-                lookAt.lookingAtTarget = true;
-                lookAt.desiredLookAt = pl.transform.position + (Vector3.up * (pl.mParam.height * 0.75f));
+                lookAtController.lookingAtTarget = true;
+                lookAtController.desiredLookAt = pl.transform.position + (Vector3.up * (pl.mParam.height * 0.75f));
             }
             else
             {
-                lookAt.lookingAtTarget = false;
-                lookAt.desiredLookAt = transform.position + transform.forward + Vector3.up;
+                lookAtController.lookingAtTarget = false;
+                lookAtController.desiredLookAt = transform.position + transform.forward + Vector3.up;
             }
         }
 
@@ -136,10 +147,14 @@ namespace Amy
                 wasNormal = true;
             }
 
+            onStartTalk.Invoke();
+
             while(msgProc.IsRunning)
             {
                 yield return 0f;
             }
+
+            onEndTalk.Invoke();
 
             if (path)
                 path.enableMovement();

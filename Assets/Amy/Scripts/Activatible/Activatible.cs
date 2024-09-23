@@ -13,7 +13,7 @@ namespace Amy
 	public class Activatible : MonoBehaviour
 	{
 
-		public float range = 3.0f;
+		public float range = 1.0f;
 		public float priority = 0.0f;
 		public string interactionLabel = "Talk";
 

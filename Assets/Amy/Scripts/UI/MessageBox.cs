@@ -8,7 +8,7 @@ using UnityEngine.Events;
 /* Copyright 2022 Jennifer Haden */
 namespace Amy
 {
-
+    /*
     [System.Serializable]
     public enum MessageBoxLocation
     {
@@ -31,45 +31,6 @@ namespace Amy
         public Message msgPath;
 
         public UnityEvent onChoiceMade;
-    }
-
-    [System.Serializable]
-    public class Message
-    {
-
-
-
-        //TODO: Make a Talker class
-        public Talker mTalker;
-
-        public Color nameColor = Color.blue;
-        public string nameTag = "";
-
-        public float delay = 0.0f;
-
-
-        public bool hasChoice = false;
-
-        public bool isSilent = false;
-        public bool invisibleBox = false;
-
-        MessageBoxStyle style = MessageBoxStyle.Default;
-        MessageBoxLocation location = MessageBoxLocation.Bottom;
-
-        [TextArea(1, 2)]
-        public List<string> messages = new List<string>{ "NULL" };
-        public List<Choice> choices;
-
-        public AudioClip voice;
-
-        [Range(0, 3)]
-        public float voice_pitch = 1.0f;
-
-        public UnityEvent onStartMessage = new UnityEvent();
-        public UnityEvent onEndMessage = new UnityEvent();
-
-        public UnityEvent onStartPrint = new UnityEvent();
-        public UnityEvent onEndPrint = new UnityEvent();
     }
 
 
@@ -722,5 +683,5 @@ namespace Amy
 
 
     }
-
+    */
 }

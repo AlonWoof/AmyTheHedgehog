@@ -121,6 +121,8 @@ namespace Amy
 
 				onContact.Invoke();
 
+
+
 				if (collisionFX)
 				{
 					GameObject inst = GameObject.Instantiate(collisionFX);

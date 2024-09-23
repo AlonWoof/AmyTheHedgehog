@@ -156,6 +156,7 @@ namespace Amy
 			plman.totalHours = reader.ReadInt32();
 			plman.totalMinutes = reader.ReadInt32();
 			plman.totalSeconds = reader.ReadSingle();
+			plman.universeNumber = reader.ReadInt32();
 
 			//Progress flags
 			plman.hasHammer = reader.ReadBoolean();
@@ -215,6 +216,7 @@ namespace Amy
 			writer.Write(plman.totalHours);
 			writer.Write(plman.totalMinutes);
 			writer.Write(plman.totalSeconds);
+			writer.Write(plman.universeNumber);
 
 			//Progress flags
 			writer.Write(plman.hasHammer);

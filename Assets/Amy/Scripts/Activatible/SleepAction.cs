@@ -36,6 +36,7 @@ namespace Amy
 
 
 			PlayerManager.Instance.wakeupScene();	
-        }
+			
+		}
 	}
 }
