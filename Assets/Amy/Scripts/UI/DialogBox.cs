@@ -47,16 +47,27 @@ namespace Amy
 		public Text myText;
 		public int textProgress = 0;
 		public string fullText;
-		public float delay = 0.01f;
+		public float delay = 0.02f;
 
 		public static float speed_fast = 0.01f;
 		public static float speed_mid = 0.02f;
 		public static float speed_slow = 0.04f;
 
+		public AudioSource mVoice;
+
 		// Start is called before the first frame update
 		void Start()
 	    {
 			myText.text = "";
+
+			if(!mVoice)
+            {
+				mVoice = gameObject.AddComponent<AudioSource>();
+				mVoice.outputAudioMixerGroup = GameManager.Instance.systemData.AUDIO_Group_Voice;
+				mVoice.spatialBlend = 0.0f;
+				mVoice.volume = 1.0f;
+
+			}
 		}
 	
 	    // Update is called once per frame
@@ -150,7 +161,14 @@ namespace Amy
 			mAnimator.Play("Appear");
 			yield return Timing.WaitForSeconds(0.5f);
 
-			msg.onStartMessage?.Invoke();
+
+
+			msg.onStartMessage.Invoke();
+
+			if(msg.voice)
+            {
+				mVoice.PlayOneShot(msg.voice);
+            }
 
 			foreach (string str in msg.messages)
             {

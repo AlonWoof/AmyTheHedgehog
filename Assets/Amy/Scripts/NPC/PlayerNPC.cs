@@ -24,8 +24,35 @@ namespace Amy
 
         public void loadMessages()
         {
+
+            List<Message> tempList = new List<Message>();
             messageList = new List<Message>();
 
+
+            foreach (MessageBank bank in messageBanks)
+            {
+
+                tempList.Clear();
+
+                foreach (Message m in bank.messages)
+                {
+                    tempList.Add(m);
+                }
+
+                tempList.Shuffle();
+
+                int msgCount = Mathf.RoundToInt((float)tempList.Count * 0.25f);
+                msgCount = Mathf.Clamp(msgCount, 1, tempList.Count);
+
+                for(int i = 0; i < msgCount; i++)
+                {
+                    messageList.Add(tempList[i]);
+                }
+            }
+
+
+            
+            /*
             foreach(MessageBank bank in messageBanks)
             {
                 foreach(Message m in bank.messages)
@@ -33,6 +60,7 @@ namespace Amy
                     messageList.Add(m);
                 }
             }
+            */
 
             messageList.Shuffle();
         }

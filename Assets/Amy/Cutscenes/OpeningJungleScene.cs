@@ -59,6 +59,7 @@ namespace Amy
 			yield return Timing.WaitForSeconds(0.5f);
 			amyVoice.volume = 0.15f;
 			amyVoice.PlayOneShot(amy_wakingUp);
+			yield return Timing.WaitForSeconds(0.1f);
 
 			amyAnimator.Play("GetUp");
 
@@ -79,14 +80,14 @@ namespace Amy
 				yield return 0f;
 			}
 
-			amyAnimator.CrossFade("LookUp", 0.25f);
-			yield return Timing.WaitForSeconds(0.5f);
-
 			cam2.SetActive(true);
 			cam1.SetActive(false);
 
+			amyAnimator.CrossFade("LookUp", 0.2f);
+			yield return Timing.WaitForSeconds(0.5f);
 
-			yield return Timing.WaitForSeconds(1.0f);
+
+			yield return Timing.WaitForSeconds(0.5f);
 			amyAnimator.Play("word_jungle");
 			amyVoice.PlayOneShot(amy_thinking);
 			msg = UIManager.Instance.messageBox.showMessageBox("Some kind of jungle?", SpeakerProfile.Amy);
