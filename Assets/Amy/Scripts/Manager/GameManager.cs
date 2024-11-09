@@ -711,7 +711,7 @@ namespace Amy
             SceneInfo scn = FindObjectOfType<SceneInfo>();
             if (scn != null)
             {
-                MusicManager.Instance.changeSongs(scn.bgmData);
+                //MusicManager.Instance.changeSongs(scn.bgmData);
 
                 if (scn.isSmallRoom)
                     PlayerManager.Instance.isSmallRoom = true;

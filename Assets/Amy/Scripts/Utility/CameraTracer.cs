@@ -10,6 +10,8 @@ namespace Amy
 	{
 
         Camera mCamera;
+        public bool lockXZ = false;
+        public bool rotation = false;
 
     	// Start is called before the first frame update
     	void Start()
@@ -45,8 +47,17 @@ namespace Amy
                 return;
             }
 
-            transform.position = mCamera.transform.position;
-            transform.rotation = mCamera.transform.rotation;
+            if(!lockXZ)
+                transform.position = mCamera.transform.position;
+            else
+            {
+                Vector3 pos = mCamera.transform.position;
+                pos.y = transform.position.y;
+                transform.position = pos;
+            }
+
+            if(rotation)
+                transform.rotation = mCamera.transform.rotation;
         }
 
     }

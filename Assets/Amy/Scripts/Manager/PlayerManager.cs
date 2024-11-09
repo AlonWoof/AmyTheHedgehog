@@ -178,6 +178,10 @@ namespace Amy
             statusFX &= ~(int)fx;
         }
 
+        public void clearStatusEffects()
+        {
+            statusFX = 0;
+        }
 
         public bool checkVibe(VibeType v)
         {
@@ -758,8 +762,11 @@ namespace Amy
             }
         }
 
+
+        //Doing away with this other axis soon.  We don't need 3.
         public void processMood(Player pl)
         {
+            
             PlayerStatus pStats = pl.getStatus();
 
             float moodFac = pStats.currentMood / pStats.maxMood;
@@ -808,6 +815,7 @@ namespace Amy
 
             pStats.currentMood = Mathf.Lerp(pStats.currentMood, targetMood, Time.deltaTime * 1.2f);
             pStats.clampValues();
+            
         }
 
         public string getMoodLabel()
@@ -815,8 +823,6 @@ namespace Amy
             PlayerStatus pStats = getCurrentPlayerStatus();
 
             float fac = (pStats.currentMood / pStats.maxMood);
-
-            
 
             if (fac > 0.8f)
             {
@@ -851,8 +857,8 @@ namespace Amy
             {
                 if (pStats.currentStamina > 0.01f)
                 {
-                    pStats.currentHealth += (Time.deltaTime * baseHealFac) * moodFac;
-                    pStats.currentStamina -= (Time.deltaTime * baseHealFac);
+                   // pStats.currentHealth += (Time.deltaTime * baseHealFac) * moodFac;
+                   //pStats.currentStamina -= (Time.deltaTime * baseHealFac);
                 }
             }
             else
@@ -1158,6 +1164,8 @@ namespace Amy
             {
                 getCurrentPlayerStatus().currentHealth -= getCurrentPlayerStatus().maxHealth * 0.25f;
                 
+                //Falling and drowning are "soft deaths", they don't instakill you.
+                //If we still have health left, don't die, just respawn.
                 if(getCurrentPlayerStatus().currentHealth > 0.0f)
                 {
                     spawnPlayerAtCheckpoint();
@@ -1179,6 +1187,7 @@ namespace Amy
                 }
                 else if(isPrologue)
                 {
+                    //An exception for the prologue because there's no bed to wake up to.
                     getCurrentPlayerStatus().currentHealth = getCurrentPlayerStatus().maxHealth * 0.5f;
                 }
             }
@@ -1190,7 +1199,8 @@ namespace Amy
             if(type == PlayerKilled.DeathType.Corrupted)
             {
                 getCurrentPlayerStatus().currentStamina = -10.0f;
-                getCurrentPlayerStatus().unSetStatusEffect(PlayerStatusFX.Scared);
+                getCurrentPlayerStatus().clearStatusEffects();
+                getCurrentPlayerStatus().setStatusEffect(PlayerStatusFX.Sick);
             }
 
             yield return 0f;

@@ -2553,33 +2553,10 @@ MonoBehaviour:
   isHubWorld: 0
   isSmallRoom: 0
   isOutdoors: 1
-  freezeTime: 0
-  humanDisguise: 0
   dontSpawnPlayer: 0
-  forceHour: -1
-  forceMinute: -1
   bgmData: {fileID: 0}
-  currentFogColor: {r: 0, g: 0, b: 0, a: 0}
   preloadObjects: []
   shadow_dist: 1024
-  isNight: 0
-  hasDayNightCycle: 0
-  lighting_day:
-    skybox_mat: {fileID: 2100000, guid: 5966f79de89422847ad8071f33e1bcc0, type: 2}
-    light_sky: {r: 0.6981132, g: 0.5705099, b: 0.39186543, a: 1}
-    light_equator: {r: 0.509434, g: 0.25011125, b: 0.24270204, a: 1}
-    light_ground: {r: 0.21493414, g: 0.21493414, b: 0.4339623, a: 1}
-    fog_color: {r: 0.5849056, g: 0.28641552, b: 0.251068, a: 1}
-    fog_density: 0.02
-  lighting_night:
-    skybox_mat: {fileID: 2100000, guid: 21cf47b1772e9f44296f677f532a6cca, type: 2}
-    light_sky: {r: 0.028746877, g: 0.039175756, b: 0.3207547, a: 1}
-    light_equator: {r: 0.071155205, g: 0.10412959, b: 0.3679245, a: 1}
-    light_ground: {r: 0.0244749, g: 0.05733404, b: 0.20754719, a: 1}
-    fog_color: {r: 0, g: 0, b: 0, a: 1}
-    fog_density: 0.02
-  daySet: {fileID: 0}
-  nightSet: {fileID: 0}
 --- !u!4 &503033369
 Transform:
   m_ObjectHideFlags: 0
@@ -5102,6 +5079,10 @@ PrefabInstance:
       propertyPath: m_IsActive
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 3287847835422477626, guid: 845966627e3036c498c9e5c1d100f62a, type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: 8f8d6e7137e34444fbeb6848d6eb91f2, type: 2}
     - target: {fileID: 3994795873577016756, guid: 845966627e3036c498c9e5c1d100f62a, type: 3}
       propertyPath: m_IsActive
       value: 1
@@ -5622,6 +5603,10 @@ PrefabInstance:
       propertyPath: m_IsActive
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 7982695377839640633, guid: 845966627e3036c498c9e5c1d100f62a, type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: 38166c3fcd979534d9029547b561269b, type: 2}
     - target: {fileID: 8323361764881631563, guid: 845966627e3036c498c9e5c1d100f62a, type: 3}
       propertyPath: m_BoundingSphereOverride.w
       value: -0.15299904

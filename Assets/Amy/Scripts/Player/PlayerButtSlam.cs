@@ -81,6 +81,16 @@ namespace Amy
 
 				mPlayer.acceleration.y = -30.0f;
 
+
+
+				if (mPlayer.getWaterDepth() > 0.5f)
+				{
+					mPlayer.acceleration.y = 0.0f;
+					mPlayer.changeCurrentMode(PlayerModes.SWIMMING);
+					mPlayer.setVelocityDirectly(mPlayer.mRigidBody.velocity * 0.5f);
+					mPlayer.resetGroundFlags();
+				}
+
 				if(mPlayer.currentMode != PlayerModes.BUTTSLAM)
                 {
 					buttSlamAura.SetActive(false);
@@ -120,6 +130,8 @@ namespace Amy
         {
 			if(!checkGrounded())
 				mPlayer.setVelocityDirectly(Vector3.down * 8.0f);
+
+			mPlayer.checkIfUnderwater();
 		}
 
 

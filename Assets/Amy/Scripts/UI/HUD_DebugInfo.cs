@@ -92,8 +92,6 @@ namespace Amy
 					dbgstr += getInventoryInfo();
 					break;
 
-
-
 				case DebugInfoPage.EventInfo:
 					dbgstr += getEventInfo();
 					break;
@@ -219,6 +217,7 @@ namespace Amy
 			dbgstr += "framesAirborne: " + player.framesAirborne + "\n";
 			dbgstr += "hammerJumpCharge: " + player.hammerJumpCharge + "\n";
 			dbgstr += "canAirAttack: " + player.canAirAttack + "\n";
+			dbgstr += "waterDepth: " + player.getWaterDepth() + "\n";
 
 			dbgstr += "\n NPCs that can see me: " + player.areaDetector.visibleNPCCount;
 
@@ -251,6 +250,7 @@ namespace Amy
 			dbgstr += "\nyumeShower: " + PlayerManager.Instance.todayEvents.yumeShower;
 
 			dbgstr += "\n\nluckyNumber: " + PlayerManager.Instance.todayEvents.luckyNumber;
+			dbgstr += "\nuniverseNumber: " + PlayerManager.Instance.universeNumber;
 
 			if (PlayerManager.Instance.currentCharacter != PlayableCharacter.Amy)
 				dbgstr += "\n\nAmy Location: " + PlayerManager.getPlayerNPCLocationString(PlayerManager.Instance.AmyNPCLocation);

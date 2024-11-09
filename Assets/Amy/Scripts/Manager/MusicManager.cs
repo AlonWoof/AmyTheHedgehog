@@ -58,7 +58,13 @@ namespace Amy
         // Update is called once per frame
         void Update()
         {
-           // Debug.Log("BGM VOLUME: " + bgm.volume);
+            // Debug.Log("BGM VOLUME: " + bgm.volume);
+
+            if (!bgm)
+                return;
+
+            if (!currentBGM)
+                return;
 
             if(hasIntro && bgm.clip == currentBGM.introClip && !bgm.isPlaying)
             {
@@ -163,10 +169,9 @@ namespace Amy
             while (isFading)
                 yield return 0f;
 
-            if (!currentBGM)
-                yield break;
 
-            target *= currentBGM.volumeMult;
+            if (currentBGM)
+                target *= currentBGM.volumeMult;
 
             float totalTime = crossFadeTime;
             float timeLeft = totalTime;
