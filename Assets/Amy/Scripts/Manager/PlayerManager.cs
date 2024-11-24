@@ -59,8 +59,8 @@ namespace Amy
     {
         public float currentHealth = 25.0f;
         public float maxHealth = 25.0f;
-        public float currentMood = 25.0f;
-        public float maxMood = 25.0f;
+        //public float currentMood = 25.0f;
+        //public float maxMood = 25.0f;
         public float maxStamina = 25.0f;
         public float currentStamina = 25.0f;
 
@@ -92,8 +92,8 @@ namespace Amy
 
             ns.currentHealth = currentHealth;
             ns.maxHealth = maxHealth;
-            ns.currentMood = currentMood;
-            ns.maxMood = maxMood;
+            //ns.currentMood = currentMood;
+            //ns.maxMood = maxMood;
 
             ns.speedBonus = speedBonus;
 
@@ -122,18 +122,18 @@ namespace Amy
 
         public void clampValues()
         {
-            if (currentMood != currentMood)
-                currentMood = 0;
+            //if (currentMood != currentMood)
+            //    currentMood = 0;
 
             if (currentHealth != currentHealth)
-                currentMood = 0;
+                currentHealth = 0;
 
             if (currentStamina != currentStamina)
-                currentMood = 0;
+                currentStamina = 0;
 
             currentHealth = Mathf.Clamp(currentHealth, 0, maxHealth);
             currentStamina = Mathf.Clamp(currentStamina, 0, maxStamina);
-            currentMood = Mathf.Clamp(currentMood, 0, maxMood);
+            //currentMood = Mathf.Clamp(currentMood, 0, maxMood);
             dirtiness = Mathf.Clamp01(dirtiness);
         }
 
@@ -201,6 +201,15 @@ namespace Amy
         public void unSetVibe(VibeType v)
         {
             currentVibes &= ~(int)v;
+        }
+
+        public float getCondition()
+        {
+            float healthFac = currentHealth / maxHealth;
+            float staminaFac = currentStamina / maxStamina;
+
+            //Average of health and stamina.
+            return (healthFac + staminaFac) * 0.5f;
         }
     }
 
@@ -401,6 +410,12 @@ namespace Amy
             {
                 CreamNPCLocation = PlayerNPCLocation.Bed;
             }
+
+            if (currentCharacter == PlayableCharacter.Amy)
+                AmyNPCLocation = PlayerNPCLocation.None;
+
+            if (currentCharacter == PlayableCharacter.Cream)
+                CreamNPCLocation = PlayerNPCLocation.None;
         }
 
         // Update is called once per frame
@@ -585,6 +600,7 @@ namespace Amy
             const float scaredStaminaDrain = 0.25f;
             const float sickStaminaDrain = 0.35f;
             const float embarassedStaminaDrain = 0.1f;
+            const float dirtyAmyStaminaDrain = 0.1f;
             const float goodFoodStaminaHeal = 0.2f;
             const float orgasmHealthHeal = 0.2f;
 
@@ -708,6 +724,11 @@ namespace Amy
                 {
                     pStats.unSetStatusEffect(PlayerStatusFX.Dirty);
                 }
+
+                if(currentCharacter == PlayableCharacter.Amy)
+                {
+                    pStats.currentStamina -= (dirtyAmyStaminaDrain * Time.deltaTime);
+                }
             }
             else
             {
@@ -766,7 +787,7 @@ namespace Amy
         //Doing away with this other axis soon.  We don't need 3.
         public void processMood(Player pl)
         {
-            
+            /*
             PlayerStatus pStats = pl.getStatus();
 
             float moodFac = pStats.currentMood / pStats.maxMood;
@@ -815,14 +836,14 @@ namespace Amy
 
             pStats.currentMood = Mathf.Lerp(pStats.currentMood, targetMood, Time.deltaTime * 1.2f);
             pStats.clampValues();
-            
+            */
         }
 
         public string getMoodLabel()
         {
             PlayerStatus pStats = getCurrentPlayerStatus();
 
-            float fac = (pStats.currentMood / pStats.maxMood);
+            float fac = pStats.getCondition();
 
             if (fac > 0.8f)
             {
@@ -850,7 +871,7 @@ namespace Amy
 
             const float baseHealFac = 0.125f;
 
-            float moodFac = pStats.currentMood / pStats.maxMood;
+            //float moodFac = pStats.currentMood / pStats.maxMood;
             float healthFac = pStats.currentHealth / pStats.maxHealth;
 
             if (healthFac < 0.99999f)
@@ -1231,13 +1252,15 @@ namespace Amy
 
             processSleeping(getCurrentPlayerStatus());
 
-            if (currentCharacter == PlayableCharacter.Amy)
-                currentCharacter = PlayableCharacter.Cream;
-            else if (currentCharacter == PlayableCharacter.Cream)
-                currentCharacter = PlayableCharacter.Amy;
+            // if (currentCharacter == PlayableCharacter.Amy)
+            //    currentCharacter = PlayableCharacter.Cream;
+            // else if (currentCharacter == PlayableCharacter.Cream)
+            //    currentCharacter = PlayableCharacter.Amy;
+
+            GameManager.Instance.loadScene("SleepScreen");
 
 
-            Timing.RunCoroutine(setupWakeupScene(false));
+            //Timing.RunCoroutine(setupWakeupScene(false));
 
         }
 
@@ -1276,7 +1299,7 @@ namespace Amy
 
         public void wakeupScene(bool whiteFade = false)
         {
-            Timing.RunCoroutine(setupWakeupScene(whiteFade));
+            Timing.RunCoroutine(setupWakeupScene(whiteFade), gameObject);
         }
         
         public IEnumerator<float> setupWakeupScene(bool whiteFade)
@@ -1300,11 +1323,16 @@ namespace Amy
 
             randomizeDayEvents();
 
+            GameObject inst = null;
+
             if (currentCharacter == PlayableCharacter.Amy)
-                GameObject.Instantiate(GameManager.Instance.systemData.Cutscene_AmyWakeup);
+                inst = GameObject.Instantiate(GameManager.Instance.systemData.Cutscene_AmyWakeup);
 
             if(currentCharacter == PlayableCharacter.Cream)
-                GameObject.Instantiate(GameManager.Instance.systemData.Cutscene_CreamWakeup);
+                inst = GameObject.Instantiate(GameManager.Instance.systemData.Cutscene_CreamWakeup);
+
+            if (inst == null)
+                Debug.Log("BUT WHY?!?!!?");
 
             yield return Timing.WaitForSeconds(0.5f);
 

@@ -75,6 +75,12 @@ namespace Amy
 		void handleInput()
 		{
 
+			if (GameManager.Instance.playerInputDisabled)
+				return;
+
+			if (GameManager.Instance.gamePaused || PlayerManager.Instance.itemMenuOpen)
+				return;
+
 			float h = InputFunctions.getLeftAnalogX();
 			float v = InputFunctions.getLeftAnalogY();
 

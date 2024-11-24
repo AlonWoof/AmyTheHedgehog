@@ -177,6 +177,12 @@ namespace Amy
         void handleInput()
         {
 
+            if (GameManager.Instance.playerInputDisabled)
+                return;
+
+            if (GameManager.Instance.gamePaused || PlayerManager.Instance.itemMenuOpen)
+                return;
+
             desiredVerticalMovement = 0.0f;
 
             if (isAtSurface() && Input.GetButtonDown("Jump"))
@@ -186,7 +192,6 @@ namespace Amy
                 mPlayer.speed = mRigidBody.velocity;
                 mPlayer.Jump(true);
                 mPlayer.acceleration.y += mPlayer.mParam.jumpSpeed;
-               
             }
 
             if (Input.GetButton("Jump") && !isAtSurface())
@@ -203,12 +208,8 @@ namespace Amy
             if (Mathf.Abs(h) == 0 && Mathf.Abs(v) == 0)
             {
                 mDesiredMovement = Vector3.zero;
-                
                 return;
             }
-
-
-
 
             Vector3 targetDirection = Vector3.ClampMagnitude(new Vector3(h, 0, v), 1.0f);
             Quaternion targetRotation = Quaternion.LookRotation(targetDirection, Vector3.up);
@@ -217,12 +218,9 @@ namespace Amy
             camAngle.y = 0;
             camAngle.Normalize();
 
-            
-
             mDesiredMovement = (targetRotation * camAngle) * (targetDirection.magnitude);
            
             mPlayer.direction = mDesiredMovement.normalized;
-
         }
     }
 }

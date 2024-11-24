@@ -580,7 +580,7 @@ MeshRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 366860339}
-  m_Enabled: 0
+  m_Enabled: 1
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
@@ -630,8 +630,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 366860339}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: -3.8, z: 0}
-  m_LocalScale: {x: 1374.6055, y: 1374.6055, z: 1374.6055}
+  m_LocalPosition: {x: 0, y: -3.8, z: 0.4175}
+  m_LocalScale: {x: 1374.6055, y: 1374.6055, z: 1374.7429}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 2
@@ -1155,6 +1155,35 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: -8961359253771211100, guid: ccaa257a7f4d5854c8465f7fae2156ab, type: 3}
   m_PrefabInstance: {fileID: 1786904927}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &1067924630
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1067924629}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 95245b4c95aedbb48acff6800ed8e8a0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  framerate: 30
+  textures:
+  - {fileID: 2800000, guid: b4fc36100a5ff4e4796b96346be42302, type: 3}
+  - {fileID: 2800000, guid: 0fcab8c3a550aec45811b85c3726efde, type: 3}
+  - {fileID: 2800000, guid: dd9bb82d4b2ee5549a2c159108d0918a, type: 3}
+  - {fileID: 2800000, guid: 94b52f48e5b38694a8a9ceb10d09adea, type: 3}
+  - {fileID: 2800000, guid: 7f5f3320d71c0cf47adc8319cd5205f2, type: 3}
+  - {fileID: 2800000, guid: ccbad72ddf7352a4089b9f269844bd20, type: 3}
+  - {fileID: 2800000, guid: 680c3de6cfd04c14b966b79d96dd4c56, type: 3}
+  - {fileID: 2800000, guid: a026178601d9b9a4b859a04f22d61849, type: 3}
+  - {fileID: 2800000, guid: 07e217dc98a75c540915af4cf9597d2d, type: 3}
+  - {fileID: 2800000, guid: 81f4495115837be43bb378658e0b99ab, type: 3}
+  - {fileID: 2800000, guid: f482da7a254310a4f93ac91cb99ef749, type: 3}
+  - {fileID: 2800000, guid: 3c6959668cb1d604ab362f2188234737, type: 3}
+  - {fileID: 2800000, guid: 26a3425ede3f93f4f92c2091d359e1db, type: 3}
+  - {fileID: 2800000, guid: 21822c429c2be1142a0fb126adc54d81, type: 3}
+  - {fileID: 2800000, guid: 25845cd256c27f440a1450e4d0990f7a, type: 3}
 --- !u!64 &1067924633
 MeshCollider:
   m_ObjectHideFlags: 0
@@ -1518,6 +1547,10 @@ PrefabInstance:
     - target: {fileID: -8961359253771211100, guid: ccaa257a7f4d5854c8465f7fae2156ab, type: 3}
       propertyPath: m_Layer
       value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: -8961359253771211100, guid: ccaa257a7f4d5854c8465f7fae2156ab, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: -8961359253771211100, guid: ccaa257a7f4d5854c8465f7fae2156ab, type: 3}
       propertyPath: m_StaticEditorFlags

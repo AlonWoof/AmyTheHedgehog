@@ -125,7 +125,7 @@ namespace Amy
 
 			dbgstr += "Health: " + pstats.currentHealth + " / " + pstats.maxHealth + "\n";
 			dbgstr += "Stamina: " + pstats.currentStamina + " / " + pstats.maxStamina + "\n";
-			dbgstr += "Mood: " + pstats.currentMood + " / " + pstats.maxMood + "\n\n";
+			//dbgstr += "Mood: " + pstats.currentMood + " / " + pstats.maxMood + "\n\n";
 
 			dbgstr += "Status Effects: ";
 

@@ -114,6 +114,12 @@ namespace Amy
         void handleInput()
         {
 
+            if (GameManager.Instance.playerInputDisabled)
+                return;
+
+            if (GameManager.Instance.gamePaused || PlayerManager.Instance.itemMenuOpen)
+                return;
+
             float camX = 0;
             float camY = 0;
 

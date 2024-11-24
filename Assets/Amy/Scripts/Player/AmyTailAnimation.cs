@@ -49,13 +49,10 @@ namespace Amy
 			if (player.currentMode == PlayerModes.RUBBING)
 				desiredExcitement = 6.0f;
 
-			PlayerStatus pstats = PlayerManager.Instance.getCurrentPlayerStatus();
-
-			float fac = (pstats.currentMood / pstats.maxMood);
-
-			desiredExcitement *= fac;
+			PlayerStatus pStats = PlayerManager.Instance.getCurrentPlayerStatus();
 
 
+			desiredExcitement *= pStats.getCondition();
 
 			desiredExcitement = Mathf.Clamp(desiredExcitement, 0.25f, 3.0f);
 

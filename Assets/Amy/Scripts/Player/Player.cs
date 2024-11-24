@@ -723,9 +723,8 @@ namespace Amy
 			mAnimator.SetFloat("z_accel", runAnimProgress);
 			mAnimator.SetFloat("run_anim_speed", runAnimSpeed);
 
-			float moodFac = (getStatus().currentMood / getStatus().maxMood);
 
-			mAnimator.SetFloat("mood", moodFac);
+			mAnimator.SetFloat("mood", getStatus().getCondition());
 
 			updateWaterFX();
 
@@ -753,7 +752,7 @@ namespace Amy
 			PlayerStatus pstats = getStatus();
 
 			pstats.currentHealth = Mathf.Clamp(pstats.currentHealth, 0, pstats.maxHealth);
-			pstats.currentMood = Mathf.Clamp(pstats.currentMood, 0, pstats.maxMood);
+			//pstats.currentMood = Mathf.Clamp(pstats.currentMood, 0, pstats.maxMood);
 
 			if (pstats.currentHealth == 0)
 			{
@@ -789,7 +788,7 @@ namespace Amy
 			PlayerStatus pstats = getStatus();
 
 			int rings = PlayerManager.Instance.getRings();
-			float moodFac = pstats.currentMood / pstats.maxMood;
+			float moodFac = pstats.currentStamina / pstats.maxStamina;
 
 			//Rings protect you from ouchies.
 			if (rings > 0)
@@ -1142,6 +1141,8 @@ namespace Amy
 
 				if (airLeft < 0.0f)
 					airLeft = 0.0f;
+
+				getStatus().currentStamina -= (0.075f * Time.deltaTime);
 
 				if (airLeft <= 0.0f)
 				{

@@ -52,7 +52,8 @@ namespace Amy
 			if (player == null || pStats == null)
 				return;
 
-			float fac = pStats.currentMood / pStats.maxMood;
+
+			float fac = pStats.getCondition();
 
 			if (fac > 0.9f)
 			{

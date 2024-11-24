@@ -27,8 +27,12 @@ namespace Amy
 
 		public List<VideoClip> shows;
 		public int currentShowIndex = 0;
+		public Activatible powerSwitch;
+
 
 		Material playerMat;
+
+		CoroutineHandle currentAction;
 
 		// Start is called before the first frame update
 		void Start()
@@ -44,28 +48,43 @@ namespace Amy
                 }
             }
 
+			isOn = false;
+			powerSwitch.interactionLabel = "Turn On";
+			lookTarget.SetActive(false);
+
 			player.isLooping = false;
 
 			shows.Shuffle();
 			pickNextShow();
 
+
 			player.time = Random.Range(0.0f, (float)player.clip.length);
 
-			if(!isOn)
-            {
-				sound.volume = 0.0f;
-				playerMat.SetColor("_EmissionColor", Color.black);
-			}
+
 
 			if(PlayerManager.Instance.currentCharacter != PlayableCharacter.Amy && PlayerManager.Instance.AmyNPCLocation == PlayerNPCLocation.WatchTV)
             {
-				turnOn();
+				isOn = true;
+				powerSwitch.enabled = false;
 			}
 
 
 			if (PlayerManager.Instance.currentCharacter != PlayableCharacter.Cream && PlayerManager.Instance.CreamNPCLocation == PlayerNPCLocation.WatchTV)
 			{
-				turnOn();
+				isOn = true;
+				powerSwitch.enabled = false;
+			}
+
+
+			if (!isOn)
+			{
+				sound.volume = 0.0f;
+				playerMat.SetColor("_EmissionColor", Color.black);
+			}
+			else
+			{
+				sound.volume = 0.25f;
+				playerMat.SetColor("_EmissionColor", Color.white);
 			}
 
 		}
@@ -74,6 +93,8 @@ namespace Amy
         {
             
         }
+
+		
 
         // Update is called once per frame
         void Update()
@@ -114,21 +135,41 @@ namespace Amy
 			player.Play();
         }
 
+		public void onActivate()
+        {
+			if (isOn)
+				turnOff();
+			else
+				turnOn();
+        }
+
 		public void turnOn()
         {
-			Timing.RunCoroutine(turnOnSequence());
+			if (isOn)
+				return;
 
+			if (currentAction.IsRunning)
+				return;
+
+			currentAction = Timing.RunCoroutine(turnOnSequence());
+			powerSwitch.interactionLabel = "Turn Off";
 		}
 
 		public void turnOff()
         {
+			if (!isOn)
+				return;
+
+			if (currentAction.IsRunning)
+				return;
 
 			if (PlayerManager.Instance.AmyNPCLocation == PlayerNPCLocation.WatchTV ||
 			PlayerManager.Instance.CreamNPCLocation == PlayerNPCLocation.WatchTV)
 				return;
 
 
-			Timing.RunCoroutine(turnOffSequence());
+			currentAction = Timing.RunCoroutine(turnOffSequence());
+			powerSwitch.interactionLabel = "Turn On";
 		}
 
 		IEnumerator<float> turnOnSequence()

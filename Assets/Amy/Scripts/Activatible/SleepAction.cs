@@ -29,13 +29,7 @@ namespace Amy
 			GameManager.Instance.cutsceneMode = true;
 			GameManager.Instance.disableInput();
 
-			if (PlayerManager.Instance.currentCharacter == PlayableCharacter.Amy)
-				PlayerManager.Instance.currentCharacter = PlayableCharacter.Cream;
-			else if (PlayerManager.Instance.currentCharacter == PlayableCharacter.Cream)
-				PlayerManager.Instance.currentCharacter = PlayableCharacter.Amy;
-
-
-			PlayerManager.Instance.wakeupScene();	
+			GameManager.Instance.loadScene("SleepScreen");
 			
 		}
 	}

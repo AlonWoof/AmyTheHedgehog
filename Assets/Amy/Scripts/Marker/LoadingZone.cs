@@ -21,6 +21,7 @@ namespace Amy
         Player mPlayer;
 
         public bool waitForMove = false;
+        public bool isTrigger = true;
 
 
     	// Start is called before the first frame update
@@ -44,6 +45,9 @@ namespace Amy
 
         private void OnTriggerEnter(Collider other)
         {
+            if (!isTrigger)
+                return;
+
             if(other.GetComponent<Player>())
             {
                 Timing.RunCoroutine(sceneTransitionCutscene(),Segment.RealtimeUpdate);
