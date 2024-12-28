@@ -154,13 +154,15 @@ namespace Amy
                 yield return 0f;
             }
 
-            onEndTalk.Invoke();
-
             if (path)
                 path.enableMovement();
 
             if (wasNormal)
                 mPlayer.changeCurrentMode(PlayerModes.NORMAL);
+
+            yield return Timing.WaitForOneFrame;
+
+            onEndTalk.Invoke();
         }
 
 

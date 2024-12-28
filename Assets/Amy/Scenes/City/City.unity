@@ -9583,33 +9583,10 @@ MonoBehaviour:
   isHubWorld: 0
   isSmallRoom: 0
   isOutdoors: 1
-  freezeTime: 0
-  humanDisguise: 0
   dontSpawnPlayer: 0
-  forceHour: -1
-  forceMinute: -1
   bgmData: {fileID: 11400000, guid: cce80549d5661b34799789f8694e2c85, type: 2}
-  currentFogColor: {r: 0, g: 0, b: 0, a: 0}
   preloadObjects: []
   shadow_dist: 1024
-  isNight: 0
-  hasDayNightCycle: 1
-  lighting_day:
-    skybox_mat: {fileID: 2100000, guid: 5966f79de89422847ad8071f33e1bcc0, type: 2}
-    light_sky: {r: 0.6981132, g: 0.5705099, b: 0.39186543, a: 1}
-    light_equator: {r: 0.509434, g: 0.25011125, b: 0.24270204, a: 1}
-    light_ground: {r: 0.21493414, g: 0.21493414, b: 0.4339623, a: 1}
-    fog_color: {r: 0.5849056, g: 0.28641552, b: 0.251068, a: 1}
-    fog_density: 0.02
-  lighting_night:
-    skybox_mat: {fileID: 2100000, guid: 21cf47b1772e9f44296f677f532a6cca, type: 2}
-    light_sky: {r: 0.028746877, g: 0.039175756, b: 0.3207547, a: 1}
-    light_equator: {r: 0.071155205, g: 0.10412959, b: 0.3679245, a: 1}
-    light_ground: {r: 0.0244749, g: 0.05733404, b: 0.20754719, a: 1}
-    fog_color: {r: 0, g: 0, b: 0, a: 1}
-    fog_density: 0.02
-  daySet: {fileID: 287116991}
-  nightSet: {fileID: 744040101}
 --- !u!4 &503033369
 Transform:
   m_ObjectHideFlags: 0
@@ -14244,13 +14221,6 @@ MonoBehaviour:
   mDirection: {x: 0, y: 0, z: 0}
   speakerProfile: 0
   AmyMessage:
-    mTalker: {fileID: 0}
-    nameColor: {r: 0, g: 0, b: 1, a: 1}
-    nameTag: 
-    delay: 0
-    hasChoice: 0
-    isSilent: 0
-    invisibleBox: 0
     messages:
     - 'Why, hello there young lady.
 
@@ -14258,7 +14228,6 @@ MonoBehaviour:
     - 'Enjoy your youth while you can.
 
       I wish I still had free time like that...'
-    choices: []
     voice: {fileID: 0}
     voice_pitch: 1
     onStartMessage:
@@ -14310,20 +14279,12 @@ MonoBehaviour:
       m_PersistentCalls:
         m_Calls: []
   CreamMessage:
-    mTalker: {fileID: 0}
-    nameColor: {r: 0, g: 0, b: 1, a: 1}
-    nameTag: 
-    delay: 0
-    hasChoice: 0
-    isSilent: 0
-    invisibleBox: 0
     messages:
     - Ah, such innocence...
     - 'I''d love to go back to when I was
 
       your age. Life was full of wonder
       back then.'
-    choices: []
     voice: {fileID: 0}
     voice_pitch: 1
     onStartMessage:
@@ -14364,16 +14325,8 @@ MonoBehaviour:
         m_Calls: []
   hasHornyMessage: 0
   AmyHornyMessage:
-    mTalker: {fileID: 0}
-    nameColor: {r: 0, g: 0, b: 1, a: 1}
-    nameTag: 
-    delay: 0
-    hasChoice: 0
-    isSilent: 0
-    invisibleBox: 0
     messages:
     - This Message is a Test. This Sausage is the Last. Yeah...
-    choices: []
     voice: {fileID: 0}
     voice_pitch: 1
     onStartMessage:
@@ -14389,16 +14342,8 @@ MonoBehaviour:
       m_PersistentCalls:
         m_Calls: []
   SickMessage:
-    mTalker: {fileID: 0}
-    nameColor: {r: 0, g: 0, b: 1, a: 1}
-    nameTag: 
-    delay: 0
-    hasChoice: 0
-    isSilent: 0
-    invisibleBox: 0
     messages:
     - This Message is a Test. This Sausage is the Last. Yeah...
-    choices: []
     voice: {fileID: 0}
     voice_pitch: 1
     onStartMessage:
@@ -14413,11 +14358,17 @@ MonoBehaviour:
     onEndPrint:
       m_PersistentCalls:
         m_Calls: []
-  tk: {fileID: 769884042}
   headNode: {fileID: 0}
-  lookAt: {fileID: 0}
+  lookAtController: {fileID: 0}
   path: {fileID: 0}
   lookAtRange: 4
+  lookAtToggle: 1
+  onStartTalk:
+    m_PersistentCalls:
+      m_Calls: []
+  onEndTalk:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!1 &779430917
 GameObject:
   m_ObjectHideFlags: 0
@@ -14955,13 +14906,6 @@ MonoBehaviour:
   mDirection: {x: 0, y: 0, z: 0}
   speakerProfile: 0
   AmyMessage:
-    mTalker: {fileID: 0}
-    nameColor: {r: 0, g: 0, b: 1, a: 1}
-    nameTag: 
-    delay: 0
-    hasChoice: 0
-    isSilent: 0
-    invisibleBox: 0
     messages:
     - My wife is so silly.
     - 'She''s always talking about strength
@@ -14972,7 +14916,6 @@ MonoBehaviour:
 
       She doesn''t need to prove
       anything to anyone.'
-    choices: []
     voice: {fileID: 0}
     voice_pitch: 1
     onStartMessage:
@@ -15024,13 +14967,6 @@ MonoBehaviour:
       m_PersistentCalls:
         m_Calls: []
   CreamMessage:
-    mTalker: {fileID: 0}
-    nameColor: {r: 0, g: 0, b: 1, a: 1}
-    nameTag: 
-    delay: 0
-    hasChoice: 0
-    isSilent: 0
-    invisibleBox: 0
     messages:
     - 'Oh, hello there.
 
@@ -15041,7 +14977,6 @@ MonoBehaviour:
     - 'But the weird thing is, I thought
 
       I saw it move...?'
-    choices: []
     voice: {fileID: 0}
     voice_pitch: 1
     onStartMessage:
@@ -15106,16 +15041,8 @@ MonoBehaviour:
         m_Calls: []
   hasHornyMessage: 0
   AmyHornyMessage:
-    mTalker: {fileID: 0}
-    nameColor: {r: 0, g: 0, b: 1, a: 1}
-    nameTag: 
-    delay: 0
-    hasChoice: 0
-    isSilent: 0
-    invisibleBox: 0
     messages:
     - This Message is a Test. This Sausage is the Last. Yeah...
-    choices: []
     voice: {fileID: 0}
     voice_pitch: 1
     onStartMessage:
@@ -15131,16 +15058,8 @@ MonoBehaviour:
       m_PersistentCalls:
         m_Calls: []
   SickMessage:
-    mTalker: {fileID: 0}
-    nameColor: {r: 0, g: 0, b: 1, a: 1}
-    nameTag: 
-    delay: 0
-    hasChoice: 0
-    isSilent: 0
-    invisibleBox: 0
     messages:
     - This Message is a Test. This Sausage is the Last. Yeah...
-    choices: []
     voice: {fileID: 0}
     voice_pitch: 1
     onStartMessage:
@@ -15155,11 +15074,17 @@ MonoBehaviour:
     onEndPrint:
       m_PersistentCalls:
         m_Calls: []
-  tk: {fileID: 851902157}
   headNode: {fileID: 0}
-  lookAt: {fileID: 0}
+  lookAtController: {fileID: 0}
   path: {fileID: 0}
   lookAtRange: 4
+  lookAtToggle: 1
+  onStartTalk:
+    m_PersistentCalls:
+      m_Calls: []
+  onEndTalk:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!1 &853649675
 GameObject:
   m_ObjectHideFlags: 0
@@ -15314,19 +15239,11 @@ MonoBehaviour:
   mDirection: {x: 0, y: 0, z: 0}
   speakerProfile: 0
   AmyMessage:
-    mTalker: {fileID: 0}
-    nameColor: {r: 0, g: 0, b: 1, a: 1}
-    nameTag: 
-    delay: 0
-    hasChoice: 0
-    isSilent: 0
-    invisibleBox: 0
     messages:
     - 'Do you know Suika?
 
       She runs that local store, SuikaMart.'
     - "I go shopping there sometimes. \nShe's always so friendly to everyone!"
-    choices: []
     voice: {fileID: 0}
     voice_pitch: 1
     onStartMessage:
@@ -15378,13 +15295,6 @@ MonoBehaviour:
       m_PersistentCalls:
         m_Calls: []
   CreamMessage:
-    mTalker: {fileID: 0}
-    nameColor: {r: 0, g: 0, b: 1, a: 1}
-    nameTag: 
-    delay: 0
-    hasChoice: 0
-    isSilent: 0
-    invisibleBox: 0
     messages:
     - 'Hey, have you been to SuikaMart?
 
@@ -15393,7 +15303,6 @@ MonoBehaviour:
 
       I need a snack or other
       neccessity. '
-    choices: []
     voice: {fileID: 0}
     voice_pitch: 1
     onStartMessage:
@@ -15458,16 +15367,8 @@ MonoBehaviour:
         m_Calls: []
   hasHornyMessage: 0
   AmyHornyMessage:
-    mTalker: {fileID: 0}
-    nameColor: {r: 0, g: 0, b: 1, a: 1}
-    nameTag: 
-    delay: 0
-    hasChoice: 0
-    isSilent: 0
-    invisibleBox: 0
     messages:
     - This Message is a Test. This Sausage is the Last. Yeah...
-    choices: []
     voice: {fileID: 0}
     voice_pitch: 1
     onStartMessage:
@@ -15483,16 +15384,8 @@ MonoBehaviour:
       m_PersistentCalls:
         m_Calls: []
   SickMessage:
-    mTalker: {fileID: 0}
-    nameColor: {r: 0, g: 0, b: 1, a: 1}
-    nameTag: 
-    delay: 0
-    hasChoice: 0
-    isSilent: 0
-    invisibleBox: 0
     messages:
     - This Message is a Test. This Sausage is the Last. Yeah...
-    choices: []
     voice: {fileID: 0}
     voice_pitch: 1
     onStartMessage:
@@ -15507,11 +15400,17 @@ MonoBehaviour:
     onEndPrint:
       m_PersistentCalls:
         m_Calls: []
-  tk: {fileID: 854229307}
   headNode: {fileID: 0}
-  lookAt: {fileID: 0}
+  lookAtController: {fileID: 0}
   path: {fileID: 0}
   lookAtRange: 4
+  lookAtToggle: 1
+  onStartTalk:
+    m_PersistentCalls:
+      m_Calls: []
+  onEndTalk:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!1 &860696193
 GameObject:
   m_ObjectHideFlags: 0
@@ -16863,18 +16762,10 @@ MonoBehaviour:
   mDirection: {x: 0, y: 0, z: 0}
   speakerProfile: 0
   AmyMessage:
-    mTalker: {fileID: 0}
-    nameColor: {r: 0, g: 0, b: 1, a: 1}
-    nameTag: 
-    delay: 0
-    hasChoice: 0
-    isSilent: 0
-    invisibleBox: 0
     messages:
     - Hey there, new in town?
     - "Don't worry, Station Circle is a \npeaceful place as long as it's daylight
       out."
-    choices: []
     voice: {fileID: 0}
     voice_pitch: 1
     onStartMessage:
@@ -16938,19 +16829,11 @@ MonoBehaviour:
       m_PersistentCalls:
         m_Calls: []
   CreamMessage:
-    mTalker: {fileID: 0}
-    nameColor: {r: 0, g: 0, b: 1, a: 1}
-    nameTag: 
-    delay: 0
-    hasChoice: 0
-    isSilent: 0
-    invisibleBox: 0
     messages:
     - 'Oh, cute! Look at those adorable floppy ears!
 
       You look cute enough
       to be a plushie!'
-    choices: []
     voice: {fileID: 0}
     voice_pitch: 1
     onStartMessage:
@@ -17015,16 +16898,8 @@ MonoBehaviour:
         m_Calls: []
   hasHornyMessage: 0
   AmyHornyMessage:
-    mTalker: {fileID: 0}
-    nameColor: {r: 0, g: 0, b: 1, a: 1}
-    nameTag: 
-    delay: 0
-    hasChoice: 0
-    isSilent: 0
-    invisibleBox: 0
     messages:
     - This Message is a Test. This Sausage is the Last. Yeah...
-    choices: []
     voice: {fileID: 0}
     voice_pitch: 1
     onStartMessage:
@@ -17040,16 +16915,8 @@ MonoBehaviour:
       m_PersistentCalls:
         m_Calls: []
   SickMessage:
-    mTalker: {fileID: 0}
-    nameColor: {r: 0, g: 0, b: 1, a: 1}
-    nameTag: 
-    delay: 0
-    hasChoice: 0
-    isSilent: 0
-    invisibleBox: 0
     messages:
     - This Message is a Test. This Sausage is the Last. Yeah...
-    choices: []
     voice: {fileID: 0}
     voice_pitch: 1
     onStartMessage:
@@ -17064,11 +16931,17 @@ MonoBehaviour:
     onEndPrint:
       m_PersistentCalls:
         m_Calls: []
-  tk: {fileID: 0}
   headNode: {fileID: 0}
-  lookAt: {fileID: 0}
+  lookAtController: {fileID: 0}
   path: {fileID: 0}
   lookAtRange: 4
+  lookAtToggle: 1
+  onStartTalk:
+    m_PersistentCalls:
+      m_Calls: []
+  onEndTalk:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!1 &940284223
 GameObject:
   m_ObjectHideFlags: 0
@@ -18385,18 +18258,10 @@ MonoBehaviour:
   mDirection: {x: 0, y: 0, z: 0}
   speakerProfile: 0
   AmyMessage:
-    mTalker: {fileID: 0}
-    nameColor: {r: 0, g: 0, b: 1, a: 1}
-    nameTag: 
-    delay: 0
-    hasChoice: 0
-    isSilent: 0
-    invisibleBox: 0
     messages:
     - Oh, hello there. Beautiful sunset today, huh?
     - "Station Square? Ah, no. This is Station Circle. \nI've never heard of a city
       called \"Station Square\"."
-    choices: []
     voice: {fileID: 0}
     voice_pitch: 1
     onStartMessage:
@@ -18460,13 +18325,6 @@ MonoBehaviour:
       m_PersistentCalls:
         m_Calls: []
   CreamMessage:
-    mTalker: {fileID: 0}
-    nameColor: {r: 0, g: 0, b: 1, a: 1}
-    nameTag: 
-    delay: 0
-    hasChoice: 0
-    isSilent: 0
-    invisibleBox: 0
     messages:
     - Oh, aren't you just the cutest little bunny ever?
     - "Station Square? Never heard of it. \nAre you sure you don't mean Station Circle?"
@@ -18474,7 +18332,6 @@ MonoBehaviour:
 
       The sun''s setting, it''s going to
       be dark soon.'
-    choices: []
     voice: {fileID: 0}
     voice_pitch: 1
     onStartMessage:
@@ -18515,16 +18372,8 @@ MonoBehaviour:
         m_Calls: []
   hasHornyMessage: 0
   AmyHornyMessage:
-    mTalker: {fileID: 0}
-    nameColor: {r: 0, g: 0, b: 1, a: 1}
-    nameTag: 
-    delay: 0
-    hasChoice: 0
-    isSilent: 0
-    invisibleBox: 0
     messages:
     - This Message is a Test. This Sausage is the Last. Yeah...
-    choices: []
     voice: {fileID: 0}
     voice_pitch: 1
     onStartMessage:
@@ -18540,16 +18389,8 @@ MonoBehaviour:
       m_PersistentCalls:
         m_Calls: []
   SickMessage:
-    mTalker: {fileID: 0}
-    nameColor: {r: 0, g: 0, b: 1, a: 1}
-    nameTag: 
-    delay: 0
-    hasChoice: 0
-    isSilent: 0
-    invisibleBox: 0
     messages:
     - This Message is a Test. This Sausage is the Last. Yeah...
-    choices: []
     voice: {fileID: 0}
     voice_pitch: 1
     onStartMessage:
@@ -18564,11 +18405,17 @@ MonoBehaviour:
     onEndPrint:
       m_PersistentCalls:
         m_Calls: []
-  tk: {fileID: 1030606540}
   headNode: {fileID: 0}
-  lookAt: {fileID: 0}
+  lookAtController: {fileID: 0}
   path: {fileID: 0}
   lookAtRange: 4
+  lookAtToggle: 1
+  onStartTalk:
+    m_PersistentCalls:
+      m_Calls: []
+  onEndTalk:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!114 &1030606542
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -21223,13 +21070,6 @@ MonoBehaviour:
   mDirection: {x: 0, y: 0, z: 0}
   speakerProfile: 0
   AmyMessage:
-    mTalker: {fileID: 0}
-    nameColor: {r: 0, g: 0, b: 1, a: 1}
-    nameTag: 
-    delay: 0
-    hasChoice: 0
-    isSilent: 0
-    invisibleBox: 0
     messages:
     - 'Giiirl, you look so strong~!
 
@@ -21238,7 +21078,6 @@ MonoBehaviour:
 
       Then I can finally beat my wife at arm
       wrestling!'
-    choices: []
     voice: {fileID: 0}
     voice_pitch: 1
     onStartMessage:
@@ -21278,20 +21117,12 @@ MonoBehaviour:
       m_PersistentCalls:
         m_Calls: []
   CreamMessage:
-    mTalker: {fileID: 0}
-    nameColor: {r: 0, g: 0, b: 1, a: 1}
-    nameTag: 
-    delay: 0
-    hasChoice: 0
-    isSilent: 0
-    invisibleBox: 0
     messages:
     - What an adorable little bunny girl!
     - 'Even if you''re not strong or fast,
 
       I''m sure you can do things your
       friends can''t!'
-    choices: []
     voice: {fileID: 0}
     voice_pitch: 1
     onStartMessage:
@@ -21332,13 +21163,6 @@ MonoBehaviour:
         m_Calls: []
   hasHornyMessage: 1
   AmyHornyMessage:
-    mTalker: {fileID: 0}
-    nameColor: {r: 0, g: 0, b: 1, a: 1}
-    nameTag: 
-    delay: 0
-    hasChoice: 0
-    isSilent: 0
-    invisibleBox: 0
     messages:
     - 'Um, girl, are you OK?
 
@@ -21346,7 +21170,6 @@ MonoBehaviour:
     - 'Don''t look at me like that!
 
       You know exactly what I mean!'
-    choices: []
     voice: {fileID: 0}
     voice_pitch: 1
     onStartMessage:
@@ -21362,16 +21185,8 @@ MonoBehaviour:
       m_PersistentCalls:
         m_Calls: []
   SickMessage:
-    mTalker: {fileID: 0}
-    nameColor: {r: 0, g: 0, b: 1, a: 1}
-    nameTag: 
-    delay: 0
-    hasChoice: 0
-    isSilent: 0
-    invisibleBox: 0
     messages:
     - This Message is a Test. This Sausage is the Last. Yeah...
-    choices: []
     voice: {fileID: 0}
     voice_pitch: 1
     onStartMessage:
@@ -21386,11 +21201,17 @@ MonoBehaviour:
     onEndPrint:
       m_PersistentCalls:
         m_Calls: []
-  tk: {fileID: 1246430790}
   headNode: {fileID: 0}
-  lookAt: {fileID: 0}
+  lookAtController: {fileID: 0}
   path: {fileID: 0}
   lookAtRange: 4
+  lookAtToggle: 1
+  onStartTalk:
+    m_PersistentCalls:
+      m_Calls: []
+  onEndTalk:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!1 &1255278800
 GameObject:
   m_ObjectHideFlags: 0
@@ -36057,18 +35878,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   mDirection: {x: 0, y: 0, z: 0}
-  speakerProfile: 0
+  speakerProfile: 3
   AmyMessage:
-    mTalker: {fileID: 0}
-    nameColor: {r: 0, g: 0, b: 1, a: 1}
-    nameTag: 
-    delay: 0
-    hasChoice: 0
-    isSilent: 0
-    invisibleBox: 0
     messages:
     - This Message is a Test. This Sausage is the Last. Yeah...
-    choices: []
     voice: {fileID: 0}
     voice_pitch: 1
     onStartMessage:
@@ -36084,16 +35897,8 @@ MonoBehaviour:
       m_PersistentCalls:
         m_Calls: []
   CreamMessage:
-    mTalker: {fileID: 0}
-    nameColor: {r: 0, g: 0, b: 1, a: 1}
-    nameTag: 
-    delay: 0
-    hasChoice: 0
-    isSilent: 0
-    invisibleBox: 0
     messages:
     - This Message is a Test. This Sausage is the Last. Yeah...
-    choices: []
     voice: {fileID: 0}
     voice_pitch: 1
     onStartMessage:
@@ -36110,16 +35915,8 @@ MonoBehaviour:
         m_Calls: []
   hasHornyMessage: 0
   AmyHornyMessage:
-    mTalker: {fileID: 0}
-    nameColor: {r: 0, g: 0, b: 1, a: 1}
-    nameTag: 
-    delay: 0
-    hasChoice: 0
-    isSilent: 0
-    invisibleBox: 0
     messages:
     - This Message is a Test. This Sausage is the Last. Yeah...
-    choices: []
     voice: {fileID: 0}
     voice_pitch: 1
     onStartMessage:
@@ -36135,16 +35932,8 @@ MonoBehaviour:
       m_PersistentCalls:
         m_Calls: []
   SickMessage:
-    mTalker: {fileID: 0}
-    nameColor: {r: 0, g: 0, b: 1, a: 1}
-    nameTag: 
-    delay: 0
-    hasChoice: 0
-    isSilent: 0
-    invisibleBox: 0
     messages:
     - This Message is a Test. This Sausage is the Last. Yeah...
-    choices: []
     voice: {fileID: 0}
     voice_pitch: 1
     onStartMessage:
@@ -36159,28 +35948,26 @@ MonoBehaviour:
     onEndPrint:
       m_PersistentCalls:
         m_Calls: []
-  tk: {fileID: 0}
   headNode: {fileID: 0}
-  lookAt: {fileID: 0}
+  lookAtController: {fileID: 0}
   path: {fileID: 0}
   lookAtRange: 4
+  lookAtToggle: 1
+  onStartTalk:
+    m_PersistentCalls:
+      m_Calls: []
+  onEndTalk:
+    m_PersistentCalls:
+      m_Calls: []
   clothedModel: {fileID: 1352285002}
   nudeModel: {fileID: 1784265436}
   AmyIntroMessage:
-    mTalker: {fileID: 0}
-    nameColor: {r: 0, g: 0, b: 1, a: 1}
-    nameTag: 
-    delay: 0
-    hasChoice: 0
-    isSilent: 0
-    invisibleBox: 0
     messages:
     - 'Do you ever feel like you''re in a dream,
 
       even though you''re wide
       awake?'
     - ...Sorry if that's a weird thing to say.
-    choices: []
     voice: {fileID: 0}
     voice_pitch: 1
     onStartMessage:
@@ -36196,20 +35983,12 @@ MonoBehaviour:
       m_PersistentCalls:
         m_Calls: []
   CreamIntroMessage:
-    mTalker: {fileID: 0}
-    nameColor: {r: 0, g: 0, b: 1, a: 1}
-    nameTag: 
-    delay: 0
-    hasChoice: 0
-    isSilent: 0
-    invisibleBox: 0
     messages:
     - 'What a cute bunny. I bet you could use
 
       those big ol ears of yours to
       fly!'
     - Ganbatte, usagi-chan!
-    choices: []
     voice: {fileID: 0}
     voice_pitch: 1
     onStartMessage:
@@ -36225,19 +36004,11 @@ MonoBehaviour:
       m_PersistentCalls:
         m_Calls: []
   AmyMessages:
-  - mTalker: {fileID: 0}
-    nameColor: {r: 0, g: 0, b: 0, a: 0}
-    nameTag: 
-    delay: 0
-    hasChoice: 0
-    isSilent: 0
-    invisibleBox: 0
-    messages:
+  - messages:
     - 'Isn''t it weird how it''s always sunset here?
 
       Let''s hope it stays
       that way...'
-    choices: []
     voice: {fileID: 0}
     voice_pitch: 0
     onStartMessage:
@@ -36252,19 +36023,11 @@ MonoBehaviour:
     onEndPrint:
       m_PersistentCalls:
         m_Calls: []
-  - mTalker: {fileID: 0}
-    nameColor: {r: 0, g: 0, b: 0, a: 0}
-    nameTag: 
-    delay: 0
-    hasChoice: 0
-    isSilent: 0
-    invisibleBox: 0
-    messages:
+  - messages:
     - 'This place really makes me feel at home.
 
       How about you? Do you like
       it here?'
-    choices: []
     voice: {fileID: 0}
     voice_pitch: 0
     onStartMessage:
@@ -36280,20 +36043,12 @@ MonoBehaviour:
       m_PersistentCalls:
         m_Calls: []
   CreamMessages:
-  - mTalker: {fileID: 0}
-    nameColor: {r: 0, g: 0, b: 0, a: 0}
-    nameTag: 
-    delay: 0
-    hasChoice: 0
-    isSilent: 0
-    invisibleBox: 0
-    messages:
+  - messages:
     - 'Wow, that building in the north side
 
       is HUGE. I can''t even see the
       top!'
     - I bet the elevator rides take forever.
-    choices: []
     voice: {fileID: 0}
     voice_pitch: 0
     onStartMessage:
@@ -36308,19 +36063,11 @@ MonoBehaviour:
     onEndPrint:
       m_PersistentCalls:
         m_Calls: []
-  - mTalker: {fileID: 0}
-    nameColor: {r: 0, g: 0, b: 0, a: 0}
-    nameTag: 
-    delay: 0
-    hasChoice: 0
-    isSilent: 0
-    invisibleBox: 0
-    messages:
+  - messages:
     - 'Make sure to get plenty of rest.
 
       Also, eat some good food. '
     - It's important!
-    choices: []
     voice: {fileID: 0}
     voice_pitch: 0
     onStartMessage:

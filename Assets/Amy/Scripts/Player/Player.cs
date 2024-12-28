@@ -523,16 +523,16 @@ namespace Amy
 			float ang = 0;
 
 			
-			float highestY = WorldToPlayerSpace(transform.position).y;
+			float highestY = transform.position.y;
 
 			for (int i = 0; i < iterations; i++)
             {
 				float seg = (360.0f / (float)iterations);
 
-				Vector3 rotatedOffset = Quaternion.Euler(0, seg * i, 0) * (transform.position + (transform.forward * 0.75f));
+				Vector3 rotatedOffset = Quaternion.Euler(0, seg * i, 0) * (transform.forward * 0.5f);
 
-				Vector3 start = rotatedOffset + transform.up;
-				Vector3 end = rotatedOffset - transform.up;
+				Vector3 start = transform.position + (rotatedOffset + Vector3.up);
+				Vector3 end = transform.position + (rotatedOffset - Vector3.up);
 
 				Debug.DrawLine(start, end, SystemColors.AmyColor, 10.0f);
 
@@ -541,19 +541,18 @@ namespace Amy
 
 				if(Physics.Linecast(start, end, out hitInfo, mask))
                 {
-					Vector3 point = WorldToPlayerSpace(hitInfo.point);
 
-					if(point.y > highestY)
+					if(hitInfo.point.y > highestY)
                     {
-						highestY = point.y;
+						highestY = hitInfo.point.y + 0.1f;
 					}
                 }
 			}
 
-			Vector3 newPos = WorldToPlayerSpace(transform.position);
+			Vector3 newPos = transform.position;
 			newPos.y = highestY;
 
-			return PlayerToWorldSpace(newPos);
+			return newPos;
 
         }
 
@@ -562,9 +561,17 @@ namespace Amy
 			GameManager.Instance.disablePlayerInput();
 			changeCurrentMode(PlayerModes.CUTSCENE);
 
+			interactTimeout = 5.0f;
+
+			yield return Timing.WaitForOneFrame;
+
+			GameManager.Instance.disablePlayerInput();
+
 			clearAccel();
 			clearSpeed();
 			updatePosition();
+
+			transform.position = getMagicCirclePos();
 
 			GameObject inst = null;
 			
@@ -658,6 +665,8 @@ namespace Amy
 		// Update is called once per frame
 		void Update()
 		{
+
+			checkForInteract();
 
 			if (GameManager.Instance.gamePaused || PlayerManager.Instance.itemMenuOpen)
 				return;
@@ -1303,6 +1312,9 @@ namespace Amy
 						groundNormal = new_ground;
 						framesGrounded++;
 
+						if(framesAirborne > 0)
+							framesAirborne--;
+
 						if (!isOnGround)
 						{
 							isHammerJumping = false;
@@ -1325,7 +1337,7 @@ namespace Amy
 							if (jumpTimer < 0.05f)
 							{
 								transform.position = hitInfo.point;
-
+								
 							}
 						}
 
@@ -1675,13 +1687,15 @@ namespace Amy
 		{
 			if (GameManager.Instance.playerInputDisabled)
 			{
-				clearActivatible();
+				interactTimeout = 1.0f;
 				return;
 			}
 
 			if (GameManager.Instance.gamePaused || PlayerManager.Instance.itemMenuOpen)
 			{
+				UIManager.Instance.contextButton.clearActionText();
 				clearActivatible();
+				interactTimeout = 1.0f;
 				return;
 			}
 
@@ -1925,8 +1939,16 @@ namespace Amy
 			//if (isAttacking && !isOnGround)
 			//updateHoming();
 
-			if (Input.GetButtonDown("Attack"))
-				changeCurrentMode(PlayerModes.BUTTSLAM);
+			if (!GameManager.Instance.usingController)
+			{
+				if (Input.GetButtonDown("Attack"))
+					changeCurrentMode(PlayerModes.BUTTSLAM);
+			}
+			else
+            {
+				if (Input.GetAxis("Shoot") > 0.5f)
+					changeCurrentMode(PlayerModes.BUTTSLAM);
+			}
 		}
 
 

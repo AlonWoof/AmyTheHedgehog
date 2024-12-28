@@ -100,7 +100,7 @@ namespace Amy
 				
 				SaveGame.loadGame(PlayerManager.Instance.saveFileSlot);
 
-				if(PlayerManager.Instance.isPrologue)
+				if(PlayerManager.Instance.isPrologue())
                 {
 					GameManager.Instance.loadScene("Jungle", true);
                 }

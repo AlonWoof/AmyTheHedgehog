@@ -50,7 +50,7 @@ namespace Amy
 			mPlayer.checkStickPower();
 			mPlayer.CalcSlope();
 			mPlayer.checkForJump();
-			mPlayer.checkForInteract();
+			
 
 
 			if (mPlayer.mChara == PlayableCharacter.Amy)
@@ -128,13 +128,13 @@ namespace Amy
 				}
 			}
 
-			float masturbateTime = 30.0f;
+			float masturbateTime = 60.0f;
 
 			if (mPlayer.getStatus().checkStatusEffect(PlayerStatusFX.Horny))
-				masturbateTime = 3.0f;
+				masturbateTime = 10.0f;
 
 			if (mPlayer.getStatus().currentHealth < mPlayer.getStatus().maxHealth * 0.75f)
-				masturbateTime = 3.0f;
+				masturbateTime = 10.0f;
 
 			if (idleCounter > masturbateTime)
             {

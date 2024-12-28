@@ -34,6 +34,11 @@ namespace Amy
 			}
 
 			mAnimator.SetFloat("timeLeft", timeLeft);
+
+			if(GameManager.Instance.gamePaused)
+            {
+				mAnimator.SetFloat("timeLeft", 0);
+			}
 	    }
 
 		public void setActionText(string str)

@@ -227,7 +227,6 @@ namespace Amy
         public bool hasHammer = false;
         public bool hasCloth = false;
         public bool hasSlingshot = false;
-        public bool isPrologue = false;
         public List<StoryFlag> storyFlags;
         public System.DateTime lastSaveTime;
 
@@ -253,6 +252,9 @@ namespace Amy
         public float totalSeconds = 0.0f;
         public int totalMinutes = 0;
         public int totalHours = 0;
+        public int days = 0;
+
+        public int daysTilMenstruation = 14;
 
         public float stealthIndex = 0.0f;
 
@@ -316,7 +318,27 @@ namespace Amy
             Debug.Log("PlayerManager Initialized!");
         }
 
+        public void advanceDay()
+        {
 
+
+            days++;
+            randomizeDayEvents();
+
+
+            if (currentCharacter == PlayableCharacter.Amy)
+            {
+                daysTilMenstruation--;
+
+                if (daysTilMenstruation == -1)
+                {
+                    daysTilMenstruation = Random.Range(13, 15);
+                }
+
+            }
+
+            
+        }
 
         public void randomizeDayEvents()
         {
@@ -347,6 +369,21 @@ namespace Amy
             {
                 AmyStatus.setStatusEffect(PlayerStatusFX.Horny);
             }
+        }
+
+        public bool isBadDay()
+        {
+            //She's too young.
+            if (currentCharacter == PlayableCharacter.Cream)
+                return false;
+
+            //if (isPrologue())
+           //     return false;
+
+            if (daysTilMenstruation > 0)
+                return false;
+
+            return true;
         }
 
         public bool getStoryFlag(string name)
@@ -387,6 +424,11 @@ namespace Amy
             }
 
             storyFlags.Add(new StoryFlag(hash, value));
+        }
+
+        public bool isPrologue()
+        {
+            return !getStoryFlag("PROLOGUE_DONE");
         }
 
         public void decidePlayerNPCLocation()
@@ -964,7 +1006,8 @@ namespace Amy
             playerCheckpoint.transform.position = mExit.transform.position;
             playerCheckpoint.transform.rotation = mExit.transform.rotation;
 
-            
+
+
             spawnPlayerAtCheckpoint();
 
             if (mExit.altCheckpoint)
@@ -990,8 +1033,21 @@ namespace Amy
                 //return mPlayerInstance;
             }
 
+            Vector3 pos = playerCheckpoint.transform.position;
 
-            mPlayerInstance = Player.Spawn(playerCheckpoint.transform.position, playerCheckpoint.transform.forward, currentCharacter);
+            if (PlayerManager.Instance.isBadDay())
+            {
+                int rng = Random.Range(0, 100);
+
+                //UH OH
+                if (rng % 8 == 0)
+                {
+                    pos += new Vector3(Random.Range(-64, 64), Random.Range(-64, 64), Random.Range(-64, 64));
+                }
+
+            }
+
+            mPlayerInstance = Player.Spawn(pos, playerCheckpoint.transform.forward, currentCharacter);
 
             //saveGame.lastScene = SceneManager.GetActiveScene().name;
             // saveGame.lastExit = lastExit;
@@ -1181,7 +1237,7 @@ namespace Amy
                 GameObject.Destroy(mPlayerInstance.gameObject);
 
 
-            if(type == PlayerKilled.DeathType.Falling || type == PlayerKilled.DeathType.Drowned || isPrologue)
+            if(type == PlayerKilled.DeathType.Falling || type == PlayerKilled.DeathType.Drowned || isPrologue())
             {
                 getCurrentPlayerStatus().currentHealth -= getCurrentPlayerStatus().maxHealth * 0.25f;
                 
@@ -1206,7 +1262,7 @@ namespace Amy
 
                     yield break;
                 }
-                else if(isPrologue)
+                else if(isPrologue())
                 {
                     //An exception for the prologue because there's no bed to wake up to.
                     getCurrentPlayerStatus().currentHealth = getCurrentPlayerStatus().maxHealth * 0.5f;
@@ -1275,7 +1331,6 @@ namespace Amy
             hasHammer = false;
             hasCloth = false;
             hasSlingshot = false;
-            isPrologue = true;
 
             universeNumber = Random.Range(0, 9999);
 
@@ -1320,8 +1375,6 @@ namespace Amy
 
                 yield return 0f;
             }
-
-            randomizeDayEvents();
 
             GameObject inst = null;
 

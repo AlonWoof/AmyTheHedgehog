@@ -14,6 +14,7 @@ namespace Amy
     {
         public static Color AmyColor = new Color(0.9647059f, 0.6392157f, 0.7333333f);
         public static Color CreamColor = new Color(0.972549f, 0.8784314f, 0.7215686f);
+        public static Color YumeColor = new Color(0.9294118f, 0.8666667f, 0.427451f);
 
         public static Color choiceHighlightColor = new Color(1.0f, 1.0f, 1.0f);
         public static Color choiceDefaultColor = new Color(0.6f, 0.6f, 0.6f);
@@ -316,7 +317,7 @@ namespace Amy
             if (Input.GetKeyDown(KeyCode.F1))
                 loadScene(UnityEngine.SceneManagement.SceneManager.GetActiveScene().name);
 
-
+            //Go anywheres
             if (Input.GetKeyDown(KeyCode.F2))
             {
                 Timing.KillCoroutines();
@@ -334,8 +335,14 @@ namespace Amy
                     PlayerManager.Instance.characterSwitch(PlayableCharacter.Amy);
             }
 
+            //Insta-period lol
+            if (Input.GetKeyDown(KeyCode.F5))
+            {
+                PlayerManager.Instance.daysTilMenstruation = 0;
+            }
+
             //Randomize Day Events
-            if(Input.GetKeyDown(KeyCode.F6))
+            if (Input.GetKeyDown(KeyCode.F6))
             {
                 PlayerManager.Instance.randomizeDayEvents();
             }
@@ -511,7 +518,15 @@ namespace Amy
                     sceneName = "City_Night";
             }
 
+            if(PlayerManager.Instance.isBadDay())
+            {
+                int rng = Random.Range(0, 100);
 
+                if(rng % 16 == 0)
+                {
+                    sceneName = "NULL";
+                }
+            }
             
 
             Timing.RunCoroutine(loadSceneRoutine(sceneName, whiteFade, delayBeforeLoading), Segment.RealtimeUpdate);
@@ -653,7 +668,18 @@ namespace Amy
 
             float waitTime = 0.1f;
 
+            if (PlayerManager.Instance.isBadDay())
+            {
+                rng = Random.Range(0, 100);
 
+                //IT'S HIP TO FUCK TEXTURES
+                if (rng % 4 == 0)
+                {
+                    GameObject fucker = new GameObject("Fucker");
+                    fucker.AddComponent<TexlistFucker>();
+                }
+
+            }
 
             if (playerShouldSpawn)
             {
@@ -698,6 +724,9 @@ namespace Amy
                // if (PlayerManager.Instance.saveGame.getCutsceneFlag(scn.titleCardStoryFlagHash) || scn.titleCardStoryFlagHash == -1)
                //     FindObjectOfType<TitleCard>().showTitleCard(scn.areaName, 2, 0.5f);
             }
+
+
+
 
             playerInputDisabled = false;
             cameraInputDisabled = false;

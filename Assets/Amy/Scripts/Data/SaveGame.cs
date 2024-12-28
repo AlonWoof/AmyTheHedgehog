@@ -162,7 +162,6 @@ namespace Amy
 			plman.hasHammer = reader.ReadBoolean();
 			plman.hasCloth = reader.ReadBoolean();
 			plman.hasSlingshot = reader.ReadBoolean();
-			plman.isPrologue = reader.ReadBoolean();
 
 			readPlayerStatus(plman.AmyStatus, ref reader);
 			readPlayerStatus(plman.CreamStatus, ref reader);
@@ -222,7 +221,6 @@ namespace Amy
 			writer.Write(plman.hasHammer);
 			writer.Write(plman.hasCloth);
 			writer.Write(plman.hasSlingshot);
-			writer.Write(plman.isPrologue);
 
 			writePlayerStatus(plman.AmyStatus, ref writer);
 			writePlayerStatus(plman.CreamStatus, ref writer);

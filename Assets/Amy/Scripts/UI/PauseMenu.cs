@@ -139,10 +139,13 @@ namespace Amy
 					if(!PlayerManager.Instance.getPlayer().canWarp())
 						entry.isAvailable = false;
 
-					if (PlayerManager.Instance.isPrologue)
+					if (PlayerManager.Instance.isPrologue())
 						entry.isVisible = false;
 					else
+					{
 						entry.isVisible = true;
+						entry.isAvailable = true;
+					}
                 }
 
 				if (!entry.isVisible)

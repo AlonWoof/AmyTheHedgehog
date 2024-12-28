@@ -18,9 +18,9 @@ namespace Amy
 		const float time_Mid = 15.0f;
 		const float time_Low = 7.5f;
 
-		public float timeTilOrgasm = 15.0f;
-		public float healthRecoveryRate = 0.8f;
-		public float staminaDrainRate = 0.1f;
+		public float timeTilOrgasm = 30.0f;
+		public float healthRecoveryRate = 10.0f;
+		public float staminaDrainRate = 5.0f;
 
 		public GameObject cunnyDripFX;
 
@@ -136,11 +136,7 @@ namespace Amy
 			}
 
 
-
-
-
-
-				mPlayer.getStatus().recentOrgasmTimeLeft = Random.Range(Helper.minutesToSeconds(5), Helper.minutesToSeconds(10));
+			mPlayer.getStatus().recentOrgasmTimeLeft = Random.Range(Helper.minutesToSeconds(5), Helper.minutesToSeconds(10));
 			cunnyDripFX.SetActive(false);
 			mAnimator.CrossFade("Idle", 0.2f);
 			yield return Timing.WaitForSeconds(0.1f);
@@ -180,11 +176,13 @@ namespace Amy
 		{
 			PlayerStatus pstats = mPlayer.getStatus();
 
+			//Creamy isn't interested
 			if (mPlayer.mChara != PlayableCharacter.Amy)
 				return false;
 
-			if (pstats.checkStatusEffect(PlayerStatusFX.RecentOrgasm))
-				return false;
+			//What was I thinking? Girls have no refractory period lol...
+			//if (pstats.checkStatusEffect(PlayerStatusFX.RecentOrgasm))
+			//	return false;
 
 			if (pstats.checkStatusEffect(PlayerStatusFX.Horny))
 				return true;
@@ -192,10 +190,10 @@ namespace Amy
 			if (pstats.currentHealth < pstats.maxHealth * 0.75f)
 				return true;
 
-			if (PlayerManager.Instance.todayEvents.luckyNumber % 3 != 0 && !PlayerManager.Instance.getStoryFlag(StoryFlag.SADX_NUDE))
-				return false;
+			if (PlayerManager.Instance.getStoryFlag(StoryFlag.SADX_NUDE))
+				return true;
 
-			return true;
+			return false;
 		}
 
 		public bool shouldMasturbate()
@@ -245,10 +243,6 @@ namespace Amy
 			if (phase == MasturbationPhase.Caught)
 				return;
 
-			if (phase == MasturbationPhase.Cum)
-				return;
-
-
 			PlayerStatus pstats = mPlayer.getStatus();
 
 			float healMult = mAnimator.GetFloat("animProgress");
@@ -257,12 +251,24 @@ namespace Amy
 				Gamepad.current.SetMotorSpeeds(healMult, healMult);
 
 
+			float baseHealRate = healthRecoveryRate;
+			float baseStamRate = staminaDrainRate;
+
 
 			if(phase == MasturbationPhase.Main && timeTilOrgasm < 7.5f)
             {
 				mAnimator.CrossFade("Rubbing_Close", 1.0f);
 				phase = MasturbationPhase.Close;
+
+				baseHealRate *= 1.25f;
+				baseStamRate *= 1.25f;
             }
+
+			if (phase == MasturbationPhase.Cum)
+            {
+				baseHealRate *= 2.0f;
+				baseStamRate *= 2.0f;
+			}
 
 			if (pstats.currentHealth < pstats.maxHealth)
             {
@@ -270,6 +276,9 @@ namespace Amy
 				pstats.currentStamina -= Time.deltaTime * staminaDrainRate * healMult;
 				mPlayer.updateHealth();
 			}
+
+			if (phase == MasturbationPhase.Cum)
+				return;
 
 			if (timeTilOrgasm > 0.0f)
 				timeTilOrgasm -= Time.deltaTime;
@@ -297,7 +306,6 @@ namespace Amy
             {
 
 				timeTilOrgasm = 0.0f;
-				pstats.currentHealth += pstats.maxHealth * 0.2f;
 				mPlayer.updateHealth();
 
 				phase = MasturbationPhase.Cum;

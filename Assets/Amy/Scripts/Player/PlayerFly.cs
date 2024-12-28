@@ -204,6 +204,23 @@ namespace Amy
 				return;
             }
 
+			if (!GameManager.Instance.usingController)
+			{
+				if (Input.GetButtonDown("Attack"))
+				{
+					mPlayer.changeCurrentMode(PlayerModes.BUTTSLAM);
+					return;
+				}
+			}
+			else
+			{
+				if (Input.GetAxis("Shoot") > 0.5f)
+				{
+					mPlayer.changeCurrentMode(PlayerModes.BUTTSLAM);
+					return;
+				}
+			}
+
 
 			mPlayer.setVelocityDirectly(Vector3.Lerp(mRigidBody.velocity, desiredVelo, Time.deltaTime * 2.0f));
 			transform.rotation = Quaternion.Lerp(transform.rotation, Quaternion.LookRotation(mPlayer.direction, Vector3.up), Time.deltaTime * 3.0f);

@@ -67,7 +67,8 @@ namespace Amy
 
 			yield return Timing.WaitForSeconds(1.0f);
 
-			GameManager.Instance.loadScene("default");
+			PlayerManager.Instance.lastExit = targetExit;
+			GameManager.Instance.loadScene(targetScene);
 		}
 
 		IEnumerator<float> waitForElevator()
