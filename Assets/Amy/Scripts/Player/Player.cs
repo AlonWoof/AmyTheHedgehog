@@ -169,6 +169,14 @@ namespace Amy
 			if (chara == PlayableCharacter.Cream)
 				cpar = GameManager.getSystemData().CreamParams;
 
+			if (chara == PlayableCharacter.YoungAmy)
+				cpar = GameManager.getSystemData().YoungAmyParams;
+
+			//TEMP CODE TO COPY DATA
+			//GameManager.getSystemData().YoungAmyParams.hitBoxes = (HitboxData[])GameManager.getSystemData().AmyParams.hitBoxes.Clone();
+
+			
+
 			float amy_height = cpar.height;
 
 			//Fandom wiki says 25 kg, official sources cheekily say ヒ・ミ・ツ！ ("it's a secret!")
@@ -652,6 +660,10 @@ namespace Amy
 
 				case PlayableCharacter.Cream:
 					result = PlayerManager.Instance.CreamStatus;
+					break;
+
+				case PlayableCharacter.YoungAmy:
+					result = PlayerManager.Instance.AmyStatus;
 					break;
 			}
 

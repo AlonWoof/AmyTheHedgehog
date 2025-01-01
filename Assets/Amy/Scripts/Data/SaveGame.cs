@@ -117,6 +117,7 @@ namespace Amy
 			metaData.totalHours = reader.ReadInt32();
 			metaData.totalMinutes = reader.ReadInt32();
 			metaData.totalSeconds = Mathf.RoundToInt(reader.ReadSingle());
+			metaData.totalDays = reader.ReadInt32();
 
 			reader.Close();
 
@@ -156,6 +157,8 @@ namespace Amy
 			plman.totalHours = reader.ReadInt32();
 			plman.totalMinutes = reader.ReadInt32();
 			plman.totalSeconds = reader.ReadSingle();
+			plman.days = reader.ReadInt32();
+			plman.daysTilMenstruation = reader.ReadInt32();
 			plman.universeNumber = reader.ReadInt32();
 
 			//Progress flags
@@ -215,6 +218,8 @@ namespace Amy
 			writer.Write(plman.totalHours);
 			writer.Write(plman.totalMinutes);
 			writer.Write(plman.totalSeconds);
+			writer.Write(plman.days);
+			writer.Write(plman.daysTilMenstruation);
 			writer.Write(plman.universeNumber);
 
 			//Progress flags

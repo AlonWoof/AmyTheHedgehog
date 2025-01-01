@@ -14,6 +14,7 @@ namespace Amy
 	{
 		public int fileIndex;
 		public int ringBank;
+		public int totalDays;
 		public string fileName;
 		public System.DateTime lastSaveTime;
 		public PlayableCharacter currentCharacter;
@@ -32,6 +33,7 @@ namespace Amy
 		public Text label;
 		public Text ringBank;
 		public Text saveTime;
+		public Text dayCount;
 		public Text characterName;
 		public CanvasGroup infoCanvas;
 
@@ -71,6 +73,7 @@ namespace Amy
 			label.text = "File " + mData.fileIndex.ToString("00");
 			ringBank.text = mData.ringBank.ToString("00000");
 			saveTime.text = mData.lastSaveTime.ToShortDateString();
+			dayCount.text = "Day " + mData.totalDays;
 
 			if(mData.currentCharacter == PlayableCharacter.Amy)
             {

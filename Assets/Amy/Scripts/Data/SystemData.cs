@@ -40,6 +40,7 @@ namespace Amy
 
         public PlayerParameters AmyParams;
         public PlayerParameters CreamParams;
+        public PlayerParameters YoungAmyParams;
 
         
         public GameObject RES_mainCamera;

@@ -144,7 +144,8 @@ namespace Amy
             analogStickFirstFrame = new bool[8];
 
             #if !UNITY_EDITOR
-            loadTitleScreen();
+            PlayerManager.Instance.saveFileSlot = -1;
+            loadScene("Init");
             #endif
 
             //loadScene(UnityEngine.SceneManagement.SceneManager.GetActiveScene().name);
@@ -331,6 +332,8 @@ namespace Amy
             {
                 if(PlayerManager.Instance.currentCharacter == PlayableCharacter.Amy)
                     PlayerManager.Instance.characterSwitch(PlayableCharacter.Cream);
+                else if (PlayerManager.Instance.currentCharacter == PlayableCharacter.Cream)
+                    PlayerManager.Instance.characterSwitch(PlayableCharacter.YoungAmy);
                 else
                     PlayerManager.Instance.characterSwitch(PlayableCharacter.Amy);
             }
@@ -620,7 +623,7 @@ namespace Amy
             bool playerShouldSpawn = true;
             PlayerManager.Instance.isSmallRoom = false;
             PlayerManager.Instance.isHubWorld = false;
-            PlayerManager.Instance.decidePlayerNPCLocation();
+            //PlayerManager.Instance.decidePlayerNPCLocation();
 
             SceneInfo scn = FindObjectOfType<SceneInfo>();
 

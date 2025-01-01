@@ -37,6 +37,12 @@ namespace Amy
             }
 
 			idleCounter = 0.0f;
+
+			//Fix for falling start
+			if(!mPlayer.isOnGround)
+            {
+				mAnimator.Play("Airborne");
+            }
         }
 
         // Update is called once per frame
@@ -131,10 +137,10 @@ namespace Amy
 			float masturbateTime = 60.0f;
 
 			if (mPlayer.getStatus().checkStatusEffect(PlayerStatusFX.Horny))
-				masturbateTime = 10.0f;
+				masturbateTime = 8.0f;
 
 			if (mPlayer.getStatus().currentHealth < mPlayer.getStatus().maxHealth * 0.75f)
-				masturbateTime = 10.0f;
+				masturbateTime = 8.0f;
 
 			if (idleCounter > masturbateTime)
             {

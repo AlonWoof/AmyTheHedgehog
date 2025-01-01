@@ -167,8 +167,6 @@ MonoBehaviour:
     baseStats:
       currentHealth: 50
       maxHealth: 50
-      currentMood: 50
-      maxMood: 50
       maxStamina: 50
       currentStamina: 50
       speedBonus: 0
@@ -341,8 +339,178 @@ MonoBehaviour:
     baseStats:
       currentHealth: 25
       maxHealth: 25
-      currentMood: 25
-      maxMood: 25
+      maxStamina: 30
+      currentStamina: 30
+      speedBonus: 0
+      jumpTimeBonus: 0
+      jumpPowerBonus: 0
+      lungCapacity: 10
+      dirtiness: 0
+      baseMeleeDamage: 8
+      baseRangedDamage: 4
+      statusFX: 0
+      currentVibes: 0
+      scaredTimeLeft: 0
+      goodFoodTimeLeft: 0
+      recentOrgasmTimeLeft: 0
+      sickTimeLeft: 0
+      timeSpentResting: 0
+      items: []
+  YoungAmyParams:
+    ingameModel: {fileID: 4433026388836347168, guid: e847e23350c25c94a98b34332a624736, type: 3}
+    ingameAnimator: {fileID: 9100000, guid: 2ec874b0a8ce5034eaf6d6a6bf69cdd4, type: 2}
+    jiggleData: {fileID: 11400000, guid: 844f127f6d2f83f47bc6b3cf8b546ecc, type: 2}
+    hitBoxes:
+    - boneName: head
+      mShape: 0
+      Weakness: 0
+      Immunity: 0
+      damageMultiplier: 1
+      radius: 0.14
+      height: 0
+      center: {x: 0, y: 0.12, z: 0}
+      size: {x: 0, y: 0, z: 0}
+    - boneName: chest
+      mShape: 2
+      Weakness: 0
+      Immunity: 0
+      damageMultiplier: 1
+      radius: 0
+      height: 0
+      center: {x: 0, y: 0.06, z: 0.025}
+      size: {x: 0.1, y: 0.15, z: 0.1}
+    - boneName: hips
+      mShape: 2
+      Weakness: 0
+      Immunity: 0
+      damageMultiplier: 1
+      radius: 0
+      height: 0
+      center: {x: 0, y: 0.04, z: 0}
+      size: {x: 0.15, y: 0.07, z: 0.1}
+    - boneName: thigh_l
+      mShape: 1
+      Weakness: 0
+      Immunity: 0
+      damageMultiplier: 1
+      radius: 0.03
+      height: 0.18
+      center: {x: 0, y: 0.09, z: 0}
+      size: {x: 1, y: 1, z: 1}
+    - boneName: thigh_r
+      mShape: 1
+      Weakness: 0
+      Immunity: 0
+      damageMultiplier: 1
+      radius: 0.03
+      height: 0.18
+      center: {x: 0, y: 0.09, z: 0}
+      size: {x: 1, y: 1, z: 1}
+    - boneName: shin_l
+      mShape: 1
+      Weakness: 0
+      Immunity: 0
+      damageMultiplier: 1
+      radius: 0.03
+      height: 0.18
+      center: {x: 0, y: 0.09, z: 0}
+      size: {x: 1, y: 1, z: 1}
+    - boneName: upperarm_l
+      mShape: 1
+      Weakness: 0
+      Immunity: 0
+      damageMultiplier: 1
+      radius: 0.022
+      height: 0.15
+      center: {x: 0, y: 0.041, z: 0}
+      size: {x: 1, y: 1, z: 1}
+    - boneName: upperarm_r
+      mShape: 1
+      Weakness: 0
+      Immunity: 0
+      damageMultiplier: 1
+      radius: 0.022
+      height: 0.15
+      center: {x: 0, y: 0.041, z: 0}
+      size: {x: 1, y: 1, z: 1}
+    - boneName: forearm_l
+      mShape: 1
+      Weakness: 0
+      Immunity: 0
+      damageMultiplier: 1
+      radius: 0.022
+      height: 0.15
+      center: {x: 0, y: 0.041, z: 0}
+      size: {x: 1, y: 1, z: 1}
+    - boneName: forearm_r
+      mShape: 1
+      Weakness: 0
+      Immunity: 0
+      damageMultiplier: 1
+      radius: 0.022
+      height: 0.15
+      center: {x: 0, y: 0.041, z: 0}
+      size: {x: 1, y: 1, z: 1}
+    - boneName: hand_l
+      mShape: 2
+      Weakness: 0
+      Immunity: 0
+      damageMultiplier: 1
+      radius: 0
+      height: 0
+      center: {x: 0, y: 0.054, z: 0}
+      size: {x: 0.029, y: 0.077, z: 0.063}
+    - boneName: hand_r
+      mShape: 2
+      Weakness: 0
+      Immunity: 0
+      damageMultiplier: 1
+      radius: 0
+      height: 0
+      center: {x: 0, y: 0.054, z: 0}
+      size: {x: 0.029, y: 0.077, z: 0.063}
+    - boneName: shin_r
+      mShape: 1
+      Weakness: 0
+      Immunity: 0
+      damageMultiplier: 1
+      radius: 0.03
+      height: 0.18
+      center: {x: 0, y: 0.09, z: 0}
+      size: {x: 1, y: 1, z: 1}
+    - boneName: foot_r
+      mShape: 2
+      Weakness: 0
+      Immunity: 0
+      damageMultiplier: 1
+      radius: 0
+      height: 0
+      center: {x: 0, y: 0.048, z: 0}
+      size: {x: 0.08, y: 0.13, z: 0.063}
+    - boneName: foot_l
+      mShape: 2
+      Weakness: 0
+      Immunity: 0
+      damageMultiplier: 1
+      radius: 0
+      height: 0
+      center: {x: 0, y: 0.048, z: 0}
+      size: {x: 0.08, y: 0.13, z: 0.063}
+    height: 0.8
+    weight: 25
+    forwardAccel: 4.3
+    airAccel: 8
+    jumpSpeed: 8
+    groundFriction: 0.52
+    airResistance: 0.26
+    slopeResistance: 4.5
+    railSpeed: 8
+    jump_hangTime: 1
+    gravityMult: 1.5
+    swimSpeed: 3
+    baseStats:
+      currentHealth: 25
+      maxHealth: 25
       maxStamina: 50
       currentStamina: 50
       speedBonus: 0
@@ -351,7 +519,7 @@ MonoBehaviour:
       lungCapacity: 10
       dirtiness: 0
       baseMeleeDamage: 8
-      baseRangedDamage: 4
+      baseRangedDamage: 5
       statusFX: 0
       currentVibes: 0
       scaredTimeLeft: 0

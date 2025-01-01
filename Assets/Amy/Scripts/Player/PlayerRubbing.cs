@@ -14,13 +14,7 @@ namespace Amy
 	public class PlayerRubbing : PlayerMode
 	{
 
-		const float time_High = 30.0f;
-		const float time_Mid = 15.0f;
-		const float time_Low = 7.5f;
-
-		public float timeTilOrgasm = 30.0f;
-		public float healthRecoveryRate = 10.0f;
-		public float staminaDrainRate = 5.0f;
+		float phaseTimeLeft = 10.0f;
 
 		public GameObject cunnyDripFX;
 
@@ -45,11 +39,6 @@ namespace Amy
 
 		MasturbationPhase phase = MasturbationPhase.Main;
 
-		// Start is called before the first frame update
-		void Start()
-	    {
-	        
-	    }
 
 		private void OnEnable()
 		{
@@ -70,27 +59,28 @@ namespace Amy
 				return;
 			}
 
-
-
 			//Sometimes a girl needs a little break~
 			Timing.RunCoroutine(doStartRubbing().CancelWith(gameObject));
 			
 		}
 
-		public IEnumerator<float> doStartRubbing()
+        private void OnDisable()
+        {
+			if(mPlayer.tpc)
+				mPlayer.tpc.changeCameraMode(TPCMode.Normal);
+		}
+
+        public IEnumerator<float> doStartRubbing()
 		{
 			mPlayer.clearAccel();
 			mPlayer.clearSpeed();
 
 			mPlayer.tpc.changeCameraMode(TPCMode.AmyMasturbation);
-
-			timeTilOrgasm = Random.Range(10.0f, 20.0f);
-			phase = MasturbationPhase.Main;
+			changePhase(MasturbationPhase.Main);
 
 			bool cancel = false;
 
-
-			mAnimator.Play("Rubbing_Start");
+			
 
 			while (mAnimator.IsInTransition(0))
 			{
@@ -121,22 +111,13 @@ namespace Amy
 
 			//Really hit the spot <3
 			if (mPlayer.getStatus().checkStatusEffect(PlayerStatusFX.Horny))
-				effectTime = Helper.minutesToSeconds(10);
-
-			
-
-			if (mPlayer.getStatus().currentHealth > mPlayer.getStatus().maxHealth * 0.75f)
 			{
 				mPlayer.getStatus().unSetStatusEffect(PlayerStatusFX.Horny);
 				mPlayer.getStatus().setStatusEffect(PlayerStatusFX.RecentOrgasm);
-			}
-			else
-            {
-				mPlayer.getStatus().setStatusEffect(PlayerStatusFX.Horny);
+				mPlayer.getStatus().recentOrgasmTimeLeft = Helper.minutesToSeconds(10);
 			}
 
 
-			mPlayer.getStatus().recentOrgasmTimeLeft = Random.Range(Helper.minutesToSeconds(5), Helper.minutesToSeconds(10));
 			cunnyDripFX.SetActive(false);
 			mAnimator.CrossFade("Idle", 0.2f);
 			yield return Timing.WaitForSeconds(0.1f);
@@ -160,17 +141,6 @@ namespace Amy
 			cunnyDripFX.SetActive(false);
 		}
 
-		public IEnumerator<float> cancelCaught()
-        {
-			mAnimator.Play("Hazukashii");
-			yield return Timing.WaitForSeconds(1.0f);
-
-			mPlayer.getStatus().setStatusEffect(PlayerStatusFX.Horny);
-
-			mAnimator.CrossFade("Idle", 0.25f);
-			mPlayer.tpc.changeCameraMode(TPCMode.Normal);
-			mPlayer.changeCurrentMode(PlayerModes.NORMAL);
-		}
 
 		public bool canMasturbate()
 		{
@@ -237,81 +207,106 @@ namespace Amy
 
         }
 
+		void changePhase(MasturbationPhase np)
+        {
+			switch(np)
+            {
+				case MasturbationPhase.Main:
+					mAnimator.Play("Rubbing_Start");
+					mAnimator.SetFloat("animSpeed", 0.8f);
+					phaseTimeLeft = Random.Range(10, 15);
+					break;
+
+				case MasturbationPhase.Close:
+					mAnimator.CrossFade("Rubbing_Close", 0.7f);
+					mAnimator.SetFloat("animSpeed", 1.0f);
+					phaseTimeLeft = Random.Range(10, 15);
+					break;
+
+				case MasturbationPhase.Cum:
+					phaseTimeLeft = 100;
+					Timing.RunCoroutine(doOrgasm());
+					break;
+			}
+
+			phase = np;
+        }
+
 		// Update is called once per frame
 		void Update()
 	    {
-			if (phase == MasturbationPhase.Caught)
-				return;
 
-			PlayerStatus pstats = mPlayer.getStatus();
+			float healRate = 5.0f;
+			float stamDrainRate = 5.0f;
+			float animProgress = mAnimator.GetFloat("animProgress");
+			float rumbleStrength = 0.5f;
 
-			float healMult = mAnimator.GetFloat("animProgress");
-
-			if(Gamepad.current != null)
-				Gamepad.current.SetMotorSpeeds(healMult, healMult);
-
-
-			float baseHealRate = healthRecoveryRate;
-			float baseStamRate = staminaDrainRate;
-
-
-			if(phase == MasturbationPhase.Main && timeTilOrgasm < 7.5f)
+			switch (phase)
             {
-				mAnimator.CrossFade("Rubbing_Close", 1.0f);
-				phase = MasturbationPhase.Close;
+				case MasturbationPhase.Main:
+					healRate = 2.0f;
+					stamDrainRate = 0.5f;
+					rumbleStrength = 0.25f;
 
-				baseHealRate *= 1.25f;
-				baseStamRate *= 1.25f;
+					if (phaseTimeLeft < 5.0f)
+                    {
+						mAnimator.SetFloat("animSpeed", 1.0f);
+					}
+					else
+                    {
+						mAnimator.SetFloat("animSpeed", 0.75f);
+					}
+
+					break;
+
+				case MasturbationPhase.Close:
+					healRate = 5.0f;
+					stamDrainRate = 1.0f;
+					rumbleStrength = 0.5f;
+
+					if (phaseTimeLeft < 5.0f)
+					{
+						mAnimator.SetFloat("animSpeed", 1.5f);
+					}
+					else
+					{
+						mAnimator.SetFloat("animSpeed", 1.0f);
+					}
+
+					break;
+
+				case MasturbationPhase.Cum:
+					healRate = 8.0f;
+					stamDrainRate = 2.5f;
+					rumbleStrength = 1.0f;
+					break;
             }
 
-			if (phase == MasturbationPhase.Cum)
+
+			mPlayer.getStatus().currentHealth += healRate * (Time.deltaTime * animProgress);
+			mPlayer.getStatus().currentStamina -= stamDrainRate * (Time.deltaTime * animProgress);
+
+			
+
+			if (Gamepad.current != null)
+				Gamepad.current.SetMotorSpeeds(animProgress * rumbleStrength, animProgress * rumbleStrength);
+
+			phaseTimeLeft -= Time.deltaTime;
+
+
+			if(phaseTimeLeft < 0.0f)
             {
-				baseHealRate *= 2.0f;
-				baseStamRate *= 2.0f;
-			}
+				switch(phase)
+                {
+					case MasturbationPhase.Main:
+						changePhase(MasturbationPhase.Close);
+						break;
 
-			if (pstats.currentHealth < pstats.maxHealth)
-            {
-				pstats.currentHealth += Time.deltaTime * healthRecoveryRate * healMult;
-				pstats.currentStamina -= Time.deltaTime * staminaDrainRate * healMult;
-				mPlayer.updateHealth();
-			}
-
-			if (phase == MasturbationPhase.Cum)
-				return;
-
-			if (timeTilOrgasm > 0.0f)
-				timeTilOrgasm -= Time.deltaTime;
-
-			if (timeTilOrgasm < 2.0f)
-				mAnimator.SetFloat("animSpeed", 1.5f);
-			else
-				mAnimator.SetFloat("animSpeed", 1.0f);
-
-			/*if (mPlayer.areaDetector.getNearbyActorCount() > 0)
-			{
-				timeTilOrgasm = 10.0f;
-				Timing.RunCoroutine(cancelCaught());
-				
-			}*/
-
-			if(mPlayer.areaDetector.isVisibleToNPC() && timeTilOrgasm > 0.1f)
-            {
-				phase = MasturbationPhase.Caught;
-				Timing.RunCoroutine(cancelCaught().CancelWith(gameObject));
-				return;
-			}
-
-			if (timeTilOrgasm < 0.0f)
-            {
-
-				timeTilOrgasm = 0.0f;
-				mPlayer.updateHealth();
-
-				phase = MasturbationPhase.Cum;
-				Timing.RunCoroutine(doOrgasm().CancelWith(gameObject));
+					case MasturbationPhase.Close:
+						changePhase(MasturbationPhase.Cum);
+						break;
+				}
             }
-
 
 	    }
 

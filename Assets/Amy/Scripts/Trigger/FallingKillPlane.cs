@@ -12,6 +12,11 @@ namespace Amy
 	public class FallingKillPlane : MonoBehaviour
 	{
 
+        private void OnValidate()
+        {
+            gameObject.name = "KILLPLANE";
+        }
+
         private void OnTriggerEnter(Collider other)
         {
             Player pl = other.GetComponentInChildren<Player>();

@@ -94,6 +94,7 @@ namespace Amy
         protected override void skipCutscene()
         {
             base.skipCutscene();
+			UIManager.Instance.fadeScreen(false, 0.01f, false);
 
 			GameManager.Instance.enableInput();
 
@@ -107,7 +108,7 @@ namespace Amy
 			wakeup_ZoomCam.SetActive(false);
 			mPlayer.tpc.centerBehindPlayer();
 
-			UIManager.Instance.fadeScreen(true, 1.0f);
+			UIManager.Instance.fadeScreen(true, 3.0f);
 
 			TimedDestroy dest = gameObject.AddComponent<TimedDestroy>();
 			dest.lifetime = 1.0f;

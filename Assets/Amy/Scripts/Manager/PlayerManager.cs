@@ -15,6 +15,7 @@ namespace Amy
     {
         Amy,
         Cream,
+        YoungAmy,
         None
     }
 
@@ -703,8 +704,21 @@ namespace Amy
 
             }
 
+            if (isPrologue())
+            {
+                if (pStats.checkStatusEffect(PlayerStatusFX.Tired))
+                {
+                    pStats.unSetStatusEffect(PlayerStatusFX.Tired);
+                }
+
+                pStats.currentStamina = Mathf.Clamp(pStats.currentStamina, pStats.maxStamina * 0.126f, pStats.maxStamina);
+            }
+
             if ((pStats.currentStamina / pStats.maxStamina) < 0.125f)
             {
+
+
+
                 if(!pStats.checkStatusEffect(PlayerStatusFX.Tired))
                 {
                     pStats.setStatusEffect(PlayerStatusFX.Tired);
@@ -946,7 +960,19 @@ namespace Amy
                 pStats.unSetStatusEffect(PlayerStatusFX.Tired);
             }
 
-            if(pStats.currentStamina < pStats.maxStamina)
+            if (pStats.recentOrgasmTimeLeft > 0.0f)
+                pStats.recentOrgasmTimeLeft -= time;
+
+            if (pStats.sickTimeLeft > 0.0f)
+                pStats.sickTimeLeft -= time;
+
+            if (pStats.goodFoodTimeLeft > 0.0f)
+                pStats.goodFoodTimeLeft -= time;
+
+            if (pStats.scaredTimeLeft > 0.0f)
+                pStats.scaredTimeLeft -= time;
+
+            if (pStats.currentStamina < pStats.maxStamina)
             {
                 pStats.currentStamina += staminaHealRate * (Time.deltaTime * time);
                 pStats.clampValues();
@@ -1240,11 +1266,16 @@ namespace Amy
             if(type == PlayerKilled.DeathType.Falling || type == PlayerKilled.DeathType.Drowned || isPrologue())
             {
                 getCurrentPlayerStatus().currentHealth -= getCurrentPlayerStatus().maxHealth * 0.25f;
-                
+
                 //Falling and drowning are "soft deaths", they don't instakill you.
                 //If we still have health left, don't die, just respawn.
-                if(getCurrentPlayerStatus().currentHealth > 0.0f)
+                if (getCurrentPlayerStatus().currentHealth > 0.0f || isPrologue())
                 {
+                    //An exception for the prologue because there's no bed to wake up to.
+                    if (isPrologue())
+                        getCurrentPlayerStatus().currentHealth = getCurrentPlayerStatus().maxHealth * 0.5f;
+
+
                     spawnPlayerAtCheckpoint();
                     yield return 0f;
 
@@ -1262,11 +1293,7 @@ namespace Amy
 
                     yield break;
                 }
-                else if(isPrologue())
-                {
-                    //An exception for the prologue because there's no bed to wake up to.
-                    getCurrentPlayerStatus().currentHealth = getCurrentPlayerStatus().maxHealth * 0.5f;
-                }
+
             }
 
 
@@ -1323,8 +1350,9 @@ namespace Amy
         public void createBlankSave()
         {
             ringBank = 0;
+            days = 1;
+            daysTilMenstruation = 13;
             currentCharacter = PlayableCharacter.Amy;
-
 
 
             //Progress flags
