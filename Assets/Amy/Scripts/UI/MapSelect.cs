@@ -234,6 +234,10 @@ namespace Amy
                 case PlayableCharacter.Cream:
                     txt += "<color=#f8e0b8>Cream</color>";
                     break;
+
+                case PlayableCharacter.YoungAmy:
+                    txt += "<color=#f6a3bb>Young Amy</color>";
+                    break;
             }
 
             timeOfDayText.text = txt;

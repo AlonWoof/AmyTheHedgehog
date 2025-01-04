@@ -10,6 +10,7 @@ namespace Amy
     public class AmyFXRes
     {
         public GameObject fx_basicJump;
+        public GameObject fx_classicJump;
         public GameObject fx_pikoHammerHit;
         public GameObject fx_pikoHammerJump;
         public GameObject fx_pikoHammerTrail;

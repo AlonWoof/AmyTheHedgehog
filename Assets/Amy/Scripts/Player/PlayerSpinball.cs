@@ -23,6 +23,11 @@ namespace Amy
 		public GameObject ballRoot;
 		public GameObject skeletonRoot;
 
+		public Renderer bodyRender;
+		public Renderer ballRender;
+
+		int BallTimer = 0;
+
         private void Awake()
         {
 			
@@ -63,12 +68,29 @@ namespace Amy
 				//mCol.enabled = true;
 			}
 
+			if((BallTimer & 0x11) == 1)
+            {
+				bodyRender.enabled = true;
+				ballRender.enabled = false;
+            }
+			else
+            {
+				bodyRender.enabled = false;
+				ballRender.enabled = true;
+			}
+
+			if (Time.deltaTime > 0.01f)
+				BallTimer++;
+
+			if (BallTimer > 300)
+				BallTimer = 0;
+
 			float fac = Mathf.Clamp(mPlayer.speed.magnitude, 1.0f, 10.0f) / 10.0f;
 
 			float rotSpeed = Mathf.Lerp(800.0f, 2000.0f, fac);
 			float animSpeed = Mathf.Lerp(1.0f, 1.5f, fac);
 
-			mAnimator.SetFloat("Speed", animSpeed);
+			//mAnimator.SetFloat("Speed", animSpeed);
 			rot.speed = rotSpeed;
 	    }
 

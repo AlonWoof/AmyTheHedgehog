@@ -1428,8 +1428,8 @@ namespace Amy
 				jumpPower *= 0.65f;
 
 
-			//if (mChara == PlayableCharacter.Cream)
-			//isBallMode = true;
+			if (mChara == PlayableCharacter.YoungAmy)
+				isBallMode = true;
 
 			acceleration *= 0.8f;
 			acceleration.y = jumpPower;
@@ -1438,10 +1438,14 @@ namespace Amy
 			getStatus().currentStamina -= jumpStaimaCost;
 			getStatus().clampValues();
 
-			//if(mChara == PlayableCharacter.Amy)
-			mVoice.playVoiceDelayed(Random.Range(0.05f, 0.1f), mVoice.jumping);
+			if(mChara != PlayableCharacter.YoungAmy)
+				mVoice.playVoiceDelayed(Random.Range(0.05f, 0.1f), mVoice.jumping);
 
-			spawnFX(GameManager.Instance.systemData.RES_AmyPlayerFX.fx_basicJump, transform.position);
+			if (mChara != PlayableCharacter.YoungAmy)
+				spawnFX(GameManager.Instance.systemData.RES_AmyPlayerFX.fx_basicJump, transform.position);
+			else
+				spawnFX(GameManager.Instance.systemData.RES_AmyPlayerFX.fx_classicJump, transform.position);
+
 			jumpTimer = mParam.jump_hangTime;
 		}
 

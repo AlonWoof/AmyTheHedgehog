@@ -90,13 +90,31 @@ namespace Amy
 
 
 		public Message getNextMessage()
-		{
-			if (timesTalkedTo == -1)
+        {
+
+            if (PlayerManager.Instance.currentCharacter == PlayableCharacter.YoungAmy)
+            {
+                Message youngAmyMessage = new Message();
+
+                youngAmyMessage.messages = new List<string>();
+
+				youngAmyMessage.messages.Add("Wow, how adorable! So that's how you looked\n when you were Cream's age!");
+                youngAmyMessage.messages.Add("Anyways... to the person behind the screen...");
+                youngAmyMessage.messages.Add("A certain blue-haired girl told me to tell you\nnot to be surprised if the game breaks.");
+                youngAmyMessage.messages.Add("And uh, I must say I agree. It's embarassing, \nbut my dreams aren't fully stable, you know...");
+				youngAmyMessage.messages.Add("Anyways, mata ne... until we meet again~");
+
+				return youngAmyMessage;
+
+			}
+
+            if (timesTalkedTo == -1)
 			{
 				if (PlayerManager.Instance.currentCharacter == PlayableCharacter.Amy)
 					return AmyIntroMessage;
-				else
+				else if(PlayerManager.Instance.currentCharacter == PlayableCharacter.Cream)
 					return CreamIntroMessage;
+
 			}
 
 			if (PlayerManager.Instance.currentCharacter == PlayableCharacter.Amy)
@@ -155,6 +173,8 @@ namespace Amy
 				yield return 0f;
 			}
 
+
+
 			timesTalkedTo++;
 
 			if (path)
@@ -162,6 +182,13 @@ namespace Amy
 
 			if (wasNormal)
 				mPlayer.changeCurrentMode(PlayerModes.NORMAL);
+
+			if (PlayerManager.Instance.currentCharacter == PlayableCharacter.YoungAmy)
+			{
+
+				mPlayer.interactTimeout = 1.0f;
+				transform.parent.gameObject.SetActive(false);
+			}
 		}
 
 		// Update is called once per frame
