@@ -126,7 +126,7 @@ namespace Amy
 
 				UIManager.Instance.messageBox.setTextColorTint(SystemColors.AmyColor);
 				UIManager.Instance.messageBox.setMessageBoxSpeed(DialogBox.speed_mid);
-				amyAnimator.CrossFade("Idle", 0.5f);
+				amyAnimator.CrossFade("Idle", 0.25f);
 				msg = UIManager.Instance.messageBox.showMessageBox("...I guess that's not important right now.", SpeakerProfile.Amy);
 
 				while (msg.IsRunning)
@@ -154,7 +154,7 @@ namespace Amy
 				yield return Timing.WaitForSeconds(0.5f);
 			}
 
-			amyAnimator.CrossFade("Idle", 0.5f);
+			amyAnimator.CrossFade("Idle", 0.25f);
 
 			cam2.SetActive(false);
 			cam3.SetActive(false);

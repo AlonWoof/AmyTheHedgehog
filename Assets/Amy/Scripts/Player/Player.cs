@@ -67,8 +67,6 @@ namespace Amy
 		const float moveStaminaCost = 0.002f;
 		const float flyStaminaCost = 0.004f;
 
-
-
 		//Components
 		public Rigidbody mRigidBody;
 		public Animator mAnimator;
@@ -583,7 +581,7 @@ namespace Amy
 
 			GameObject inst = null;
 			
-			if(mChara == PlayableCharacter.Amy)
+			if(mChara == PlayableCharacter.Amy || mChara == PlayableCharacter.YoungAmy)
 				inst = GameObject.Instantiate(GameManager.Instance.systemData.RES_AmyPlayerFX.fx_amyMagicCircle);
 			else
 				inst = GameObject.Instantiate(GameManager.Instance.systemData.RES_AmyPlayerFX.fx_creamMagicCircle);
