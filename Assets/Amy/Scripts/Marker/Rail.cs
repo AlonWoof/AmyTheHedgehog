@@ -128,6 +128,7 @@ namespace Amy
 
 							if (railProgress < 0.9f)
 							{
+
 								pl.changeCurrentMode(PlayerModes.RAIL);
 								pl.direction = Helper.getDirectionTo(start, end);
 								pl.modeRail.MountRail(this, pos);

@@ -278,7 +278,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 5
+  m_RootOrder: 6
   m_LocalEulerAnglesHint: {x: 90, y: 0, z: 0}
 --- !u!1 &47370913
 GameObject:
@@ -611,7 +611,7 @@ Transform:
   m_LocalScale: {x: 3.0243, y: 2.438078, z: 2.6642}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 9
+  m_RootOrder: 10
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &253700442
 GameObject:
@@ -1264,6 +1264,67 @@ SkinnedMeshRenderer:
     m_Center: {x: -1.1641532e-10, y: -0.0063339975, z: -0.000718542}
     m_Extent: {x: 0.001151555, y: 0.0004475615, z: 0.0007599845}
   m_DirtyAABB: 0
+--- !u!1001 &474766929
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 2007681458, guid: 476670bceaef3e44d90878388220eeec, type: 3}
+      propertyPath: decalLocation
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 5344366228405613566, guid: 476670bceaef3e44d90878388220eeec, type: 3}
+      propertyPath: m_Name
+      value: AmyDecal
+      objectReference: {fileID: 0}
+    - target: {fileID: 5750978828960133570, guid: 476670bceaef3e44d90878388220eeec, type: 3}
+      propertyPath: m_RootOrder
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5750978828960133570, guid: 476670bceaef3e44d90878388220eeec, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -3.636
+      objectReference: {fileID: 0}
+    - target: {fileID: 5750978828960133570, guid: 476670bceaef3e44d90878388220eeec, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 1.092
+      objectReference: {fileID: 0}
+    - target: {fileID: 5750978828960133570, guid: 476670bceaef3e44d90878388220eeec, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -3.997
+      objectReference: {fileID: 0}
+    - target: {fileID: 5750978828960133570, guid: 476670bceaef3e44d90878388220eeec, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: -0.0000005513429
+      objectReference: {fileID: 0}
+    - target: {fileID: 5750978828960133570, guid: 476670bceaef3e44d90878388220eeec, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5750978828960133570, guid: 476670bceaef3e44d90878388220eeec, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5750978828960133570, guid: 476670bceaef3e44d90878388220eeec, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5750978828960133570, guid: 476670bceaef3e44d90878388220eeec, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5750978828960133570, guid: 476670bceaef3e44d90878388220eeec, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: -180
+      objectReference: {fileID: 0}
+    - target: {fileID: 5750978828960133570, guid: 476670bceaef3e44d90878388220eeec, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 476670bceaef3e44d90878388220eeec, type: 3}
 --- !u!1 &499473259
 GameObject:
   m_ObjectHideFlags: 0
@@ -1597,16 +1658,8 @@ MonoBehaviour:
   mDirection: {x: 0, y: 0, z: 0}
   speakerProfile: 1
   AmyMessage:
-    mTalker: {fileID: 0}
-    nameColor: {r: 0, g: 0, b: 1, a: 1}
-    nameTag: 
-    delay: 0
-    hasChoice: 0
-    isSilent: 0
-    invisibleBox: 0
     messages:
     - NULL
-    choices: []
     voice: {fileID: 0}
     voice_pitch: 1
     onStartMessage:
@@ -1622,16 +1675,8 @@ MonoBehaviour:
       m_PersistentCalls:
         m_Calls: []
   CreamMessage:
-    mTalker: {fileID: 0}
-    nameColor: {r: 0, g: 0, b: 1, a: 1}
-    nameTag: 
-    delay: 0
-    hasChoice: 0
-    isSilent: 0
-    invisibleBox: 0
     messages:
     - NULL
-    choices: []
     voice: {fileID: 0}
     voice_pitch: 1
     onStartMessage:
@@ -1648,16 +1693,8 @@ MonoBehaviour:
         m_Calls: []
   hasHornyMessage: 0
   AmyHornyMessage:
-    mTalker: {fileID: 0}
-    nameColor: {r: 0, g: 0, b: 1, a: 1}
-    nameTag: 
-    delay: 0
-    hasChoice: 0
-    isSilent: 0
-    invisibleBox: 0
     messages:
     - NULL
-    choices: []
     voice: {fileID: 0}
     voice_pitch: 1
     onStartMessage:
@@ -1673,16 +1710,8 @@ MonoBehaviour:
       m_PersistentCalls:
         m_Calls: []
   SickMessage:
-    mTalker: {fileID: 0}
-    nameColor: {r: 0, g: 0, b: 1, a: 1}
-    nameTag: 
-    delay: 0
-    hasChoice: 0
-    isSilent: 0
-    invisibleBox: 0
     messages:
     - NULL
-    choices: []
     voice: {fileID: 0}
     voice_pitch: 1
     onStartMessage:
@@ -1697,11 +1726,17 @@ MonoBehaviour:
     onEndPrint:
       m_PersistentCalls:
         m_Calls: []
-  tk: {fileID: 0}
   headNode: {fileID: 0}
-  lookAt: {fileID: 0}
+  lookAtController: {fileID: 0}
   path: {fileID: 0}
   lookAtRange: 4
+  lookAtToggle: 1
+  onStartTalk:
+    m_PersistentCalls:
+      m_Calls: []
+  onEndTalk:
+    m_PersistentCalls:
+      m_Calls: []
   messageBanks:
   - {fileID: 11400000, guid: 51301dc787afc4e4c8b8da3bf47f9312, type: 2}
 --- !u!4 &583890024
@@ -2241,7 +2276,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 2
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 90, y: 0, z: 0}
 --- !u!1 &858475174
 GameObject:
@@ -2523,7 +2558,11 @@ MonoBehaviour:
   luckyNumberEvent:
     m_PersistentCalls:
       m_Calls: []
+  universeNumberEvent:
+    m_PersistentCalls:
+      m_Calls: []
   luckyNumberChance: -1
+  universeNumberChance: -1
 --- !u!1 &911781953
 GameObject:
   m_ObjectHideFlags: 0
@@ -2562,6 +2601,7 @@ MonoBehaviour:
   vCam: {fileID: 0}
   timer: 1
   waitForMove: 0
+  isTrigger: 1
 --- !u!65 &911781955
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -2595,7 +2635,7 @@ Transform:
   m_LocalScale: {x: 3.0243, y: 2.438078, z: 2.6642}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 7
+  m_RootOrder: 8
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &925114630
 GameObject:
@@ -2677,33 +2717,11 @@ MonoBehaviour:
   isHubWorld: 1
   isSmallRoom: 1
   isOutdoors: 0
-  freezeTime: 0
-  humanDisguise: 0
   dontSpawnPlayer: 0
-  forceHour: -1
-  forceMinute: -1
+  forceYoungAmy: 0
   bgmData: {fileID: 0}
-  currentFogColor: {r: 0, g: 0, b: 0, a: 0}
   preloadObjects: []
   shadow_dist: 1024
-  isNight: 0
-  hasDayNightCycle: 0
-  lighting_day:
-    skybox_mat: {fileID: 0}
-    light_sky: {r: 0.44108224, g: 0.47015548, b: 0.5283019, a: 1}
-    light_equator: {r: 0.114, g: 0.125, b: 0.133, a: 1}
-    light_ground: {r: 0.047, g: 0.043, b: 0.035, a: 1}
-    fog_color: {r: 0.5, g: 0.5, b: 0.5, a: 1}
-    fog_density: 0.01
-  lighting_night:
-    skybox_mat: {fileID: 0}
-    light_sky: {r: 0.44108224, g: 0.47015548, b: 0.5283019, a: 1}
-    light_equator: {r: 0.114, g: 0.125, b: 0.133, a: 1}
-    light_ground: {r: 0.047, g: 0.043, b: 0.035, a: 1}
-    fog_color: {r: 0.5, g: 0.5, b: 0.5, a: 1}
-    fog_density: 0.01
-  daySet: {fileID: 0}
-  nightSet: {fileID: 0}
 --- !u!1 &950445800
 GameObject:
   m_ObjectHideFlags: 0
@@ -2922,16 +2940,8 @@ MonoBehaviour:
   mDirection: {x: 0, y: 0, z: 0}
   speakerProfile: 2
   AmyMessage:
-    mTalker: {fileID: 0}
-    nameColor: {r: 0, g: 0, b: 1, a: 1}
-    nameTag: 
-    delay: 0
-    hasChoice: 0
-    isSilent: 0
-    invisibleBox: 0
     messages:
     - NULL
-    choices: []
     voice: {fileID: 0}
     voice_pitch: 1
     onStartMessage:
@@ -2947,17 +2957,9 @@ MonoBehaviour:
       m_PersistentCalls:
         m_Calls: []
   CreamMessage:
-    mTalker: {fileID: 0}
-    nameColor: {r: 0, g: 0, b: 1, a: 1}
-    nameTag: 
-    delay: 0
-    hasChoice: 0
-    isSilent: 0
-    invisibleBox: 0
     messages:
     - (Amy seems to be enjoying herself. )
     - (I wonder what she's doing? Should I try it?)
-    choices: []
     voice: {fileID: 0}
     voice_pitch: 1
     onStartMessage:
@@ -2974,16 +2976,8 @@ MonoBehaviour:
         m_Calls: []
   hasHornyMessage: 0
   AmyHornyMessage:
-    mTalker: {fileID: 0}
-    nameColor: {r: 0, g: 0, b: 1, a: 1}
-    nameTag: 
-    delay: 0
-    hasChoice: 0
-    isSilent: 0
-    invisibleBox: 0
     messages:
     - NULL
-    choices: []
     voice: {fileID: 0}
     voice_pitch: 1
     onStartMessage:
@@ -2999,16 +2993,8 @@ MonoBehaviour:
       m_PersistentCalls:
         m_Calls: []
   SickMessage:
-    mTalker: {fileID: 0}
-    nameColor: {r: 0, g: 0, b: 1, a: 1}
-    nameTag: 
-    delay: 0
-    hasChoice: 0
-    isSilent: 0
-    invisibleBox: 0
     messages:
     - NULL
-    choices: []
     voice: {fileID: 0}
     voice_pitch: 1
     onStartMessage:
@@ -3023,11 +3009,17 @@ MonoBehaviour:
     onEndPrint:
       m_PersistentCalls:
         m_Calls: []
-  tk: {fileID: 0}
   headNode: {fileID: 0}
-  lookAt: {fileID: 0}
+  lookAtController: {fileID: 0}
   path: {fileID: 0}
   lookAtRange: 4
+  lookAtToggle: 1
+  onStartTalk:
+    m_PersistentCalls:
+      m_Calls: []
+  onEndTalk:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!1 &1012876233
 GameObject:
   m_ObjectHideFlags: 0
@@ -3398,7 +3390,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 6
+  m_RootOrder: 7
   m_LocalEulerAnglesHint: {x: 90, y: 0, z: 0}
 --- !u!1 &1087986721
 GameObject:
@@ -3688,7 +3680,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 4
+  m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 90, y: 0, z: 0}
 --- !u!1 &1219619626
 GameObject:
@@ -4062,7 +4054,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 1
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1266903774
 GameObject:
@@ -4606,7 +4598,7 @@ Transform:
   m_LocalScale: {x: 3.0243, y: 2.438078, z: 2.6642}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 8
+  m_RootOrder: 9
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &1309843662
 PrefabInstance:
@@ -5066,16 +5058,8 @@ MonoBehaviour:
   mDirection: {x: 0, y: 0, z: 0}
   speakerProfile: 2
   AmyMessage:
-    mTalker: {fileID: 0}
-    nameColor: {r: 0, g: 0, b: 1, a: 1}
-    nameTag: 
-    delay: 0
-    hasChoice: 0
-    isSilent: 0
-    invisibleBox: 0
     messages:
     - NULL
-    choices: []
     voice: {fileID: 0}
     voice_pitch: 1
     onStartMessage:
@@ -5091,16 +5075,8 @@ MonoBehaviour:
       m_PersistentCalls:
         m_Calls: []
   CreamMessage:
-    mTalker: {fileID: 0}
-    nameColor: {r: 0, g: 0, b: 1, a: 1}
-    nameTag: 
-    delay: 0
-    hasChoice: 0
-    isSilent: 0
-    invisibleBox: 0
     messages:
     - NULL
-    choices: []
     voice: {fileID: 0}
     voice_pitch: 1
     onStartMessage:
@@ -5117,16 +5093,8 @@ MonoBehaviour:
         m_Calls: []
   hasHornyMessage: 0
   AmyHornyMessage:
-    mTalker: {fileID: 0}
-    nameColor: {r: 0, g: 0, b: 1, a: 1}
-    nameTag: 
-    delay: 0
-    hasChoice: 0
-    isSilent: 0
-    invisibleBox: 0
     messages:
     - NULL
-    choices: []
     voice: {fileID: 0}
     voice_pitch: 1
     onStartMessage:
@@ -5142,16 +5110,8 @@ MonoBehaviour:
       m_PersistentCalls:
         m_Calls: []
   SickMessage:
-    mTalker: {fileID: 0}
-    nameColor: {r: 0, g: 0, b: 1, a: 1}
-    nameTag: 
-    delay: 0
-    hasChoice: 0
-    isSilent: 0
-    invisibleBox: 0
     messages:
     - NULL
-    choices: []
     voice: {fileID: 0}
     voice_pitch: 1
     onStartMessage:
@@ -5166,11 +5126,17 @@ MonoBehaviour:
     onEndPrint:
       m_PersistentCalls:
         m_Calls: []
-  tk: {fileID: 0}
   headNode: {fileID: 0}
-  lookAt: {fileID: 0}
+  lookAtController: {fileID: 0}
   path: {fileID: 0}
   lookAtRange: 4
+  lookAtToggle: 1
+  onStartTalk:
+    m_PersistentCalls:
+      m_Calls: []
+  onEndTalk:
+    m_PersistentCalls:
+      m_Calls: []
   messageBanks:
   - {fileID: 11400000, guid: 446ceafc9ba5d5546bde9d3ebd86262f, type: 2}
 --- !u!4 &1417000862
@@ -5447,7 +5413,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 3
+  m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 90, y: 0, z: 0}
 --- !u!1 &1483180029
 GameObject:
@@ -6003,7 +5969,7 @@ Transform:
   m_Children:
   - {fileID: 880857959}
   m_Father: {fileID: 0}
-  m_RootOrder: 10
+  m_RootOrder: 11
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1515664700
 GameObject:
@@ -8116,7 +8082,11 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 1
         m_CallState: 2
+  universeNumberEvent:
+    m_PersistentCalls:
+      m_Calls: []
   luckyNumberChance: 69
+  universeNumberChance: -1
 --- !u!1 &1892422433
 GameObject:
   m_ObjectHideFlags: 0

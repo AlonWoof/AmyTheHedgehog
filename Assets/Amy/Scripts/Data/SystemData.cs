@@ -45,6 +45,7 @@ namespace Amy
 
         
         public GameObject RES_mainCamera;
+        public GameObject RES_freeCamera;
         public AmyFXRes RES_AmyPlayerFX;
         public FootstepFXRes RES_footstepFX;
 

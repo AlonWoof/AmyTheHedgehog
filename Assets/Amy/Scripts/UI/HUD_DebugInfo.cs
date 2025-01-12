@@ -37,7 +37,10 @@ namespace Amy
 	    // Update is called once per frame
 	    void Update()
 	    {
-	        
+
+			if (!GameManager.Instance.debugMode)
+				return;
+
 			if(Input.GetKeyDown(KeyCode.F3))
             {
 				currentPage++;

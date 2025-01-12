@@ -59,6 +59,8 @@ namespace Amy
         
         public bool dontSpawnPlayer = false;
 
+        public bool forceYoungAmy = false;
+
 
         public BGMData bgmData;
 

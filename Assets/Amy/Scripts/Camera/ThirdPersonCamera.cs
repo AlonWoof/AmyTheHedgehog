@@ -314,7 +314,7 @@ namespace Amy
                 currentFOV = 45.0f;
 
             if (mode == TPCMode.CreamFlying)
-                currentFOV = GameManager.Instance.config.desiredFOV * 1.1f;
+                currentFOV = GameManager.Instance.config.desiredFOV * 1.0f;
 
             vCam.m_Lens.FieldOfView = Mathf.Lerp(vCam.m_Lens.FieldOfView, currentFOV, 0.1f);
 

@@ -27,17 +27,24 @@ namespace Amy
 				mPlayer = PlayerManager.Instance.getPlayer();
 	    }
 
-        private void OnTriggerStay(Collider other)
+        private void OnTriggerEnter(Collider other)
         {
             if(other.GetComponent<Player>() && mPlayer.currentMode == PlayerModes.NORMAL)
             {
 
-				if (!mPlayer.isOnGround && Mathf.Abs(mPlayer.speed.y) > 0.2f && mPlayer.currentMode == PlayerModes.NORMAL)
-				{
-					//mPlayer = PlayerManager.Instance.getPlayer();
-					//mPlayer.changeCurrentMode(PlayerModes.RAIL);
+				if (PlayerManager.Instance.currentCharacter != PlayableCharacter.Amy)
+					return;
 
-					//mPlayer.modeRail.MountRail(mRail);
+				if (!PlayerManager.Instance.hasCloth)
+					return;
+
+
+				if (mPlayer.framesAirborne > 0 && Mathf.Abs(mPlayer.speed.y) > 0.2f && mPlayer.currentMode == PlayerModes.NORMAL)
+				{
+					mPlayer = PlayerManager.Instance.getPlayer();
+					mPlayer.changeCurrentMode(PlayerModes.RAIL);
+
+					mPlayer.modeRail.MountRail(mRail, mRail.getPosOnRailFromDistance(0.0f));
 				}
 			}
         }

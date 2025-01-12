@@ -147,6 +147,9 @@ namespace Amy
 
 			if (Physics.Linecast(start, end, out hitInfo, mPlayer.mColMask))
 			{
+				mPlayer.clearSpeed();
+				mPlayer.clearAccel();
+
 				mPlayer.changeCurrentMode(PlayerModes.NORMAL);
 				mPlayer.tpc.changeCameraMode(TPCMode.Normal);
 			}
@@ -157,6 +160,9 @@ namespace Amy
 
 			if (mPlayer.getWaterDepth() >= mPlayer.headOffsetFromGround)
 			{
+				mPlayer.clearSpeed();
+				mPlayer.clearAccel();
+
 				mPlayer.changeCurrentMode(PlayerModes.SWIMMING);
 				mPlayer.tpc.changeCameraMode(TPCMode.Normal);
 			}

@@ -15,8 +15,10 @@ namespace Amy
 		public UnityEvent yumeShowerEvent;
 		public UnityEvent stationCircleNightEvent;
 		public UnityEvent luckyNumberEvent;
+		public UnityEvent universeNumberEvent;
 
 		public int luckyNumberChance = -1;
+		public int universeNumberChance = -1;
 
 		// Start is called before the first frame update
 		void Awake()
@@ -34,6 +36,12 @@ namespace Amy
 				if (today.luckyNumber % luckyNumberChance == 0)
 					luckyNumberEvent.Invoke();
             }
+
+			if(universeNumberChance > 0)
+            {
+				if (PlayerManager.Instance.universeNumber % universeNumberChance == 0)
+					universeNumberEvent.Invoke();
+			}
 		}
 	
 	    // Update is called once per frame

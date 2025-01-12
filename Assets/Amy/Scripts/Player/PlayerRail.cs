@@ -42,6 +42,7 @@ namespace Amy
 				return;
 			}
 
+
 			if (!clothModel)
 				SpawnClothModel();
 
@@ -188,6 +189,9 @@ namespace Amy
         {
 			mPlayer.mRigidBody.isKinematic = false;
 			mPlayer.transform.SetParent(null);
+			mPlayer.clearAccel();
+			mPlayer.clearSpeed();
+
 			mPlayer.changeCurrentMode(PlayerModes.NORMAL);
 			mPlayer.mAnimator.Play("Airborne");
 			mPlayer.isOnGround = false;
@@ -202,6 +206,10 @@ namespace Amy
         {
 			mPlayer.mRigidBody.isKinematic = false;
 			mPlayer.transform.SetParent(null);
+
+			mPlayer.clearAccel();
+			mPlayer.clearSpeed();
+
 			mPlayer.changeCurrentMode(PlayerModes.NORMAL);
 			mPlayer.mAnimator.Play("Jump");
 			mPlayer.Jump(true);

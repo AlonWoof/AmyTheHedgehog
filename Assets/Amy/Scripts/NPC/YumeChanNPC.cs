@@ -155,7 +155,7 @@ namespace Amy
 			Message msg = getNextMessage();
 
 
-			CoroutineHandle msgProc = UIManager.Instance.messageBox.showMessageBox(msg, speakerProfile);
+			CoroutineHandle msgProc = UIManager.Instance.messageBox.showMessageBox(msg, SpeakerProfile.Yume);
 
 			if (path)
 				path.disableMovement();

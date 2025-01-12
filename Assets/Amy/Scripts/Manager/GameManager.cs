@@ -49,6 +49,7 @@ namespace Amy
 	{
 
         public Camera mainCamera;
+        public CameraFree freeCam;
 
 
         public bool usingController = true;
@@ -58,6 +59,7 @@ namespace Amy
         public bool isLoading = false;
         public bool cutsceneMode = false;
         public bool gamePaused = false;
+        public bool debugMode = false;
 
         public GameConfig config;
         public SystemData systemData;
@@ -143,10 +145,14 @@ namespace Amy
             analogStickState = new bool[8];
             analogStickFirstFrame = new bool[8];
 
-            #if !UNITY_EDITOR
+#if !UNITY_EDITOR
             PlayerManager.Instance.saveFileSlot = -1;
             loadScene("Init");
-            #endif
+#endif
+
+
+            if(Debug.isDebugBuild)
+                debugMode = true;
 
             //loadScene(UnityEngine.SceneManagement.SceneManager.GetActiveScene().name);
         }
@@ -220,8 +226,12 @@ namespace Amy
     	void Update()
     	{
             checkController();
-            debugFunctions();
             checkPauseGame();
+
+            if (debugMode)
+                debugFunctions();
+
+            
 
             
             systemData.AUDIO_GameSFXMixer.SetFloat("GameSFXVolume",  gameSFXVolume);
@@ -372,6 +382,26 @@ namespace Amy
                 }
             }
 
+            //Freecam
+            if (Input.GetKeyDown(KeyCode.F11))
+            {
+                if(!freeCam)
+                {
+                    GameObject inst = GameObject.Instantiate(systemData.RES_freeCamera);
+                    freeCam = inst.GetComponent<CameraFree>();
+                }
+
+                if (!freeCam.gameObject.activeInHierarchy)
+                {
+                    freeCam.gameObject.SetActive(true);
+                }
+                else
+                {
+                    freeCam.gameObject.SetActive(false);
+                }
+
+            }
+
             //Emergency exit key
             if (Input.GetButton("RightBumper") && Input.GetButton("LeftBumper") && Input.GetButtonDown("Action"))
             {
@@ -503,7 +533,7 @@ namespace Amy
             systemSoundSource.PlayOneShot(snd);
         }
 
-        #region Scene Transition
+#region Scene Transition
 
         public void loadTitleScreen()
         {
@@ -541,6 +571,36 @@ namespace Amy
             return GameManager.Instance.systemData;
         }
 
+        public void fadeGameAudio(bool fadeIn, float fadeTime)
+        {
+            Timing.RunCoroutine(doFadeGameAudio(fadeIn, fadeTime));
+        }
+
+        IEnumerator<float> doFadeGameAudio(bool fadeIn, float fadeTime)
+        {
+            float targetVolume = -80.0f;
+
+            if(fadeIn)
+                targetVolume = 0.0f;
+
+
+            float startVolume = gameSFXVolume;
+            float totalTime = 0.0f;
+
+            while (totalTime < fadeTime)
+            {
+                float fac = totalTime / fadeTime;
+
+                gameSFXVolume = Mathf.Lerp(startVolume, targetVolume, fac);
+
+                totalTime += Time.unscaledDeltaTime;
+
+                yield return 0f;
+            }
+
+            gameSFXVolume = targetVolume;
+        }
+
         IEnumerator<float> loadSceneRoutine(string sceneName, bool whiteFade, float delay = 0.0f)
         {
             yield return Timing.WaitForSeconds(delay);
@@ -564,25 +624,15 @@ namespace Amy
             }
             */
 
+
+
             UIManager.Instance.fadeScreen(false, 0.75f, whiteFade);
 
-
-            while (gameSFXVolume > -80.0f)
-            {
-                gameSFXVolume = Mathf.Lerp(gameSFXVolume, -81.0f, Time.unscaledDeltaTime * 3);
-
-                yield return 0f;
-            }
-
-            gameSFXVolume = -80.0f;
+            fadeGameAudio(false, 0.75f);
 
 
+            yield return Timing.WaitForSeconds(0.75f);
 
-            yield return Timing.WaitForSeconds(0.5f);
-
-
-
-            //UIManager.Instance.hideGameOverScreen();
 
             //Night chance?
             int rng = Random.Range(0, 64);
@@ -631,6 +681,18 @@ namespace Amy
             {
                 MusicManager.Instance.changeSongs(scn.bgmData);
 
+                if(scn.forceYoungAmy)
+                {
+                    if (PlayerManager.Instance.currentCharacter == PlayableCharacter.Amy)
+                        PlayerManager.Instance.currentCharacter = PlayableCharacter.YoungAmy;
+
+                    if(PlayerManager.Instance.currentCharacter == PlayableCharacter.Cream)
+                    {
+                        PlayerManager.Instance.wakeupScene();
+                    }
+                }
+
+
                 if (scn.dontSpawnPlayer)
                     playerShouldSpawn = false;
 
@@ -640,7 +702,12 @@ namespace Amy
                     PlayerManager.Instance.isSmallRoom = true;
 
                 if (scn.isHubWorld)
+                {
                     PlayerManager.Instance.isHubWorld = true;
+
+                    if (PlayerManager.Instance.currentCharacter == PlayableCharacter.YoungAmy)
+                        PlayerManager.Instance.currentCharacter = PlayableCharacter.Amy;
+                }
 
             }
             else
@@ -693,15 +760,6 @@ namespace Amy
 
             yield return Timing.WaitForSeconds(waitTime);
 
-            
-            while (gameSFXVolume < 0.0f)
-            {
-                gameSFXVolume = Mathf.Lerp(gameSFXVolume, 0.1f, Time.unscaledDeltaTime * 3);
-
-                yield return 0f;
-            }
-
-            gameSFXVolume = 0.0f;
 
             if (PlayerManager.Instance.mPlayerInstance)
                 PlayerManager.Instance.mPlayerInstance.tpc.centerBehindPlayer();
@@ -713,13 +771,20 @@ namespace Amy
             if (PlayerManager.Instance.mPlayerInstance)
                 PlayerManager.Instance.mPlayerInstance.changeCurrentMode(PlayerModes.NORMAL);
 
-            //Auto-save
-            SaveGame.writeSaveGame(PlayerManager.Instance.saveFileSlot);
+            yield return Timing.WaitForSeconds(0.5f);
 
             // EnemyManager.Instance.currentEnemyPhase = ENEMY_PHASE.PHASE_SNEAK;
 
             UIManager.Instance.fadeScreen(true, 0.75f);
-            yield return Timing.WaitForSeconds(0.75f);
+            fadeGameAudio(true, 0.75f);
+
+
+            yield return Timing.WaitForSeconds(0.5f);
+
+            //Auto-save
+            SaveGame.writeSaveGame(PlayerManager.Instance.saveFileSlot);
+
+            yield return Timing.WaitForSeconds(0.25f);
 
             if (scn.showTitleCard)
             {
@@ -759,7 +824,7 @@ namespace Amy
 
         }
 
-        #endregion
+#endregion
 
     }
 

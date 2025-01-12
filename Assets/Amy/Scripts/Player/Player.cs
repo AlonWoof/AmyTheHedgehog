@@ -998,6 +998,10 @@ namespace Amy
 
         void debugControls()
         {
+
+			if (!GameManager.Instance.debugMode)
+				return;
+
 			if (Input.GetKeyDown(KeyCode.Keypad5))
 			{
 
@@ -1276,7 +1280,7 @@ namespace Amy
         void getGroundNormal()
 		{
 			Vector3 start = transform.position + WorldToPlayerSpace(Vector3.up * 0.5f);
-			Vector3 end = transform.position - WorldToPlayerSpace(Vector3.up * 0.2f);
+			Vector3 end = transform.position - WorldToPlayerSpace(Vector3.up * 0.1f);
 
 			//start += mRigidBody.velocity * Time.deltaTime;
 			//end += mRigidBody.velocity * Time.deltaTime;
@@ -2167,6 +2171,20 @@ namespace Amy
 
 			adjustStepVolume();
 			checkForwardWall();
+			checkIfOutOfBounds();
+		}
+
+		void checkIfOutOfBounds()
+		{
+
+			if (transform.position.y < -500.0f)
+			{
+				if (currentMode != PlayerModes.KILLED)
+				{
+					modeKilled.deathType = PlayerKilled.DeathType.Falling;
+					changeCurrentMode(PlayerModes.KILLED);
+				}
+			}
 		}
 
 		public void setVelocityDirectly(Vector3 spd)

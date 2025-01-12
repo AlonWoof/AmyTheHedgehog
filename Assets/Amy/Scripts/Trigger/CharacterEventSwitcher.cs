@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 
 namespace Amy
 {
@@ -13,6 +14,9 @@ namespace Amy
 
         public List<GameObject> amy_objects;
         public List<GameObject> cream_objects;
+
+        public UnityEvent amyEvents;
+        public UnityEvent creamEvents;
 
         // Start is called before the first frame update
         void Start()
@@ -41,11 +45,15 @@ namespace Amy
                 case PlayableCharacter.Amy:
                     foreach (GameObject g in amy_objects)
                         g.SetActive(true);
+
+                    amyEvents.Invoke();
                     break;
 
                 case PlayableCharacter.Cream:
                     foreach (GameObject g in cream_objects)
                         g.SetActive(true);
+
+                    creamEvents.Invoke();
                     break;
             }
         }

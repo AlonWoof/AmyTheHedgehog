@@ -370,6 +370,12 @@ namespace Amy
             {
                 AmyStatus.setStatusEffect(PlayerStatusFX.Horny);
             }
+
+
+            if(AmyDecal.getAmyDecalCount() >= 7)
+            {
+                GameManager.Instance.debugMode = true;
+            }
         }
 
         public bool isBadDay()
@@ -1389,6 +1395,7 @@ namespace Amy
         {
             yield return 0f;
             UIManager.Instance.fadeScreen(false, 0.5f, whiteFade);
+            GameManager.Instance.fadeGameAudio(false, 0.5f);
             yield return Timing.WaitForSeconds(0.5f);
 
 
@@ -1418,6 +1425,7 @@ namespace Amy
             yield return Timing.WaitForSeconds(0.5f);
 
             UIManager.Instance.fadeScreen(true, 3.0f, whiteFade);
+            GameManager.Instance.fadeGameAudio(true, 3.0f);
         }
 
         public void characterSwitch(PlayableCharacter newChar)
