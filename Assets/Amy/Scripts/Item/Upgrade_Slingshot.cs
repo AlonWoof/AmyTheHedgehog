@@ -31,6 +31,7 @@ namespace Amy
 			mAnimator.Play("Disappear");
 
 			PlayerManager.Instance.hasSlingshot = true;
+			GameManager.Instance.playSystemSound(GameManager.Instance.systemData.AUDIO_itemGetJingle, 0.5f);
 
 			Invoke("Die", 5.0f);
 		}

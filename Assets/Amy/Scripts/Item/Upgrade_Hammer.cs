@@ -72,6 +72,7 @@ namespace Amy
 			UIManager.Instance.fadeScreen(true, 1.0f, true);
 
 			yield return Timing.WaitForSeconds(1.0f);
+			GameManager.Instance.playSystemSound(GameManager.Instance.systemData.AUDIO_itemGetJingle, 0.5f);
 
 			CoroutineHandle messageTask = UIManager.Instance.messageBox.showMessageBox(itemGetMessage);
 

@@ -206,7 +206,7 @@ namespace Amy
 			}
 		}
 
-		public bool isVisibleToNPC(float range = 30.0f)
+		public bool isVisibleToNPC(float range = 64.0f)
         {
 			visibleNPCCount = 0;
 			bool ret = false;

@@ -16,5 +16,10 @@ namespace Amy
         {
 			PlayerManager.Instance.getPlayer().startWarp("WarpCenter", 7);
 		}
+
+		public void event_killPlayer()
+        {
+			PlayerManager.Instance.killHer();
+        }			
 	}
 }

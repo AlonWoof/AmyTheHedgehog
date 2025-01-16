@@ -84,6 +84,8 @@ namespace Amy
         public BGMData bgm_alert;
         public BGMData bgm_evasion;
         public AudioClip sfx_mgs_clear;
+        public AudioClip AUDIO_itemGetJingle;
+        public AudioClip AUDIO_challengeClearJingle;
 
         [Header("Cutscenes")]
 

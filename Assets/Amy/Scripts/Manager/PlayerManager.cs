@@ -283,6 +283,7 @@ namespace Amy
             storyFlags = new List<StoryFlag>();
 
             randomizeDayEvents();
+            PlayerManager.Instance.universeNumber = Random.Range(1, 9999);
 
             GameObject inst = new GameObject("CHECKPOINT");
             DontDestroyOnLoad(inst);
@@ -361,7 +362,7 @@ namespace Amy
                 todayEvents.yumeShower = true;
 
 
-            todayEvents.luckyNumber = Random.Range(0, 99);
+            todayEvents.luckyNumber = Random.Range(1, 999);
 
             rng = Random.Range(0, 40);
 
@@ -372,10 +373,6 @@ namespace Amy
             }
 
 
-            if(AmyDecal.getAmyDecalCount() >= 7)
-            {
-                GameManager.Instance.debugMode = true;
-            }
         }
 
         public bool isBadDay()
@@ -436,6 +433,15 @@ namespace Amy
         public bool isPrologue()
         {
             return !getStoryFlag("PROLOGUE_DONE");
+        }
+
+        public void checkStoryFlags()
+        {
+            if (isHubWorld && isPrologue())
+                setStoryFlag("PROLOGUE_DONE", true);
+
+            if (getStoryFlag("AMYDECAL_CLEAR"))
+                GameManager.Instance.debugMode = true;
         }
 
         public void decidePlayerNPCLocation()
@@ -1055,6 +1061,9 @@ namespace Amy
         {
             Debug.Log("Respawning Player...");
 
+            //Just gonna throw this in here...
+            checkStoryFlags();
+
             if (mPlayerInstance != null)
             {
                 //Debug.Log("Destroying duplicate player...");
@@ -1078,6 +1087,8 @@ namespace Amy
                 }
 
             }
+
+
 
             mPlayerInstance = Player.Spawn(pos, playerCheckpoint.transform.forward, currentCharacter);
 

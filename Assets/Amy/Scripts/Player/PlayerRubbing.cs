@@ -191,6 +191,13 @@ namespace Amy
 				return false;
 			}
 
+			if (pstats.checkStatusEffect(PlayerStatusFX.Tired))
+			{
+				showCantMasturbateMessage(cantMasturbateReason.Tired);
+				return false;
+			}
+
+
 			if (pstats.checkVibe(VibeType.Scary) || pstats.checkStatusEffect(PlayerStatusFX.Scared))
 			{
 				showCantMasturbateMessage(cantMasturbateReason.Scared);
@@ -245,7 +252,7 @@ namespace Amy
             {
 				case MasturbationPhase.Main:
 					healRate = 2.0f;
-					stamDrainRate = 0.5f;
+					stamDrainRate = 0.25f;
 					rumbleStrength = 0.25f;
 
 					if (phaseTimeLeft < 5.0f)
@@ -261,7 +268,7 @@ namespace Amy
 
 				case MasturbationPhase.Close:
 					healRate = 5.0f;
-					stamDrainRate = 1.0f;
+					stamDrainRate = 0.5f;
 					rumbleStrength = 0.5f;
 
 					if (phaseTimeLeft < 5.0f)
@@ -277,14 +284,16 @@ namespace Amy
 
 				case MasturbationPhase.Cum:
 					healRate = 8.0f;
-					stamDrainRate = 2.5f;
+					stamDrainRate = 1.25f;
 					rumbleStrength = 1.0f;
 					break;
             }
 
 
 			mPlayer.getStatus().currentHealth += healRate * (Time.deltaTime * animProgress);
-			mPlayer.getStatus().currentStamina -= stamDrainRate * (Time.deltaTime * animProgress);
+
+			if(mPlayer.getStatus().currentHealth < (mPlayer.getStatus().maxHealth * 0.95f))
+				mPlayer.getStatus().currentStamina -= stamDrainRate * (Time.deltaTime * animProgress);
 
 			
 

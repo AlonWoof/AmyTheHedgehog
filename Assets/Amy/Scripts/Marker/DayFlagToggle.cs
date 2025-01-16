@@ -23,6 +23,11 @@ namespace Amy
 		// Start is called before the first frame update
 		void Awake()
 	    {
+			executeEvents();
+		}
+
+		void executeEvents()
+        {
 			DayEvents today = PlayerManager.Instance.todayEvents;
 
 			if (today.stationCircleNight)
@@ -31,14 +36,14 @@ namespace Amy
 			if (today.yumeShower)
 				yumeShowerEvent.Invoke();
 
-			if(luckyNumberChance > 0)
-            {
+			if (luckyNumberChance > 0)
+			{
 				if (today.luckyNumber % luckyNumberChance == 0)
 					luckyNumberEvent.Invoke();
-            }
+			}
 
-			if(universeNumberChance > 0)
-            {
+			if (universeNumberChance > 0)
+			{
 				if (PlayerManager.Instance.universeNumber % universeNumberChance == 0)
 					universeNumberEvent.Invoke();
 			}
@@ -47,7 +52,9 @@ namespace Amy
 	    // Update is called once per frame
 	    void Update()
 	    {
-	        
-	    }
+			if (Input.GetKeyDown(KeyCode.F6))
+				executeEvents();
+
+		}
 	}
 }

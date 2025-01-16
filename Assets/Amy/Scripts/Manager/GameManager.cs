@@ -164,9 +164,9 @@ namespace Amy
 
 
             //Clear duplicates
-            if (FindObjectOfType<Cinemachine.CinemachineBrain>())
+            if (FindObjectOfType<AudioListener>())
             {
-                Destroy(FindObjectOfType<Cinemachine.CinemachineBrain>().gameObject);
+                Destroy(FindObjectOfType<AudioListener>().gameObject);
             }
             
 
@@ -358,6 +358,7 @@ namespace Amy
             if (Input.GetKeyDown(KeyCode.F6))
             {
                 PlayerManager.Instance.randomizeDayEvents();
+                PlayerManager.Instance.universeNumber = Random.Range(0, 9999);
             }
 
             //How fucking brutal

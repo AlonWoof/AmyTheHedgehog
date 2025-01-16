@@ -30,6 +30,7 @@ namespace Amy
 			mAnimator.Play("Disappear");
 
 			PlayerManager.Instance.hasCloth = true;
+			GameManager.Instance.playSystemSound(GameManager.Instance.systemData.AUDIO_itemGetJingle, 0.5f);
 
 			Invoke("Die", 5.0f);
 		}
