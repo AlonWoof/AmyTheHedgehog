@@ -51,7 +51,9 @@ namespace Amy
 			mPlayer.canAirAttack = false;
 			mPlayer.framesGrounded = 0;
 
-			mPlayer.tpc.changeCameraMode(TPCMode.Normal);
+			if(mPlayer.tpc)
+				mPlayer.tpc.changeCameraMode(TPCMode.Normal);
+
 			Timing.RunCoroutine(startButtSlam());
 		}
 

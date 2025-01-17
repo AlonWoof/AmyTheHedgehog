@@ -120,6 +120,8 @@ namespace Amy
 		public int framesGrounded = 0;
 		public float lookTimeLeft = 0.0f;
 
+		public bool isAiControlled = false;
+
 		public float stickTimeout = 0.0f;
 		public float jumpTimer = 0.0f;
 
@@ -157,23 +159,40 @@ namespace Amy
 
 		public List<Hitbox> hitBoxes;
 
-		public static Player Spawn(Vector3 pos, Vector3 dir, PlayableCharacter chara = PlayableCharacter.Amy)
+		public Vector3 debug_jumpStartPos;
+
+
+		public static Player Spawn(Vector3 pos, Vector3 dir, PlayableCharacter chara = PlayableCharacter.Amy, bool isAI = false)
 		{
 			//Replace this with something better later.
 			GameManager.Instance.findSceneInfo();
 
 			PlayerParameters cpar = GameManager.getSystemData().AmyParams;
 
-			if (chara == PlayableCharacter.Cream)
-				cpar = GameManager.getSystemData().CreamParams;
+			switch(chara)
+            {
+				case PlayableCharacter.Amy:
+					cpar = GameManager.getSystemData().AmyParams;
+					break;
 
-			if (chara == PlayableCharacter.YoungAmy)
-				cpar = GameManager.getSystemData().YoungAmyParams;
+				case PlayableCharacter.Cream:
+					cpar = GameManager.getSystemData().CreamParams;
+					break;
+
+				case PlayableCharacter.YoungAmy:
+					cpar = GameManager.getSystemData().YoungAmyParams;
+					break;
+
+				case PlayableCharacter.Yume:
+					cpar = GameManager.getSystemData().YumeParams;
+					break;
+			}
+
 
 			//TEMP CODE TO COPY DATA
 			//GameManager.getSystemData().YoungAmyParams.hitBoxes = (HitboxData[])GameManager.getSystemData().AmyParams.hitBoxes.Clone();
+			//GameManager.getSystemData().YumeParams = GameManager.getSystemData().AmyParams;
 
-			
 
 			float amy_height = cpar.height;
 
@@ -220,14 +239,28 @@ namespace Amy
 			FootstepFX footsteps = inst.AddComponent<FootstepFX>();
 			footsteps.isPlayer = true;
 
-			Player newPlayer = inst.AddComponent<Player>();
 
-			GameObject camInst = new GameObject("ThirdPersonCamera");
-			ThirdPersonCamera tpc = camInst.AddComponent<ThirdPersonCamera>();
+			Player newPlayer;
 
-			tpc.setPlayerTransform(inst.transform);
-			tpc.centerBehindPlayer();
-			newPlayer.tpc = tpc;
+			if (!isAI)
+			{
+				newPlayer = inst.AddComponent<Player>();
+			}
+			else
+			{
+				newPlayer = inst.AddComponent<AIPlayer>();
+				newPlayer.isAiControlled = true;
+			}
+
+			if (!isAI)
+			{
+				GameObject camInst = new GameObject("ThirdPersonCamera");
+				ThirdPersonCamera tpc = camInst.AddComponent<ThirdPersonCamera>();
+
+				tpc.setPlayerTransform(inst.transform);
+				tpc.centerBehindPlayer();
+				newPlayer.tpc = tpc;
+			}
 
 			newPlayer.fx_footsteps = footsteps;
 
@@ -327,7 +360,7 @@ namespace Amy
 			framesAirborne = 0;
 			framesGrounded = 10;
 			jumpTimer = 0.0f;
-	}
+		}
 
 		public void addAllModes()
         {
@@ -518,7 +551,6 @@ namespace Amy
 
 		public void startWarp(string sceneName, int exitNum = 0)
         {
-
 			Timing.RunCoroutine(doWarp(sceneName, exitNum));
         }
 
@@ -662,6 +694,10 @@ namespace Amy
 
 				case PlayableCharacter.YoungAmy:
 					result = PlayerManager.Instance.AmyStatus;
+					break;
+
+				case PlayableCharacter.Yume:
+					result = PlayerManager.Instance.CreamStatus;
 					break;
 			}
 
@@ -955,7 +991,7 @@ namespace Amy
 			if (GameManager.Instance.gamePaused || PlayerManager.Instance.itemMenuOpen)
 				return;
 
-			doLeanAnimation();
+			//doLeanAnimation();
 
 			//if (acceleration.z > 0.5f)
 			//	tpc.centerBehindPlayerSmooth(Time.deltaTime);
@@ -996,7 +1032,12 @@ namespace Amy
 
 		}
 
-        void debugControls()
+		protected void saveDebugPosition()
+        {
+			debug_jumpStartPos = transform.position;
+        }
+		
+        protected virtual void debugControls()
         {
 
 			if (!GameManager.Instance.debugMode)
@@ -1042,7 +1083,7 @@ namespace Amy
 			}
 		}
 
-		public void changeCurrentMode(PlayerModes newMode)
+		public virtual void changeCurrentMode(PlayerModes newMode)
         {
 			if (newMode == currentMode)
 				return;
@@ -1344,6 +1385,12 @@ namespace Amy
 							acceleration *= 0.95f;
 							speed.y = 0.0f;
 							framesAirborne = 0;
+
+							Vector3 plpos = transform.position;
+							plpos.y = 0;
+							debug_jumpStartPos.y = 0;
+
+							Debug.Log("JUMP DIST: " + Vector3.Distance(plpos, debug_jumpStartPos));
 						}
 
 						if (framesAirborne > 0 || Vector3.Distance(hitInfo.point, transform.position) > 0.01f)
@@ -1418,6 +1465,9 @@ namespace Amy
         {
 			if (!isOnGround && !ignoreGrounded)
 				return;
+
+			debug_jumpStartPos = transform.position;
+
 
 			float slopeMult = Mathf.Clamp01(1.0f + slopeAmount);
 
@@ -1701,7 +1751,7 @@ namespace Amy
 			}
 		}
 
-		public void checkForInteract()
+		public virtual void checkForInteract()
 		{
 			if (GameManager.Instance.playerInputDisabled)
 			{
@@ -1802,7 +1852,7 @@ namespace Amy
 
 		}
 
-		public void checkForGroundAttack()
+		public virtual void checkForGroundAttack()
         {
 			if (GameManager.Instance.playerInputDisabled || GameManager.Instance.gamePaused || PlayerManager.Instance.itemMenuOpen)
 				return;
@@ -1820,7 +1870,7 @@ namespace Amy
 				groundAttack();
         }
 
-		public void checkForRunningGroundAttack()
+		public virtual void checkForRunningGroundAttack()
         {
 			if (GameManager.Instance.playerInputDisabled || GameManager.Instance.gamePaused || PlayerManager.Instance.itemMenuOpen)
 				return;
@@ -1841,7 +1891,7 @@ namespace Amy
 			}
 		}
 
-		public void checkForEarSpinAttack()
+		public virtual void checkForEarSpinAttack()
         {
 			if (GameManager.Instance.playerInputDisabled || GameManager.Instance.gamePaused || PlayerManager.Instance.itemMenuOpen)
 				return;
@@ -1863,7 +1913,7 @@ namespace Amy
 			}
 		}
 
-		public void checkForAirAttack()
+		public virtual void checkForAirAttack()
         {
 			if (GameManager.Instance.playerInputDisabled || GameManager.Instance.gamePaused || PlayerManager.Instance.itemMenuOpen)
 				return;
@@ -1898,9 +1948,8 @@ namespace Amy
 			modeLadder.startClimbing(l);
 		}
 
-		public void checkForJump()
+		public virtual void checkForJump()
         {
-
 
 			if (Input.GetButtonDown("Jump") && canJump(false))
 				Jump(false);
@@ -1912,7 +1961,7 @@ namespace Amy
 				jumpTimer -= Time.deltaTime;
 		}
 
-		public void checkForFlying()
+		public virtual void checkForFlying()
         {
 			if (GameManager.Instance.playerInputDisabled || GameManager.Instance.gamePaused || PlayerManager.Instance.itemMenuOpen)
 				return;
@@ -1935,7 +1984,7 @@ namespace Amy
 
 
 		}
-		public void checkForButtSlamAttack()
+		public virtual void checkForButtSlamAttack()
 		{
 			if (GameManager.Instance.playerInputDisabled || GameManager.Instance.gamePaused || PlayerManager.Instance.itemMenuOpen)
 				return;
@@ -1993,7 +2042,7 @@ namespace Amy
 			changeCurrentMode(PlayerModes.SLINGSHOT);
         }
 
-		public void checkStickPower()
+		public virtual void checkStickPower()
 		{
 
 

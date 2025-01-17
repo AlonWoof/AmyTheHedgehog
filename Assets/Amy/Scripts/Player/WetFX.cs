@@ -12,6 +12,7 @@ namespace Amy
 	public class WetFX : MonoBehaviour
 	{
 		public List<Material> materials;
+		public List<Material> yumeTaisogi;
 		float currentWetness = 0.0f;
 		public float desiredWetness = 0.0f;
 
@@ -58,6 +59,7 @@ namespace Amy
 		void findAllMats()
 		{
 			materials = new List<Material>();
+			yumeTaisogi = new List<Material>();
 
 			foreach (Renderer r in GetComponentsInChildren<Renderer>())
 			{
@@ -67,6 +69,17 @@ namespace Amy
 					{
 						materials.Add(m);
 
+					}
+
+					if (m.shader.name.ToLower().Contains("body"))
+					{
+						materials.Add(m);
+
+					}
+
+					if (m.shader.name.ToLower().Contains("yumeblend"))
+					{
+						yumeTaisogi.Add(m);
 					}
 				}
 			}
@@ -78,6 +91,13 @@ namespace Amy
 			foreach (Material m in materials)
 			{
 				m.SetFloat("_Wetness", Mathf.Clamp01(currentWetness));
+			}
+
+			foreach (Material m in yumeTaisogi)
+			{
+				m.SetFloat("_Blend", currentWetness);
+				m.SetFloat("_SpecularGloss", Mathf.Clamp(currentWetness * 0.2f, 0.05f, 1.0f));
+				m.SetFloat("_SpecularPower", currentWetness * 0.3f);
 			}
 		}
 	}

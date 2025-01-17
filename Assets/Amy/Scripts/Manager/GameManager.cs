@@ -383,6 +383,57 @@ namespace Amy
                 }
             }
 
+            //AI player
+            /*
+            if (Input.GetKeyDown(KeyCode.F10))
+            {
+                Transform checkPoint = PlayerManager.Instance.playerCheckpoint;
+
+                int shimaiCount = 0;
+                List<AIPlayerFollow> shimaiCore = new List<AIPlayerFollow>();
+
+                if (PlayerManager.Instance.currentCharacter != PlayableCharacter.Amy && PlayerManager.Instance.currentCharacter != PlayableCharacter.YoungAmy)
+                {
+
+                    Player amy = Player.Spawn(checkPoint.transform.position, checkPoint.transform.forward, PlayableCharacter.Amy, true);
+                    shimaiCore.Add(amy.gameObject.AddComponent<AIPlayerFollow>());
+                    shimaiCount++;
+                }
+
+                if (PlayerManager.Instance.currentCharacter != PlayableCharacter.Cream)
+                {
+                    Player creamy = Player.Spawn(checkPoint.transform.position, checkPoint.transform.forward, PlayableCharacter.Cream, true);
+                    shimaiCore.Add(creamy.gameObject.AddComponent<AIPlayerFollow>());
+                    shimaiCount++;
+                }
+
+                if (PlayerManager.Instance.currentCharacter != PlayableCharacter.Yume)
+                {
+                    Player yume = Player.Spawn(checkPoint.transform.position, checkPoint.transform.forward, PlayableCharacter.Yume, true);
+                    shimaiCore.Add(yume.gameObject.AddComponent<AIPlayerFollow>());
+                    shimaiCount++;
+                }
+
+                if(shimaiCount > 1)
+                {
+                    shimaiCore[0].migi = true;
+                    shimaiCore[1].hidari = true;
+                }
+            }
+            */
+
+            if (Input.GetKeyDown(KeyCode.F10))
+            {
+                Transform checkPoint = PlayerManager.Instance.playerCheckpoint;
+
+                if (PlayerManager.Instance.currentCharacter != PlayableCharacter.Yume)
+                {
+                    Player yume = Player.Spawn(checkPoint.transform.position, checkPoint.transform.forward, PlayableCharacter.Yume, true);
+                    yume.gameObject.AddComponent<AIPlayerRace>();
+                }
+
+            }
+
             //Freecam
             if (Input.GetKeyDown(KeyCode.F11))
             {

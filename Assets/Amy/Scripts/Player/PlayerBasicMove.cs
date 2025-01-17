@@ -144,7 +144,7 @@ namespace Amy
 
 			if (idleCounter > masturbateTime)
             {
-				if (mPlayer.modeRubbing.canMasturbate())
+				if (mPlayer.modeRubbing.canMasturbate() && mPlayer.interactTimeout < 0.001f)
 				{
 					UIManager.Instance.contextButton.setActionText("Rub It?");
 					if (Input.GetButtonDown("Action"))

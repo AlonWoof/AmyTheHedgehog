@@ -16,6 +16,7 @@ namespace Amy
         Amy,
         Cream,
         YoungAmy,
+        Yume,
         None
     }
 

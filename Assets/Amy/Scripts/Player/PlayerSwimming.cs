@@ -69,7 +69,10 @@ namespace Amy
         // Update is called once per frame
         void Update()
         {
-            handleInput();
+            if (!mPlayer.isAiControlled)
+                handleInput();
+            else
+                handleInputAI();
 
             mCurrentMovement = Vector3.Lerp(mCurrentMovement, mDesiredMovement, Time.deltaTime * 8.0f);
             currentVerticalMovement = Mathf.Lerp(currentVerticalMovement, desiredVerticalMovement, Time.deltaTime * 8.0f);
@@ -172,6 +175,57 @@ namespace Amy
 
 
             transform.rotation = Quaternion.Lerp(transform.rotation, Quaternion.LookRotation(mPlayer.direction, Vector3.up), Time.deltaTime * 3.0f);
+        }
+
+        void handleInputAI()
+        {
+
+            AIPlayer aiPlayer = mPlayer as AIPlayer;
+
+            if (!aiPlayer)
+                return;
+
+            if (GameManager.Instance.gamePaused || PlayerManager.Instance.itemMenuOpen)
+                return;
+
+            desiredVerticalMovement = 0.0f;
+
+            if (isAtSurface() && Input.GetButtonDown("Jump"))
+            {
+                mPlayer.changeCurrentMode(PlayerModes.NORMAL);
+                mPlayer.acceleration.z = mRigidBody.velocity.magnitude;
+                mPlayer.speed = mRigidBody.velocity;
+                mPlayer.Jump(true);
+                mPlayer.acceleration.y += mPlayer.mParam.jumpSpeed;
+            }
+
+            if (aiPlayer.virtualJumpDown && !isAtSurface())
+                desiredVerticalMovement = 1.0f;
+
+
+            //if (Input.GetButton("Action"))
+            //    desiredVerticalMovement = -1.0f;
+
+            float h = aiPlayer.virtualAnalogX;
+            float v = aiPlayer.virtualAnalogY;
+
+
+            if (Mathf.Abs(h) == 0 && Mathf.Abs(v) == 0)
+            {
+                mDesiredMovement = Vector3.zero;
+                return;
+            }
+
+            Vector3 targetDirection = Vector3.ClampMagnitude(new Vector3(h, 0, v), 1.0f);
+            Quaternion targetRotation = Quaternion.LookRotation(targetDirection, Vector3.up);
+
+            Vector3 camAngle = Vector3.forward;
+            camAngle.y = 0;
+            camAngle.Normalize();
+
+            mDesiredMovement = (targetRotation * camAngle) * (targetDirection.magnitude);
+
+            mPlayer.direction = mDesiredMovement.normalized;
         }
 
         void handleInput()

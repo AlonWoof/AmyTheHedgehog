@@ -42,8 +42,8 @@ namespace Amy
         public PlayerParameters AmyParams;
         public PlayerParameters CreamParams;
         public PlayerParameters YoungAmyParams;
+        public PlayerParameters YumeParams;
 
-        
         public GameObject RES_mainCamera;
         public GameObject RES_freeCamera;
         public AmyFXRes RES_AmyPlayerFX;

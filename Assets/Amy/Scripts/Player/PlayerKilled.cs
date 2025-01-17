@@ -66,7 +66,8 @@ namespace Amy
                 mAnimator.Play("Die_Start");
             }
 
-            PlayerManager.Instance.PlayerDieRespawn(deathType);
+            if(!mPlayer.isAiControlled)
+                PlayerManager.Instance.PlayerDieRespawn(deathType);
 
         }
 
