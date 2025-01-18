@@ -19,12 +19,14 @@ namespace Amy
 		InventoryInfo,
 		SceneInfo,
 		EventInfo,
+		AIInfo,
 		PageCount
     }
 	public class HUD_DebugInfo : MonoBehaviour
 	{
 		public Text dbg_text;
 		public Player player;
+		public AIPlayer aiplayer;
 
 		public DebugInfoPage currentPage;
 
@@ -97,6 +99,10 @@ namespace Amy
 
 				case DebugInfoPage.EventInfo:
 					dbgstr += getEventInfo();
+					break;
+
+				case DebugInfoPage.AIInfo:
+					dbgstr += getAIInfo();
 					break;
 			}
 
@@ -260,6 +266,30 @@ namespace Amy
 
 			if (PlayerManager.Instance.currentCharacter != PlayableCharacter.Cream)
 				dbgstr += "\n\nCream Location: " + PlayerManager.getPlayerNPCLocationString(PlayerManager.Instance.CreamNPCLocation);
+
+			return dbgstr;
+		}
+
+
+		string getAIInfo()
+		{
+			string dbgstr = "";
+
+			dbgstr += "AI INFO: \n";
+
+			if (!aiplayer)
+				aiplayer = FindObjectOfType<AIPlayer>();
+
+			if (!aiplayer)
+				return dbgstr + "\n\n NO AI PLAYER DETECTED";
+
+			dbgstr += "\nVirtualAnalogX: " + aiplayer.virtualAnalogX;
+			dbgstr += "\nVirtualAnalogY: " + aiplayer.virtualAnalogY;
+
+			dbgstr += "\nVirtualJumpDown: " + aiplayer.virtualJumpDown;
+			dbgstr += "\nVirtualJumpHeld: " + aiplayer.virtualJumpHeld;
+
+			dbgstr += "\nJumpTimer: " + aiplayer.jumpTimer;
 
 			return dbgstr;
 		}

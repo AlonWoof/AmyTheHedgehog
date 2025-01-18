@@ -70,7 +70,8 @@ namespace Amy
 
 			mAnimator.Play("Hurt");
 
-			GameManager.Instance.controllerRumble(1.0f, 1.0f, 1.0f);
+			if(!mPlayer.isAiControlled)
+				GameManager.Instance.controllerRumble(1.0f, 1.0f, 1.0f);
 		}
 
 		// Update is called once per frame

@@ -24,13 +24,30 @@ namespace Amy
 		public bool virtualAttackDown = false;
 		public bool virtualAttackHeld = false;
 
-		public void handleVirtualButtons()
+		public LayerMask obstacleCol;
+		public LayerMask groundCol;
+
+		public float analogMoveSpeed = 8.0f;
+
+        public override void Awake()
+        {
+            base.Awake();
+			groundCol = LayerMask.GetMask("Collision");
+			obstacleCol = LayerMask.GetMask("Collision", "NonWalkable");
+
+			//DEBUG CODE VERY DANGEROPS
+			//GameManager.getSystemData().YumeParams_Easy = GameManager.getSystemData().YumeParams;
+			//GameManager.getSystemData().YumeParams_Medium = GameManager.getSystemData().YumeParams;
+			//GameManager.getSystemData().YumeParams_Hard = GameManager.getSystemData().YumeParams;
+		}
+
+        public void handleVirtualButtons()
         {
 			virtualJumpDown = false;
 			virtualAttackDown = false;
 
-			virtualAnalogX = Mathf.Lerp(virtualAnalogX, desiredVirtualAnalogX, 0.25f);
-			virtualAnalogY = Mathf.Lerp(virtualAnalogY, desiredVirtualAnalogY, 0.25f);
+			virtualAnalogX = Mathf.Lerp(virtualAnalogX, desiredVirtualAnalogX, 0.15f);
+			virtualAnalogY = Mathf.Lerp(virtualAnalogY, desiredVirtualAnalogY, 0.15f);
 		}
 
 		public void pressJump()
@@ -53,6 +70,176 @@ namespace Amy
 		public void releaseAttack()
         {
 			virtualAttackHeld = false;
+        }
+
+        public override void Update()
+        {
+            base.Update();
+			handleVirtualButtons();
+
+		}
+		
+		public Vector3 getForwardWithAccel(float accelMult = 0.5f)
+        {
+			return (Vector3.up * 0.5f) + transform.forward + (transform.forward * (acceleration.z * accelMult));
+        }
+
+		public Vector3 getForwardWithDistance(float dist = 1.0f)
+        {
+			return (Vector3.up * 0.5f) + (transform.forward * dist);
+		}
+
+		public bool isObstacleInFront(float dist)
+        {
+			Vector3 start = transform.position + getForwardWithDistance(0.0f);
+			Vector3 end = transform.position + getForwardWithDistance(dist);
+
+			Debug.DrawLine(start, end, Color.green);
+
+			RaycastHit hitInfo = new RaycastHit();
+
+			if(Physics.Linecast(start,end,out hitInfo, obstacleCol))
+            {
+				if (Vector3.Dot(transform.forward, -hitInfo.normal) > 0.5f)
+				{
+					Debug.DrawLine(start, end, Color.red, 2.0f);
+					return true;
+				}
+            }
+
+			return false;
+		}
+
+		public bool isSmallObstacleInFront(float forwardDist)
+        {
+			Vector3 start = transform.position + Vector3.up * 0.25f;
+			Vector3 end = start + transform.forward * forwardDist;
+
+			Debug.DrawLine(start, end, Color.green);
+
+			RaycastHit hitInfo = new RaycastHit();
+
+			if (Physics.Linecast(start, end, out hitInfo, obstacleCol))
+			{
+				Debug.DrawLine(start, end, Color.red, 2.0f);
+
+				if (Vector3.Dot(transform.forward, -hitInfo.normal) < 0.75f)
+					return false;
+			}
+			else
+            {
+				return false;
+            }
+
+			start += Vector3.up;
+			end += Vector3.up + transform.forward;
+
+			if (!Physics.Linecast(start, end, out hitInfo, obstacleCol))
+			{
+				Debug.DrawLine(start, end, Color.red, 2.0f);
+				return true;
+			}
+
+
+			return false;
+		}
+
+		public bool isGapInFront(float forwardDist)
+        {
+			Vector3 start = transform.position + getForwardWithDistance(forwardDist);
+			Vector3 end = start - Vector3.up * 3.0f;
+
+			Debug.DrawLine(start, end, Color.cyan);
+			RaycastHit hitInfo = new RaycastHit();
+
+			if (!Physics.Linecast(start, end, out hitInfo, groundCol))
+			{
+				Debug.DrawLine(start, end, Color.yellow, 2.0f);
+				return true;
+			}
+
+			return false;
+		}
+
+		public bool canJumpGap(float gapDist)
+        {
+			if (!isGapInFront(gapDist * 0.5f))
+				return false;
+
+			Vector3 start = transform.position + getForwardWithDistance(gapDist) + Vector3.up * 1.0f;
+			Vector3 end = start - Vector3.up * 3.0f;
+
+			Debug.DrawLine(start, end, Color.cyan);
+			RaycastHit hitInfo = new RaycastHit();
+
+			if (Physics.Linecast(start, end, out hitInfo, groundCol))
+			{
+				Debug.DrawLine(start, end, Color.yellow, 2.0f);
+				return true;
+			}
+
+			return false;
+		}
+
+		public bool canJumpLedge(float ledgeDist = 1.0f, float ledgeHeight = 3.0f)
+        {
+			if (!isObstacleInFront(ledgeDist))
+				return false;
+
+			Vector3 start = transform.position + getForwardWithAccel(0.5f) + Vector3.up * ledgeHeight;
+			Vector3 end = start - Vector3.up * 1.5f;
+
+			Debug.DrawLine(start, end, Color.yellow);
+
+			RaycastHit hitInfo = new RaycastHit();
+
+			if (Physics.Linecast(start, end, out hitInfo, groundCol))
+			{
+				if (Vector3.Dot(Vector3.up, hitInfo.normal) > 0.75f)
+				{
+					Debug.DrawLine(start, end, Color.magenta, 2.0f);
+					return true;
+				}
+			}
+
+			return false;
+		}
+
+		public bool isAbovePit()
+        {
+			Vector3 start = transform.position + Vector3.up * 0.5f;
+			Vector3 end = start - (Vector3.up * 32.0f);
+
+			if (!Physics.Linecast(start, end, groundCol))
+			{
+				Debug.DrawLine(start, end, Color.red);
+				return true;
+			}
+
+			return false;
+        }			
+
+		public bool shouldReleaseJump()
+        {
+
+			if (isAbovePit())
+				return false;
+
+			if (framesAirborne < 5)
+				return false;
+
+			if (jumpTimer > 0.1f)
+				return false;
+
+			if (framesGrounded > 15 && isOnGround)
+				return true;
+
+			if (isGapInFront(acceleration.z * 0.5f))
+				return false;
+
+			
+
+			return true;
         }
 
 		public void testFollowFunction()
@@ -326,7 +513,7 @@ namespace Amy
 
 		public override void checkForInteract()
         {
-			
+			return;
         }
 
 		public override void checkForAirAttack()
@@ -375,23 +562,6 @@ namespace Amy
 				}
 			}
 
-			if (Input.GetKeyDown(KeyCode.Keypad7))
-			{
-
-
-				GameObject dSource = new GameObject("Dmg");
-
-				Damage dmg = dSource.AddComponent<Damage>();
-
-				dSource.transform.position = transform.position + Vector3.up * 0.5f + transform.forward;
-
-				dmg.damageAmount = 5;
-				dmg.damageType = DamageType.Neutral;
-				dmg.source = dSource;
-
-				takeDamage(dmg);
-
-			}
 
 			if (Input.GetKeyDown(KeyCode.Keypad9))
 			{

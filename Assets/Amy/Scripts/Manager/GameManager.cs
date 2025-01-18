@@ -384,7 +384,7 @@ namespace Amy
             }
 
             //AI player
-            /*
+            
             if (Input.GetKeyDown(KeyCode.F10))
             {
                 Transform checkPoint = PlayerManager.Instance.playerCheckpoint;
@@ -420,8 +420,8 @@ namespace Amy
                     shimaiCore[1].hidari = true;
                 }
             }
-            */
-
+            
+            /*
             if (Input.GetKeyDown(KeyCode.F10))
             {
                 Transform checkPoint = PlayerManager.Instance.playerCheckpoint;
@@ -433,6 +433,7 @@ namespace Amy
                 }
 
             }
+            */
 
             //Freecam
             if (Input.GetKeyDown(KeyCode.F11))

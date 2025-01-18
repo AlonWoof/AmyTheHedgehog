@@ -105,7 +105,8 @@ namespace Amy
 			mAnimator.Play("Rubbing_Cum");
 			yield return Timing.WaitForSeconds(2.5f);
 
-			GameManager.Instance.controllerRumble(1.0f, 1.0f, 1.0f);
+			if (!mPlayer.isAiControlled)
+				GameManager.Instance.controllerRumble(1.0f, 1.0f, 1.0f);
 
 			float effectTime = Helper.minutesToSeconds(5);
 
@@ -132,7 +133,10 @@ namespace Amy
 			while (aftershock > 0)
 			{
 				cunnyDripFX.SetActive(true);
-				GameManager.Instance.controllerRumble(0.5f, 0.05f, 0.06f);
+
+				if(!mPlayer.isAiControlled)
+					GameManager.Instance.controllerRumble(0.5f, 0.05f, 0.06f);
+
 				aftershock--;
 				yield return Timing.WaitForSeconds(Random.Range(3.0f, 6.0f));
 				cunnyDripFX.SetActive(false);

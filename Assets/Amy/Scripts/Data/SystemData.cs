@@ -42,7 +42,16 @@ namespace Amy
         public PlayerParameters AmyParams;
         public PlayerParameters CreamParams;
         public PlayerParameters YoungAmyParams;
+
         public PlayerParameters YumeParams;
+
+        public PlayerParameters YumeParams_Easy;
+        public PlayerParameters YumeParams_Medium;
+        public PlayerParameters YumeParams_Hard;
+
+        public GameObject YumeRace_EasyModel;
+        public GameObject YumeRace_MediumModel;
+        public GameObject YumeRace_HardModel;
 
         public GameObject RES_mainCamera;
         public GameObject RES_freeCamera;

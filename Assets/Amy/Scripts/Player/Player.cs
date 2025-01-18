@@ -330,7 +330,7 @@ namespace Amy
 
 			return newPlayer;
 		}
-		private void Awake()
+		public virtual void Awake()
 		{
 			addAllModes();
 			getBaseComponents();
@@ -474,6 +474,10 @@ namespace Amy
 		void getPlayerBones()
 		{
 			hipBoneTransform = getBoneByName("hips");
+
+			if (!hipBoneTransform)
+				hipBoneTransform = getBoneByName("pelvis");
+
 			headBoneTransform = getBoneByName("head");
 
 			rThighBoneTransform = getBoneByName("thigh_r");
@@ -522,6 +526,8 @@ namespace Amy
 
 			leanAmount = Mathf.Lerp(leanAmount, 0.0f, Time.deltaTime * 3.0f);
 
+			if (!hipBoneTransform || !rThighBoneTransform || !lThighBoneTransform || !headBoneTransform)
+				return;
 
 			hipBoneTransform.rotation = hipBoneTransform.rotation * Quaternion.Euler(0, 0, angle);
 
@@ -572,7 +578,7 @@ namespace Amy
 				Vector3 start = transform.position + (rotatedOffset + Vector3.up);
 				Vector3 end = transform.position + (rotatedOffset - Vector3.up);
 
-				Debug.DrawLine(start, end, SystemColors.AmyColor, 10.0f);
+				//Debug.DrawLine(start, end, SystemColors.AmyColor, 10.0f);
 
 				RaycastHit hitInfo = new RaycastHit();
 				LayerMask mask = LayerMask.GetMask("Collision");
@@ -709,7 +715,7 @@ namespace Amy
 
 
 		// Update is called once per frame
-		void Update()
+		public virtual void Update()
 		{
 
 			checkForInteract();
@@ -876,7 +882,7 @@ namespace Amy
 						knockDir.y = 0;
 
 						modeHurt.setKnockBackDirectional(knockDir.normalized, force);
-						Debug.DrawLine(transform.position, transform.position + knockDir.normalized, Color.yellow, 30.0f);
+						//Debug.DrawLine(transform.position, transform.position + knockDir.normalized, Color.yellow, 30.0f);
 					}
 					else
                     {
@@ -991,7 +997,7 @@ namespace Amy
 			if (GameManager.Instance.gamePaused || PlayerManager.Instance.itemMenuOpen)
 				return;
 
-			//doLeanAnimation();
+			doLeanAnimation();
 
 			//if (acceleration.z > 0.5f)
 			//	tpc.centerBehindPlayerSmooth(Time.deltaTime);
@@ -1326,7 +1332,7 @@ namespace Amy
 			//start += mRigidBody.velocity * Time.deltaTime;
 			//end += mRigidBody.velocity * Time.deltaTime;
 
-			//Debug.DrawLine(start, end, Color.green, 10.0f);
+			////Debug.DrawLine(start, end, Color.green, 10.0f);
 
 			RaycastHit hitInfo = new RaycastHit();
 
@@ -1352,7 +1358,7 @@ namespace Amy
 
 					new_ground = norm;
 
-					//Debug.DrawLine(hitInfo.point, hitInfo.point + norm, Color.red, 10.2f);
+					////Debug.DrawLine(hitInfo.point, hitInfo.point + norm, Color.red, 10.2f);
 				}
 
 				//Debug.Log("DIFF: " + Vector3.Dot(Vector3.up, new_ground));
@@ -1390,7 +1396,7 @@ namespace Amy
 							plpos.y = 0;
 							debug_jumpStartPos.y = 0;
 
-							Debug.Log("JUMP DIST: " + Vector3.Distance(plpos, debug_jumpStartPos));
+							//Debug.Log("JUMP DIST: " + Vector3.Distance(plpos, debug_jumpStartPos));
 						}
 
 						if (framesAirborne > 0 || Vector3.Distance(hitInfo.point, transform.position) > 0.01f)
@@ -1522,7 +1528,10 @@ namespace Amy
 			isHammerJumping = true;
 			getStatus().currentStamina -= hammerJumpStaimaCost;
 			getStatus().clampValues();
-			GameManager.Instance.controllerRumble(0.2f, 0.6f, 0.6f);
+
+			if(!isAiControlled)
+				GameManager.Instance.controllerRumble(0.2f, 0.6f, 0.6f);
+
 			mAnimator.Play("Mouth_Jump");
 			mVoice.playVoiceDelayed(Random.Range(0.05f, 0.1f), mVoice.altJumping);
 			spawnFX(GameManager.Instance.systemData.RES_AmyPlayerFX.fx_basicJump, transform.position);
@@ -2202,7 +2211,7 @@ namespace Amy
 			Vector3 start = transform.position + WorldToPlayerSpace(Vector3.up * 0.5f);
 			Vector3 end = start + (transform.forward * 0.35f);
 
-			Debug.DrawLine(start, end, Color.magenta);
+			//Debug.DrawLine(start, end, Color.magenta);
 
 			if(Physics.Linecast(start,end,mColMask))
             {

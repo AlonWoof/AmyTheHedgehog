@@ -32,7 +32,6 @@ namespace Amy
 	    // Update is called once per frame
 	    void Update()
 	    {
-			aiplayer.handleVirtualButtons();
 			evalauteDistanceFromSister();
 			followSister();
 			checkForDie();

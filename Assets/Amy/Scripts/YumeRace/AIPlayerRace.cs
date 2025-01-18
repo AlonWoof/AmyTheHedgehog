@@ -22,6 +22,7 @@ namespace Amy
 
 		Racetrack mRaceTrack;
 		public AIPlayer aiplayer;
+		public RaceDifficulty difficulty;
 		public int currentRaceNode = 0;
 
 		public float nodeDist = 0.0f;
@@ -43,9 +44,6 @@ namespace Amy
 			if (!mRaceTrack)
 				enabled = false;
 
-			
-
-			
 		}
 	
 	    // Update is called once per frame
@@ -70,7 +68,7 @@ namespace Amy
 			}
 		}
 
-		void changePhase(YumeRacePhase newPhase)
+		public void changePhase(YumeRacePhase newPhase)
         {
 			if (currentPhase == newPhase)
 				return;
@@ -89,6 +87,13 @@ namespace Amy
 					mPlayer.changeCurrentMode(PlayerModes.NORMAL);
 					mPlayer.resetGroundFlags();
 					mAnimator.CrossFade("Locomotion", 0.2f);
+
+					if (difficulty == RaceDifficulty.Medium)
+						mPlayer.acceleration.z = 2.0f;
+
+					if (difficulty == RaceDifficulty.Hard)
+						mPlayer.acceleration.z = 6.0f;
+
 					break;
 
 				case YumeRacePhase.Complete:
@@ -113,8 +118,6 @@ namespace Amy
 		{
 			phaseTimeout -= Time.deltaTime;
 
-			if (phaseTimeout < 0.0f)
-				changePhase(YumeRacePhase.Normal);
 
 			Vector3 start = transform.position + Vector3.up * 0.5f;
 			Vector3 end = start - Vector3.up * 10.0f;
@@ -129,14 +132,18 @@ namespace Amy
 
 		void updateNormalPhase()
         {
-			aiplayer.handleVirtualButtons();
 			evaluateWaypointDistance();
 			moveToDestination();
 
 			checkIfDead();
+
+			if (difficulty == RaceDifficulty.Hard)
+			{
+				aiplayer.acceleration.z = Mathf.Clamp(aiplayer.acceleration.z, 3.0f, 100.0f);
+			}
 		}
 
-		Waypoint getCurrentNode()
+		RaceNode getCurrentNode()
         {
 			if (currentRaceNode > mRaceTrack.racetrackNodes.Count-1)
 				currentRaceNode = 0;
@@ -163,7 +170,7 @@ namespace Amy
 		void moveToDestination()
         {
 			
-			if(nodeDist < 3.0f)
+			if(nodeDist < getCurrentNode().aiRange)
             {
 				currentRaceNode++;
 
@@ -171,18 +178,38 @@ namespace Amy
 					currentRaceNode = 0;
 			}
 
+			//float sineMult = Mathf.Sin(Time.time);
 			float sine = Mathf.Sin(Time.time * 3.0f);
-
-			aiplayer.desiredVirtualAnalogX = nodeDir.x + (sine * 0.2f);
-			aiplayer.desiredVirtualAnalogY = nodeDir.z + (sine * 0.2f);
+			float sineInfluence = 0.2f;
 
 
-			if (verticalNodeDist > 3.0f && nodeDist < 8.0f)
+			if (difficulty == RaceDifficulty.Easy)
+				sineInfluence = 0.4f;
+
+			if (difficulty == RaceDifficulty.Medium)
+				sineInfluence = 0.2f;
+
+			if (difficulty == RaceDifficulty.Hard)
+				sineInfluence = 0.2f;
+
+			aiplayer.desiredVirtualAnalogX = nodeDir.x + (sine * sineInfluence);
+			aiplayer.desiredVirtualAnalogY = nodeDir.z + (sine * sineInfluence);
+
+
+
+
+			if (aiplayer.isOnGround)
 			{
-				aiplayer.pressJump();
+				if (aiplayer.canJumpLedge(1.0f) || 
+					aiplayer.canJumpLedge(aiplayer.acceleration.z * 0.5f) || 
+					aiplayer.canJumpGap(aiplayer.acceleration.z) ||
+					aiplayer.isSmallObstacleInFront(1.0f + aiplayer.acceleration.z * 0.25f))
+				{
+					aiplayer.pressJump();
+				}
 			}
 
-			if (verticalNodeDist < 1.0f || mPlayer.framesGrounded > 15)
+			if (aiplayer.shouldReleaseJump())
             {
 				aiplayer.releaseJump();
             }
