@@ -83,6 +83,12 @@ public static class Helper
         return minutesToSeconds(60) * hours;
     }
 
+    public static void drawDebugText(Vector2 pos, string txt)
+    {
+
+        GUI.Label(new Rect(pos.x, pos.y, pos.x + 1000, pos.y + 2000), txt, Amy.GameManager.Instance.systemData.debugTextStyle);
+    }
+
     public static float GetCurrentAnimatorTime(Animator targetAnim, int layer = 0)
     {
         AnimatorStateInfo animState = targetAnim.GetCurrentAnimatorStateInfo(layer);

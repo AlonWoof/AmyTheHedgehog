@@ -122,9 +122,21 @@ namespace Amy
 		}
 
 
-	
-	    // Update is called once per frame
-	    void Update()
+		void OnGUI()
+		{
+
+			string dbgStr = "Race Info:\n";
+			dbgStr += "\n Player Node: " + playerCurrentNode;
+			dbgStr += "\n Yume Node: " + yumeCurrentNode;
+			dbgStr += "\n Player Laps: " + playerLaps;
+			dbgStr += "\n Yume Laps: " + yumeLaps;
+
+			Helper.drawDebugText(new Vector2(100,100), dbgStr);
+		}
+
+
+		// Update is called once per frame
+		void Update()
 	    {
 			if(raceCountdown > 0.0f)
             {
@@ -188,10 +200,33 @@ namespace Amy
 			}
 		}
 
-		bool checkIfReachedWaypoint(Transform racer, int waypointNum)
+        private void OnTriggerEnter(Collider other)
+        {
+
+			if (other.gameObject == playerInstance.gameObject)
+			{
+				if(playerCurrentNode == racetrackNodes.Count)
+                {
+					playerLaps++;
+					playerCurrentNode = 0;
+                }
+			}
+
+			if (other.gameObject == yumeInstance.gameObject)
+            {
+				if (yumeCurrentNode == racetrackNodes.Count)
+				{
+					yumeLaps++;
+					yumeCurrentNode = 0;
+				}
+			}
+        }
+
+
+        bool checkIfReachedWaypoint(Transform racer, int waypointNum)
         {
 			if (waypointNum > racetrackNodes.Count - 1)
-				waypointNum = 0;
+				return false;
 
 			if (Vector3.Distance(racer.transform.position, racetrackNodes[waypointNum].transform.position) < 6.0f)
 				return true;
@@ -240,8 +275,6 @@ namespace Amy
 			Gizmos.color = drawColor;
 
 			Gizmos.DrawWireMesh(yumeMesh, yumeStart.position, yumeStart.rotation * Quaternion.Euler(-90, 0, 0), Vector3.one * 100.0f);
-
-
 
 		}
     }

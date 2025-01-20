@@ -372,6 +372,12 @@ namespace Amy
                 PlayerStatus pstats = PlayerManager.Instance.getCurrentPlayerStatus();
                 pstats.currentHealth = pstats.maxHealth;
                 pstats.currentStamina = pstats.maxStamina;
+
+                PlayerManager.Instance.hasHammer = true;
+                PlayerManager.Instance.hasSlingshot = true;
+                PlayerManager.Instance.hasCloth = true;
+
+                PlayerManager.Instance.setStoryFlag("PROLOGUE_DONE", true);
             }
 
             //ALL the things

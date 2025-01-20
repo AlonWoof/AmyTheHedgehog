@@ -17,6 +17,7 @@ namespace Amy
 		public RuntimeAnimatorController ingameAnimator;
 		public CharacterPhysicsData jiggleData;
 		public HitboxData[] hitBoxes;
+		public CharaTag charatag;
 
 		public float height = 1.0f;
 		public float weight = 50.0f;
@@ -239,6 +240,8 @@ namespace Amy
 			FootstepFX footsteps = inst.AddComponent<FootstepFX>();
 			footsteps.isPlayer = true;
 
+			//Avoid time paradoxes
+			CharacterTags.disableCharacterByTag(cpar.charatag);
 
 			Player newPlayer;
 

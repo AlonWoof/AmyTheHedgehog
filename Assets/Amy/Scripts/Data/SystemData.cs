@@ -83,6 +83,8 @@ namespace Amy
         public AudioClip AUDIO_selectSound;
         public AudioClip AUDIO_cancelSound;
 
+        public GUIStyle debugTextStyle;
+
         [Header("Audio")]
 
         public AudioMixer AUDIO_GameSFXMixer;

@@ -24,6 +24,8 @@ namespace Amy
 		public bool virtualAttackDown = false;
 		public bool virtualAttackHeld = false;
 
+		public bool jumpDisabled = false;
+
 		public LayerMask obstacleCol;
 		public LayerMask groundCol;
 
@@ -52,6 +54,9 @@ namespace Amy
 
 		public void pressJump()
         {
+			if (jumpDisabled)
+				return;
+
 			virtualJumpDown = true;
 			virtualJumpHeld = true;
         }
