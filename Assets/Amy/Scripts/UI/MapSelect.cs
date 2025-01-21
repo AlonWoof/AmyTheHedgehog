@@ -1,4 +1,4 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -53,6 +53,7 @@ namespace Amy
 
         public Color color_amy;
         public Color color_cream;
+        public Color color_yume;
 
         // Start is called before the first frame update
         void Start()
@@ -160,11 +161,15 @@ namespace Amy
             if (characterSelect == PlayableCharacter.Cream)
                 textColor = color_cream;
 
+            if (characterSelect == PlayableCharacter.Yume)
+                textColor = SystemColors.YumeColor;
+
             if (entryTexts[cursorPosition] != null && mapList[cursorPosition] != null)
             {
                 foreach (Text t in entryTexts)
                 {
                     t.color = textColor;
+
                 }
 
                 entryTexts[cursorPosition].color = Color.white;
@@ -237,6 +242,10 @@ namespace Amy
 
                 case PlayableCharacter.YoungAmy:
                     txt += "<color=#f6a3bb>Young Amy</color>";
+                    break;
+
+                case PlayableCharacter.Yume:
+                    txt += "<color=#EDDD6D>村神夢</color>";
                     break;
             }
 

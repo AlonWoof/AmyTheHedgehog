@@ -129,7 +129,17 @@ namespace Amy
             if(mPlayer.getStatus().checkStatusEffect(PlayerStatusFX.Horny) && hasHornyMessage)
             {
                 msg = AmyHornyMessage;
-            }    
+            }
+
+            if (PlayerManager.Instance.currentCharacter == PlayableCharacter.Yume)
+            {
+                msg = new Message();
+                msg.messages.Clear();
+                msg.messages.Add("NPC NAME: " + transform.parent.name + 
+                    " \n" + "NUMBER OF MESSAGES: " + 
+                    (AmyMessage.messages.Count + CreamMessage.messages.Count)
+                    + "\n POS: " + transform.position);
+            }
 
             if (PlayerManager.Instance.currentCharacter == PlayableCharacter.Cream)
                 msg = CreamMessage;

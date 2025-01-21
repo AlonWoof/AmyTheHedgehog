@@ -190,7 +190,7 @@ namespace Amy
 
             desiredVerticalMovement = 0.0f;
 
-            if (isAtSurface() && Input.GetButtonDown("Jump"))
+            if (isAtSurface() && aiPlayer.virtualJumpDown)
             {
                 mPlayer.changeCurrentMode(PlayerModes.NORMAL);
                 mPlayer.acceleration.z = mRigidBody.velocity.magnitude;

@@ -186,7 +186,7 @@ namespace Amy
 			return false;
 		}
 
-		public bool canJumpLedge(float ledgeDist = 1.0f, float ledgeHeight = 3.0f)
+		public bool canJumpLedge(float ledgeDist = 1.0f, float ledgeHeight = 2.0f)
         {
 			if (!isObstacleInFront(ledgeDist))
 				return false;
@@ -301,8 +301,6 @@ namespace Amy
 			stickPower = 0.0f;
 
 
-			if (GameManager.Instance.playerInputDisabled)
-				return;
 
 			float h = virtualAnalogX;
 			float v = virtualAnalogY;

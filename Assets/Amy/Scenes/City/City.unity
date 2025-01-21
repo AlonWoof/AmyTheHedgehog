@@ -37,7 +37,7 @@ RenderSettings:
   m_ReflectionBounces: 1
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
-  m_Sun: {fileID: 0}
+  m_Sun: {fileID: 17515630}
   m_IndirectSpecularColor: {r: 0.8137438, g: 0.15830193, b: 0.34615797, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
@@ -33437,6 +33437,10 @@ PrefabInstance:
       propertyPath: m_Enabled
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 4592528903740865965, guid: 845966627e3036c498c9e5c1d100f62a, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 7982695377839640633, guid: 845966627e3036c498c9e5c1d100f62a, type: 3}
       propertyPath: m_Materials.Array.data[0]
       value: 
@@ -33730,6 +33734,7 @@ GameObject:
   - component: {fileID: 1088070068}
   - component: {fileID: 1088070066}
   - component: {fileID: 1088070067}
+  - component: {fileID: 6437706313471866424}
   m_Layer: 6
   m_Name: YumeChanNPC
   m_TagString: Untagged
@@ -33737,6 +33742,19 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
+--- !u!114 &6437706313471866424
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6437706313471866423}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 99785960cbe9787469159468a82bffeb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  character: 3
 --- !u!114 &6437706313730217791
 MonoBehaviour:
   m_ObjectHideFlags: 0

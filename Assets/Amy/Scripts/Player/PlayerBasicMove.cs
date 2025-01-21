@@ -122,8 +122,12 @@ namespace Amy
 
 			if (groundedTimer > 5.0f)
 			{
-				mPlayer.lastSafeGroundPosition = transform.position;
-				dbg_safePos.transform.position = mPlayer.lastSafeGroundPosition;
+				if (Physics.Linecast(transform.position + Vector3.up, transform.position - Vector3.up * 3.0f, mPlayer.mColMask))
+				{
+					mPlayer.lastSafeGroundPosition = transform.position;
+					dbg_safePos.transform.position = mPlayer.lastSafeGroundPosition;
+
+				}
 			}
 
 			if(idleCounter > 0.5f)

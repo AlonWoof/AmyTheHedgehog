@@ -27,6 +27,9 @@ namespace Amy
 	    // Update is called once per frame
 	    void Update()
 	    {
+			if (!mPlayer)
+				return;
+
 			if(mPlayer.acceleration.z > 1.0f)
 				wetness += ((mPlayer.acceleration.z / 8.0f) * Time.deltaTime) * sweatRate;
 

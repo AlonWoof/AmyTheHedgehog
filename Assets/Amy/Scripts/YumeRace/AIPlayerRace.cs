@@ -33,18 +33,47 @@ namespace Amy
 
 		float phaseTimeout = 5.0f;
 
+		List<Renderer> renderers;
+
 		// Start is called before the first frame update
 		void Start()
 	    {
 			getBaseComponents();
 
+
+
 			mRaceTrack = FindObjectOfType<Racetrack>();
 			aiplayer = GetComponent<AIPlayer>();
+
+
+			renderers = new List<Renderer>();
+
+			foreach(Renderer r in GetComponentsInChildren<Renderer>())
+            {
+				renderers.Add(r);
+            }
 
 			if (!mRaceTrack)
 				enabled = false;
 
 		}
+
+		bool isVisibleToPlayer()
+        {
+
+			if (Vector3.Distance(transform.position, GameManager.Instance.mainCamera.transform.position) < 8.0f)
+				return true;
+
+			foreach (Renderer r in renderers)
+            {
+				if (r.isVisible)
+					return true;
+            }
+
+
+
+			return false;
+        }
 	
 	    // Update is called once per frame
 	    void Update()
@@ -64,6 +93,7 @@ namespace Amy
 					break;
 
 				case YumeRacePhase.Complete:
+					updateCompletePhase();
 					break;
 			}
 		}
@@ -86,7 +116,7 @@ namespace Amy
 				case YumeRacePhase.Normal:
 					mPlayer.changeCurrentMode(PlayerModes.NORMAL);
 					mPlayer.resetGroundFlags();
-					mAnimator.CrossFade("Locomotion", 0.2f);
+					mAnimator.Play("Locomotion");
 
 					if (difficulty == RaceDifficulty.Medium)
 						mPlayer.acceleration.z = 2.0f;
@@ -97,6 +127,7 @@ namespace Amy
 					break;
 
 				case YumeRacePhase.Complete:
+					mPlayer.acceleration.z *= 0.5f;
 					break;
             }
         }
@@ -106,13 +137,18 @@ namespace Amy
 			if(mPlayer.framesGrounded > 10)
             {
 				mPlayer.clearAccel();
-				updateNormalPhase();
+				evaluateWaypointDistance();
 				mPlayer.setAngleInstantly(nodeDir);
-				phaseTimeout = 5.0f;
 				changePhase(YumeRacePhase.Ready);
 
 			}
         }
+
+		void updateCompletePhase()
+        {
+			aiplayer.desiredVirtualAnalogX = 0.0f;
+			aiplayer.desiredVirtualAnalogY = 0.0f;
+		}
 
 		void updateReadyPhase()
 		{
@@ -141,7 +177,32 @@ namespace Amy
 			{
 				aiplayer.acceleration.z = Mathf.Clamp(aiplayer.acceleration.z, 3.0f, 100.0f);
 			}
+
+			updateRubberbanding();
 		}
+
+		void updateRubberbanding()
+        {
+
+			if (isVisibleToPlayer())
+				return;
+
+
+			int bandThreshold = 20;
+
+
+			if (difficulty == RaceDifficulty.Medium)
+				bandThreshold = 10;
+
+			if (difficulty == RaceDifficulty.Hard)
+				bandThreshold = 1;
+
+			if(mRaceTrack.getRacerScore(Racer.Amy) - mRaceTrack.getRacerScore(Racer.Yume) > bandThreshold)
+            {
+				transform.position = Vector3.Lerp(transform.position, getCurrentNode().transform.position + Vector3.up * 0.5f, 0.1f);
+				mAnimator.Play("Locomotion");
+            }
+        }
 
 		RaceNode getCurrentNode()
         {
@@ -192,16 +253,24 @@ namespace Amy
 			if (difficulty == RaceDifficulty.Hard)
 				sineInfluence = 0.2f;
 
-			aiplayer.desiredVirtualAnalogX = nodeDir.x + (sine * sineInfluence);
-			aiplayer.desiredVirtualAnalogY = nodeDir.z + (sine * sineInfluence);
+			float pityMultiplier = 1.0f;
+
+			if (mRaceTrack.getRacerScore(Racer.Yume) - mRaceTrack.getRacerScore(Racer.Amy) > 10)
+				pityMultiplier = 0.5f;
+
+			if (difficulty == RaceDifficulty.Hard)
+				pityMultiplier = 1.0f;
+
+			aiplayer.desiredVirtualAnalogX = (nodeDir.x + (sine * sineInfluence)) * pityMultiplier;
+			aiplayer.desiredVirtualAnalogY = (nodeDir.z + (sine * sineInfluence)) * pityMultiplier;
 
 
-
+		
 
 			if (aiplayer.isOnGround)
 			{
-				if (aiplayer.canJumpLedge(1.0f) || 
-					aiplayer.canJumpLedge(aiplayer.acceleration.z * 0.5f) || 
+				if (aiplayer.canJumpLedge(1.0f, 2.0f) || 
+					aiplayer.canJumpLedge(aiplayer.acceleration.z * 0.5f, 2.0f) || 
 					aiplayer.canJumpGap(aiplayer.acceleration.z) ||
 					aiplayer.isSmallObstacleInFront(1.0f + aiplayer.acceleration.z * 0.25f))
 				{

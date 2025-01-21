@@ -4,7 +4,7 @@ using UnityEngine;
 using MEC;
 
 //////////////////////////////////////
-//         2024 AlonWoof            //
+//         2025 AlonWoof            //
 //////////////////////////////////////
 
 namespace Amy
@@ -34,6 +34,9 @@ namespace Amy
         private void Awake()
         {
 
+			CharacterTags tg = transform.parent.gameObject.AddComponent<CharacterTags>();
+			tg.character = CharaTag.Yume;
+
 			timesTalkedTo = -1;
 
 			//She has a very slim chance of being naked.
@@ -62,7 +65,6 @@ namespace Amy
 				clothedModel.SetActive(true);
 
 				mAnimator = clothedModel.GetComponent<Animator>();
-
 				
 			}
 

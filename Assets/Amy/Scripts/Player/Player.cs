@@ -164,14 +164,12 @@ namespace Amy
 
 
 		public static Player Spawn(Vector3 pos, Vector3 dir, PlayableCharacter chara = PlayableCharacter.Amy, bool isAI = false)
-		{
-			//Replace this with something better later.
-			GameManager.Instance.findSceneInfo();
+        {
 
 			PlayerParameters cpar = GameManager.getSystemData().AmyParams;
 
-			switch(chara)
-            {
+			switch (chara)
+			{
 				case PlayableCharacter.Amy:
 					cpar = GameManager.getSystemData().AmyParams;
 					break;
@@ -189,6 +187,13 @@ namespace Amy
 					break;
 			}
 
+			return Player.Spawn(pos, dir, cpar, chara, isAI);
+		}
+
+		public static Player Spawn(Vector3 pos, Vector3 dir, PlayerParameters cpar, PlayableCharacter chara = PlayableCharacter.Amy, bool isAI = false)
+		{
+			//Replace this with something better later.
+			GameManager.Instance.findSceneInfo();
 
 			//TEMP CODE TO COPY DATA
 			//GameManager.getSystemData().YoungAmyParams.hitBoxes = (HitboxData[])GameManager.getSystemData().AmyParams.hitBoxes.Clone();

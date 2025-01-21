@@ -1267,7 +1267,30 @@ namespace Amy
                 while (mPlayerInstance.GetComponent<PlayerVoice>().voiceSource.isPlaying)
                     yield return 0f;
             }
-            
+
+            //An exception for race stages
+
+            Racetrack r = FindObjectOfType<Racetrack>();
+
+            if (r)
+            {
+                UIManager.Instance.fadeScreen(false, 0.25f, false);
+                yield return Timing.WaitForSeconds(0.25f);
+
+                mPlayerInstance.transform.position = mPlayerInstance.lastSafeGroundPosition;
+                mPlayerInstance.getStatus().currentHealth = mPlayerInstance.getStatus().maxHealth;
+                mPlayerInstance.changeCurrentMode(PlayerModes.NORMAL);
+                GameManager.Instance.enablePlayerInput();
+                GameManager.Instance.enableCameraInput();
+                mPlayerInstance.tpc.centerBehindPlayer();
+                mPlayerInstance.tpc.lockPosition = false;
+                UIManager.Instance.fadeScreen(true, 0.25f, false);
+                yield return Timing.WaitForSeconds(0.25f);
+
+                yield break;
+            }
+
+
             yield return Timing.WaitForSeconds(0.5f);
 
             UIManager.Instance.fadeScreen(false, 1.0f, false);
@@ -1292,6 +1315,7 @@ namespace Amy
                     //An exception for the prologue because there's no bed to wake up to.
                     if (isPrologue())
                         getCurrentPlayerStatus().currentHealth = getCurrentPlayerStatus().maxHealth * 0.5f;
+
 
 
                     spawnPlayerAtCheckpoint();
