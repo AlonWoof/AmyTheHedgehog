@@ -50,6 +50,8 @@ namespace Amy
         public string areaName = "Default Zone";
         public bool showTitleCard = false;
 
+        public Color cameraClearColor = Color.black;
+
         //Only show it if story flag hash is true
         public int titleCardStoryFlagHash = -1;
 
@@ -58,7 +60,6 @@ namespace Amy
         public bool isOutdoors = true;
         
         public bool dontSpawnPlayer = false;
-
         public bool forceYoungAmy = false;
 
 
@@ -71,7 +72,8 @@ namespace Amy
 
         void Awake()
         {
-
+            GameManager.Instance.setCameraClearColor(cameraClearColor);
+            Screen.SetResolution(640, 480, true);
         }
 
         // Update is called once per frame
@@ -84,6 +86,7 @@ namespace Amy
         private void OnValidate()
         {
             gameObject.name = "SceneInfo";
+            Camera.main.backgroundColor = cameraClearColor;
         }
 
 

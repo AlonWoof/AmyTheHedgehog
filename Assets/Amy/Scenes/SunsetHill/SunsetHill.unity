@@ -2718,6 +2718,7 @@ MonoBehaviour:
   playerInstance: {fileID: 0}
   yumeInstance: {fileID: 0}
   yumeAI: {fileID: 0}
+  totalLaps: 3
   playerCurrentNode: 0
   playerLaps: 0
   yumeCurrentNode: 0
@@ -2727,6 +2728,34 @@ MonoBehaviour:
   raceCountdown: 5
   race_beep_countdown: {fileID: 0}
   race_beep_go: {fileID: 0}
+  race_beep_complete: {fileID: 0}
+  raceIntroCamera:
+    m_PersistentCalls:
+      m_Calls: []
+  onLapComplete:
+    m_PersistentCalls:
+      m_Calls: []
+  onFinalLap:
+    m_PersistentCalls:
+      m_Calls: []
+  onRaceOver:
+    m_PersistentCalls:
+      m_Calls: []
+  onPlayerWin:
+    m_PersistentCalls:
+      m_Calls: []
+  onYumeWin:
+    m_PersistentCalls:
+      m_Calls: []
+  easyModeSetup:
+    m_PersistentCalls:
+      m_Calls: []
+  mediumModeSetup:
+    m_PersistentCalls:
+      m_Calls: []
+  hardModeSetup:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!4 &118286424
 Transform:
   m_ObjectHideFlags: 0
@@ -60517,7 +60546,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6437706313123752764, guid: 341191200458ade47bb96d3aab32f32c, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 12.623
+      value: 11.884
       objectReference: {fileID: 0}
     - target: {fileID: 6437706313123752764, guid: 341191200458ade47bb96d3aab32f32c, type: 3}
       propertyPath: m_LocalPosition.z

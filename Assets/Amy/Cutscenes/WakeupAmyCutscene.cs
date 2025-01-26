@@ -51,9 +51,7 @@ namespace Amy
 			
 			enableSkip();
 
-			yield return Timing.WaitForSeconds(5.0f);
-
-			
+			yield return Timing.WaitForSeconds(3.0f);
 
 			sleepyAmyAnimator.Play("WakeUp");
 			yield return Timing.WaitForSeconds(6.0f);

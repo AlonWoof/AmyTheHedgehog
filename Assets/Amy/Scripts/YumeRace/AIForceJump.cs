@@ -37,8 +37,15 @@ namespace Amy
 
 			if (aiplayer)
 			{
-				aiplayer.Jump(false);
+				//aiplayer.releaseJump();
+				aiplayer.pressJump();
 				timeLeft = timeout;
+
+				if(aiplayer.currentMode == PlayerModes.SWIMMING)
+                {
+					aiplayer.changeCurrentMode(PlayerModes.NORMAL);
+					aiplayer.Jump(true);
+                }
 			}
 		}
     }

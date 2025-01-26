@@ -20,17 +20,20 @@ namespace Amy
 		bool elevatorCalled = false;
 		bool elevatorOpen = false;
 
+
 		public AudioSource elevatorBody;
 		public AudioSource elevatorBell;
 		public AudioClip sfx_moving;
 		public AudioClip sfx_opening;
 		public AudioClip sfx_bell;
 
+		public GameObject barrier;
+
 	    // Start is called before the first frame update
 	    void Start()
 	    {
-	        
-	    }
+			barrier.SetActive(false);
+		}
 	
 	    // Update is called once per frame
 	    void Update()
@@ -40,7 +43,7 @@ namespace Amy
 
 		public void CallElevator()
         {
-			if (elevatorCalled)
+			if (elevatorCalled || elevatorOpen)
 				return;
 
 			elevatorCalled = true;
@@ -53,12 +56,14 @@ namespace Amy
 			if (!elevatorCalled || !elevatorOpen)
 				return;
 
+
+
 			Timing.RunCoroutine(doElevatorWarp());
 		}
 
 		IEnumerator<float> doElevatorWarp()
         {
-
+			barrier.SetActive(true);
 			yield return Timing.WaitForSeconds(0.5f);
 			mAnimator.Play("Close");
 			elevatorBody.clip = sfx_opening;

@@ -15,6 +15,7 @@ namespace Amy
         public static Color AmyColor = new Color(0.9647059f, 0.6392157f, 0.7333333f);
         public static Color CreamColor = new Color(0.972549f, 0.8784314f, 0.7215686f);
         public static Color YumeColor = new Color(0.9294118f, 0.8666667f, 0.427451f);
+        public static Color JennyColor = new Color(0.0f, 0.3098039f, 0.8666667f);
 
         public static Color choiceHighlightColor = new Color(1.0f, 1.0f, 1.0f);
         public static Color choiceDefaultColor = new Color(0.6f, 0.6f, 0.6f);
@@ -178,6 +179,10 @@ namespace Amy
             return inst.GetComponent<Camera>();
         }
         
+        public void setCameraClearColor(Color color)
+        {
+            mainCamera.backgroundColor = color;
+        }
 
         public void changeCameraBlendMode(blend_mode mode)
         {
@@ -732,6 +737,7 @@ namespace Amy
             bool playerShouldSpawn = true;
             PlayerManager.Instance.isSmallRoom = false;
             PlayerManager.Instance.isHubWorld = false;
+            PlayerManager.Instance.isRaceLevel = false;
             //PlayerManager.Instance.decidePlayerNPCLocation();
 
             SceneInfo scn = FindObjectOfType<SceneInfo>();
@@ -747,7 +753,7 @@ namespace Amy
 
                     if(PlayerManager.Instance.currentCharacter == PlayableCharacter.Cream)
                     {
-                        PlayerManager.Instance.wakeupScene();
+                        UnityEngine.SceneManagement.SceneManager.LoadScene("InsideVanilla");
                     }
                 }
 
@@ -757,7 +763,10 @@ namespace Amy
 
                 //PlayerManager.Instance.isOutdoors = scn.isOutdoors;
 
-                if(scn.isSmallRoom)
+                if (FindObjectOfType<Racetrack>())
+                    PlayerManager.Instance.isRaceLevel = true;
+
+                if (scn.isSmallRoom)
                     PlayerManager.Instance.isSmallRoom = true;
 
                 if (scn.isHubWorld)

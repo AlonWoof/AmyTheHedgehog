@@ -139,15 +139,15 @@ namespace Amy
 				case SpeakerProfile.Amy:
 					return Color.Lerp(SystemColors.AmyColor, Color.white, 0.25f);
 				case SpeakerProfile.Cream:
-					return Color.Lerp(SystemColors.CreamColor, Color.white, 0.25f);
+					return Color.Lerp(SystemColors.CreamColor, Color.white, 0.0f);
 				case SpeakerProfile.Yume:
 					return Color.Lerp(SystemColors.YumeColor, Color.white, 0.25f);
 
 				case SpeakerProfile.Suika:
-					return Color.Lerp(SystemColors.YumeColor, Color.white, 0.25f);
+					return Color.Lerp(SystemColors.YumeColor, Color.white, 0.45f);
 
 				case SpeakerProfile.Jenny:
-					return Color.Lerp(SystemColors.YumeColor, Color.white, 0.25f);
+					return Color.Lerp(SystemColors.JennyColor, Color.white, 0.25f);
 			}
 
 			return Color.white;

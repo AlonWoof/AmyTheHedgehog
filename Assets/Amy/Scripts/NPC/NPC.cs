@@ -83,7 +83,10 @@ namespace Amy
 
             float dst = Vector3.Distance(pl.transform.position + Vector3.up * 0.5f, transform.position);
 
-            if (dst < lookAtRange && lookAtToggle)
+            Vector3 dir = Helper.getHorizontalDirectionTo(transform.position, pl.transform.position).normalized;
+
+
+            if (dst < lookAtRange && lookAtToggle && Vector3.Dot(transform.forward, dir) > 0.5f)
             {
                 lookAtController.lookingAtTarget = true;
                 lookAtController.desiredLookAt = pl.transform.position + (Vector3.up * (pl.mParam.height * 0.75f));

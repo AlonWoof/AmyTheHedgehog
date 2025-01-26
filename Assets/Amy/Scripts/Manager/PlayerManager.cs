@@ -268,6 +268,7 @@ namespace Amy
         public bool isHubWorld = false;
         public bool isSmallRoom = false;
         public bool isNightTime = false;
+        public bool isRaceLevel = false;
         public bool ringLeftChannel = false;
 
         public bool itemMenuOpen = false;
@@ -442,7 +443,10 @@ namespace Amy
                 setStoryFlag("PROLOGUE_DONE", true);
 
             if (getStoryFlag("AMYDECAL_CLEAR"))
+            {
                 GameManager.Instance.debugMode = true;
+                setStoryFlag("DEVCOMMENT", true);
+            }
         }
 
         public void decidePlayerNPCLocation()
@@ -1494,6 +1498,27 @@ namespace Amy
             yield return Timing.WaitForSeconds(0.5f);
 
             GameManager.Instance.enableInput();
+        }
+
+        public void killEnemiesPowerup(Transform user, float range = 32.0f)
+        {
+            Timing.RunCoroutine(doKillEnemiesPowerup(user, range));
+        }
+
+        public IEnumerator<float> doKillEnemiesPowerup(Transform user, float range)
+        {
+            foreach(Enemy e in FindObjectsOfType<Enemy>())
+            {
+                if(Vector3.Distance(user.transform.position, e.transform.position) < range)
+                {
+                    Damage instaKill = new Damage();
+                    instaKill.damageAmount = 9999;
+
+                    e.takeDamage(instaKill);
+
+                    yield return Timing.WaitForSeconds(Random.Range(0.2f, 1.0f));
+                }
+            }
         }
 
 

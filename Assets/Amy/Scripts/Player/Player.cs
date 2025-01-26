@@ -209,6 +209,11 @@ namespace Amy
 			GameObject inst = GameObject.Instantiate(cpar.ingameModel);
 			inst.transform.position = pos;
 
+			foreach(SkinnedMeshRenderer r in inst.GetComponentsInChildren<SkinnedMeshRenderer>())
+            {
+				r.updateWhenOffscreen = true;
+            }
+
 			CapsuleCollider col = inst.AddComponent<CapsuleCollider>();
 			col.radius = 0.25f;
 			col.height = amy_height * 0.7f;
@@ -492,6 +497,7 @@ namespace Amy
 			lThighBoneTransform = getBoneByName("thigh_l");
 
 			headOffsetFromGround = (headBoneTransform.position.y - 0.05f) - transform.position.y;
+
 		}
 
 		public Transform getBoneByName(string name)
@@ -969,6 +975,9 @@ namespace Amy
 
         void damageRingScatter()
         {
+			if (isAiControlled)
+				return;
+
 			int rings = PlayerManager.Instance.getRings();
 
 			if (rings > 20)
@@ -1019,7 +1028,8 @@ namespace Amy
 			}
 			else if (currentMode == PlayerModes.HURT)
 			{
-				mAnimator.Play("Face_Itai");
+				if(mChara != PlayableCharacter.YoungAmy)
+					mAnimator.Play("Face_Itai");
 			}
 			else if (getStatus().checkStatusEffect(PlayerStatusFX.Scared) || currentMode == PlayerModes.KILLED)
 			{

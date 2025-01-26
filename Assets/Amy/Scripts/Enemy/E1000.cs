@@ -89,6 +89,8 @@ namespace Amy
 			{
 				changeMode(E1000Mode.Stand);
 			}
+
+			timeTilVoiceLine = Random.Range(10, 20);
 		}
 
 		void getAllComponents()
@@ -330,6 +332,22 @@ namespace Amy
 
             }
         }
+
+		public void instantAlert()
+        {
+			Player pl = PlayerManager.Instance.getPlayer();
+
+			if (!pl)
+				return;
+
+			if (alertPhase != EnemyAlertPhase.ALERT)
+			{
+				alertPhase = EnemyAlertPhase.ALERT;
+
+				voice.playRandomClip(voice.SpottedVoice, true);
+			}
+
+		}
 
 		void Animate()
         {

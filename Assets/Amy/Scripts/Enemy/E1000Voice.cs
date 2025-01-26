@@ -24,6 +24,9 @@ namespace Amy
 	    void Start()
 	    {
 			source = gameObject.GetComponent<AudioSource>();
+			source.volume = 0.75f;
+			source.spatialBlend = 1.0f;
+			source.dopplerLevel = 0.0f;
 	    }
 	
 	    // Update is called once per frame

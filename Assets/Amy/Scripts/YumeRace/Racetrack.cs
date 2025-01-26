@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using MEC;
+using UnityEngine.Events;
 
 //////////////////////////////////////
 //         2025 AlonWoof            //
@@ -57,6 +58,19 @@ namespace Amy
 		public AudioClip race_beep_go;
 		public AudioClip race_beep_complete;
 
+		public UnityEvent raceIntroCamera;
+		public UnityEvent onLapComplete;
+		public UnityEvent onFinalLap;
+
+		public UnityEvent onRaceOver;
+
+		public UnityEvent onPlayerWin;
+		public UnityEvent onYumeWin;
+
+		public UnityEvent easyModeSetup;
+		public UnityEvent mediumModeSetup;
+		public UnityEvent hardModeSetup;
+
 		private void OnValidate()
 		{
 			if (!playerStart)
@@ -91,6 +105,8 @@ namespace Amy
 
 			UIManager.Instance.fadeScreen(false, 0.5f);
 
+			
+
 			yield return Timing.WaitForSeconds(0.5f);
 
 			PlayerManager.Instance.spawnPlayerAtCheckpoint();
@@ -111,16 +127,19 @@ namespace Amy
 				case RaceDifficulty.Easy:
 					GameManager.getSystemData().YumeParams.ingameModel = GameManager.getSystemData().YumeRace_EasyModel;
 					cpar = GameManager.getSystemData().YumeParams_Easy;
+					easyModeSetup.Invoke();
 					break;
 
 				case RaceDifficulty.Medium:
 					GameManager.getSystemData().YumeParams.ingameModel = GameManager.getSystemData().YumeRace_MediumModel;
 					cpar = GameManager.getSystemData().YumeParams_Medium;
+					mediumModeSetup.Invoke();
 					break;
 
 				case RaceDifficulty.Hard:
 					GameManager.getSystemData().YumeParams.ingameModel = GameManager.getSystemData().YumeRace_HardModel;
 					cpar = GameManager.getSystemData().YumeParams_Hard;
+					hardModeSetup.Invoke();
 					break;
 			}
 
@@ -128,9 +147,15 @@ namespace Amy
 			yumeAI = yumeInstance.gameObject.AddComponent<AIPlayerRace>();
 			yumeAI.difficulty = difficulty;
 
+			yield return Timing.WaitForSeconds(0.5f);
+
+			raceIntroCamera.Invoke();
+
 			UIManager.Instance.fadeScreen(true, 0.5f);
 
-			yield return Timing.WaitForSeconds(3.0f);
+			GameManager.Instance.changeCameraBlendMode(GameManager.blend_mode.slow);
+
+			yield return Timing.WaitForSeconds(7.5f);
 
 			int countdown = 3;
 
@@ -143,11 +168,14 @@ namespace Amy
 
 			GameManager.Instance.playSystemSound(race_beep_go, 0.8f);
 
+
 			GameManager.Instance.enablePlayerInput();
 			yumeAI.changePhase(YumeRacePhase.Normal);
 			test_StartLapTimer();
 
 			Timing.RunCoroutine(raceRoutine());
+
+			GameManager.Instance.changeCameraBlendMode(GameManager.blend_mode.instant);
 		}
 
 		IEnumerator<float> raceRoutine()
@@ -197,7 +225,10 @@ namespace Amy
 
 					if (!raceWon)
 					{
+						yumeInstance.mAnimator.Play("Victory");
+						GameManager.Instance.playSystemSound(race_beep_complete, 0.8f);
 						raceWinner = Racer.Yume;
+						
 						raceWon = true;
 					}
 				}					
@@ -207,19 +238,34 @@ namespace Amy
 					GameManager.Instance.disablePlayerInput();
 
 					racetrackNodes[0].transform.position = playerInstance.transform.position;
+					
 
 					if (!raceWon)
 					{
+						GameManager.Instance.playSystemSound(race_beep_complete, 0.8f);
 						raceWinner = Racer.Amy;
+						onPlayerWin.Invoke();
+						PlayerManager.Instance.killEnemiesPowerup(yumeInstance.transform, 1000.0f);
 						raceWon = true;
+						
 					}
                 }
 
 				yield return 0f;
 			}
 
+			if (raceWinner == Racer.Yume)
+			{
+				PlayerManager.Instance.killEnemiesPowerup(yumeInstance.transform, 1000.0f);
+				onYumeWin.Invoke();
+			}
+
 			yumeAI.changePhase(YumeRacePhase.Complete);
 			GameManager.Instance.disablePlayerInput();
+
+			yield return Timing.WaitForSeconds(5.0f);
+
+			GameManager.Instance.loadScene(UnityEngine.SceneManagement.SceneManager.GetActiveScene().name);
 
 			yield return 0f;
 		}
@@ -321,9 +367,9 @@ namespace Amy
 		public int getRacerScore(Racer r)
         {
 			if(r == Racer.Amy)
-				return (playerLaps * 100) + playerCurrentNode;
+				return (playerLaps * (racetrackNodes.Count*2)) + playerCurrentNode;
 
-			return (yumeLaps * 100) + yumeCurrentNode;
+			return (yumeLaps * (racetrackNodes.Count*2)) + yumeCurrentNode;
 		}
 
         private void OnDrawGizmos()

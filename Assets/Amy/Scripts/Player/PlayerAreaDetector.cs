@@ -167,6 +167,9 @@ namespace Amy
             {
 				float dst = Vector3.Distance(lp.transform.position, transform.position + (Vector3.up * 0.5f));
 
+				if (lp.transform.IsChildOf(transform))
+					continue;
+
 				if (dst < lp.lookDistance)
 				{
 					if (dst < bestDist)

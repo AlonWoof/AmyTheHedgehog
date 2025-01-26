@@ -13,6 +13,7 @@ namespace Amy
 	{
 
 		AIPlayer aiplayer;
+		Player sister;
 		public float sisterDistance = 0.0f;
 		public float sisterHorizontalDistance = 0.0f;
 		public float sisterVerticalDistance = 0.0f;
@@ -35,6 +36,7 @@ namespace Amy
 			evalauteDistanceFromSister();
 			followSister();
 			checkForDie();
+			lookAtSister();
 		}
 
 		void checkForDie()
@@ -50,19 +52,20 @@ namespace Amy
 
 		void evalauteDistanceFromSister()
         {
-			Player pl = PlayerManager.Instance.mPlayerInstance;
+			if (!sister)
+				sister = PlayerManager.Instance.mPlayerInstance;
 
-			if (!pl)
+			if (!sister)
 				return;
 
 			Vector3 mpos = transform.position;
-			Vector3 tpos = pl.transform.position;
+			Vector3 tpos = sister.transform.position;
 
 			if (migi)
-				tpos += (pl.transform.right * 0.5f);
+				tpos += (sister.transform.right * 0.5f);
 
 			if(hidari)
-				tpos -= (pl.transform.right * 0.5f);
+				tpos -= (sister.transform.right * 0.5f);
 
 			sisterDistance = Vector3.Distance(mpos, tpos);
 			sisterVerticalDistance = tpos.y - mpos.y;
@@ -201,6 +204,17 @@ namespace Amy
 			return false;
         }
 
+		void lookAtSister()
+        {
+			if (!sister)
+				return;
 
+
+			if (sisterDistance < 4.0f && mPlayer.modeBasic.idleCounter > 1.0f && Vector3.Dot(mPlayer.transform.forward, sisterDirection) > 0.5f)
+            {
+				mPlayer.lookAt(sister.headBoneTransform.position);
+
+            }
+        }
 	}
 }
