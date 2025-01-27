@@ -91,7 +91,7 @@ namespace Amy
         private void LateUpdate()
         {
             preventGroundClipping();
-
+            bindToWaterBounds();
 
         }
 
@@ -146,7 +146,7 @@ namespace Amy
             {
                 Vector3 npos = transform.position;
                 npos.y = Mathf.Clamp(npos.y, -9000.0f, y_limit);
-                transform.position = npos;
+                transform.position = Vector3.Lerp(transform.position, npos, 0.25f);
             }
         }
 

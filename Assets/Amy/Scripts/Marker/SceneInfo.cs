@@ -1,9 +1,10 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Rendering.PostProcessing;
 //using Tenkoku.Core;
 
-/* Copyright 2022 Jennifer Haden */
+/* Copyright 2025 Jennifer Haden */
 namespace Amy
 {
 
@@ -69,6 +70,7 @@ namespace Amy
 
         public float shadow_dist = 1024f;
 
+        public PostProcessProfile postProcessProfile;
 
         void Awake()
         {
@@ -85,8 +87,21 @@ namespace Amy
 
         private void OnValidate()
         {
+            
             gameObject.name = "SceneInfo";
-            Camera.main.backgroundColor = cameraClearColor;
+
+            if(Camera.main)
+                Camera.main.backgroundColor = cameraClearColor;
+
+            gameObject.layer = LayerMask.NameToLayer("PostProcessing");
+
+            if (!GetComponent<PostProcessVolume>())
+            {
+                PostProcessVolume pp = gameObject.AddComponent<PostProcessVolume>();
+                pp.isGlobal = true;
+                pp.profile = postProcessProfile;
+            }
+
         }
 
 

@@ -68,7 +68,9 @@ namespace Amy
             if (mPlayer.currentMode == PlayerModes.SLINGSHOT)
                 return;
 
-            PlayerManager.Instance.addRings(1);
+
+            if (!mPlayer.isAiControlled)
+                PlayerManager.Instance.addRings(1);
 
             //PlayerManager.Instance.getCharacterStatus(mPlayer.mChara).currentHealth += 0.05f;
 

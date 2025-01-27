@@ -82,6 +82,8 @@ namespace Amy
         public AudioClip AUDIO_confirmSound;
         public AudioClip AUDIO_selectSound;
         public AudioClip AUDIO_cancelSound;
+        public AudioClip AUDIO_menuAppear;
+        public AudioClip AUDIO_menuDisappear;
 
         public GUIStyle debugTextStyle;
 

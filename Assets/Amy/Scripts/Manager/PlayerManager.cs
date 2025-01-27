@@ -1072,11 +1072,17 @@ namespace Amy
             if (mPlayerInstance != null)
             {
                 //Debug.Log("Destroying duplicate player...");
+                Destroy(mPlayerInstance.tpc);
                 Destroy(mPlayerInstance.gameObject);
                 //mPlayerInstance.transform.position = playerCheckpoint.transform.position;
                // mPlayerInstance.direction = playerCheckpoint.transform.forward;
                // mPlayerInstance.changeCurrentMode(PlayerModes.NORMAL);
                 //return mPlayerInstance;
+            }
+
+            if (FindObjectOfType<ThirdPersonCamera>())
+            {
+                Destroy(FindObjectOfType<ThirdPersonCamera>().gameObject);
             }
 
             Vector3 pos = playerCheckpoint.transform.position;
@@ -1096,6 +1102,7 @@ namespace Amy
 
 
             mPlayerInstance = Player.Spawn(pos, playerCheckpoint.transform.forward, currentCharacter);
+            
 
             //saveGame.lastScene = SceneManager.GetActiveScene().name;
             // saveGame.lastExit = lastExit;
@@ -1297,6 +1304,7 @@ namespace Amy
 
             yield return Timing.WaitForSeconds(0.5f);
 
+            GameManager.Instance.fadeGameAudio(false, 1.0f);
             UIManager.Instance.fadeScreen(false, 1.0f, false);
 
 
@@ -1326,11 +1334,16 @@ namespace Amy
                     yield return 0f;
 
 
-                    yield return Timing.WaitForSeconds(1.0f);
+                    yield return Timing.WaitForSeconds(0.5f);
+
+                    mPlayerInstance.tpc.centerBehindPlayer();
+
+                    yield return Timing.WaitForSeconds(0.5f);
 
                     UIManager.Instance.fadeScreen(true, 1.0f, false);
                     MusicManager.Instance.restartMusic();
                     MusicManager.Instance.fadeBGM(1.0f, 0.025f);
+                    GameManager.Instance.fadeGameAudio(true, 1.0f);
 
                     yield return Timing.WaitForSeconds(1.1f);
 
@@ -1422,7 +1435,8 @@ namespace Amy
         {
             createBlankSave();
 
-            GameManager.Instance.loadScene("Jungle", true);
+            GameManager.Instance.loadScene("DEMO_DevCommentaryScreen", true);
+            //GameManager.Instance.loadScene("Jungle", true);
 
         }
 

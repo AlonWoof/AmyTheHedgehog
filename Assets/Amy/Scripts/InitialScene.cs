@@ -12,7 +12,7 @@ namespace Amy
     public class InitialScene : MonoBehaviour
     {
         float timeLeft = 0.0f;
-        public float timeBeforeContinue = 25.0f;
+        public float timeBeforeContinue = 5.0f;
 
         bool canContinue = false;
 

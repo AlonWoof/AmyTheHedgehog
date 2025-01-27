@@ -104,6 +104,7 @@ namespace Amy
             Time.fixedDeltaTime = 1.0f / ((float)Application.targetFrameRate);
             Time.maximumDeltaTime = Time.fixedDeltaTime * 0.5f;
             QualitySettings.vSyncCount = 0;
+           // Screen.SetResolution(640, 480, true);
 
 
             Debug.Log("Target Refresh Rate: " + Application.targetFrameRate);
