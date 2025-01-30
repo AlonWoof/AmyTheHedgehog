@@ -17,6 +17,7 @@ namespace Amy
 	{
 
 		NavMeshAgent mAgent;
+		NavMeshObstacle mObstacle;
 		List<Waypoint> waypoints;
 
 		List<Waypoint> previousWaypoints;
@@ -50,6 +51,11 @@ namespace Amy
 			mAgent.stoppingDistance = 0.0f;
 			mAgent.updateRotation = false;
 			mAgent.angularSpeed = 1000.0f;
+
+			mObstacle = gameObject.AddComponent<NavMeshObstacle>();
+			mObstacle.shape = NavMeshObstacleShape.Capsule;
+			mObstacle.size = new Vector3(0.3f, 1.0f);
+			mObstacle.enabled = false;
 		}
 	
 		void buildWaypointList()
@@ -104,7 +110,9 @@ namespace Amy
         private void LateUpdate()
         {
 			snapToGround();
-        }
+
+			mObstacle.enabled = !mAgent.enabled;
+		}
 
         void snapToGround()
         {
@@ -179,6 +187,9 @@ namespace Amy
 			Player pl = PlayerManager.Instance.mPlayerInstance;
 
 			if (!pl)
+				return false;
+
+			if (pl.currentMode == PlayerModes.LISTENING)
 				return false;
 
 			if (Vector3.Distance(transform.position, pl.transform.position) < 1.5f)

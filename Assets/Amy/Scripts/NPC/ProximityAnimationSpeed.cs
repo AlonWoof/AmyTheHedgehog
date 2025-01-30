@@ -67,7 +67,7 @@ namespace Amy
 
         private void OnGUI()
         {
-			Helper.drawDebugText(new Vector2(200, 200), "ANIM SPEED: " + animSpeed);
+			//Helper.drawDebugText(new Vector2(200, 200), "ANIM SPEED: " + animSpeed);
         }
     }
 }

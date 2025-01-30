@@ -129,8 +129,9 @@ namespace Amy
 			selectionDisabled = true;
 
 			warningDialog.gameObject.SetActive(true);
+			sfx.PlayOneShot(GameManager.Instance.systemData.AUDIO_menuAppear);
 
-			while(!warningDialog.choiceConfirmed)
+			while (!warningDialog.choiceConfirmed)
             {
 				yield return 0f;
 			}

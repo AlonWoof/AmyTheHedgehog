@@ -43,7 +43,9 @@ namespace Amy
 			int rng = Random.Range(0, 64);
 
 			//chance increase if you have my nude mod~
-			if(PlayerManager.Instance.getStoryFlag(StoryFlag.SADX_NUDE))
+			//Or, if your universe is a multiple of 16.
+			if(PlayerManager.Instance.getStoryFlag(StoryFlag.SADX_NUDE) || 
+				PlayerManager.Instance.universeNumber % 16 == 0)
 				rng = Random.Range(0, 32);
 
 			if(rng == 7)
@@ -57,6 +59,7 @@ namespace Amy
 				clothedModel.SetActive(false);
 
 				mAnimator = nudeModel.GetComponent<Animator>();
+				lookAtController = nudeModel.GetComponent<ActorLookAtController>();
 				addNakedMessages();
 			}
 			else
@@ -65,7 +68,7 @@ namespace Amy
 				clothedModel.SetActive(true);
 
 				mAnimator = clothedModel.GetComponent<Animator>();
-				
+				lookAtController = clothedModel.GetComponent<ActorLookAtController>();
 			}
 
 		}
@@ -157,6 +160,12 @@ namespace Amy
 			Message msg = getNextMessage();
 
 
+			if (overridePrint)
+			{
+				msg.onStartPrint = onStartPrint;
+				msg.onEndPrint = onEndPrint;
+			}
+
 			CoroutineHandle msgProc = UIManager.Instance.messageBox.showMessageBox(msg, SpeakerProfile.Yume);
 
 			if (path)
@@ -170,11 +179,14 @@ namespace Amy
 				wasNormal = true;
 			}
 
+			onStartTalk.Invoke();
+
 			while (msgProc.IsRunning)
 			{
 				yield return 0f;
 			}
 
+			onEndTalk.Invoke();
 
 
 			timesTalkedTo++;

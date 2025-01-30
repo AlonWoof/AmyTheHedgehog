@@ -147,7 +147,7 @@ namespace Amy
 					return Color.Lerp(SystemColors.YumeColor, Color.white, 0.45f);
 
 				case SpeakerProfile.Jenny:
-					return Color.Lerp(SystemColors.JennyColor, Color.white, 0.25f);
+					return Color.Lerp(SystemColors.JennyColor, Color.white, 0.5f);
 			}
 
 			return Color.white;
@@ -181,14 +181,15 @@ namespace Amy
 
 			foreach (string str in msg.messages)
             {
-
+				msg.onStartPrint.Invoke();
 				CoroutineHandle print = Timing.RunCoroutine(doPrint(str));
 
 				while (print.IsRunning)
 					yield return 0f;
 
+				msg.onEndPrint.Invoke();
 
-				while(!Input.GetButtonDown("Action"))
+				while (!Input.GetButtonDown("Action"))
 					yield return 0f;
 
 				yield return Timing.WaitForSeconds(0.05f);

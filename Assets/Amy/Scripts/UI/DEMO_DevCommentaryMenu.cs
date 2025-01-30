@@ -100,8 +100,8 @@ namespace Amy
 					PlayerManager.Instance.setStoryFlag("DEVCOMMENT", true);
                 }
 
-				//sfx.PlayOneShot(GameManager.Instance.systemData.AUDIO_confirmSound);
-				sfx.PlayOneShot(GameManager.Instance.systemData.AUDIO_menuDisappear);
+				sfx.PlayOneShot(GameManager.Instance.systemData.AUDIO_confirmSound);
+				//sfx.PlayOneShot(GameManager.Instance.systemData.AUDIO_menuDisappear);
 
 				mAnimator.Play("Disappear");
 				GameManager.Instance.loadScene("Jungle", true);

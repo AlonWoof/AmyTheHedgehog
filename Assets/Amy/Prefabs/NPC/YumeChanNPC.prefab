@@ -99,6 +99,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6437706313123752764}
+  - component: {fileID: 803936759406088374}
   m_Layer: 6
   m_Name: YumeChanNPC
   m_TagString: Untagged
@@ -123,6 +124,20 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 180, z: 0}
+--- !u!136 &803936759406088374
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6437706313123752765}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  m_Radius: 0.25
+  m_Height: 1
+  m_Direction: 1
+  m_Center: {x: 0, y: 0.5, z: 0}
 --- !u!1 &6437706314849156927
 GameObject:
   m_ObjectHideFlags: 0
@@ -270,17 +285,120 @@ MonoBehaviour:
     onEndPrint:
       m_PersistentCalls:
         m_Calls: []
-  headNode: {fileID: 0}
-  lookAtController: {fileID: 0}
+  headNode: {fileID: 7999013649688549368}
+  lookAtController: {fileID: 4093367767233959002}
   path: {fileID: 0}
   lookAtRange: 4
   lookAtToggle: 1
   onStartTalk:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 0}
+        m_TargetAssemblyTypeName: 
+        m_MethodName: 
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: 
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 0}
+        m_TargetAssemblyTypeName: 
+        m_MethodName: 
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: 
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
   onEndTalk:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 0}
+        m_TargetAssemblyTypeName: 
+        m_MethodName: 
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: 
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 0}
+        m_TargetAssemblyTypeName: 
+        m_MethodName: 
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: 
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+  overridePrint: 1
+  onStartPrint:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 593848847712759848}
+        m_TargetAssemblyTypeName: UnityEngine.Animator, UnityEngine
+        m_MethodName: SetTrigger
+        m_Mode: 5
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: StartTalking
+          m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 593848846689968810}
+        m_TargetAssemblyTypeName: UnityEngine.Animator, UnityEngine
+        m_MethodName: SetTrigger
+        m_Mode: 5
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: StartTalking
+          m_BoolArgument: 0
+        m_CallState: 2
+  onEndPrint:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 593848847712759848}
+        m_TargetAssemblyTypeName: UnityEngine.Animator, UnityEngine
+        m_MethodName: SetTrigger
+        m_Mode: 5
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: StopTalking
+          m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 593848846689968810}
+        m_TargetAssemblyTypeName: UnityEngine.Animator, UnityEngine
+        m_MethodName: SetTrigger
+        m_Mode: 5
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: StopTalking
+          m_BoolArgument: 0
+        m_CallState: 2
   clothedModel: {fileID: 6167180620624310504}
   nudeModel: {fileID: 6167180619499872874}
   AmyIntroMessage:
@@ -1123,6 +1241,16 @@ Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: c1e322e3b47116c409b8f8a474b969b5, type: 3}
   m_PrefabInstance: {fileID: 6437706313122254265}
   m_PrefabAsset: {fileID: 0}
+--- !u!95 &593848847712759848 stripped
+Animator:
+  m_CorrespondingSourceObject: {fileID: 5866666021909216657, guid: c1e322e3b47116c409b8f8a474b969b5, type: 3}
+  m_PrefabInstance: {fileID: 6437706313122254265}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &325568682935749710 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 6761017080198300151, guid: c1e322e3b47116c409b8f8a474b969b5, type: 3}
+  m_PrefabInstance: {fileID: 6437706313122254265}
+  m_PrefabAsset: {fileID: 0}
 --- !u!4 &3188273428098114727 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 8460106470387345694, guid: c1e322e3b47116c409b8f8a474b969b5, type: 3}
@@ -1148,24 +1276,19 @@ Transform:
   m_CorrespondingSourceObject: {fileID: -4129346846856362393, guid: c1e322e3b47116c409b8f8a474b969b5, type: 3}
   m_PrefabInstance: {fileID: 6437706313122254265}
   m_PrefabAsset: {fileID: 0}
---- !u!4 &4866196345932904190 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: -7287000102448432313, guid: c1e322e3b47116c409b8f8a474b969b5, type: 3}
-  m_PrefabInstance: {fileID: 6437706313122254265}
-  m_PrefabAsset: {fileID: 0}
 --- !u!4 &7780641134887120774 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -5571744198714187201, guid: c1e322e3b47116c409b8f8a474b969b5, type: 3}
   m_PrefabInstance: {fileID: 6437706313122254265}
   m_PrefabAsset: {fileID: 0}
+--- !u!4 &6363646381939654981 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: -9149232639448216324, guid: c1e322e3b47116c409b8f8a474b969b5, type: 3}
+  m_PrefabInstance: {fileID: 6437706313122254265}
+  m_PrefabAsset: {fileID: 0}
 --- !u!4 &8432143412248073297 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -6029284115868329496, guid: c1e322e3b47116c409b8f8a474b969b5, type: 3}
-  m_PrefabInstance: {fileID: 6437706313122254265}
-  m_PrefabAsset: {fileID: 0}
---- !u!4 &1794815621305780031 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: -4485826550982129018, guid: c1e322e3b47116c409b8f8a474b969b5, type: 3}
   m_PrefabInstance: {fileID: 6437706313122254265}
   m_PrefabAsset: {fileID: 0}
 --- !u!4 &6328404844176457968 stripped
@@ -1193,14 +1316,14 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 3447309931397767359, guid: c1e322e3b47116c409b8f8a474b969b5, type: 3}
   m_PrefabInstance: {fileID: 6437706313122254265}
   m_PrefabAsset: {fileID: 0}
---- !u!4 &6363646381939654981 stripped
+--- !u!4 &1794815621305780031 stripped
 Transform:
-  m_CorrespondingSourceObject: {fileID: -9149232639448216324, guid: c1e322e3b47116c409b8f8a474b969b5, type: 3}
+  m_CorrespondingSourceObject: {fileID: -4485826550982129018, guid: c1e322e3b47116c409b8f8a474b969b5, type: 3}
   m_PrefabInstance: {fileID: 6437706313122254265}
   m_PrefabAsset: {fileID: 0}
---- !u!4 &325568682935749710 stripped
+--- !u!4 &4866196345932904190 stripped
 Transform:
-  m_CorrespondingSourceObject: {fileID: 6761017080198300151, guid: c1e322e3b47116c409b8f8a474b969b5, type: 3}
+  m_CorrespondingSourceObject: {fileID: -7287000102448432313, guid: c1e322e3b47116c409b8f8a474b969b5, type: 3}
   m_PrefabInstance: {fileID: 6437706313122254265}
   m_PrefabAsset: {fileID: 0}
 --- !u!114 &4093367767233959002
@@ -1215,8 +1338,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ec3ccf04a547d5e48877b6fd18cebeba, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  eyeLook: {fileID: 0}
-  headLook: {fileID: 0}
+  eyeLook: {fileID: 8340768387770623926}
+  headLook: {fileID: 7561906165132861713}
   overrideTransform: {fileID: 0}
   lookingAtTarget: 0
   desiredLookAt: {x: 0, y: 0, z: 0}
@@ -1257,7 +1380,7 @@ MonoBehaviour:
   solvers:
     leftFoot:
       executedInEditor: 0
-      IKPosition: {x: 16.616392, y: 12.67626, z: 20.378096}
+      IKPosition: {x: 16.616392, y: 11.93726, z: 20.378096}
       IKPositionWeight: 0
       root: {fileID: 6835877876677241426}
       target: {fileID: 0}
@@ -1301,7 +1424,7 @@ MonoBehaviour:
       bendGoal: {fileID: 0}
     rightFoot:
       executedInEditor: 0
-      IKPosition: {x: 16.685572, y: 12.67626, z: 20.443192}
+      IKPosition: {x: 16.685572, y: 11.93726, z: 20.443192}
       IKPositionWeight: 0
       root: {fileID: 6835877876677241426}
       target: {fileID: 0}
@@ -1345,7 +1468,7 @@ MonoBehaviour:
       bendGoal: {fileID: 0}
     leftHand:
       executedInEditor: 0
-      IKPosition: {x: 16.473034, y: 13.138668, z: 20.214483}
+      IKPosition: {x: 16.473034, y: 12.399668, z: 20.214483}
       IKPositionWeight: 0
       root: {fileID: 6835877876677241426}
       target: {fileID: 0}
@@ -1389,7 +1512,7 @@ MonoBehaviour:
       bendGoal: {fileID: 0}
     rightHand:
       executedInEditor: 0
-      IKPosition: {x: 16.857592, y: 13.138668, z: 20.576344}
+      IKPosition: {x: 16.857592, y: 12.399668, z: 20.576344}
       IKPositionWeight: 0
       root: {fileID: 6835877876677241426}
       target: {fileID: 0}
@@ -1433,7 +1556,7 @@ MonoBehaviour:
       bendGoal: {fileID: 0}
     spine:
       executedInEditor: 0
-      IKPosition: {x: 16.644192, y: 13.227127, z: 20.417858}
+      IKPosition: {x: 16.644192, y: 12.488127, z: 20.417858}
       IKPositionWeight: 0
       root: {fileID: 6835877876677241426}
       target: {fileID: 0}
@@ -1444,7 +1567,7 @@ MonoBehaviour:
       bones:
       - transform: {fileID: 2694477899610526453}
         weight: 1
-        solverPosition: {x: 16.649708, y: 13.1346245, z: 20.411997}
+        solverPosition: {x: 16.649708, y: 12.395624, z: 20.411997}
         solverRotation: {x: -0.032175533, y: 0.36837584, z: -0.012758092, w: -0.9290324}
         defaultLocalPosition: {x: 1.303323e-11, y: 0.00084069715, z: 0.0000546652}
         defaultLocalRotation: {x: 0.15081528, y: -2.9353835e-14, z: -0.000000035957186, w: 0.988562}
@@ -1453,7 +1576,7 @@ MonoBehaviour:
         axis: {x: -0.00000053147227, y: 0.09283779, z: 0.0016297296}
       - transform: {fileID: 4787355036428426750}
         weight: 1
-        solverPosition: {x: 16.644192, y: 13.227127, z: 20.417858}
+        solverPosition: {x: 16.644192, y: 12.488127, z: 20.417858}
         solverRotation: {x: 0.009724604, y: 0.36857656, z: 0.0038559546, w: -0.9295386}
         defaultLocalPosition: {x: 3.8849176e-12, y: 0.0009283829, z: 0.000016294525}
         defaultLocalRotation: {x: -0.045065552, y: -3.2153608e-14, z: 0.000000010744465, w: 0.99898404}
@@ -1462,7 +1585,7 @@ MonoBehaviour:
         axis: {x: -0.00000052898906, y: 0.09231396, z: 0.0099821985}
     lookAt:
       executedInEditor: 0
-      IKPosition: {x: 14.588331, y: 13.227127, z: 22.602678}
+      IKPosition: {x: 14.588331, y: 12.488127, z: 22.602678}
       IKPositionWeight: 0
       root: {fileID: 6835877876677241426}
       target: {fileID: 0}
@@ -1572,7 +1695,7 @@ MonoBehaviour:
       transform: {fileID: 8538857701580664070}
       target: {fileID: 0}
       positionOffset: {x: 0, y: 0, z: 0}
-      position: {x: 16.640018, y: 13.051572, z: 20.422295}
+      position: {x: 16.640018, y: 12.312572, z: 20.422295}
       positionWeight: 0
       rotationOffset: {x: 0, y: 0, z: 0}
       rotation: {x: 346.61874, y: 316.7418, z: 0.0000030715964}
@@ -1753,9 +1876,19 @@ PrefabInstance:
       objectReference: {fileID: 9100000, guid: 20f200c6c0abb644d9db005a8f02ec17, type: 2}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 18773275a5112504b822e01107b46534, type: 3}
+--- !u!4 &4787355037384101756 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 1956613660924137543, guid: 18773275a5112504b822e01107b46534, type: 3}
+  m_PrefabInstance: {fileID: 6437706314280574779}
+  m_PrefabAsset: {fileID: 0}
 --- !u!4 &7999013650644157818 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -5308223060424336831, guid: 18773275a5112504b822e01107b46534, type: 3}
+  m_PrefabInstance: {fileID: 6437706314280574779}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &4989195312274176320 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 2047586948127581819, guid: 18773275a5112504b822e01107b46534, type: 3}
   m_PrefabInstance: {fileID: 6437706314280574779}
   m_PrefabAsset: {fileID: 0}
 --- !u!4 &9094565910780159164 stripped
@@ -1788,6 +1921,11 @@ Transform:
   m_CorrespondingSourceObject: {fileID: -5571744198714187201, guid: 18773275a5112504b822e01107b46534, type: 3}
   m_PrefabInstance: {fileID: 6437706314280574779}
   m_PrefabAsset: {fileID: 0}
+--- !u!4 &6835877875485702352 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 18773275a5112504b822e01107b46534, type: 3}
+  m_PrefabInstance: {fileID: 6437706314280574779}
+  m_PrefabAsset: {fileID: 0}
 --- !u!4 &325568684127559372 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 6761017080198300151, guid: 18773275a5112504b822e01107b46534, type: 3}
@@ -1818,19 +1956,14 @@ Transform:
   m_CorrespondingSourceObject: {fileID: -4129346846856362393, guid: 18773275a5112504b822e01107b46534, type: 3}
   m_PrefabInstance: {fileID: 6437706314280574779}
   m_PrefabAsset: {fileID: 0}
---- !u!4 &6835877875485702352 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 18773275a5112504b822e01107b46534, type: 3}
-  m_PrefabInstance: {fileID: 6437706314280574779}
-  m_PrefabAsset: {fileID: 0}
---- !u!4 &4989195312274176320 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 2047586948127581819, guid: 18773275a5112504b822e01107b46534, type: 3}
-  m_PrefabInstance: {fileID: 6437706314280574779}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &6167180619499872874 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: 18773275a5112504b822e01107b46534, type: 3}
+  m_PrefabInstance: {fileID: 6437706314280574779}
+  m_PrefabAsset: {fileID: 0}
+--- !u!95 &593848846689968810 stripped
+Animator:
+  m_CorrespondingSourceObject: {fileID: 5866666021909216657, guid: 18773275a5112504b822e01107b46534, type: 3}
   m_PrefabInstance: {fileID: 6437706314280574779}
   m_PrefabAsset: {fileID: 0}
 --- !u!4 &8538857702705102724 stripped
@@ -1841,11 +1974,6 @@ Transform:
 --- !u!4 &2694477900633571447 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -273621615510806708, guid: 18773275a5112504b822e01107b46534, type: 3}
-  m_PrefabInstance: {fileID: 6437706314280574779}
-  m_PrefabAsset: {fileID: 0}
---- !u!4 &4787355037384101756 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 1956613660924137543, guid: 18773275a5112504b822e01107b46534, type: 3}
   m_PrefabInstance: {fileID: 6437706314280574779}
   m_PrefabAsset: {fileID: 0}
 --- !u!4 &4866196344775697532 stripped
@@ -1907,7 +2035,7 @@ MonoBehaviour:
   solvers:
     leftFoot:
       executedInEditor: 0
-      IKPosition: {x: 16.616392, y: 12.67626, z: 20.378096}
+      IKPosition: {x: 16.616392, y: 11.93726, z: 20.378096}
       IKPositionWeight: 0
       root: {fileID: 6835877875485702352}
       target: {fileID: 0}
@@ -1951,7 +2079,7 @@ MonoBehaviour:
       bendGoal: {fileID: 0}
     rightFoot:
       executedInEditor: 0
-      IKPosition: {x: 16.685572, y: 12.67626, z: 20.443192}
+      IKPosition: {x: 16.685572, y: 11.93726, z: 20.443192}
       IKPositionWeight: 0
       root: {fileID: 6835877875485702352}
       target: {fileID: 0}
@@ -1995,7 +2123,7 @@ MonoBehaviour:
       bendGoal: {fileID: 0}
     leftHand:
       executedInEditor: 0
-      IKPosition: {x: 16.473034, y: 13.138668, z: 20.214483}
+      IKPosition: {x: 16.473034, y: 12.399668, z: 20.214483}
       IKPositionWeight: 0
       root: {fileID: 6835877875485702352}
       target: {fileID: 0}
@@ -2039,7 +2167,7 @@ MonoBehaviour:
       bendGoal: {fileID: 0}
     rightHand:
       executedInEditor: 0
-      IKPosition: {x: 16.857592, y: 13.138668, z: 20.576344}
+      IKPosition: {x: 16.857592, y: 12.399668, z: 20.576344}
       IKPositionWeight: 0
       root: {fileID: 6835877875485702352}
       target: {fileID: 0}
@@ -2083,7 +2211,7 @@ MonoBehaviour:
       bendGoal: {fileID: 0}
     spine:
       executedInEditor: 0
-      IKPosition: {x: 16.644192, y: 13.227127, z: 20.417858}
+      IKPosition: {x: 16.644192, y: 12.488127, z: 20.417858}
       IKPositionWeight: 0
       root: {fileID: 6835877875485702352}
       target: {fileID: 0}
@@ -2094,7 +2222,7 @@ MonoBehaviour:
       bones:
       - transform: {fileID: 2694477900633571447}
         weight: 1
-        solverPosition: {x: 16.649708, y: 13.1346245, z: 20.411997}
+        solverPosition: {x: 16.649708, y: 12.395624, z: 20.411997}
         solverRotation: {x: -0.032175533, y: 0.36837584, z: -0.012758092, w: -0.9290324}
         defaultLocalPosition: {x: 1.303323e-11, y: 0.00084069715, z: 0.0000546652}
         defaultLocalRotation: {x: 0.15081528, y: -2.9353835e-14, z: -0.000000035957186, w: 0.988562}
@@ -2103,7 +2231,7 @@ MonoBehaviour:
         axis: {x: -0.00000053147227, y: 0.09283779, z: 0.0016297296}
       - transform: {fileID: 4787355037384101756}
         weight: 1
-        solverPosition: {x: 16.644192, y: 13.227127, z: 20.417858}
+        solverPosition: {x: 16.644192, y: 12.488127, z: 20.417858}
         solverRotation: {x: 0.009724604, y: 0.36857656, z: 0.0038559546, w: -0.9295386}
         defaultLocalPosition: {x: 3.8849176e-12, y: 0.0009283829, z: 0.000016294525}
         defaultLocalRotation: {x: -0.045065552, y: -3.2153608e-14, z: 0.000000010744465, w: 0.99898404}
@@ -2112,7 +2240,7 @@ MonoBehaviour:
         axis: {x: -0.00000052898906, y: 0.09231396, z: 0.0099821985}
     lookAt:
       executedInEditor: 0
-      IKPosition: {x: 14.588331, y: 13.227127, z: 22.602678}
+      IKPosition: {x: 14.588331, y: 12.488127, z: 22.602678}
       IKPositionWeight: 0
       root: {fileID: 6835877875485702352}
       target: {fileID: 0}
@@ -2242,7 +2370,7 @@ MonoBehaviour:
       transform: {fileID: 8538857702705102724}
       target: {fileID: 0}
       positionOffset: {x: 0, y: 0, z: 0}
-      position: {x: 16.640018, y: 13.051572, z: 20.422295}
+      position: {x: 16.640018, y: 12.312572, z: 20.422295}
       positionWeight: 0
       rotationOffset: {x: 0, y: 0, z: 0}
       rotation: {x: 346.61874, y: 316.7418, z: 0.0000030715964}
@@ -2358,8 +2486,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ec3ccf04a547d5e48877b6fd18cebeba, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  eyeLook: {fileID: 0}
-  headLook: {fileID: 0}
+  eyeLook: {fileID: 5915994001634746993}
+  headLook: {fileID: 8251351929687208169}
   overrideTransform: {fileID: 0}
   lookingAtTarget: 0
   desiredLookAt: {x: 0, y: 0, z: 0}

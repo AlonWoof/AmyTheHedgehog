@@ -384,6 +384,7 @@ namespace Amy
                 PlayerManager.Instance.hasCloth = true;
 
                 PlayerManager.Instance.setStoryFlag("PROLOGUE_DONE", true);
+                PlayerManager.Instance.setStoryFlag("DEVCOMMENT", true);
             }
 
             //ALL the things
@@ -625,7 +626,25 @@ namespace Amy
                     sceneName = "NULL";
                 }
             }
-            
+
+            //Fun extra code for yume-chan
+            int rand = Random.Range(0, 100);
+
+            if(rand % 3 == 0)
+            { 
+                GameManager.getSystemData().YumeParams.ingameModel = GameManager.getSystemData().YumeRace_EasyModel;
+            }
+
+            if((rand + 1) % 3 == 0)
+            {
+                GameManager.getSystemData().YumeParams.ingameModel = GameManager.getSystemData().YumeRace_MediumModel;
+            }
+
+            if((rand + 2) % 3 == 0)
+            {
+                GameManager.getSystemData().YumeParams.ingameModel = GameManager.getSystemData().YumeRace_HardModel;
+            }
+
 
             Timing.RunCoroutine(loadSceneRoutine(sceneName, whiteFade, delayBeforeLoading), Segment.RealtimeUpdate);
         }
@@ -689,7 +708,7 @@ namespace Amy
             }
             */
 
-
+            UIManager.Instance.messageBox.cancelMessage();
 
             UIManager.Instance.fadeScreen(false, 0.75f, whiteFade);
 

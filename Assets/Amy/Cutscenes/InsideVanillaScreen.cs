@@ -24,13 +24,13 @@ namespace Amy
 		IEnumerator<float> insideVanillaScene()
 		{
 
-			yield return Timing.WaitForSeconds(4.0f);
+			yield return Timing.WaitForSeconds(6.0f);
 			processSleeping();
 
 			PlayerManager.Instance.advanceDay();
 			PlayerManager.Instance.decidePlayerNPCLocation();
 
-			yield return Timing.WaitForSeconds(2.0f);
+			yield return Timing.WaitForSeconds(4.0f);
 
 			PlayerManager.Instance.wakeupScene(false);
 		}

@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.Events;
 using MEC;
 
-/* Copyright 2024 Jennifer Haden */
+/* Copyright 2025 Jennifer Haden */
 namespace Amy
 {
 
@@ -31,6 +31,10 @@ namespace Amy
 
         public UnityEvent onStartTalk;
         public UnityEvent onEndTalk;
+
+        public bool overridePrint = true;
+        public UnityEvent onStartPrint;
+        public UnityEvent onEndPrint;
 
     	// Start is called before the first frame update
     	void Awake()
@@ -147,10 +151,17 @@ namespace Amy
             if (PlayerManager.Instance.currentCharacter == PlayableCharacter.Cream)
                 msg = CreamMessage;
 
+            if(overridePrint)
+            {
+                msg.onStartPrint = onStartPrint;
+                msg.onEndPrint = onEndPrint;
+            }
+
             CoroutineHandle msgProc = UIManager.Instance.messageBox.showMessageBox(msg, speakerProfile);
 
             if (path)
                 path.disableMovement();
+
 
             bool wasNormal = false;
 
@@ -162,6 +173,7 @@ namespace Amy
 
             onStartTalk.Invoke();
 
+
             while(msgProc.IsRunning)
             {
                 yield return 0f;
@@ -169,6 +181,7 @@ namespace Amy
 
             if (path)
                 path.enableMovement();
+
 
             if (wasNormal)
                 mPlayer.changeCurrentMode(PlayerModes.NORMAL);
@@ -178,7 +191,10 @@ namespace Amy
             onEndTalk.Invoke();
         }
 
-
+        private void Update()
+        {
+            updatelookAt();
+        }
     }
 
 }

@@ -79,6 +79,7 @@ namespace Amy
 			if (Input.GetKeyDown(KeyCode.E) || Input.GetButtonDown("Action"))
 			{
 				confirmSelection();
+				sfx.PlayOneShot(GameManager.Instance.systemData.AUDIO_confirmSound);
 			}
 
 		}

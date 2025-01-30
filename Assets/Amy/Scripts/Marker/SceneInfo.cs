@@ -75,7 +75,7 @@ namespace Amy
         void Awake()
         {
             GameManager.Instance.setCameraClearColor(cameraClearColor);
-            Screen.SetResolution(640, 480, true);
+           // Screen.SetResolution(640, 480, true);
         }
 
         // Update is called once per frame

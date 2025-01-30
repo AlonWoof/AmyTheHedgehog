@@ -1482,6 +1482,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   areaName: Default Zone
   showTitleCard: 0
+  cameraClearColor: {r: 0, g: 0, b: 0, a: 1}
   titleCardStoryFlagHash: -1
   isHubWorld: 1
   isSmallRoom: 1
@@ -1491,6 +1492,7 @@ MonoBehaviour:
   bgmData: {fileID: 11400000, guid: fb88c66608cf8604c90adec46635a42c, type: 2}
   preloadObjects: []
   shadow_dist: 1024
+  postProcessProfile: {fileID: 0}
 --- !u!4 &2053628928
 Transform:
   m_ObjectHideFlags: 0
@@ -2158,6 +2160,7 @@ GameObject:
   - component: {fileID: 6977150883842005466}
   - component: {fileID: 259618224670826362}
   - component: {fileID: 259618224670826363}
+  - component: {fileID: 259618224670826364}
   m_Layer: 0
   m_Name: Cream
   m_TagString: Untagged
@@ -2297,9 +2300,29 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+  overridePrint: 1
+  onStartPrint:
+    m_PersistentCalls:
+      m_Calls: []
+  onEndPrint:
+    m_PersistentCalls:
+      m_Calls: []
   messageBanks:
   - {fileID: 11400000, guid: 446ceafc9ba5d5546bde9d3ebd86262f, type: 2}
   - {fileID: 11400000, guid: 466e8995c7e318a44b52e4bb49d1ffcd, type: 2}
+--- !u!114 &259618224670826364
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 259618224670826361}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 99785960cbe9787469159468a82bffeb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  character: 2
 --- !u!4 &281367685811807634
 Transform:
   m_ObjectHideFlags: 0
@@ -9098,6 +9121,7 @@ GameObject:
   - component: {fileID: 4855779664661034568}
   - component: {fileID: 6631572917510182221}
   - component: {fileID: 6631572917510182222}
+  - component: {fileID: 6631572917510182223}
   m_Layer: 0
   m_Name: Amy
   m_TagString: Untagged
@@ -9237,9 +9261,29 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+  overridePrint: 1
+  onStartPrint:
+    m_PersistentCalls:
+      m_Calls: []
+  onEndPrint:
+    m_PersistentCalls:
+      m_Calls: []
   messageBanks:
   - {fileID: 11400000, guid: 51301dc787afc4e4c8b8da3bf47f9312, type: 2}
   - {fileID: 11400000, guid: abe122ef83c30434d9c49bea4f7748a0, type: 2}
+--- !u!114 &6631572917510182223
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6631572917510182220}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 99785960cbe9787469159468a82bffeb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  character: 1
 --- !u!4 &6650588039171924261
 Transform:
   m_ObjectHideFlags: 0

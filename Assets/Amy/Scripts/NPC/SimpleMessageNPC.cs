@@ -31,8 +31,12 @@ namespace Amy
             Player mPlayer = PlayerManager.Instance.getPlayer();
             Message msg = SimpleMessage;
 
+            msg.onStartPrint = onStartPrint;
+            msg.onEndPrint = onEndPrint;
 
             CoroutineHandle msgProc = UIManager.Instance.messageBox.showMessageBox(msg, speakerProfile);
+
+
 
             if (path)
                 path.disableMovement();

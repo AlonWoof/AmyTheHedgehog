@@ -102,11 +102,15 @@ namespace Amy
 
         void updateHumanEyes()
         {
+            
+
             if (overrideLook)
             {
                 look_x = -Mathf.Clamp(eyeTarget.transform.localPosition.x * x_mult, -1.0f, 1.0f);
                 look_y = -Mathf.Clamp(eyeTarget.transform.localPosition.y * y_mult, -1.0f, 1.0f);
             }
+
+            clampEyes();
 
             eyeMat.SetFloat("_LookX", look_x);
             eyeMat.SetFloat("_LookY", look_y);
@@ -154,6 +158,12 @@ namespace Amy
 
             look_x_right = Mathf.Clamp(look_x_right, rightEyeRange_min.x, rightEyeRange_max.x);
             look_y_right = Mathf.Clamp(look_y_right, rightEyeRange_min.y, rightEyeRange_max.y);
+
+            if(!isMobian)
+            {
+                look_x = Mathf.Clamp(look_x, leftEyeRange_min.x, leftEyeRange_max.x);
+                look_y = Mathf.Clamp(look_y, leftEyeRange_min.y, leftEyeRange_max.y);
+            }
         }
 
         void findEyeMat()
