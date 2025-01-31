@@ -1085,6 +1085,11 @@ namespace Amy
                 Destroy(FindObjectOfType<ThirdPersonCamera>().gameObject);
             }
 
+            if (FindObjectOfType<CameraWaterFX>())
+            {
+                FindObjectOfType<CameraWaterFX>().isInWater = false;
+            }
+
             Vector3 pos = playerCheckpoint.transform.position;
 
             if (PlayerManager.Instance.isBadDay())

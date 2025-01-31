@@ -140,7 +140,7 @@ namespace Amy
 						entry.isAvailable = false;
 
 					if (PlayerManager.Instance.isPrologue())
-						entry.isVisible = false;
+						entry.isAvailable = false;
 					else
 					{
 						entry.isVisible = true;

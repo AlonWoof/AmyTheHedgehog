@@ -365,6 +365,7 @@ namespace Amy
             {
                 PlayerManager.Instance.randomizeDayEvents();
                 PlayerManager.Instance.universeNumber = Random.Range(0, 9999);
+                PlayerManager.Instance.decidePlayerNPCLocation();
             }
 
             //How fucking brutal

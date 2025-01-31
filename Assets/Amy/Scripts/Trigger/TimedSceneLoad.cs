@@ -34,9 +34,11 @@ namespace Amy
 
 				PlayerManager.Instance.PlayerDieRespawn(PlayerKilled.DeathType.Corrupted);
 				PlayerManager.Instance.exitType = ExitLevelType.NORMAL;
+				SaveGame.writeSaveGame(PlayerManager.Instance.saveFileSlot);
+
 				//enabled = false;
 				triggered = true;
-				//Application.Quit();
+				Application.Quit();
 				Time.timeScale = 1.0f;
 			}
 			

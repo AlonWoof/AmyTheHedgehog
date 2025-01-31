@@ -17,9 +17,23 @@ namespace Amy
         List<Message> messageList;
         int currentMessage = 0;
 
+        public Animator mAnimator;
+        public string startingAnim = null;
+
         private void Awake()
         {
             loadMessages();
+        }
+
+        private void Start()
+        {
+            if (!mAnimator)
+                return;
+
+            if (startingAnim == null)
+                return;
+
+            mAnimator.Play(startingAnim);
         }
 
         public void loadMessages()

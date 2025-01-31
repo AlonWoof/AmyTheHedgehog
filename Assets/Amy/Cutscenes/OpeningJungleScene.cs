@@ -83,7 +83,7 @@ namespace Amy
 			cam2.SetActive(true);
 			cam1.SetActive(false);
 
-			amyAnimator.CrossFade("LookUp", 0.2f);
+			amyAnimator.CrossFade("LookUp", 0.12f);
 			yield return Timing.WaitForSeconds(0.5f);
 
 
@@ -126,7 +126,7 @@ namespace Amy
 
 				UIManager.Instance.messageBox.setTextColorTint(SystemColors.AmyColor);
 				UIManager.Instance.messageBox.setMessageBoxSpeed(DialogBox.speed_mid);
-				amyAnimator.CrossFade("Idle", 0.25f);
+				amyAnimator.CrossFade("Idle", 0.125f);
 				msg = UIManager.Instance.messageBox.showMessageBox("...I guess that's not important right now.", SpeakerProfile.Amy);
 
 				while (msg.IsRunning)
@@ -140,7 +140,7 @@ namespace Amy
 			{
 				cam2.SetActive(false);
 				cam3_alt.SetActive(true);
-				amyAnimator.CrossFade("NoGloves", 0.5f);
+				amyAnimator.CrossFade("NoGloves", 0.25f);
 				amyVoice.PlayOneShot(amy_thinking2);
 				amyAnimator.Play("word_are");
 
@@ -154,7 +154,7 @@ namespace Amy
 				yield return Timing.WaitForSeconds(0.5f);
 			}
 
-			amyAnimator.CrossFade("Idle", 0.25f);
+			amyAnimator.CrossFade("Idle", 0.125f);
 
 			cam2.SetActive(false);
 			cam3.SetActive(false);

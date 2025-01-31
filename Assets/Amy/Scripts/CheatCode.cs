@@ -31,11 +31,6 @@ namespace Amy
 
         const float maxTimeout = 1.0f;
 
-
-        public CheatCodeInfo bunCheatCode = new CheatCodeInfo("ABBAZAZA");
-        public CheatCodeInfo luckyCheatCode = new CheatCodeInfo("BAXAX");
-        public CheatCodeInfo deleteCheatCode = new CheatCodeInfo("DELETEDELETEDELETE");
-
         public CheatCodeInfo debugModeCheat = new CheatCodeInfo("MURAKAMI");
         public CheatCodeInfo waremeCheat = new CheatCodeInfo("CUNNY");
 
@@ -90,15 +85,20 @@ namespace Amy
 
         void activateWaremeCheat()
         {
-            //われめは ∞ アロン
+            //われめは ∞ 
+            GameManager.Instance.loadScene("wareme");
         }
 
         void checkInput()
         {
             procCheat(debugModeCheat);
+            procCheat(waremeCheat);
 
             if (debugModeCheat.isComplete)
                 activateDebugCheat();
+
+            if (waremeCheat.isComplete)
+                activateWaremeCheat();
         }
 
 
@@ -125,6 +125,11 @@ namespace Amy
                 case 'B':
                     key = KeyCode.B;
                     button = "Cancel";
+                    break;
+
+                case 'C':
+                    key = KeyCode.C;
+                    button = "";
                     break;
 
                 case 'D':
@@ -157,6 +162,11 @@ namespace Amy
                     button = "";
                     break;
 
+                case 'N':
+                    key = KeyCode.N;
+                    button = "";
+                    break;
+
                 case 'R':
                     key = KeyCode.R;
                     button = "";
@@ -175,6 +185,11 @@ namespace Amy
                 case 'X':
                     key = KeyCode.X;
                     button = "Attack";
+                    break;
+
+                case 'Y':
+                    key = KeyCode.Y;
+                    button = "";
                     break;
 
                 case 'Z':

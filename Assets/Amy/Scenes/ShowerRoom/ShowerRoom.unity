@@ -1829,12 +1829,38 @@ MonoBehaviour:
   overridePrint: 1
   onStartPrint:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 795572175591388237}
+        m_TargetAssemblyTypeName: UnityEngine.Animator, UnityEngine
+        m_MethodName: SetTrigger
+        m_Mode: 5
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: StartTalking
+          m_BoolArgument: 0
+        m_CallState: 2
   onEndPrint:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 795572175591388237}
+        m_TargetAssemblyTypeName: UnityEngine.Animator, UnityEngine
+        m_MethodName: SetTrigger
+        m_Mode: 5
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: StopTalking
+          m_BoolArgument: 0
+        m_CallState: 2
   messageBanks:
   - {fileID: 11400000, guid: 51301dc787afc4e4c8b8da3bf47f9312, type: 2}
+  mAnimator: {fileID: 795572175591388237}
+  startingAnim: Shower_Scrub
 --- !u!4 &583890024
 Transform:
   m_ObjectHideFlags: 0
@@ -5264,12 +5290,38 @@ MonoBehaviour:
   overridePrint: 1
   onStartPrint:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 4756271369169219262}
+        m_TargetAssemblyTypeName: UnityEngine.Animator, UnityEngine
+        m_MethodName: SetTrigger
+        m_Mode: 5
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: StartTalking
+          m_BoolArgument: 0
+        m_CallState: 2
   onEndPrint:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 4756271369169219262}
+        m_TargetAssemblyTypeName: UnityEngine.Animator, UnityEngine
+        m_MethodName: SetTrigger
+        m_Mode: 5
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: StopTalking
+          m_BoolArgument: 0
+        m_CallState: 2
   messageBanks:
   - {fileID: 11400000, guid: 446ceafc9ba5d5546bde9d3ebd86262f, type: 2}
+  mAnimator: {fileID: 4756271369169219262}
+  startingAnim: Shower_Scrub
 --- !u!4 &1417000862
 Transform:
   m_ObjectHideFlags: 0
@@ -9734,7 +9786,7 @@ Animator:
   m_GameObject: {fileID: 7703669709838375194}
   m_Enabled: 1
   m_Avatar: {fileID: 9000000, guid: 0f93ea7109123954596257c4ee490eb5, type: 3}
-  m_Controller: {fileID: 9100000, guid: 5742f2d087293bf4192204d81bd4f51b, type: 2}
+  m_Controller: {fileID: 9100000, guid: 2ec874b0a8ce5034eaf6d6a6bf69cdd4, type: 2}
   m_CullingMode: 1
   m_UpdateMode: 0
   m_ApplyRootMotion: 1
@@ -11525,6 +11577,7 @@ GameObject:
   - component: {fileID: 3294032138782297501}
   - component: {fileID: 2281732799482080895}
   - component: {fileID: 2281732799482080896}
+  - component: {fileID: 2281732799482080897}
   m_Layer: 0
   m_Name: Cream
   m_TagString: Untagged
@@ -11560,6 +11613,20 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   character: 2
+--- !u!136 &2281732799482080897
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2281732799482080894}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  m_Radius: 0.3
+  m_Height: 1
+  m_Direction: 1
+  m_Center: {x: 0, y: 0.5, z: 0}
 --- !u!1 &2306199753341856521
 GameObject:
   m_ObjectHideFlags: 0
@@ -13849,13 +13916,18 @@ Animator:
   m_GameObject: {fileID: 2281732799482080894}
   m_Enabled: 1
   m_Avatar: {fileID: 9000000, guid: 7dedd7bd9a700d1459c848e27823428e, type: 3}
-  m_Controller: {fileID: 9100000, guid: 21c49188c4bac1a44bf9cad8d468b43e, type: 2}
+  m_Controller: {fileID: 9100000, guid: 66a4be1c3b4202a4687b5eb084531268, type: 2}
   m_CullingMode: 1
   m_UpdateMode: 0
   m_ApplyRootMotion: 1
   m_LinearVelocityBlending: 0
   m_StabilizeFeet: 0
-  m_WarningMessage: 
+  m_WarningMessage: "\nBinding warning: Some generic clip(s) animate transforms that
+    are already bound by a Humanoid avatar. These transforms can only be changed
+    by Humanoid clips.\n\tTransform 'ring_1_l'\n\tTransform 'shin_r'\n\tTransform
+    'thumb_1_r'\n\tTransform 'pinky_0_l'\n\tTransform 'middle_0_l'\n\tTransform 'thumb_0_l'\n\tTransform
+    'thumb_2_r'\n\tTransform 'thumb_2_l'\n\tTransform 'upperchest'\n\tTransform 'pinky_1_r'\n\tand
+    more ...\n\tFrom animation clip 'Cream_Ears_Flying'"
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
@@ -16860,7 +16932,7 @@ CapsuleCollider:
   m_Material: {fileID: 0}
   m_IsTrigger: 0
   m_Enabled: 1
-  m_Radius: 0.2
+  m_Radius: 0.3
   m_Height: 1
   m_Direction: 1
   m_Center: {x: 0, y: 0.5, z: 0}
