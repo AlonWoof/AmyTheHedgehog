@@ -31,7 +31,7 @@ namespace Amy
 
 			if(mChara == PlayableCharacter.Amy)
             {
-				if (mLocation == PlayerManager.Instance.AmyNPCLocation)
+				if (mLocation == PlayerManager.Instance.AmyStatus.npcLocation)
 				{
 					npcObject.SetActive(true);
 					onActive.Invoke();
@@ -39,7 +39,7 @@ namespace Amy
             }
 			else if(mChara == PlayableCharacter.Cream)
             {
-				if (mLocation == PlayerManager.Instance.CreamNPCLocation)
+				if (mLocation == PlayerManager.Instance.CreamStatus.npcLocation)
 				{
 					npcObject.SetActive(true);
 					onActive.Invoke();

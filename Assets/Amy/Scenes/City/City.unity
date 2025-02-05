@@ -24888,6 +24888,71 @@ Transform:
   m_Father: {fileID: 2041484216}
   m_RootOrder: 70
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1611970434
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1611970435}
+  - component: {fileID: 1611970437}
+  - component: {fileID: 1611970436}
+  m_Layer: 0
+  m_Name: LoadingZone_SuikaMart_exit0
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1611970435
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1611970434}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 1, y: 0, z: 2.81}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 4072740221841928629}
+  m_RootOrder: 12
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1611970436
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1611970434}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9a5b6591ad54fde4ea76ecc801064f17, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  targetScene: SuikaMart
+  exitNumber: 0
+  whiteFade: 0
+  moveTarget: {fileID: 0}
+  vCam: {fileID: 0}
+  timer: 1
+  waitForMove: 0
+  isTrigger: 1
+--- !u!65 &1611970437
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1611970434}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 3, y: 3.0065978, z: 1.3621348}
+  m_Center: {x: -3.5527137e-15, y: 1.0032991, z: -0.8189326}
 --- !u!1 &1614140063
 GameObject:
   m_ObjectHideFlags: 0
@@ -34921,11 +34986,11 @@ PrefabInstance:
       objectReference: {fileID: 18639118}
     - target: {fileID: 4592528903740865960, guid: 845966627e3036c498c9e5c1d100f62a, type: 3}
       propertyPath: m_Enabled
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 4592528903740865965, guid: 845966627e3036c498c9e5c1d100f62a, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 6672896850235778877, guid: 845966627e3036c498c9e5c1d100f62a, type: 3}
       propertyPath: m_IsActive
@@ -34945,6 +35010,11 @@ PrefabInstance:
       objectReference: {fileID: 508802334}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 845966627e3036c498c9e5c1d100f62a, type: 3}
+--- !u!4 &4072740221841928629 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 4049098671755803091, guid: 845966627e3036c498c9e5c1d100f62a, type: 3}
+  m_PrefabInstance: {fileID: 4072740221841928628}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &4186085696436024979
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -35473,6 +35543,7 @@ MonoBehaviour:
   mDirection: {x: 0, y: 0, z: 0}
   speakerProfile: 3
   AmyMessage:
+    label: 
     messages:
     - This Message is a Test. This Sausage is the Last. Yeah...
     voice: {fileID: 0}
@@ -35586,6 +35657,7 @@ MonoBehaviour:
             m_BoolArgument: 0
           m_CallState: 2
   CreamMessage:
+    label: 
     messages:
     - This Message is a Test. This Sausage is the Last. Yeah...
     voice: {fileID: 0}
@@ -35604,6 +35676,7 @@ MonoBehaviour:
         m_Calls: []
   hasHornyMessage: 0
   AmyHornyMessage:
+    label: 
     messages:
     - This Message is a Test. This Sausage is the Last. Yeah...
     voice: {fileID: 0}
@@ -35621,6 +35694,7 @@ MonoBehaviour:
       m_PersistentCalls:
         m_Calls: []
   SickMessage:
+    label: 
     messages:
     - This Message is a Test. This Sausage is the Last. Yeah...
     voice: {fileID: 0}
@@ -35754,6 +35828,7 @@ MonoBehaviour:
   clothedModel: {fileID: 1352285002}
   nudeModel: {fileID: 1784265436}
   AmyIntroMessage:
+    label: 
     messages:
     - 'Do you ever feel like you''re in a dream,
 
@@ -35775,6 +35850,7 @@ MonoBehaviour:
       m_PersistentCalls:
         m_Calls: []
   CreamIntroMessage:
+    label: 
     messages:
     - 'What a cute bunny. I bet you could use
 
@@ -35796,7 +35872,8 @@ MonoBehaviour:
       m_PersistentCalls:
         m_Calls: []
   AmyMessages:
-  - messages:
+  - label: 
+    messages:
     - 'Isn''t it weird how it''s always sunset here?
 
       Let''s hope it stays
@@ -35815,7 +35892,8 @@ MonoBehaviour:
     onEndPrint:
       m_PersistentCalls:
         m_Calls: []
-  - messages:
+  - label: 
+    messages:
     - 'This place really makes me feel at home.
 
       How about you? Do you like
@@ -35835,7 +35913,8 @@ MonoBehaviour:
       m_PersistentCalls:
         m_Calls: []
   CreamMessages:
-  - messages:
+  - label: 
+    messages:
     - 'Wow, that building in the north side
 
       is HUGE. I can''t even see the
@@ -35855,7 +35934,8 @@ MonoBehaviour:
     onEndPrint:
       m_PersistentCalls:
         m_Calls: []
-  - messages:
+  - label: 
+    messages:
     - 'Make sure to get plenty of rest.
 
       Also, eat some good food. '

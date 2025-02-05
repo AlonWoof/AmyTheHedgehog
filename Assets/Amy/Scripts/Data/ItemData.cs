@@ -11,14 +11,16 @@ namespace Amy
 {
 
 	[System.Serializable]
-	public class ItemData
+	[CreateAssetMenu(fileName = "New ItemData", menuName = "ItemData", order = 51)]
+	public class ItemData : ScriptableObject
 	{
-		public string name;
+		public int hash;
 		public string displayName;
 		[TextArea]
 		public string description;
 		public Sprite icon;
 		public bool consumable = true;
+
 
 		public GameObject itemEffect = null;
 
@@ -52,10 +54,17 @@ namespace Amy
 			return Animator.StringToHash(name.ToLower());
         }
 
-		public static ItemData getItemData(string name)
+        private void OnValidate()
+        {
+			hash = getHash();
+
+		}
+
+        public static ItemData getItemData(string name)
         {
 			return getItemData(Animator.StringToHash(name.ToLower()));
         }
+
 		public static ItemData getItemData(int hash)
         {
 

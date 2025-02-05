@@ -169,6 +169,9 @@ namespace Amy
 			readPlayerStatus(plman.AmyStatus, ref reader);
 			readPlayerStatus(plman.CreamStatus, ref reader);
 
+			plman.AmySuikaAffection = reader.ReadInt32();
+			plman.CreamSuikaAffection = reader.ReadInt32();
+
 			int numFlags = reader.ReadInt32();
 
 			if (plman.storyFlags == null)
@@ -229,6 +232,9 @@ namespace Amy
 
 			writePlayerStatus(plman.AmyStatus, ref writer);
 			writePlayerStatus(plman.CreamStatus, ref writer);
+
+			writer.Write(plman.AmySuikaAffection);
+			writer.Write(plman.CreamSuikaAffection);
 
 			writer.Write(plman.storyFlags.Count);
 

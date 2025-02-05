@@ -42,6 +42,9 @@ namespace Amy
 
         void Update()
         {
+            if (!GameManager.Instance.debugMode)
+                return;
+
             if (Input.GetKeyDown(KeyCode.F))
                 fadeScreen(false, 1.0f, false);
 

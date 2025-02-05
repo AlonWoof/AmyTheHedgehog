@@ -196,7 +196,7 @@ namespace Amy
 					bestDist = dst;
 					closestActivatible = e;
 
-					Debug.Log(closestActivatible.interactionLabel);
+					//Debug.Log(closestActivatible.interactionLabel);
 				}
 			}
 

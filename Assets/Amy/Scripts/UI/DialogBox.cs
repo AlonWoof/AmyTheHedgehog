@@ -25,6 +25,8 @@ namespace Amy
 	[System.Serializable]
 	public class Message
 	{
+		
+		public string label;
 
 		[TextArea(1, 2)]
 		public List<string> messages = new List<string> { "NULL" };
@@ -144,7 +146,7 @@ namespace Amy
 					return Color.Lerp(SystemColors.YumeColor, Color.white, 0.25f);
 
 				case SpeakerProfile.Suika:
-					return Color.Lerp(SystemColors.YumeColor, Color.white, 0.45f);
+					return Color.Lerp(SystemColors.SuikaColor, Color.white, 0.5f);
 
 				case SpeakerProfile.Jenny:
 					return Color.Lerp(SystemColors.JennyColor, Color.white, 0.5f);

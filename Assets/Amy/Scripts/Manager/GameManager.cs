@@ -15,6 +15,7 @@ namespace Amy
         public static Color AmyColor = new Color(0.9647059f, 0.6392157f, 0.7333333f);
         public static Color CreamColor = new Color(0.972549f, 0.8784314f, 0.7215686f);
         public static Color YumeColor = new Color(0.9294118f, 0.8666667f, 0.427451f);
+        public static Color SuikaColor = new Color(0.2705882f, 0.5647059f, 0.1254902f);
         public static Color JennyColor = new Color(0.0f, 0.3098039f, 0.8666667f);
 
         public static Color choiceHighlightColor = new Color(1.0f, 1.0f, 1.0f);

@@ -1,7 +1,9 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using UnityEngine;
 using UnityEngine.Audio;
+using UnityEditor;
 
 namespace Amy
 {
@@ -38,7 +40,7 @@ namespace Amy
     [CreateAssetMenu(fileName = "SystemData", menuName = "SystemData", order = 51)]
     public class SystemData : ScriptableObject
     {
-
+        [Header("Player")]
         public PlayerParameters AmyParams;
         public PlayerParameters CreamParams;
         public PlayerParameters YoungAmyParams;
@@ -53,11 +55,15 @@ namespace Amy
         public GameObject YumeRace_MediumModel;
         public GameObject YumeRace_HardModel;
 
+
+
+        [Header("Camera")]
         public GameObject RES_mainCamera;
         public GameObject RES_freeCamera;
+
+        [Header("FX")]
         public AmyFXRes RES_AmyPlayerFX;
         public FootstepFXRes RES_footstepFX;
-
         public GameObject RES_AI_ExclamationFX;
 
         public GameObject RES_WaterWadingFX;
@@ -71,6 +77,7 @@ namespace Amy
 
         [Header("Item")]
         public List<ItemData> itemData;
+        public SuikaMartData suikaMartData;
 
         [Header("UI")]
 
@@ -115,5 +122,24 @@ namespace Amy
 
         public MessageBank Messages_AmyNPCWatchingTV;
         public MessageBank Messages_CreamNPCWatchingTV;
+
+
+        private void OnValidate()
+        {
+
+        #if UNITY_EDITOR
+
+            itemData.Clear();
+            string itemDataPath  = "Assets/Amy/Data/ItemData";
+            string[] files = Directory.GetFiles(itemDataPath, "*.asset", SearchOption.TopDirectoryOnly);
+
+            foreach (string file in files)
+            {
+
+                itemData.Add(AssetDatabase.LoadAssetAtPath(file, typeof(ItemData)) as ItemData);
+            }
+
+        #endif
+        }
     }
 }

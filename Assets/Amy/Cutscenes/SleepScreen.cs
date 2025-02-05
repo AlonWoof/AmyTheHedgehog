@@ -41,42 +41,53 @@ namespace Amy
 			}
 		}
 
+		bool canSwitchGirls()
+        {
+
+			PlayerStatus otherGirl;
+
+			if (PlayerManager.Instance.currentCharacter == PlayableCharacter.Amy)
+				otherGirl = PlayerManager.Instance.CreamStatus;
+			else
+				otherGirl = PlayerManager.Instance.AmyStatus;
+
+			if (otherGirl.sleepTimeLeft > 0.0f || otherGirl.checkStatusEffect(PlayerStatusFX.Sick))
+				return false;
+
+			return true;
+		}
+
+
 		IEnumerator<float> doSleepScene()
         {
 			nextDayText.text = "Day " + PlayerManager.Instance.days;
 			updateTextColor(0.01f);
-
-
 
 			yield return Timing.WaitForSeconds(4.0f);
 			processSleeping();
 
 			PlayerManager.Instance.advanceDay();
 
-			if (PlayerManager.Instance.currentCharacter == PlayableCharacter.Amy)
-				PlayerManager.Instance.currentCharacter = PlayableCharacter.Cream;
-			else
-				PlayerManager.Instance.currentCharacter = PlayableCharacter.Amy;
+
+
+			if (PlayerManager.Instance.getCurrentPlayerStatus().sleepTimeLeft > 0.0f && canSwitchGirls())
+            {
+				if (PlayerManager.Instance.currentCharacter == PlayableCharacter.Amy)
+					PlayerManager.Instance.currentCharacter = PlayableCharacter.Cream;
+
+				if (PlayerManager.Instance.currentCharacter == PlayableCharacter.Cream)
+					PlayerManager.Instance.currentCharacter = PlayableCharacter.Amy;
+
+			}
 
 			nextDayText.text = "Day " + PlayerManager.Instance.days;
 			updateTextColor(1.0f);
 
 			if(PlayerManager.Instance.isBadDay())
             {
-				int rng = Random.Range(0, 100);
-
-				if(rng > 30)
-					PlayerManager.Instance.AmyStatus.setStatusEffect(PlayerStatusFX.Horny);
-
-				rng = Random.Range(0, 100);
-
-				if (rng > 30)
-					PlayerManager.Instance.AmyStatus.setStatusEffect(PlayerStatusFX.Sick);
-
-				rng = Random.Range(0, 100);
-
-				if (rng > 30)
-					PlayerManager.Instance.AmyStatus.currentStamina *= 0.5f;
+				PlayerManager.Instance.AmyStatus.setStatusEffect(PlayerStatusFX.Horny);
+				PlayerManager.Instance.AmyStatus.setStatusEffect(PlayerStatusFX.Sick);
+				PlayerManager.Instance.AmyStatus.currentStamina *= 0.5f;
 			}
 
 			PlayerManager.Instance.decidePlayerNPCLocation();
@@ -89,9 +100,9 @@ namespace Amy
 		
 		void processSleeping()
         {
-			//60 second nap
-			PlayerManager.Instance.processSleeping(PlayerManager.Instance.AmyStatus, 60.0f);
-			PlayerManager.Instance.processSleeping(PlayerManager.Instance.CreamStatus, 60.0f);
+			//15 minutes
+			PlayerManager.Instance.processSleeping(PlayerManager.Instance.AmyStatus, Helper.minutesToSeconds(15.5f));
+			PlayerManager.Instance.processSleeping(PlayerManager.Instance.CreamStatus, Helper.minutesToSeconds(15.5f));
 
 		}
 	}

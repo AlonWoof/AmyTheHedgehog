@@ -16,8 +16,10 @@ namespace Amy
 
 		public CinemachineVirtualCamera fpCam;
 		public Transform headBone;
+        Vector3 headBonePos;
 
-		public Vector2 camRot = Vector2.zero;
+
+        public Vector2 camRot = Vector2.zero;
         public bool acceptInput = false;
 
 		// Start is called before the first frame update
@@ -68,6 +70,7 @@ namespace Amy
             mPlayer.clearActivatible();
             mPlayer.areaDetector.enabled = false;
             mPlayer.lookAtController.lookingAtTarget = false;
+            headBonePos = headBone.transform.position;
         }
 
         private void OnDisable()
@@ -107,8 +110,8 @@ namespace Amy
 
             fpCam.transform.rotation = Quaternion.LookRotation(transform.forward) * rot;
 
-            Debug.Log("HEAD SCALE: " + headBone.transform.localScale);
-            fpCam.transform.position = headBone.transform.position + (headBone.transform.up * 0.1f) + ((headBone.transform.forward * 0.1f));
+
+            fpCam.transform.position = headBonePos + (headBone.transform.up * 0.1f) + ((headBone.transform.forward * 0.1f));
         }
 
         void handleInput()

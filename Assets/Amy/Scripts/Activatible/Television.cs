@@ -62,14 +62,14 @@ namespace Amy
 
 
 
-			if(PlayerManager.Instance.currentCharacter != PlayableCharacter.Amy && PlayerManager.Instance.AmyNPCLocation == PlayerNPCLocation.WatchTV)
+			if(PlayerManager.Instance.currentCharacter != PlayableCharacter.Amy && PlayerManager.Instance.AmyStatus.npcLocation == PlayerNPCLocation.WatchTV)
             {
 				isOn = true;
 				powerSwitch.enabled = false;
 			}
 
 
-			if (PlayerManager.Instance.currentCharacter != PlayableCharacter.Cream && PlayerManager.Instance.CreamNPCLocation == PlayerNPCLocation.WatchTV)
+			if (PlayerManager.Instance.currentCharacter != PlayableCharacter.Cream && PlayerManager.Instance.CreamStatus.npcLocation == PlayerNPCLocation.WatchTV)
 			{
 				isOn = true;
 				powerSwitch.enabled = false;
@@ -163,8 +163,8 @@ namespace Amy
 			if (currentAction.IsRunning)
 				return;
 
-			if (PlayerManager.Instance.AmyNPCLocation == PlayerNPCLocation.WatchTV ||
-			PlayerManager.Instance.CreamNPCLocation == PlayerNPCLocation.WatchTV)
+			if (PlayerManager.Instance.AmyStatus.npcLocation == PlayerNPCLocation.WatchTV ||
+			PlayerManager.Instance.CreamStatus.npcLocation == PlayerNPCLocation.WatchTV)
 				return;
 
 

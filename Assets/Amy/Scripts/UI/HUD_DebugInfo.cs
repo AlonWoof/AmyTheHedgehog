@@ -262,10 +262,10 @@ namespace Amy
 			dbgstr += "\nuniverseNumber: " + PlayerManager.Instance.universeNumber;
 
 			if (PlayerManager.Instance.currentCharacter != PlayableCharacter.Amy)
-				dbgstr += "\n\nAmy Location: " + PlayerManager.getPlayerNPCLocationString(PlayerManager.Instance.AmyNPCLocation);
+				dbgstr += "\n\nAmy Location: " + PlayerManager.getPlayerNPCLocationString(PlayerManager.Instance.AmyStatus.npcLocation);
 
 			if (PlayerManager.Instance.currentCharacter != PlayableCharacter.Cream)
-				dbgstr += "\n\nCream Location: " + PlayerManager.getPlayerNPCLocationString(PlayerManager.Instance.CreamNPCLocation);
+				dbgstr += "\n\nCream Location: " + PlayerManager.getPlayerNPCLocationString(PlayerManager.Instance.CreamStatus.npcLocation);
 
 			return dbgstr;
 		}
@@ -281,7 +281,12 @@ namespace Amy
 				aiplayer = FindObjectOfType<AIPlayer>();
 
 			if (!aiplayer)
-				return dbgstr + "\n\n NO AI PLAYER DETECTED";
+			{
+				if ((Time.frameCount & 32) > 0)
+					return dbgstr + "\n\n NO AI PLAYER DETECTED";
+				else
+					return dbgstr;
+			}
 
 			dbgstr += "\nVirtualAnalogX: " + aiplayer.virtualAnalogX;
 			dbgstr += "\nVirtualAnalogY: " + aiplayer.virtualAnalogY;

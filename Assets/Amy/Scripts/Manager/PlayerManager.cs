@@ -85,6 +85,9 @@ namespace Amy
         public float sickTimeLeft = 0.0f;
 
         public float timeSpentResting = 0.0f;
+        public float sleepTimeLeft = 0.0f;
+
+        public PlayerNPCLocation npcLocation = PlayerNPCLocation.None;
 
         public List<ItemData> items;
 
@@ -213,6 +216,19 @@ namespace Amy
             //Average of health and stamina.
             return (healthFac + staminaFac) * 0.5f;
         }
+
+        public void determineNPCLocation()
+        {
+            if(sleepTimeLeft > 0.0f || checkStatusEffect(PlayerStatusFX.Sick))
+            {
+                npcLocation = PlayerNPCLocation.Bed;
+            }
+            else
+            {
+                int r = Random.Range((int)PlayerNPCLocation.WatchTV, (int)PlayerNPCLocation.MAX);
+                npcLocation = (PlayerNPCLocation)r;
+            }
+        }
     }
 
     public class PlayerManager : Singleton<PlayerManager>
@@ -232,11 +248,11 @@ namespace Amy
         public List<StoryFlag> storyFlags;
         public System.DateTime lastSaveTime;
 
+        public int AmySuikaAffection = 0;
+        public int CreamSuikaAffection = 0;
+
 
         public PlayableCharacter currentCharacter = PlayableCharacter.Amy;
-
-        public PlayerNPCLocation AmyNPCLocation;
-        public PlayerNPCLocation CreamNPCLocation;
 
         //This will be placed at the last safe place/exit
         public Transform playerCheckpoint;
@@ -451,32 +467,11 @@ namespace Amy
 
         public void decidePlayerNPCLocation()
         {
-            if(AmyStatus.currentHealth == AmyStatus.maxHealth && AmyStatus.currentStamina == AmyStatus.maxStamina)
-            {
-                int r = Random.Range((int)PlayerNPCLocation.WatchTV, (int)PlayerNPCLocation.MAX);
-                AmyNPCLocation = (PlayerNPCLocation)r;
-            }
-            else
-            {
-                AmyNPCLocation = PlayerNPCLocation.Bed;
-            }
-
-            if (CreamStatus.currentHealth == CreamStatus.maxHealth && CreamStatus.currentStamina == CreamStatus.maxStamina)
-            {
-                int r = Random.Range((int)PlayerNPCLocation.WatchTV, (int)PlayerNPCLocation.MAX);
-                CreamNPCLocation = (PlayerNPCLocation)r;
-            }
-            else
-            {
-                CreamNPCLocation = PlayerNPCLocation.Bed;
-            }
-
-            if (currentCharacter == PlayableCharacter.Amy)
-                AmyNPCLocation = PlayerNPCLocation.None;
-
-            if (currentCharacter == PlayableCharacter.Cream)
-                CreamNPCLocation = PlayerNPCLocation.None;
+            AmyStatus.determineNPCLocation();
+            CreamStatus.determineNPCLocation();
         }
+
+
 
         // Update is called once per frame
         void Update()
@@ -657,7 +652,7 @@ namespace Amy
         public void processStatusFX(Player pl)
         {
             PlayerStatus pStats = pl.getStatus();
-            const float scaredStaminaDrain = 0.25f;
+            const float scaredHealthDrain = 0.25f;
             const float sickStaminaDrain = 0.35f;
             const float embarassedStaminaDrain = 0.1f;
             const float dirtyAmyStaminaDrain = 0.1f;
@@ -669,13 +664,9 @@ namespace Amy
 
             if (pStats.checkStatusEffect(PlayerStatusFX.Scared))
             {
-                if(pStats.currentStamina > 0.01f)
+                if(pStats.currentHealth > 0.0f)
                 {
-                    pStats.currentStamina -= (scaredStaminaDrain * Time.deltaTime);
-                }
-                else if(pStats.currentHealth > 0.0f)
-                {
-                    pStats.currentHealth -= scaredStaminaDrain * Time.deltaTime;
+                    pStats.currentHealth -= scaredHealthDrain * Time.deltaTime;
                     pl.updateHealth();
                 }
 
@@ -967,36 +958,18 @@ namespace Amy
 
         public void processSleeping(PlayerStatus pStats, float time = 1.0f)
         {
-            const float staminaHealRate = 0.1f;
-            const float healthHealRate = 0.1f;
             pStats.timeSpentResting += (Time.deltaTime * time);
 
-            if (pStats.checkStatusEffect(PlayerStatusFX.Scared) || pStats.checkStatusEffect(PlayerStatusFX.Tired))
+            if (pStats.sleepTimeLeft > 0.0f)
             {
-                pStats.unSetStatusEffect(PlayerStatusFX.Scared);
+                pStats.sleepTimeLeft -= (Time.deltaTime * time);
+            }
+
+            if(pStats.sleepTimeLeft < 0.0f)
+            {
                 pStats.unSetStatusEffect(PlayerStatusFX.Tired);
-            }
-
-            if (pStats.recentOrgasmTimeLeft > 0.0f)
-                pStats.recentOrgasmTimeLeft -= time;
-
-            if (pStats.sickTimeLeft > 0.0f)
-                pStats.sickTimeLeft -= time;
-
-            if (pStats.goodFoodTimeLeft > 0.0f)
-                pStats.goodFoodTimeLeft -= time;
-
-            if (pStats.scaredTimeLeft > 0.0f)
-                pStats.scaredTimeLeft -= time;
-
-            if (pStats.currentStamina < pStats.maxStamina)
-            {
-                pStats.currentStamina += staminaHealRate * (Time.deltaTime * time);
-                pStats.clampValues();
-            }
-            else if(pStats.currentHealth < pStats.maxHealth)
-            {
-                pStats.currentHealth += healthHealRate * (Time.deltaTime * time);
+                pStats.currentHealth = pStats.maxHealth;
+                pStats.currentStamina = pStats.maxStamina;
                 pStats.clampValues();
             }
 
@@ -1363,12 +1336,13 @@ namespace Amy
 
             getCurrentPlayerStatus().currentHealth = getCurrentPlayerStatus().maxHealth * 0.1f;
             getCurrentPlayerStatus().currentStamina = getCurrentPlayerStatus().maxStamina * 0.1f;
+            getCurrentPlayerStatus().sleepTimeLeft = Helper.minutesToSeconds(15.0f);
 
-            if(type == PlayerKilled.DeathType.Corrupted)
+            if (type == PlayerKilled.DeathType.Corrupted)
             {
-                getCurrentPlayerStatus().currentStamina = -10.0f;
                 getCurrentPlayerStatus().clearStatusEffects();
                 getCurrentPlayerStatus().setStatusEffect(PlayerStatusFX.Sick);
+                getCurrentPlayerStatus().sleepTimeLeft = Helper.minutesToSeconds(30.0f);
             }
 
             yield return 0f;

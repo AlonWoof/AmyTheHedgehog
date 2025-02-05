@@ -18,6 +18,9 @@ public class BGMData : ScriptableObject
 
     private void OnValidate()
     {
+        if (songName == "")
+            songName = name;
+
         songNameHash = Animator.StringToHash(songName);
     }
 }
