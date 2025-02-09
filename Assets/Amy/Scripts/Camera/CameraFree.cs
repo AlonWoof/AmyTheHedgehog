@@ -27,6 +27,11 @@ namespace Amy
 		public float fov_mult = 1.0f;
 		public float actionTimeout = 0.0f;
 
+		public bool limitedMode = false;
+		float rangeLimit = 4.0f;
+
+		Vector3 desiredVelocity;
+		Vector3 velocity;
 
 	    // Start is called before the first frame update
 	    void Start()
@@ -70,7 +75,22 @@ namespace Amy
 			handleInput();
 			updateRotation();
 			updateFOV();
+			handleMovement();
 		}
+
+		Vector3 getHomePos()
+        {
+			return PlayerManager.Instance.mPlayerInstance.transform.position + Vector3.up;
+
+		}			
+
+		bool isInRange(Vector3 tpos)
+        {
+			if (Vector3.Distance(tpos, getHomePos()) > rangeLimit)
+				return false;
+
+			return true;
+        }
 
 		void updateFOV()
         {
@@ -166,8 +186,55 @@ namespace Amy
 				actionTimeout -= Time.unscaledDeltaTime;
 		}
 
+		void handleMovement()
+        {
+			velocity = Vector3.Lerp(velocity, desiredVelocity, Time.unscaledDeltaTime * 8.0f);
+
+			Vector3 moveVec = velocity * Time.unscaledDeltaTime;
+
+			Vector3 npos = transform.position + moveVec;
+			transform.position = npos;
+
+			for (int b = 0; b < 8; b++)
+			{
+
+				for (int i = 0; i < 8; i++)
+				{
+					Vector3 ray = Quaternion.Euler((360.0f / 8.0f) * b, (360.0f / 8.0f) * i, 0) * (Vector3.forward * 0.1f) + (Vector3.forward * velocity.magnitude * Time.unscaledDeltaTime);
+
+					Debug.DrawLine(transform.position, transform.position + ray, Color.red);
+					pushOutRay(ray);
+				}
+			}
+
+			if (!isInRange(transform.position))
+            {
+				velocity = Helper.getDirectionTo(transform.position, getHomePos()) *
+					(Vector3.Distance(transform.position, getHomePos()));
+            }
+
+
+        }
+
+		void pushOutRay(Vector3 dir)
+        {
+			Vector3 start = transform.position;
+			Vector3 end = start + dir;
+
+			RaycastHit hitInfo = new RaycastHit();
+
+			if(Physics.Linecast(start,end, out hitInfo))
+            {
+				transform.position = transform.position - dir;
+				velocity *= 0.15f;
+            }
+        }
+
 		void movementInput()
         {
+			desiredVelocity = Vector3.zero;
+
+
 			float h = InputFunctions.getLeftAnalogX();
 			float v = InputFunctions.getLeftAnalogY();
 
@@ -184,8 +251,25 @@ namespace Amy
 
 			float camSpeed = 5.0f;
 
-			transform.position = transform.position + (mDir * Time.unscaledDeltaTime * camSpeed);
+			desiredVelocity = mDir * camSpeed;
+
 		}
+
+		bool wallDetect(Vector3 targetPos)
+        {
+			Vector3 mpos = transform.position;
+
+			RaycastHit hitInfo = new RaycastHit();
+
+			if(Physics.Linecast(mpos, targetPos, out hitInfo))
+            {
+				return true;
+            }
+			else
+            {
+				return false;
+            }
+        }
 
 		void lookInput()
         {

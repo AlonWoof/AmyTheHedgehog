@@ -340,24 +340,11 @@ namespace Amy
 
         public void advanceDay()
         {
-
-
             days++;
             randomizeDayEvents();
-
-
-            if (currentCharacter == PlayableCharacter.Amy)
-            {
-                daysTilMenstruation--;
-
-                if (daysTilMenstruation == -1)
-                {
-                    daysTilMenstruation = Random.Range(13, 15);
-                }
-
-            }
-
-            
+            //SystemColors.
+           // processSleeping(AmyStatus, )
+           //
         }
 
         public void randomizeDayEvents()
@@ -415,7 +402,6 @@ namespace Amy
 
         //Important flags...
         //SADX_NUDE - has SADX nude mod installed
-
 
         public bool getStoryFlag(int hash)
         {
@@ -724,8 +710,6 @@ namespace Amy
 
             if ((pStats.currentStamina / pStats.maxStamina) < 0.125f)
             {
-
-
 
                 if(!pStats.checkStatusEffect(PlayerStatusFX.Tired))
                 {

@@ -5,7 +5,7 @@ using UnityEngine.UI;
 using MEC;
 
 //////////////////////////////////////
-//         2024 AlonWoof            //
+//         2025 AlonWoof            //
 //////////////////////////////////////
 
 namespace Amy
@@ -40,6 +40,10 @@ namespace Amy
 		public Text descriptionBox;
 
 		public AudioSource sfx;
+
+		public AudioClip menuCancel;
+		public AudioClip menuSelect;
+		public AudioClip menuBuy;
 
 		// Start is called before the first frame update
 		void Start()
@@ -80,6 +84,7 @@ namespace Amy
 			choiceOffset = 0;
 
 			updateHighlighted();
+			updateItemDescription();
 			clampValues();
 
 			menuActive = true;
@@ -97,8 +102,8 @@ namespace Amy
 
 				if (Input.GetKeyDown(KeyCode.Delete) || Input.GetButtonDown("Cancel"))
 				{
-					//deleteFile();
 					doneShopping = true;
+					sfx.PlayOneShot(menuCancel);
 				}
 
 				yield return 0f;

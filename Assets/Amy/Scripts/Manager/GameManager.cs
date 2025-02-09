@@ -23,6 +23,11 @@ namespace Amy
         public static Color choiceInactiveColor = new Color();
     }
 
+    public static class TimeLengths
+    {
+
+    }
+
     [System.Serializable]
     public class GameConfig
     {

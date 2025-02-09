@@ -41,8 +41,13 @@ namespace Amy
 		public bool menuVisible = false;
 		public SuikaNPC suika;
 
-	    // Start is called before the first frame update
-	    void Start()
+		public AudioSource sfx;
+		public AudioClip menuCancel;
+		public AudioClip menuSelect;
+		public AudioClip menuBuy;
+
+		// Start is called before the first frame update
+		void Start()
 	    {
 			updateSelection();
 
@@ -69,7 +74,7 @@ namespace Amy
 			{
 				selection--;
 				//selectSound.Play();
-				//sfx.PlayOneShot(GameManager.Instance.systemData.AUDIO_selectSound);
+				sfx.PlayOneShot(GameManager.Instance.systemData.AUDIO_selectSound);
 				clampValues();
 
 				//Skiparoo
@@ -87,7 +92,7 @@ namespace Amy
 			{
 				selection++;
 				//selectSound.Play();
-				//sfx.PlayOneShot(GameManager.Instance.systemData.AUDIO_selectSound);
+				sfx.PlayOneShot(GameManager.Instance.systemData.AUDIO_selectSound);
 				clampValues();
 
 				//Skiparoo
@@ -143,16 +148,20 @@ namespace Amy
             {
 				case SuikaMainMenuChoice.Buy:
 					menuCoroutine = buyMenu.openShopMenu();
+					sfx.PlayOneShot(menuSelect);
 					break;
 
 				case SuikaMainMenuChoice.Sell:
+					sfx.PlayOneShot(menuCancel);
 					break;
 
 				case SuikaMainMenuChoice.Talk:
 					menuCoroutine = suika.dailyMessage();
+					sfx.PlayOneShot(menuSelect);
 					break;
 
 				case SuikaMainMenuChoice.Quit:
+					sfx.PlayOneShot(menuCancel);
 					loopBack = false;
 					break;
             }
