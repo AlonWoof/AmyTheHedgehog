@@ -18,8 +18,8 @@ namespace Amy
             }
             else
             {
-                if (Mathf.Abs(Input.GetAxisRaw("Horizontal")) > controllerDeadzone)
-                    return Input.GetAxisRaw("Horizontal");
+                if (Mathf.Abs(Input.GetAxis("Horizontal")) > controllerDeadzone)
+                    return Input.GetAxis("Horizontal");
             }
 
             return 0f;
@@ -34,8 +34,8 @@ namespace Amy
             }
             else
             {
-                if (Mathf.Abs(Input.GetAxisRaw("Vertical")) > controllerDeadzone)
-                    return Input.GetAxisRaw("Vertical");
+                if (Mathf.Abs(Input.GetAxis("Vertical")) > controllerDeadzone)
+                    return Input.GetAxis("Vertical");
             }
 
             return 0f;

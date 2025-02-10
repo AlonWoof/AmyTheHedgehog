@@ -6,7 +6,7 @@ using MEC;
 using System.Linq;
 
 //////////////////////////////////////
-//         2024 AlonWoof            //
+//         2025 AlonWoof            //
 //////////////////////////////////////
 
 namespace Amy
@@ -29,6 +29,7 @@ namespace Amy
 		public float stopDist = 0.1f;
 		public float z_offset = 0.0f;
 		bool moveOverride = false;
+		public bool stopOnPlayer = true;
 
 		Vector3 currentDirection = Vector3.forward;
 
@@ -101,7 +102,7 @@ namespace Amy
 			if (mAnimator)
 			{
 				if(mAgent.enabled)
-					mAnimator.SetFloat("velocity", mAgent.speed / mAgent.velocity.magnitude);
+					mAnimator.SetFloat("velocity", mAgent.velocity.magnitude);
 				else
 					mAnimator.SetFloat("velocity", 0);
 			}
@@ -184,6 +185,10 @@ namespace Amy
 
 		bool isFacingPlayer()
 		{
+			if (!stopOnPlayer)
+				return false;
+
+
 			Player pl = PlayerManager.Instance.mPlayerInstance;
 
 			if (!pl)

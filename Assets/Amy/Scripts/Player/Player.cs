@@ -1345,7 +1345,7 @@ namespace Amy
         void getGroundNormal()
 		{
 			Vector3 start = transform.position + WorldToPlayerSpace(Vector3.up * 0.5f);
-			Vector3 end = transform.position - WorldToPlayerSpace(Vector3.up * 0.1f);
+			Vector3 end = transform.position - WorldToPlayerSpace(Vector3.up * 0.3f);
 
 			//start += mRigidBody.velocity * Time.deltaTime;
 			//end += mRigidBody.velocity * Time.deltaTime;
@@ -1376,6 +1376,14 @@ namespace Amy
 
 					new_ground = norm;
 
+					if (framesAirborne > 0 || Vector3.Distance(hitInfo.point, transform.position) > 0.01f)
+					{
+						if (jumpTimer < 0.05f)
+						{
+							transform.position = hitInfo.point;
+
+						}
+					}
 					////Debug.DrawLine(hitInfo.point, hitInfo.point + norm, Color.red, 10.2f);
 				}
 
