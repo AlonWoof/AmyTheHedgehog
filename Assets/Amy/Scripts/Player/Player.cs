@@ -1102,7 +1102,10 @@ namespace Amy
 			{
 				if(currentMode == PlayerModes.NORMAL)
                 {
-					changeCurrentMode(PlayerModes.RUBBING);
+					changeCurrentMode(PlayerModes.CUTSCENE);
+					mAnimator.CrossFade("Dance", 0.2f);
+
+					
                 }
 			}
 		}

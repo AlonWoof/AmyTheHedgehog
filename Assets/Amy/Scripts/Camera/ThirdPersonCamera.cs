@@ -104,6 +104,11 @@ namespace Amy
 
             if (GameManager.Instance.gamePaused || PlayerManager.Instance.itemMenuOpen)
                 pausedUpdate();
+
+            if (dof)
+            {
+                dof.focusDist = Vector3.Distance(lookPosition, GameManager.Instance.mainCamera.transform.position);
+            }
         }
 
         void pausedUpdate()
@@ -144,10 +149,7 @@ namespace Amy
                 mPlayer = playerTransform.GetComponent<Player>();
             }
 
-            if(dof)
-            {
-                dof.focusDist = Vector3.Distance(lookPosition, transform.position);
-            }
+
         }
 
 

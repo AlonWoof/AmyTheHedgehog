@@ -754,6 +754,18 @@ namespace Amy
                     //Hazukashii yo... they can all see my omanko dripping...
                     pStats.currentHealth -= (embarassedStaminaDrain * pl.areaDetector.visibleNPCCount) * Time.deltaTime;
                 }
+
+                if(pl.modeRubbing.karadaMesh)
+                {
+                    pl.modeRubbing.karadaMesh.SetBlendShapeWeight(0, 100);
+                }
+            }
+            else
+            {
+                if (pl.modeRubbing.karadaMesh)
+                {
+                    pl.modeRubbing.karadaMesh.SetBlendShapeWeight(0, 0);
+                }
             }
 
             if(pStats.checkStatusEffect(PlayerStatusFX.Dirty))

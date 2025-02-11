@@ -5,7 +5,7 @@ using MEC;
 using UnityEngine.InputSystem;
 
 //////////////////////////////////////
-//         2024 AlonWoof            //
+//         2025 AlonWoof            //
 //////////////////////////////////////
 
 namespace Amy
@@ -17,6 +17,7 @@ namespace Amy
 		float phaseTimeLeft = 10.0f;
 
 		public GameObject cunnyDripFX;
+		public SkinnedMeshRenderer karadaMesh = null;
 
 		enum MasturbationPhase
         {
@@ -53,6 +54,14 @@ namespace Amy
 				cunnyDripFX.SetActive(false);
 			}
 
+			foreach (SkinnedMeshRenderer smr in GetComponentsInChildren<SkinnedMeshRenderer>())
+			{
+				if(smr.gameObject.name.ToLower().Contains("karada"))
+                {
+					karadaMesh = smr;
+                }
+			}
+
 			if (mPlayer.currentMode != PlayerModes.RUBBING)
 			{
 				enabled = false;
@@ -62,6 +71,8 @@ namespace Amy
 			//Sometimes a girl needs a little break~
 			Timing.RunCoroutine(doStartRubbing().CancelWith(gameObject));
 			
+
+
 		}
 
         private void OnDisable()

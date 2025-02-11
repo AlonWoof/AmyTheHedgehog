@@ -13,6 +13,7 @@ namespace Amy
     {
 		public string songTitle;
 		public AudioClip clip;
+		public float danceSpeed = 1.0f;
     }
 
 	public class SuikaRadio : MonoBehaviour
@@ -37,7 +38,22 @@ namespace Amy
 
 			if (!sound.isPlaying)
 				playNextSong();
-	    }
+
+			if (GameManager.Instance.debugMode)
+				debugInput();
+
+
+		}
+
+		void setDanceSpeed(float speed)
+        {
+			Player pl = PlayerManager.Instance.mPlayerInstance;
+
+			if (!pl)
+				return;
+
+			pl.mAnimator.SetFloat("danceSpeed", speed);
+        }
 
 		void playNextSong()
         {
@@ -52,7 +68,9 @@ namespace Amy
 			sound.time = 0.0f;
 			sound.clip = songs[currentSong].clip;
 			sound.Play();
-        }
+			setDanceSpeed(songs[currentSong].danceSpeed);
+
+		}
 
 		void initSong()
         {
@@ -62,6 +80,15 @@ namespace Amy
 			playNextSong();
 
 			sound.time = Random.Range(0, sound.clip.length);
+        }
+
+		void debugInput()
+        {
+			
+				
+
+			if (Input.GetKeyDown(KeyCode.RightArrow))
+				playNextSong();
         }
 	}
 }
