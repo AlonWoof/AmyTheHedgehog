@@ -18,7 +18,7 @@ namespace Amy
 		public int itemPrice = 10;
 		public int affinityRequirement = 0;
 		public int emblemRequirement = 0;
-
+		public GameObject itemModelInst;
     }
 
 	public class SuikaMartShopMenu : MonoBehaviour
@@ -45,6 +45,8 @@ namespace Amy
 		public AudioClip menuSelect;
 		public AudioClip menuBuy;
 
+		public Transform itemPreviewRoot;
+
 		// Start is called before the first frame update
 		void Start()
 		{
@@ -52,6 +54,41 @@ namespace Amy
 			choiceOffset = 0;
 
 			updateHighlighted();
+			spawnItemModels();
+		}
+
+		void spawnItemModels()
+        {
+			foreach(SuikaMartItemData i in itemData)
+            {
+				if(i.item != null)
+                {
+					if(!i.itemModelInst)
+                    {
+						i.itemModelInst = i.item.spawnItemModel();
+						i.itemModelInst.transform.SetParent(itemPreviewRoot);
+						i.itemModelInst.transform.localPosition = Vector3.zero;
+                    }
+                }
+            }
+        }
+
+		void updateModelSelection()
+        {
+			for (int i = 0; i < shopEntries.Count; i++)
+			{
+				if (i == currentChoice)
+				{
+					if(shopEntries[i].getItemData().itemModelInst)
+						shopEntries[i].getItemData().itemModelInst.transform.localScale = Vector3.Lerp(shopEntries[i].getItemData().itemModelInst.transform.localScale, Vector3.one, 0.12f);
+				}
+				else
+				{
+					if (shopEntries[i].getItemData().itemModelInst)
+						shopEntries[i].getItemData().itemModelInst.transform.localScale = Vector3.zero;
+				}
+
+			}
 		}
 
 		// Update is called once per frame
@@ -60,7 +97,7 @@ namespace Amy
 			if (menuActive)
 			{
 				mCanvas.alpha = Mathf.Lerp(mCanvas.alpha, 1.0f, 0.2f);
-
+				updateModelSelection();
 			}
 			else
 			{

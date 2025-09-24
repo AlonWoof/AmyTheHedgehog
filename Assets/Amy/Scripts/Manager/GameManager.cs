@@ -123,7 +123,6 @@ namespace Amy
             return Resources.Load("SystemData") as SystemData;
         }
 
-        // Start is called before the first frame update
         void Awake()
         {
             Debug.Log("Loading System Data...");
@@ -140,8 +139,6 @@ namespace Amy
             bgmSource.volume = 0.25f;
             bgmSource.playOnAwake = false;
             */
-
-            Application.targetFrameRate = 60;
 
             systemSoundSource = gameObject.AddComponent<AudioSource>();
             systemSoundSource.spatialBlend = 0.0f;
@@ -347,6 +344,14 @@ namespace Amy
                 SceneManager.LoadScene("MapSelect");
             }
 
+            //Emergency exit key
+            if (Input.GetButton("RightBumper") && Input.GetButton("LeftBumper") && Input.GetButtonDown("Action"))
+            {
+                Timing.KillCoroutines();
+                SceneManager.LoadScene("MapSelect");
+            }
+
+
             //F3 reserved for DebugInfo pages
 
             //Switch girls.
@@ -475,12 +480,7 @@ namespace Amy
 
             }
 
-            //Emergency exit key
-            if (Input.GetButton("RightBumper") && Input.GetButton("LeftBumper") && Input.GetButtonDown("Action"))
-            {
-                Timing.KillCoroutines();
-                SceneManager.LoadScene("MapSelect");
-            }
+
 
             //if(Input.GetButtonDown())
 

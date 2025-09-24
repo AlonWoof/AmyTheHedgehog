@@ -318,7 +318,18 @@ namespace Amy
 			if (magic != 0x52504C41)
 				return false;
 
+			//Major Version
+			reader.ReadByte();
+
+			//Minor version
+			reader.ReadByte();
+
+			bool transTails = reader.ReadBoolean();
+
 			reader.Close();
+
+			PlayerManager.Instance.setStoryFlag("TAILS_CUNNY", transTails);
+			Debug.Log("TAILS_CUNNY: " + Animator.StringToHash("TAILS_CUNNY"));
 
 			return true;
 		}

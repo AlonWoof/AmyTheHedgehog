@@ -2369,7 +2369,6 @@ namespace Amy
 
 		void averageGroundNormal()
         {
-
 			Vector3 total = Vector3.zero;
 
 			for(int i = 0; i < 4; i++)

@@ -79,7 +79,6 @@ namespace Amy
 
 		public void followSister()
         {
-			Player pl = PlayerManager.Instance.mPlayerInstance;
 
 			aiplayer.desiredVirtualAnalogX = 0.0f;
 			aiplayer.desiredVirtualAnalogY = 0.0f;

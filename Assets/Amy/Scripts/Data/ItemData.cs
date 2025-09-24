@@ -19,6 +19,7 @@ namespace Amy
 		[TextArea]
 		public string description;
 		public Sprite icon;
+		public GameObject itemModel = null;
 		public bool consumable = true;
 
 
@@ -77,6 +78,12 @@ namespace Amy
 			}
 
 			return null;
+        }
+
+		public GameObject spawnItemModel()
+        {
+			GameObject inst = GameObject.Instantiate(itemModel);
+			return inst;
         }
 	}
 }

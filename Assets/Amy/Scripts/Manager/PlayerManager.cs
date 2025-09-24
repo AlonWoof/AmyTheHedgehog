@@ -307,10 +307,10 @@ namespace Amy
             DontDestroyOnLoad(inst);
             playerCheckpoint = inst.transform;
 
-
-
             SaveGame.readConfigFile();
             SaveGame.loadGame(saveFileSlot);
+
+            SaveGame.readSADXNudeModData();
         }
 
         public static string getPlayerNPCLocationString(PlayerNPCLocation loc)
@@ -402,6 +402,7 @@ namespace Amy
 
         //Important flags...
         //SADX_NUDE - has SADX nude mod installed
+        //TAILS_CUNNY - has trans tails enabled in sadx nude mod
 
         public bool getStoryFlag(int hash)
         {

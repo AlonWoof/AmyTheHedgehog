@@ -23,6 +23,7 @@ namespace Amy
 
 		bool hasItemData = false;
 		SuikaMartItemData data;
+		public GameObject itemModelInst;
 
 		// Start is called before the first frame update
 		void Start()
@@ -61,6 +62,7 @@ namespace Amy
 				alphaGroup.alpha = 0.0f;
 				itemName.text = "SORRY NOTHING";
 				//itemCost.text = data.itemPrice.ToString();
+				itemModelInst = null;
 				return;
 			}
 

@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using MEC;
 
 //////////////////////////////////////
 //         2024 AlonWoof            //
@@ -82,11 +83,23 @@ namespace Amy
 			sound.time = Random.Range(0, sound.clip.length);
         }
 
+		public void onCheck()
+        {
+			Timing.RunCoroutine(doCheck(), gameObject);
+        }
+
+		IEnumerator<float> doCheck()
+        {
+
+			CoroutineHandle msgCoroutine = UIManager.Instance.messageBox.showMessageBox("Now Playing: " + songs[currentSong].songTitle, SpeakerProfile.Default);
+
+			while (msgCoroutine.IsRunning)
+				yield return 0f;
+		}
+
 		void debugInput()
         {
 			
-				
-
 			if (Input.GetKeyDown(KeyCode.RightArrow))
 				playNextSong();
         }

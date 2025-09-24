@@ -25,7 +25,10 @@ namespace Amy
 	[System.Serializable]
 	public class Message
 	{
-		
+
+		public string speakerName;
+		public Image bustImage;
+
 		public string label;
 
 		[TextArea(1, 2)]
@@ -172,7 +175,7 @@ namespace Amy
 			mAnimator.Play("Appear");
 			yield return Timing.WaitForSeconds(0.5f);
 
-
+			
 
 			msg.onStartMessage.Invoke();
 

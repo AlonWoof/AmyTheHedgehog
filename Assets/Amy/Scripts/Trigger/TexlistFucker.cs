@@ -42,6 +42,10 @@ namespace Amy
 
 				foreach(Material m in r.materials)
 				{
+
+					if (m.shader.name.ToLower().Contains("body") || m.shader.name.ToLower().Contains("eye"))
+						continue;
+
 					Texture t = m.mainTexture;
 
 					if (t != null)
