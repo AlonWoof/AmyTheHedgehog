@@ -80,7 +80,9 @@ namespace Amy
         {
             //Timing.KillCoroutines();
             GameManager.Instance.debugMode = true;
+            PlayerManager.Instance.setStoryFlag("DEVCOMMENT", true);
             SceneManager.LoadScene("MapSelect");
+            
         }
 
         void activateWaremeCheat()
