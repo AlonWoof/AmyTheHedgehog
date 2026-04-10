@@ -341,95 +341,6 @@ Transform:
   m_Father: {fileID: 1650153875}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1001 &123779254
-PrefabInstance:
-  m_ObjectHideFlags: 0
-  serializedVersion: 2
-  m_Modification:
-    m_TransformParent: {fileID: 0}
-    m_Modifications:
-    - target: {fileID: 2185919587025440480, guid: 23abcd3a8f8afa54a9538b49c4cea271, type: 3}
-      propertyPath: m_Name
-      value: DevCommentaryJenny
-      objectReference: {fileID: 0}
-    - target: {fileID: 2185919587025440482, guid: 23abcd3a8f8afa54a9538b49c4cea271, type: 3}
-      propertyPath: m_RootOrder
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 2185919587025440482, guid: 23abcd3a8f8afa54a9538b49c4cea271, type: 3}
-      propertyPath: m_LocalPosition.x
-      value: 1.4488034
-      objectReference: {fileID: 0}
-    - target: {fileID: 2185919587025440482, guid: 23abcd3a8f8afa54a9538b49c4cea271, type: 3}
-      propertyPath: m_LocalPosition.y
-      value: -0.00000047683716
-      objectReference: {fileID: 0}
-    - target: {fileID: 2185919587025440482, guid: 23abcd3a8f8afa54a9538b49c4cea271, type: 3}
-      propertyPath: m_LocalPosition.z
-      value: -4.8715396
-      objectReference: {fileID: 0}
-    - target: {fileID: 2185919587025440482, guid: 23abcd3a8f8afa54a9538b49c4cea271, type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 2185919587025440482, guid: 23abcd3a8f8afa54a9538b49c4cea271, type: 3}
-      propertyPath: m_LocalRotation.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2185919587025440482, guid: 23abcd3a8f8afa54a9538b49c4cea271, type: 3}
-      propertyPath: m_LocalRotation.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2185919587025440482, guid: 23abcd3a8f8afa54a9538b49c4cea271, type: 3}
-      propertyPath: m_LocalRotation.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2185919587025440482, guid: 23abcd3a8f8afa54a9538b49c4cea271, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2185919587025440482, guid: 23abcd3a8f8afa54a9538b49c4cea271, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2185919587025440482, guid: 23abcd3a8f8afa54a9538b49c4cea271, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2185919587258823278, guid: 23abcd3a8f8afa54a9538b49c4cea271, type: 3}
-      propertyPath: SimpleMessage.messages.Array.size
-      value: 4
-      objectReference: {fileID: 0}
-    - target: {fileID: 2185919587258823278, guid: 23abcd3a8f8afa54a9538b49c4cea271, type: 3}
-      propertyPath: SimpleMessage.messages.Array.data[0]
-      value: ' I''m still unsure how I''m going to integrate
-
-        status effects
-        such as "dirty" or "scared"'
-      objectReference: {fileID: 0}
-    - target: {fileID: 2185919587258823278, guid: 23abcd3a8f8afa54a9538b49c4cea271, type: 3}
-      propertyPath: SimpleMessage.messages.Array.data[1]
-      value: 'They''re a bit of a remnant of the stealth survival
-
-        original
-        concept. But I''ve grown quite attached. '
-      objectReference: {fileID: 0}
-    - target: {fileID: 2185919587258823278, guid: 23abcd3a8f8afa54a9538b49c4cea271, type: 3}
-      propertyPath: SimpleMessage.messages.Array.data[2]
-      value: 'I know I want status effects, and I want
-
-        benefits to taking
-        care of these girls, but...'
-      objectReference: {fileID: 0}
-    - target: {fileID: 2185919587258823278, guid: 23abcd3a8f8afa54a9538b49c4cea271, type: 3}
-      propertyPath: SimpleMessage.messages.Array.data[3]
-      value: 'The question is, how do these systems interplay
-
-        in a way that''s
-        simple to understand and rewarding?'
-      objectReference: {fileID: 0}
-    m_RemovedComponents: []
-  m_SourcePrefab: {fileID: 100100000, guid: 23abcd3a8f8afa54a9538b49c4cea271, type: 3}
 --- !u!1 &138490782 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: -4293467355530967067, guid: 79b7df99440a1854997e083c443cd082, type: 3}
@@ -1747,6 +1658,9 @@ MonoBehaviour:
   mDirection: {x: 0, y: 0, z: 0}
   speakerProfile: 1
   AmyMessage:
+    speakerName: 
+    bustImage: {fileID: 0}
+    label: 
     messages:
     - NULL
     voice: {fileID: 0}
@@ -1764,6 +1678,9 @@ MonoBehaviour:
       m_PersistentCalls:
         m_Calls: []
   CreamMessage:
+    speakerName: 
+    bustImage: {fileID: 0}
+    label: 
     messages:
     - NULL
     voice: {fileID: 0}
@@ -1782,6 +1699,9 @@ MonoBehaviour:
         m_Calls: []
   hasHornyMessage: 0
   AmyHornyMessage:
+    speakerName: 
+    bustImage: {fileID: 0}
+    label: 
     messages:
     - NULL
     voice: {fileID: 0}
@@ -1799,6 +1719,9 @@ MonoBehaviour:
       m_PersistentCalls:
         m_Calls: []
   SickMessage:
+    speakerName: 
+    bustImage: {fileID: 0}
+    label: 
     messages:
     - NULL
     voice: {fileID: 0}
@@ -2843,6 +2766,7 @@ MonoBehaviour:
   isOutdoors: 0
   dontSpawnPlayer: 0
   forceYoungAmy: 0
+  enforceBGM: 1
   bgmData: {fileID: 0}
   preloadObjects: []
   shadow_dist: 1024
@@ -3082,6 +3006,9 @@ MonoBehaviour:
   mDirection: {x: 0, y: 0, z: 0}
   speakerProfile: 2
   AmyMessage:
+    speakerName: 
+    bustImage: {fileID: 0}
+    label: 
     messages:
     - NULL
     voice: {fileID: 0}
@@ -3099,6 +3026,9 @@ MonoBehaviour:
       m_PersistentCalls:
         m_Calls: []
   CreamMessage:
+    speakerName: 
+    bustImage: {fileID: 0}
+    label: 
     messages:
     - (Amy seems to be enjoying herself. )
     - (I wonder what she's doing? Should I try it?)
@@ -3118,6 +3048,9 @@ MonoBehaviour:
         m_Calls: []
   hasHornyMessage: 0
   AmyHornyMessage:
+    speakerName: 
+    bustImage: {fileID: 0}
+    label: 
     messages:
     - NULL
     voice: {fileID: 0}
@@ -3135,6 +3068,9 @@ MonoBehaviour:
       m_PersistentCalls:
         m_Calls: []
   SickMessage:
+    speakerName: 
+    bustImage: {fileID: 0}
+    label: 
     messages:
     - NULL
     voice: {fileID: 0}
@@ -3699,6 +3635,99 @@ Transform:
   m_Father: {fileID: 723245065}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1001 &1181435995
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 4680238852832548649, guid: 053124d1e88fbb64bb05cf4e94329496, type: 3}
+      propertyPath: m_Name
+      value: DevCommentaryJenny_01
+      objectReference: {fileID: 0}
+    - target: {fileID: 4680238852832548655, guid: 053124d1e88fbb64bb05cf4e94329496, type: 3}
+      propertyPath: m_RootOrder
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4680238852832548655, guid: 053124d1e88fbb64bb05cf4e94329496, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 1.4488034
+      objectReference: {fileID: 0}
+    - target: {fileID: 4680238852832548655, guid: 053124d1e88fbb64bb05cf4e94329496, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4680238852832548655, guid: 053124d1e88fbb64bb05cf4e94329496, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -4.8715396
+      objectReference: {fileID: 0}
+    - target: {fileID: 4680238852832548655, guid: 053124d1e88fbb64bb05cf4e94329496, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 0.7071068
+      objectReference: {fileID: 0}
+    - target: {fileID: 4680238852832548655, guid: 053124d1e88fbb64bb05cf4e94329496, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4680238852832548655, guid: 053124d1e88fbb64bb05cf4e94329496, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0.7071068
+      objectReference: {fileID: 0}
+    - target: {fileID: 4680238852832548655, guid: 053124d1e88fbb64bb05cf4e94329496, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4680238852832548655, guid: 053124d1e88fbb64bb05cf4e94329496, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4680238852832548655, guid: 053124d1e88fbb64bb05cf4e94329496, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: -90
+      objectReference: {fileID: 0}
+    - target: {fileID: 4680238852832548655, guid: 053124d1e88fbb64bb05cf4e94329496, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4680238853722287462, guid: 053124d1e88fbb64bb05cf4e94329496, type: 3}
+      propertyPath: globalMessage.messages.Array.size
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 4680238853722287462, guid: 053124d1e88fbb64bb05cf4e94329496, type: 3}
+      propertyPath: globalMessage.messages.Array.data[0]
+      value: 'I''m still unsure how I''m going to integrate
+
+        status effects
+        such as "dirty" or "scared".'
+      objectReference: {fileID: 0}
+    - target: {fileID: 4680238853722287462, guid: 053124d1e88fbb64bb05cf4e94329496, type: 3}
+      propertyPath: globalMessage.messages.Array.data[1]
+      value: 'They''re a bit of a remnant of the stealth survival
+
+        original
+        concept. But I''''ve grown quite attached.'
+      objectReference: {fileID: 0}
+    - target: {fileID: 4680238853722287462, guid: 053124d1e88fbb64bb05cf4e94329496, type: 3}
+      propertyPath: globalMessage.messages.Array.data[2]
+      value: 'I know I want status effects, and I want
+
+        benefits to taking
+        care of these girls, but...'
+      objectReference: {fileID: 0}
+    - target: {fileID: 4680238853722287462, guid: 053124d1e88fbb64bb05cf4e94329496, type: 3}
+      propertyPath: globalMessage.messages.Array.data[3]
+      value: 'The question is, how do these systems interplay
+
+        in a way that''s
+        simple to understand and rewarding?'
+      objectReference: {fileID: 0}
+    - target: {fileID: 5490703376553760793, guid: 053124d1e88fbb64bb05cf4e94329496, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 053124d1e88fbb64bb05cf4e94329496, type: 3}
 --- !u!1 &1196604743
 GameObject:
   m_ObjectHideFlags: 0
@@ -5208,6 +5237,9 @@ MonoBehaviour:
   mDirection: {x: 0, y: 0, z: 0}
   speakerProfile: 2
   AmyMessage:
+    speakerName: 
+    bustImage: {fileID: 0}
+    label: 
     messages:
     - NULL
     voice: {fileID: 0}
@@ -5225,6 +5257,9 @@ MonoBehaviour:
       m_PersistentCalls:
         m_Calls: []
   CreamMessage:
+    speakerName: 
+    bustImage: {fileID: 0}
+    label: 
     messages:
     - NULL
     voice: {fileID: 0}
@@ -5243,6 +5278,9 @@ MonoBehaviour:
         m_Calls: []
   hasHornyMessage: 0
   AmyHornyMessage:
+    speakerName: 
+    bustImage: {fileID: 0}
+    label: 
     messages:
     - NULL
     voice: {fileID: 0}
@@ -5260,6 +5298,9 @@ MonoBehaviour:
       m_PersistentCalls:
         m_Calls: []
   SickMessage:
+    speakerName: 
+    bustImage: {fileID: 0}
+    label: 
     messages:
     - NULL
     voice: {fileID: 0}

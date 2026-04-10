@@ -111,6 +111,15 @@ namespace Amy
 			mAnimator.Play("ButtSlam_Impact");
 			SpawnFX(GameManager.Instance.systemData.RES_AmyPlayerFX.fx_creamButtSlamImpact);
 
+			yield return Timing.WaitForSeconds(0.05f);
+
+			if (!mPlayer.isAiControlled)
+			{
+				GameManager.Instance.controllerRumble(0.25f, 0.75f, 0.75f);
+				mPlayer.tpc.shakeCamera(0.2f, 0.15f);
+				GameManager.Instance.hitStun(0.03f, 0.0f);
+			}
+
 			yield return Timing.WaitForSeconds(0.25f);
 			mAnimator.Play("ButtSlam_End");
 

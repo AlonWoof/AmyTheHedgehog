@@ -4,7 +4,7 @@ using UnityEngine;
 using MEC;
 using Cinemachine;
 
-/* Copyright 2021 Jennifer Haden */
+/* Copyright 2026 Jennifer Haden */
 namespace Amy
 {
 
@@ -50,7 +50,7 @@ namespace Amy
 
             if(other.GetComponent<Player>())
             {
-                Timing.RunCoroutine(sceneTransitionCutscene(),Segment.RealtimeUpdate);
+                Timing.RunCoroutine(sceneTransitionCutscene(),Segment.RealtimeUpdate, gameObject);
             }
         }
 
@@ -68,26 +68,30 @@ namespace Amy
             {
                 vCam.m_Priority = 999;
                 vCam.gameObject.SetActive(true);
+                vCam.m_Lens.FieldOfView = GameManager.Instance.config.desiredFOV;
             }
 
             if (moveTarget)
             {
 
-               // mPlayer.changeCurrentAction(PlayerActionState.Cutscene);
+                // mPlayer.changeCurrentAction(PlayerActionState.Cutscene);
+                
+                if(mPlayer.currentMode != PlayerModes.NORMAL || mPlayer.currentMode != PlayerModes.SWIMMING)
+                    mPlayer.changeCurrentMode(PlayerModes.NORMAL);
 
-               // CoroutineHandle moveAction = mPlayer.GetComponent<PlayerCutscene>().moveToPoint(moveTarget.transform.position, 0.2f, 1.0f, true);
+                CoroutineHandle moveAction = Timing.RunCoroutine(movePlayerToTarget(moveTarget.transform.position));
 
                 if (waitForMove)
                 {
-                   // while (moveAction.IsRunning)
-                  //  {
+                    while (moveAction.IsRunning)
+                    {
                         yield return 0f;
-                   // }
+                    }
                 }
             }
 
-            //if(!waitForMove)
-                //yield return Timing.WaitForSeconds(timer);
+            if(!waitForMove)
+                yield return Timing.WaitForSeconds(timer);
 
             PlayerManager.Instance.lastExit = exitNumber;
 
@@ -100,6 +104,30 @@ namespace Amy
 
 
             GameManager.Instance.loadScene(targetScene,whiteFade);
+        }
+
+        IEnumerator<float> movePlayerToTarget(Vector3 targetPos)
+        {
+            float startAccel = Mathf.Clamp(mPlayer.acceleration.z, 3.0f, 16.0f);
+
+
+
+            Vector3 moveDir = Helper.getHorizontalDirectionTo(mPlayer.transform.position, targetPos);
+            moveDir.Normalize();
+
+            mPlayer.setAngleInstantly(moveDir);
+            mPlayer.acceleration.z = startAccel;
+
+            float dst = Vector3.Distance(Helper.zeroAltitude(mPlayer.transform.position), Helper.zeroAltitude(targetPos));
+
+            while(dst > 1.0f)
+            {
+                mPlayer.setAngleInstantly(moveDir);
+                mPlayer.acceleration.z = startAccel;
+
+                dst = Vector3.Distance(Helper.zeroAltitude(mPlayer.transform.position), Helper.zeroAltitude(targetPos));
+                yield return 0f;
+            }
         }
 
         private void OnValidate()

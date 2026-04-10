@@ -24,8 +24,8 @@ namespace Amy
 	{
 
 		const float timeForSearch = 30.0f;
-		const float viewRange = 16.0f;
-		const float viewFOV = 45.0f;
+		const float viewRange = 64.0f;
+		const float viewFOV = 60.0f;
 		const float wanderSpeed = 4.0f;
 		const float chaseSpeed = 6.0f;
 

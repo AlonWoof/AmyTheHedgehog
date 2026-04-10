@@ -15,7 +15,6 @@ namespace Amy
 
 		public Message SimpleMessage;
 
-
         public void simpleTalk()
         {
             Timing.RunCoroutine(doSimpleTalk().CancelWith(gameObject));
@@ -35,8 +34,6 @@ namespace Amy
             msg.onEndPrint = onEndPrint;
 
             CoroutineHandle msgProc = UIManager.Instance.messageBox.showMessageBox(msg, speakerProfile);
-
-
 
             if (path)
                 path.disableMovement();

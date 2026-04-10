@@ -17,7 +17,6 @@ namespace Amy
 		public Vector3 knockOrigin;
 
 		float hurtAnimTimer = 0.75f;
-		float verticalVelocity;
 		int framesAirborne = 0;
 
 
@@ -38,7 +37,7 @@ namespace Amy
 			//grounderIK.enabled = false;
 			//mPlayer.isGrounded = false;
 			mPlayer.isOnGround = false;
-			verticalVelocity = 0.0f;
+			//verticalVelocity = 0.0f;
 			framesAirborne = 0;
 
 		}
@@ -50,6 +49,12 @@ namespace Amy
 			mPlayer.acceleration.y = power * 0.65f;
 			hurtAnimTimer = 0.25f;
 
+			if (!mPlayer.isAiControlled)
+			{
+				GameManager.Instance.controllerRumble(1.0f, 1.0f, 1.0f);
+				mPlayer.tpc.shakeCamera(0.2f, 0.15f);
+				GameManager.Instance.hitStun(0.04f, 0.0f);
+			}
 
 			mAnimator.Play("Hurt");
 		}
@@ -70,8 +75,13 @@ namespace Amy
 
 			mAnimator.Play("Hurt");
 
-			if(!mPlayer.isAiControlled)
+			if (!mPlayer.isAiControlled)
+			{
 				GameManager.Instance.controllerRumble(1.0f, 1.0f, 1.0f);
+				mPlayer.tpc.shakeCamera(0.2f, 0.15f);
+				GameManager.Instance.hitStun(0.04f, 0.0f);
+			}
+
 		}
 
 		// Update is called once per frame

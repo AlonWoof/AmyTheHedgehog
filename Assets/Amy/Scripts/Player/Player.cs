@@ -881,8 +881,7 @@ namespace Amy
 			if (currentMode == PlayerModes.NORMAL || currentMode == PlayerModes.FLY || currentMode == PlayerModes.SLINGSHOT)
             {
 				
-
-				if (currentMode == PlayerModes.NORMAL && force > 1.0f)
+				if (currentMode == PlayerModes.NORMAL && force > 8.0f)
 				{
 					if (dmg.useSourceDir)
 					{
@@ -1558,8 +1557,12 @@ namespace Amy
 			getStatus().currentStamina -= hammerJumpStaimaCost;
 			getStatus().clampValues();
 
-			if(!isAiControlled)
+			if (!isAiControlled)
+			{
 				GameManager.Instance.controllerRumble(0.2f, 0.6f, 0.6f);
+				//tpc.shakeCamera(0.2f, 0.15f);
+				GameManager.Instance.hitStun(0.04f, 0.0f);
+			}
 
 			mAnimator.Play("Mouth_Jump");
 			mVoice.playVoiceDelayed(Random.Range(0.05f, 0.1f), mVoice.altJumping);
@@ -1708,6 +1711,7 @@ namespace Amy
 				}
 			}
 		}
+
 
 		public void airHammerAttack()
         {

@@ -21,7 +21,7 @@ namespace Amy
 		public int universeNumberChance = -1;
 
 		// Start is called before the first frame update
-		void Awake()
+		void Start()
 	    {
 			executeEvents();
 		}

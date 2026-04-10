@@ -64,6 +64,7 @@ namespace Amy
         public bool forceYoungAmy = false;
 
 
+        public bool enforceBGM = true;
         public BGMData bgmData;
 
         public List<GameObject> preloadObjects;

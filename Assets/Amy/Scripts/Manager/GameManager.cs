@@ -16,7 +16,7 @@ namespace Amy
         public static Color CreamColor = new Color(0.972549f, 0.8784314f, 0.7215686f);
         public static Color YumeColor = new Color(0.9294118f, 0.8666667f, 0.427451f);
         public static Color SuikaColor = new Color(0.2705882f, 0.5647059f, 0.1254902f);
-        public static Color JennyColor = new Color(0.0f, 0.3098039f, 0.8666667f);
+        public static Color JennyColor = new Color(0.482f, 0.0901f, 0.686f);
 
         public static Color choiceHighlightColor = new Color(1.0f, 1.0f, 1.0f);
         public static Color choiceDefaultColor = new Color(0.6f, 0.6f, 0.6f);
@@ -359,8 +359,6 @@ namespace Amy
             {
                 if(PlayerManager.Instance.currentCharacter == PlayableCharacter.Amy)
                     PlayerManager.Instance.characterSwitch(PlayableCharacter.Cream);
-                else if (PlayerManager.Instance.currentCharacter == PlayableCharacter.Cream)
-                    PlayerManager.Instance.characterSwitch(PlayableCharacter.YoungAmy);
                 else
                     PlayerManager.Instance.characterSwitch(PlayableCharacter.Amy);
             }
@@ -368,7 +366,7 @@ namespace Amy
             //Insta-period lol
             if (Input.GetKeyDown(KeyCode.F5))
             {
-                PlayerManager.Instance.daysTilMenstruation = 0;
+                //PlayerManager.Instance.daysTilMenstruation = 0;
             }
 
             //Randomize Day Events
@@ -507,6 +505,31 @@ namespace Amy
             }
 
             setAnalogPressedFlags();
+        }
+
+        public void hitStun(float time, float timeScale)
+        {
+            if (Time.timeScale < 1.0f)
+                return;
+
+            Timing.RunCoroutine(doHitStun(time, timeScale).CancelWith(gameObject), Segment.RealtimeUpdate);
+        }
+
+        IEnumerator<float> doHitStun(float time, float timeScale)
+        {
+            float maxTime = time;
+
+            while (time > 0.0f)
+            {
+                float fac = time / maxTime;
+
+                Time.timeScale = timeScale;
+
+                time -= Time.unscaledDeltaTime;
+                yield return 0f;
+            }
+
+            Time.timeScale = 1.0f;
         }
 
         public void controllerRumble(float time, float power_left, float power_right)
@@ -771,7 +794,8 @@ namespace Amy
 
             if (scn != null)
             {
-                MusicManager.Instance.changeSongs(scn.bgmData);
+                if(scn.enforceBGM || scn.bgmData != null)
+                    MusicManager.Instance.changeSongs(scn.bgmData);
 
                 if(scn.forceYoungAmy)
                 {

@@ -63,6 +63,9 @@ namespace Amy
         CameraDOFBox dof;
         Collider camCollider;
 
+        float shakeTime = 0.0f;
+        float shakeAmount = 0.0f;
+
         private void Awake()
         {
 			vCam = gameObject.AddComponent<CinemachineVirtualCamera>();
@@ -337,10 +340,27 @@ namespace Amy
             if (!lockPosition)
                 transform.position = Vector3.Lerp(transform.position, desiredPosition, t * 30.0f);
 
+
+            if(shakeTime > 0.0f)
+            {
+                float fac = Mathf.Clamp01(shakeTime) / 1.0f;
+
+                transform.position += (Random.insideUnitSphere * shakeAmount);
+                shakeTime -= Time.deltaTime;
+                shakeAmount = Mathf.Lerp(shakeAmount, 0.0f, Time.deltaTime);
+            }
+
+
             transform.LookAt(lookPosition);
 
             Occlusion();
 
+        }
+
+        public void shakeCamera(float time, float amount = 0.1f)
+        {
+            shakeTime = time;
+            shakeAmount = amount;
         }
 
         public void updateDesiredPositionPaused()

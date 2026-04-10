@@ -169,6 +169,7 @@ namespace Amy
 			updatePreviousWaypointList();
 			previousWaypoints.Add(w);
 
+
 			currentRoutine = Timing.RunCoroutine(goToPointRoutine(findNextWaypoint()).CancelWith(gameObject));
 		}
 

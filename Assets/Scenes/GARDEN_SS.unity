@@ -26,7 +26,7 @@ RenderSettings:
   m_AmbientIntensity: 1
   m_AmbientMode: 1
   m_SubtractiveShadowColor: {r: 0.42, g: 0.478, b: 0.627, a: 1}
-  m_SkyboxMaterial: {fileID: 10304, guid: 0000000000000000f000000000000000, type: 0}
+  m_SkyboxMaterial: {fileID: 2100000, guid: 35198e2c6ff638c478b6d05bf2864198, type: 2}
   m_HaloStrength: 0.5
   m_FlareStrength: 1
   m_FlareFadeSpeed: 3
@@ -172,36 +172,18 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   areaName: Chao Garden
   showTitleCard: 0
+  cameraClearColor: {r: 0, g: 0, b: 0, a: 1}
   titleCardStoryFlagHash: -1
-  isHubRoom: 0
+  isHubWorld: 0
+  isSmallRoom: 0
   isOutdoors: 1
-  freezeTime: 0
-  humanDisguise: 0
   dontSpawnPlayer: 0
-  forceHour: -1
-  forceMinute: -1
+  forceYoungAmy: 0
+  enforceBGM: 1
   bgmData: {fileID: 0}
-  currentFogColor: {r: 0, g: 0, b: 0, a: 0}
   preloadObjects: []
   shadow_dist: 1024
-  isNight: 0
-  hasDayNightCycle: 0
-  lighting_day:
-    skybox_mat: {fileID: 0}
-    light_sky: {r: 0, g: 0, b: 0, a: 0}
-    light_equator: {r: 0, g: 0, b: 0, a: 0}
-    light_ground: {r: 0, g: 0, b: 0, a: 0}
-    fog_color: {r: 0, g: 0, b: 0, a: 0}
-    fog_density: 0
-  lighting_night:
-    skybox_mat: {fileID: 0}
-    light_sky: {r: 0, g: 0, b: 0, a: 0}
-    light_equator: {r: 0, g: 0, b: 0, a: 0}
-    light_ground: {r: 0, g: 0, b: 0, a: 0}
-    fog_color: {r: 0, g: 0, b: 0, a: 0}
-    fog_density: 0
-  daySet: {fileID: 0}
-  nightSet: {fileID: 0}
+  postProcessProfile: {fileID: 0}
 --- !u!4 &48746391
 Transform:
   m_ObjectHideFlags: 0
@@ -949,6 +931,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   exitNumber: 0
   altCheckpoint: {fileID: 0}
+  amyMesh: {fileID: 0}
 --- !u!1 &1095958408
 GameObject:
   m_ObjectHideFlags: 0
