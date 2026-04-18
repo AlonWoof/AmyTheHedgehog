@@ -13,11 +13,16 @@ namespace Amy
     public class WaterVolume : MonoBehaviour
     {
 
+        CameraWaterFX fx = null;
+        Collider camCollider = null;
+
         private void OnTriggerEnter(Collider other)
         {
             if (other.gameObject.GetComponentInChildren<CameraWaterFX>())
             {
-                other.gameObject.GetComponentInChildren<CameraWaterFX>().isInWater = true;
+                fx = other.gameObject.GetComponentInChildren<CameraWaterFX>();
+                fx.isInWater = true;
+                camCollider = other;
             }
 
             Rigidbody r = other.GetComponent<Rigidbody>();
@@ -33,12 +38,25 @@ namespace Amy
             }
         }
 
+        private void OnTriggerStay(Collider other)
+        {
+            if(other == camCollider)
+            {
+                if(fx)
+                {
+                    fx.isInWater = true;
+                }
+            }
+        }
 
         private void OnTriggerExit(Collider other)
         {
-            if (other.gameObject.GetComponentInChildren<CameraWaterFX>())
+            if (other == camCollider)
             {
-                other.gameObject.GetComponentInChildren<CameraWaterFX>().isInWater = false;
+                if (fx)
+                {
+                    fx.isInWater = false;
+                }
             }
         }
     }

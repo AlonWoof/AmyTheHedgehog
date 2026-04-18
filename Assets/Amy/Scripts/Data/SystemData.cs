@@ -69,6 +69,7 @@ namespace Amy
         public GameObject RES_WaterWadingFX;
         public GameObject RES_ActorWaterSplashFX;
         public GameObject RES_ActorWaterEmergeFX;
+        public GameObject RES_ActorSwimmingFX;
         public GameObject RES_RingTobitiri;
         public GameObject RES_RingTobitiriFX;
 

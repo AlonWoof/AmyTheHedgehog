@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.Events;
 using MEC;
 
-/* Copyright 2025 Jennifer Haden */
+/* Copyright 2026 Jennifer Haden */
 namespace Amy
 {
 

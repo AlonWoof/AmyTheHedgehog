@@ -18,6 +18,8 @@ namespace Amy
 
         float swimSpeed = 6.0f;
 
+        bool isDiving = false;
+        float depth = 0.0f;
 
         // Start is called before the first frame update
         void Start()
@@ -77,9 +79,11 @@ namespace Amy
             mCurrentMovement = Vector3.Lerp(mCurrentMovement, mDesiredMovement, Time.deltaTime * 8.0f);
             currentVerticalMovement = Mathf.Lerp(currentVerticalMovement, desiredVerticalMovement, Time.deltaTime * 8.0f);
 
+            //y;
+
             speedMult = mPlayer.mAnimator.GetFloat("animProgress");
             mPlayer.mAnimator.SetFloat("swim_z", mCurrentMovement.magnitude);
-            mPlayer.mAnimator.SetFloat("swim_y", currentVerticalMovement);
+            mPlayer.mAnimator.SetFloat("swim_y", mRigidBody.velocity.y);
         }
 
         private void FixedUpdate()
@@ -132,7 +136,9 @@ namespace Amy
 
         bool isAtSurface()
         {
-            if (mPlayer.getWaterDepth() <= mPlayer.headOffsetFromGround)
+            depth = mPlayer.getWaterDepth() - mPlayer.headOffsetFromGround;
+
+            if (depth <= 0)
                 return true;
 
             return false;
@@ -168,6 +174,31 @@ namespace Amy
                 moveVec.y = Mathf.Clamp(moveVec.y, -32, -3);
             }
 
+
+            if (depth > 1.0f)
+                isDiving = true;
+
+            if (isDiving && depth < 0.5f)
+            {
+                if (mRigidBody.velocity.y > 1.2f)
+                {
+                    mAnimator.CrossFade("Surfacing", 0.1f);
+                    currentVerticalMovement += 0.5f;
+                    mPlayer.tpc.shakeCamera(0.012f, 0.075f);
+
+
+                }
+
+
+                GameObject splish = GameObject.Instantiate(GameManager.Instance.systemData.RES_ActorWaterEmergeFX);
+                splish.transform.position = mPlayer.transform.position + (mPlayer.getWaterDepth() * Vector3.up);
+
+                //Debug.Log("y velo: " + mRigidBody.velocity.y);
+
+                isDiving = false;
+            }
+
+            
 
             // mRigidBody.velocity = ((mPlayer.mCurrentMovement * swimSpeed) * speedMult) + (Vector3.up * 0.23f) + Vector3.up * (currentVerticalMovement * swimSpeed);// * mPlayer.mForwardVelocity;
             //mRigidBody.velocity = ;
@@ -245,7 +276,7 @@ namespace Amy
                 mPlayer.acceleration.z = mRigidBody.velocity.magnitude;
                 mPlayer.speed = mRigidBody.velocity;
                 mPlayer.Jump(true);
-                mPlayer.acceleration.y += mPlayer.mParam.jumpSpeed;
+                mPlayer.acceleration.y += (mPlayer.mParam.jumpSpeed * 0.5f);
             }
 
             if (Input.GetButton("Jump") && !isAtSurface())

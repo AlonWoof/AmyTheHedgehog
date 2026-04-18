@@ -197,7 +197,8 @@ GameObject:
   m_Component:
   - component: {fileID: 189152046}
   - component: {fileID: 189152045}
-  m_Layer: 0
+  - component: {fileID: 189152047}
+  m_Layer: 20
   m_Name: SceneInfo
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -218,17 +219,18 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   areaName: Default Zone
   showTitleCard: 0
+  cameraClearColor: {r: 0, g: 0, b: 0, a: 1}
   titleCardStoryFlagHash: -1
+  isHubWorld: 0
+  isSmallRoom: 0
   isOutdoors: 1
-  freezeTime: 0
-  humanDisguise: 0
   dontSpawnPlayer: 0
-  forceHour: -1
-  forceMinute: -1
+  forceYoungAmy: 0
+  enforceBGM: 1
   bgmData: {fileID: 0}
-  currentFogColor: {r: 0, g: 0, b: 0, a: 0}
   preloadObjects: []
   shadow_dist: 1024
+  postProcessProfile: {fileID: 0}
 --- !u!4 &189152046
 Transform:
   m_ObjectHideFlags: 0
@@ -243,6 +245,23 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &189152047
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 189152044}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8b9a305e18de0c04dbd257a21cd47087, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  sharedProfile: {fileID: 0}
+  isGlobal: 1
+  blendDistance: 0
+  weight: 1
+  priority: 0
 --- !u!1 &266246978
 GameObject:
   m_ObjectHideFlags: 0
@@ -367,6 +386,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   exitNumber: 0
   altCheckpoint: {fileID: 0}
+  amyMesh: {fileID: 3031404434518301089, guid: 8ef8767801823c442827b836a28a15a6, type: 3}
 --- !u!4 &467987005
 Transform:
   m_ObjectHideFlags: 0
@@ -412,6 +432,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   exitNumber: 2
   altCheckpoint: {fileID: 0}
+  amyMesh: {fileID: 0}
 --- !u!4 &684483965
 Transform:
   m_ObjectHideFlags: 0
@@ -625,7 +646,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: f98cad1481e5c744389b0ae59ee0789f, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 26.221561
+      value: -1.8162804
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: f98cad1481e5c744389b0ae59ee0789f, type: 3}
       propertyPath: m_LocalPosition.y
@@ -633,7 +654,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: f98cad1481e5c744389b0ae59ee0789f, type: 3}
       propertyPath: m_LocalPosition.z
-      value: -12.040308
+      value: -14.763423
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: f98cad1481e5c744389b0ae59ee0789f, type: 3}
       propertyPath: m_LocalRotation.w
@@ -1183,6 +1204,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   exitNumber: 1
   altCheckpoint: {fileID: 0}
+  amyMesh: {fileID: 0}
 --- !u!4 &1468793492
 Transform:
   m_ObjectHideFlags: 0

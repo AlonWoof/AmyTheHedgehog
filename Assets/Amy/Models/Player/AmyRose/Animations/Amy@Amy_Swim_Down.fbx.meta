@@ -8,7 +8,7 @@ ModelImporter:
     second: Amy_Swim_Down
   externalObjects: {}
   materials:
-    materialImportMode: 2
+    materialImportMode: 0
     materialName: 0
     materialSearch: 1
     materialLocation: 1
@@ -60,8 +60,56 @@ ModelImporter:
       heightFromFeet: 0
       mirror: 0
       bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
-      curves: []
-      events: []
+      curves:
+      - name: animProgress
+        curve:
+          serializedVersion: 2
+          curve:
+          - serializedVersion: 3
+            time: 0
+            value: 0.5
+            inSlope: 4.2431474
+            outSlope: 4.2431474
+            tangentMode: 0
+            weightedMode: 0
+            inWeight: 0
+            outWeight: 0.113807105
+          - serializedVersion: 3
+            time: 0.22222248
+            value: 0.9870283
+            inSlope: 0.3456416
+            outSlope: 0.3456416
+            tangentMode: 0
+            weightedMode: 0
+            inWeight: 0.6688315
+            outWeight: 0.05702535
+          - serializedVersion: 3
+            time: 1
+            value: 0.5
+            inSlope: 0
+            outSlope: 0
+            tangentMode: 0
+            weightedMode: 0
+            inWeight: 0
+            outWeight: 0
+          preInfinity: 3
+          postInfinity: 3
+          rotationOrder: 4
+      events:
+      - time: 0.22182469
+        functionName: SwimSurface
+        data: 
+        objectReferenceParameter: {instanceID: 0}
+        floatParameter: 0
+        intParameter: 0
+        messageOptions: 0
+      - time: 0.2254025
+        functionName: SwimSurface
+        data: 
+        objectReferenceParameter: {instanceID: 0}
+        floatParameter: 0
+        intParameter: 0
+        messageOptions: 0
       transformMask: []
       maskType: 3
       maskSource: {instanceID: 0}

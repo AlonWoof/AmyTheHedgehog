@@ -5,6 +5,7 @@ Shader "AlonWoof/Dolphin/Triplanar"
 	Properties
 	{
 		_MainTex("MainTex", 2D) = "white" {}
+		_Bump("Bump", 2D) = "bump" {}
 		_Scale("Scale", Float) = 1
 		_Color("Color", Color) = (1,1,1,1)
 		_Offset("Offset", Vector) = (0,0,0,0)
@@ -35,10 +36,27 @@ Shader "AlonWoof/Dolphin/Triplanar"
 			float4 vertexColor : COLOR;
 		};
 
-		sampler2D _MainTex;
+		sampler2D _Bump;
 		uniform float _Scale;
 		uniform float3 _Offset;
+		sampler2D _MainTex;
 		uniform float4 _Color;
+
+
+		inline float3 TriplanarSampling11( sampler2D topTexMap, float3 worldPos, float3 worldNormal, float falloff, float2 tiling, float3 normalScale, float3 index )
+		{
+			float3 projNormal = ( pow( abs( worldNormal ), falloff ) );
+			projNormal /= ( projNormal.x + projNormal.y + projNormal.z ) + 0.00001;
+			float3 nsign = sign( worldNormal );
+			half4 xNorm; half4 yNorm; half4 zNorm;
+			xNorm = tex2D( topTexMap, tiling * worldPos.zy * float2(  nsign.x, 1.0 ) );
+			yNorm = tex2D( topTexMap, tiling * worldPos.xz * float2(  nsign.y, 1.0 ) );
+			zNorm = tex2D( topTexMap, tiling * worldPos.xy * float2( -nsign.z, 1.0 ) );
+			xNorm.xyz  = half3( UnpackNormal( xNorm ).xy * float2(  nsign.x, 1.0 ) + worldNormal.zy, worldNormal.x ).zyx;
+			yNorm.xyz  = half3( UnpackNormal( yNorm ).xy * float2(  nsign.y, 1.0 ) + worldNormal.xz, worldNormal.y ).xzy;
+			zNorm.xyz  = half3( UnpackNormal( zNorm ).xy * float2( -nsign.z, 1.0 ) + worldNormal.xy, worldNormal.z ).xyz;
+			return normalize( xNorm.xyz * projNormal.x + yNorm.xyz * projNormal.y + zNorm.xyz * projNormal.z );
+		}
 
 
 		inline float4 TriplanarSampling2( sampler2D topTexMap, float3 worldPos, float3 worldNormal, float falloff, float2 tiling, float3 normalScale, float3 index )
@@ -56,11 +74,18 @@ Shader "AlonWoof/Dolphin/Triplanar"
 
 		void surf( Input i , inout SurfaceOutput o )
 		{
-			o.Normal = float3(0,0,1);
 			float2 temp_cast_0 = (_Scale).xx;
 			float3 ase_worldPos = i.worldPos;
 			float3 ase_worldNormal = WorldNormalVector( i, float3( 0, 0, 1 ) );
-			float4 triplanar2 = TriplanarSampling2( _MainTex, ( ase_worldPos + _Offset ), ase_worldNormal, 1.0, temp_cast_0, 1.0, 0 );
+			float3 ase_worldTangent = WorldNormalVector( i, float3( 1, 0, 0 ) );
+			float3 ase_worldBitangent = WorldNormalVector( i, float3( 0, 1, 0 ) );
+			float3x3 ase_worldToTangent = float3x3( ase_worldTangent, ase_worldBitangent, ase_worldNormal );
+			float3 temp_output_9_0 = ( ase_worldPos + _Offset );
+			float3 triplanar11 = TriplanarSampling11( _Bump, temp_output_9_0, ase_worldNormal, 1.0, temp_cast_0, 1.0, 0 );
+			float3 tanTriplanarNormal11 = mul( ase_worldToTangent, triplanar11 );
+			o.Normal = tanTriplanarNormal11;
+			float2 temp_cast_1 = (_Scale).xx;
+			float4 triplanar2 = TriplanarSampling2( _MainTex, temp_output_9_0, ase_worldNormal, 1.0, temp_cast_1, 1.0, 0 );
 			o.Albedo = ( triplanar2 * ( _Color * i.vertexColor ) ).xyz;
 			o.Alpha = 1;
 		}
@@ -151,24 +176,28 @@ Shader "AlonWoof/Dolphin/Triplanar"
 }
 /*ASEBEGIN
 Version=19105
-Node;AmplifyShaderEditor.StandardSurfaceOutputNode;0;2.004095,0;Float;False;True;-1;2;ASEMaterialInspector;0;0;Lambert;AlonWoof/Dolphin/Triplanar;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;Back;0;False;;0;False;;False;0;False;;0;False;;False;0;Opaque;0.5;True;True;0;False;Opaque;;Geometry;All;12;all;True;True;True;True;0;False;;False;0;False;;255;False;;255;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;False;2;15;10;25;False;0.5;True;0;0;False;;0;False;;0;0;False;;0;False;;0;False;;0;False;;0;False;0;0,0,0,0;VertexOffset;True;False;Cylindrical;False;True;Relative;0;;-1;-1;-1;-1;0;False;0;0;False;;-1;0;False;;0;0;0;False;0.1;False;;0;False;;False;15;0;FLOAT3;0,0,0;False;1;FLOAT3;0,0,0;False;2;FLOAT3;0,0,0;False;3;FLOAT;0;False;4;FLOAT;0;False;6;FLOAT3;0,0,0;False;7;FLOAT3;0,0,0;False;8;FLOAT;0;False;9;FLOAT;0;False;10;FLOAT;0;False;13;FLOAT3;0,0,0;False;11;FLOAT3;0,0,0;False;12;FLOAT3;0,0,0;False;14;FLOAT4;0,0,0,0;False;15;FLOAT3;0,0,0;False;0
-Node;AmplifyShaderEditor.TriplanarNode;2;-804.5828,-129.041;Inherit;True;Spherical;World;False;MainTex;_MainTex;white;0;None;Mid Texture 0;_MidTexture0;white;-1;None;Bot Texture 0;_BotTexture0;white;-1;None;Triplanar Sampler;Tangent;10;0;SAMPLER2D;;False;5;FLOAT;1;False;1;SAMPLER2D;;False;6;FLOAT;0;False;2;SAMPLER2D;;False;7;FLOAT;0;False;9;FLOAT3;0,0,0;False;8;FLOAT;1;False;3;FLOAT2;1,1;False;4;FLOAT;1;False;5;FLOAT4;0;FLOAT;1;FLOAT;2;FLOAT;3;FLOAT;4
-Node;AmplifyShaderEditor.SimpleMultiplyOpNode;6;-302.636,110.4764;Inherit;False;2;2;0;FLOAT4;0,0,0,0;False;1;COLOR;0,0,0,0;False;1;FLOAT4;0
-Node;AmplifyShaderEditor.SimpleMultiplyOpNode;5;-551.636,156.4764;Inherit;False;2;2;0;COLOR;0,0,0,0;False;1;COLOR;0,0,0,0;False;1;COLOR;0
 Node;AmplifyShaderEditor.VertexColorNode;7;-1001.357,576.6031;Inherit;False;0;5;COLOR;0;FLOAT;1;FLOAT;2;FLOAT;3;FLOAT;4
-Node;AmplifyShaderEditor.ColorNode;4;-1025.636,295.4764;Inherit;False;Property;_Color;Color;2;0;Create;True;0;0;0;False;0;False;1,1,1,1;1,1,1,1;True;0;5;COLOR;0;FLOAT;1;FLOAT;2;FLOAT;3;FLOAT;4
-Node;AmplifyShaderEditor.RangedFloatNode;3;-1225.789,-33.52049;Inherit;False;Property;_Scale;Scale;1;0;Create;True;0;0;0;False;0;False;1;0.5;0;0;0;1;FLOAT;0
-Node;AmplifyShaderEditor.WorldPosInputsNode;8;-1326.393,-317.7189;Inherit;False;0;4;FLOAT3;0;FLOAT;1;FLOAT;2;FLOAT;3
-Node;AmplifyShaderEditor.SimpleAddOpNode;9;-1027.393,-328.7189;Inherit;False;2;2;0;FLOAT3;0,0,0;False;1;FLOAT3;0,0,0;False;1;FLOAT3;0
-Node;AmplifyShaderEditor.Vector3Node;10;-1355.393,-179.7189;Inherit;False;Property;_Offset;Offset;3;0;Create;True;0;0;0;False;0;False;0,0,0;0,0,0;0;4;FLOAT3;0;FLOAT;1;FLOAT;2;FLOAT;3
-WireConnection;0;0;6;0
-WireConnection;2;9;9;0
-WireConnection;2;3;3;0
-WireConnection;6;0;2;0
-WireConnection;6;1;5;0
-WireConnection;5;0;4;0
-WireConnection;5;1;7;0
+Node;AmplifyShaderEditor.ColorNode;4;-1025.636,295.4764;Inherit;False;Property;_Color;Color;3;0;Create;True;0;0;0;False;0;False;1,1,1,1;0.8,0.8,0.8,1;True;0;5;COLOR;0;FLOAT;1;FLOAT;2;FLOAT;3;FLOAT;4
+Node;AmplifyShaderEditor.WorldPosInputsNode;8;-1497.993,-395.7189;Inherit;False;0;4;FLOAT3;0;FLOAT;1;FLOAT;2;FLOAT;3
+Node;AmplifyShaderEditor.Vector3Node;10;-1477.593,-248.6189;Inherit;False;Property;_Offset;Offset;4;0;Create;True;0;0;0;False;0;False;0,0,0;0,0,0;0;4;FLOAT3;0;FLOAT;1;FLOAT;2;FLOAT;3
+Node;AmplifyShaderEditor.RangedFloatNode;3;-1461.889,-118.0205;Inherit;False;Property;_Scale;Scale;2;0;Create;True;0;0;0;False;0;False;1;1;0;0;0;1;FLOAT;0
+Node;AmplifyShaderEditor.SimpleAddOpNode;9;-1237.993,-279.3189;Inherit;False;2;2;0;FLOAT3;0,0,0;False;1;FLOAT3;0,0,0;False;1;FLOAT3;0
+Node;AmplifyShaderEditor.TriplanarNode;2;-807.1828,-129.041;Inherit;True;Spherical;World;False;MainTex;_MainTex;white;0;None;Mid Texture 0;_MidTexture0;white;-1;None;Bot Texture 0;_BotTexture0;white;-1;None;Triplanar Sampler;Tangent;10;0;SAMPLER2D;;False;5;FLOAT;1;False;1;SAMPLER2D;;False;6;FLOAT;0;False;2;SAMPLER2D;;False;7;FLOAT;0;False;9;FLOAT3;0,0,0;False;8;FLOAT;1;False;3;FLOAT2;1,1;False;4;FLOAT;1;False;5;FLOAT4;0;FLOAT;1;FLOAT;2;FLOAT;3;FLOAT;4
+Node;AmplifyShaderEditor.TriplanarNode;11;-1054.716,77.91116;Inherit;True;Spherical;World;True;Bump;_Bump;bump;1;None;Mid Texture 1;_MidTexture1;white;-1;None;Bot Texture 1;_BotTexture1;white;-1;None;Triplanar Sampler;Tangent;10;0;SAMPLER2D;;False;5;FLOAT;1;False;1;SAMPLER2D;;False;6;FLOAT;0;False;2;SAMPLER2D;;False;7;FLOAT;0;False;9;FLOAT3;0,0,0;False;8;FLOAT;1;False;3;FLOAT2;1,1;False;4;FLOAT;1;False;5;FLOAT3;0;FLOAT;1;FLOAT;2;FLOAT;3;FLOAT;4
+Node;AmplifyShaderEditor.SimpleMultiplyOpNode;5;-504.8361,385.2764;Inherit;False;2;2;0;COLOR;0,0,0,0;False;1;COLOR;0,0,0,0;False;1;COLOR;0
+Node;AmplifyShaderEditor.SimpleMultiplyOpNode;6;-305.236,59.77641;Inherit;False;2;2;0;FLOAT4;0,0,0,0;False;1;COLOR;0,0,0,0;False;1;FLOAT4;0
+Node;AmplifyShaderEditor.StandardSurfaceOutputNode;0;2.004095,0;Float;False;True;-1;2;ASEMaterialInspector;0;0;Lambert;AlonWoof/Dolphin/Triplanar;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;Back;0;False;;0;False;;False;0;False;;0;False;;False;0;Opaque;0.5;True;True;0;False;Opaque;;Geometry;All;12;all;True;True;True;True;0;False;;False;0;False;;255;False;;255;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;False;2;15;10;25;False;0.5;True;0;0;False;;0;False;;0;0;False;;0;False;;0;False;;0;False;;0;False;0;0,0,0,0;VertexOffset;True;False;Cylindrical;False;True;Relative;0;;-1;-1;-1;-1;0;False;0;0;False;;-1;0;False;;0;0;0;False;0.1;False;;0;False;;False;15;0;FLOAT3;0,0,0;False;1;FLOAT3;0,0,0;False;2;FLOAT3;0,0,0;False;3;FLOAT;0;False;4;FLOAT;0;False;6;FLOAT3;0,0,0;False;7;FLOAT3;0,0,0;False;8;FLOAT;0;False;9;FLOAT;0;False;10;FLOAT;0;False;13;FLOAT3;0,0,0;False;11;FLOAT3;0,0,0;False;12;FLOAT3;0,0,0;False;14;FLOAT4;0,0,0,0;False;15;FLOAT3;0,0,0;False;0
 WireConnection;9;0;8;0
 WireConnection;9;1;10;0
+WireConnection;2;9;9;0
+WireConnection;2;3;3;0
+WireConnection;11;9;9;0
+WireConnection;11;3;3;0
+WireConnection;5;0;4;0
+WireConnection;5;1;7;0
+WireConnection;6;0;2;0
+WireConnection;6;1;5;0
+WireConnection;0;0;6;0
+WireConnection;0;1;11;0
 ASEEND*/
-//CHKSM=2A57BF4D60F4B90B48AEF15F651BF883D8C9BBF8
+//CHKSM=D39F25C8B7F0E015E2E8FD12E04CA18D83BEC49F

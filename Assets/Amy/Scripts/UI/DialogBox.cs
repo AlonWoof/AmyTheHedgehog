@@ -152,7 +152,7 @@ namespace Amy
 					return Color.Lerp(SystemColors.SuikaColor, Color.white, 0.5f);
 
 				case SpeakerProfile.Jenny:
-					return Color.Lerp(SystemColors.JennyColor, Color.white, 0.5f);
+					return Color.Lerp(SystemColors.JennyColor, Color.white, 0.625f);
 			}
 
 			return Color.white;
