@@ -195,6 +195,7 @@ namespace Amy
 			Vector3 npos = transform.position + moveVec;
 			transform.position = npos;
 
+			/*
 			for (int b = 0; b < 8; b++)
 			{
 
@@ -212,7 +213,7 @@ namespace Amy
 				velocity = Helper.getDirectionTo(transform.position, getHomePos()) *
 					(Vector3.Distance(transform.position, getHomePos()));
             }
-
+			*/
 
         }
 
