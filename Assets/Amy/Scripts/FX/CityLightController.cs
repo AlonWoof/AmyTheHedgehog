@@ -7,11 +7,15 @@ using UnityEditor;
 //         2024 AlonWoof            //
 //////////////////////////////////////
 
+
 namespace Amy
 {
 
 	public class CityLightController : MonoBehaviour
 	{
+		//DEPRECATED
+		/*
+
 	    // Start is called before the first frame update
 	    void Start()
 	    {
@@ -38,6 +42,6 @@ namespace Amy
 				l.turnOff();
 			}
 		}
-
-    }
+		*/
+	}
 }

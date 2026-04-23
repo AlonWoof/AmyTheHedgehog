@@ -8,7 +8,7 @@ using System.Runtime.InteropServices;
 using System.Runtime.Serialization.Formatters.Binary;
 using Unity.Collections;
 
-/* Copyright 2024 Jennifer Haden */
+/* Copyright 2026 Jennifer Haden */
 namespace Amy
 {
     public enum PlayableCharacter
@@ -48,12 +48,13 @@ namespace Amy
         NORMAL,
         WARP
     }
+
     [System.Serializable]
     public class DayEvents
     {
-        public bool stationCircleNight = false;
-        public bool yumeShower = false;
         public int luckyNumber = 0;
+
+        public int[] dayNumbers = new int[5];
     };
 
     [System.Serializable]
@@ -301,7 +302,7 @@ namespace Amy
             storyFlags = new List<StoryFlag>();
 
             randomizeDayEvents();
-            PlayerManager.Instance.universeNumber = Random.Range(1, 9999);
+            PlayerManager.Instance.universeNumber = Random.Range(1, int.MaxValue);
 
             GameObject inst = new GameObject("CHECKPOINT");
             DontDestroyOnLoad(inst);
@@ -350,32 +351,10 @@ namespace Amy
         public void randomizeDayEvents()
         {
 
-            todayEvents.stationCircleNight = false;
-            todayEvents.yumeShower = false;
+            todayEvents.luckyNumber = Random.Range(1, int.MaxValue);
 
-
-            int rng = Random.Range(0, 64);
-
-            if (rng == 13)
-            {
-                todayEvents.stationCircleNight = true;
-            }
-
-            rng = Random.Range(0, 64);
-
-            if (rng == 7)
-                todayEvents.yumeShower = true;
-
-
-            todayEvents.luckyNumber = Random.Range(1, 999);
-
-            rng = Random.Range(0, 40);
-
-            //Sometimes she gets like that.
-            if(rng == 12)
-            {
-                AmyStatus.setStatusEffect(PlayerStatusFX.Horny);
-            }
+            for(int i = 0; i < 5; i++)
+                todayEvents.dayNumbers[i] = Random.Range(1, int.MaxValue);
 
 
         }
@@ -1395,7 +1374,7 @@ namespace Amy
             hasCloth = false;
             hasSlingshot = false;
 
-            universeNumber = Random.Range(0, 9999);
+            universeNumber = Random.Range(0, int.MaxValue);
 
             AmyStatus = GameManager.getSystemData().AmyParams.baseStats.makeCopy();
             CreamStatus = GameManager.getSystemData().CreamParams.baseStats.makeCopy();

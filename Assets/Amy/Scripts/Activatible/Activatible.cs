@@ -21,6 +21,9 @@ namespace Amy
 		public bool directionDependent = false;
 		public bool turnAroundPlayer = true;
 
+		public bool useAnimation = false;
+		public string interactAnimation = "Interact";
+
 		public bool canActivate(Player pl)
         {
 			if (directionDependent)
@@ -45,6 +48,9 @@ namespace Amy
         {
 			if (!canActivate(pl))
 				return;
+
+			if (useAnimation)
+				pl.mAnimator.Play(interactAnimation);
 
 			onActivate.Invoke();
         }

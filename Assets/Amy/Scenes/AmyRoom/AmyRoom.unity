@@ -861,6 +861,8 @@ MonoBehaviour:
         m_CallState: 2
   directionDependent: 1
   turnAroundPlayer: 1
+  useAnimation: 0
+  interactAnimation: Interact
 --- !u!1 &1170798859
 GameObject:
   m_ObjectHideFlags: 0
@@ -924,6 +926,8 @@ MonoBehaviour:
         m_CallState: 2
   directionDependent: 1
   turnAroundPlayer: 1
+  useAnimation: 0
+  interactAnimation: Interact
 --- !u!114 &1400216133 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 4437015626676042733, guid: 6d723ddcb09564541b7e4eb3bf0772fd, type: 3}
@@ -984,7 +988,7 @@ MonoBehaviour:
   whiteFade: 0
   moveTarget: {fileID: 0}
   vCam: {fileID: 0}
-  timer: 1
+  timer: 0.5
   waitForMove: 0
   isTrigger: 1
 --- !u!114 &1553924372
@@ -1019,6 +1023,8 @@ MonoBehaviour:
         m_CallState: 2
   directionDependent: 0
   turnAroundPlayer: 1
+  useAnimation: 1
+  interactAnimation: Interact
 --- !u!1 &1572132550
 GameObject:
   m_ObjectHideFlags: 0
@@ -1489,6 +1495,7 @@ MonoBehaviour:
   isOutdoors: 0
   dontSpawnPlayer: 0
   forceYoungAmy: 0
+  enforceBGM: 1
   bgmData: {fileID: 11400000, guid: fb88c66608cf8604c90adec46635a42c, type: 2}
   preloadObjects: []
   shadow_dist: 1024
@@ -1573,6 +1580,8 @@ MonoBehaviour:
         m_CallState: 2
   directionDependent: 0
   turnAroundPlayer: 1
+  useAnimation: 0
+  interactAnimation: Interact
 --- !u!1 &2078645812
 GameObject:
   m_ObjectHideFlags: 0
@@ -2197,6 +2206,9 @@ MonoBehaviour:
   mDirection: {x: 0, y: 0, z: 0}
   speakerProfile: 2
   AmyMessage:
+    speakerName: 
+    bustImage: {fileID: 0}
+    label: 
     messages:
     - NULL
     voice: {fileID: 0}
@@ -2214,6 +2226,9 @@ MonoBehaviour:
       m_PersistentCalls:
         m_Calls: []
   CreamMessage:
+    speakerName: 
+    bustImage: {fileID: 0}
+    label: 
     messages:
     - NULL
     voice: {fileID: 0}
@@ -2232,6 +2247,9 @@ MonoBehaviour:
         m_Calls: []
   hasHornyMessage: 0
   AmyHornyMessage:
+    speakerName: 
+    bustImage: {fileID: 0}
+    label: 
     messages:
     - NULL
     voice: {fileID: 0}
@@ -2249,6 +2267,9 @@ MonoBehaviour:
       m_PersistentCalls:
         m_Calls: []
   SickMessage:
+    speakerName: 
+    bustImage: {fileID: 0}
+    label: 
     messages:
     - NULL
     voice: {fileID: 0}
@@ -2334,6 +2355,8 @@ MonoBehaviour:
   messageBanks:
   - {fileID: 11400000, guid: 446ceafc9ba5d5546bde9d3ebd86262f, type: 2}
   - {fileID: 11400000, guid: 466e8995c7e318a44b52e4bb49d1ffcd, type: 2}
+  mAnimator: {fileID: 0}
+  startingAnim: 
 --- !u!114 &259618224670826364
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -9182,6 +9205,9 @@ MonoBehaviour:
   mDirection: {x: 0, y: 0, z: 0}
   speakerProfile: 1
   AmyMessage:
+    speakerName: 
+    bustImage: {fileID: 0}
+    label: 
     messages:
     - NULL
     voice: {fileID: 0}
@@ -9199,6 +9225,9 @@ MonoBehaviour:
       m_PersistentCalls:
         m_Calls: []
   CreamMessage:
+    speakerName: 
+    bustImage: {fileID: 0}
+    label: 
     messages:
     - NULL
     voice: {fileID: 0}
@@ -9217,6 +9246,9 @@ MonoBehaviour:
         m_Calls: []
   hasHornyMessage: 0
   AmyHornyMessage:
+    speakerName: 
+    bustImage: {fileID: 0}
+    label: 
     messages:
     - NULL
     voice: {fileID: 0}
@@ -9234,6 +9266,9 @@ MonoBehaviour:
       m_PersistentCalls:
         m_Calls: []
   SickMessage:
+    speakerName: 
+    bustImage: {fileID: 0}
+    label: 
     messages:
     - NULL
     voice: {fileID: 0}
@@ -9319,6 +9354,8 @@ MonoBehaviour:
   messageBanks:
   - {fileID: 11400000, guid: 51301dc787afc4e4c8b8da3bf47f9312, type: 2}
   - {fileID: 11400000, guid: abe122ef83c30434d9c49bea4f7748a0, type: 2}
+  mAnimator: {fileID: 0}
+  startingAnim: 
 --- !u!114 &6631572917510182223
 MonoBehaviour:
   m_ObjectHideFlags: 0

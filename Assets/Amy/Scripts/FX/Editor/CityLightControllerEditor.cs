@@ -12,6 +12,8 @@ namespace Amy
 	[CustomEditor(typeof(CityLightController))]
 	public class CityLightControllerEditor : Editor
 	{
+        //DEPRECATED
+        /*
         public override void OnInspectorGUI()
         {
             CityLightController lc = (CityLightController)target;
@@ -29,5 +31,6 @@ namespace Amy
             }
 
         }
+        */
     }
 }

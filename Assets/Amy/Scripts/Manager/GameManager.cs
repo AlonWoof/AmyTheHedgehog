@@ -373,7 +373,7 @@ namespace Amy
             if (Input.GetKeyDown(KeyCode.F6))
             {
                 PlayerManager.Instance.randomizeDayEvents();
-                PlayerManager.Instance.universeNumber = Random.Range(0, 9999);
+                PlayerManager.Instance.universeNumber = Random.Range(0, int.MaxValue);
                 PlayerManager.Instance.decidePlayerNPCLocation();
             }
 
@@ -641,102 +641,105 @@ namespace Amy
         {
             //Special exceptions...
 
-            if(PlayerManager.Instance.todayEvents.stationCircleNight)
-            {
-                if (sceneName.ToLower() == "city")
-                    sceneName = "City_Night";
-            }
-
-            if(PlayerManager.Instance.isBadDay())
-            {
-                int rng = Random.Range(0, 100);
-
-                if(rng % 16 == 0)
-                {
-                    sceneName = "NULL";
-                }
-            }
-
-            //Fun extra code for yume-chan
-            int rand = Random.Range(0, 100);
-
-            if(rand % 3 == 0)
-            { 
-                GameManager.getSystemData().YumeParams.ingameModel = GameManager.getSystemData().YumeRace_EasyModel;
-            }
-
-            if((rand + 1) % 3 == 0)
-            {
-                GameManager.getSystemData().YumeParams.ingameModel = GameManager.getSystemData().YumeRace_MediumModel;
-            }
-
-            if((rand + 2) % 3 == 0)
-            {
-                GameManager.getSystemData().YumeParams.ingameModel = GameManager.getSystemData().YumeRace_HardModel;
-            }
-
-
-            Timing.RunCoroutine(loadSceneRoutine(sceneName, whiteFade, delayBeforeLoading), Segment.RealtimeUpdate);
-        }
-
-
-        public static SystemData getSystemData()
-        {
-            return GameManager.Instance.systemData;
-        }
-
-        public void fadeGameAudio(bool fadeIn, float fadeTime)
-        {
-            Timing.RunCoroutine(doFadeGameAudio(fadeIn, fadeTime));
-        }
-
-        IEnumerator<float> doFadeGameAudio(bool fadeIn, float fadeTime)
-        {
-            float targetVolume = -80.0f;
-
-            if(fadeIn)
-                targetVolume = 0.0f;
-
-
-            float startVolume = gameSFXVolume;
-            float totalTime = 0.0f;
-
-            while (totalTime < fadeTime)
-            {
-                float fac = totalTime / fadeTime;
-
-                gameSFXVolume = Mathf.Lerp(startVolume, targetVolume, fac);
-
-                totalTime += Time.unscaledDeltaTime;
-
-                yield return 0f;
-            }
-
-            gameSFXVolume = targetVolume;
-        }
-
-        IEnumerator<float> loadSceneRoutine(string sceneName, bool whiteFade, float delay = 0.0f)
-        {
-            yield return Timing.WaitForSeconds(delay);
-
-            gamePaused = false;
-            PlayerManager.Instance.itemMenuOpen = false;
-            playerInputDisabled = true;
-            cameraInputDisabled = true;
-            isLoading = true;
-            cutsceneMode = true;
-            Time.timeScale = 1.0f;
-
-
-            //Not relevant yet.
+            //DEPRECATED
             /*
-            if (UIManager.Instance.gamePaused)
-            {
+                if(PlayerManager.Instance.todayEvents.stationCircleNight)
+                {
+                    if (sceneName.ToLower() == "city")
+                        sceneName = "City_Night";
+                }
 
-                UIManager.Instance.mIngameMenu.gameObject.SetActive(false);
-                UIManager.Instance.gamePaused = false;
-            }
+                if(PlayerManager.Instance.isBadDay())
+                {
+                    int rng = Random.Range(0, 100);
+
+                    if(rng % 16 == 0)
+                    {
+                        sceneName = "NULL";
+                    }
+                }
             */
+
+                //Fun extra code for yume-chan
+                int rand = Random.Range(0, 100);
+
+                if(rand % 3 == 0)
+                { 
+                    GameManager.getSystemData().YumeParams.ingameModel = GameManager.getSystemData().YumeRace_EasyModel;
+                }
+
+                if((rand + 1) % 3 == 0)
+                {
+                    GameManager.getSystemData().YumeParams.ingameModel = GameManager.getSystemData().YumeRace_MediumModel;
+                }
+
+                if((rand + 2) % 3 == 0)
+                {
+                    GameManager.getSystemData().YumeParams.ingameModel = GameManager.getSystemData().YumeRace_HardModel;
+                }
+
+
+                Timing.RunCoroutine(loadSceneRoutine(sceneName, whiteFade, delayBeforeLoading), Segment.RealtimeUpdate);
+            }
+
+
+            public static SystemData getSystemData()
+            {
+                return GameManager.Instance.systemData;
+            }
+
+            public void fadeGameAudio(bool fadeIn, float fadeTime)
+            {
+                Timing.RunCoroutine(doFadeGameAudio(fadeIn, fadeTime));
+            }
+
+            IEnumerator<float> doFadeGameAudio(bool fadeIn, float fadeTime)
+            {
+                float targetVolume = -80.0f;
+
+                if(fadeIn)
+                    targetVolume = 0.0f;
+
+
+                float startVolume = gameSFXVolume;
+                float totalTime = 0.0f;
+
+                while (totalTime < fadeTime)
+                {
+                    float fac = totalTime / fadeTime;
+
+                    gameSFXVolume = Mathf.Lerp(startVolume, targetVolume, fac);
+
+                    totalTime += Time.unscaledDeltaTime;
+
+                    yield return 0f;
+                }
+
+                gameSFXVolume = targetVolume;
+            }
+
+            IEnumerator<float> loadSceneRoutine(string sceneName, bool whiteFade, float delay = 0.0f)
+            {
+                yield return Timing.WaitForSeconds(delay);
+
+                gamePaused = false;
+                PlayerManager.Instance.itemMenuOpen = false;
+                playerInputDisabled = true;
+                cameraInputDisabled = true;
+                isLoading = true;
+                cutsceneMode = true;
+                Time.timeScale = 1.0f;
+
+
+                //Not relevant yet.
+                /*
+                if (UIManager.Instance.gamePaused)
+                {
+
+                    UIManager.Instance.mIngameMenu.gameObject.SetActive(false);
+                    UIManager.Instance.gamePaused = false;
+                }
+                */
 
             UIManager.Instance.messageBox.cancelMessage();
 

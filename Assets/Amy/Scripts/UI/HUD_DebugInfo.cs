@@ -255,11 +255,14 @@ namespace Amy
 
 			dbgstr += "EVENT INFO: \n";
 
-			dbgstr += "\nstationCircleNight: " + PlayerManager.Instance.todayEvents.stationCircleNight;
-			dbgstr += "\nyumeShower: " + PlayerManager.Instance.todayEvents.yumeShower;
+			dbgstr += "\n";
 
-			dbgstr += "\n\nluckyNumber: " + PlayerManager.Instance.todayEvents.luckyNumber;
-			dbgstr += "\nuniverseNumber: " + PlayerManager.Instance.universeNumber;
+			for(int i = 0; i < 5; i++)
+            {
+				dbgstr += "\ndailyNumber" + i + ": " + PlayerManager.Instance.todayEvents.dayNumbers[i];
+            }
+
+			dbgstr += "\n\nuniverseNumber: " + PlayerManager.Instance.universeNumber;
 
 			if (PlayerManager.Instance.currentCharacter != PlayableCharacter.Amy)
 				dbgstr += "\n\nAmy Location: " + PlayerManager.getPlayerNPCLocationString(PlayerManager.Instance.AmyStatus.npcLocation);

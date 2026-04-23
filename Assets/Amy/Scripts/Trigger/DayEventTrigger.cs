@@ -38,7 +38,6 @@ namespace Amy
 
         public void executeEvents()
         {
-
 			DayEvents today = PlayerManager.Instance.todayEvents;
 
 			if (luckyNumberMod > 0)

@@ -17,7 +17,8 @@ namespace Amy
 		public UnityEvent luckyNumberEvent;
 		public UnityEvent universeNumberEvent;
 
-		public int luckyNumberChance = -1;
+		public int dayNumberChance = -1;
+		public int dayNumberIndex = 0;
 		public int universeNumberChance = -1;
 
 		// Start is called before the first frame update
@@ -30,15 +31,10 @@ namespace Amy
         {
 			DayEvents today = PlayerManager.Instance.todayEvents;
 
-			if (today.stationCircleNight)
-				stationCircleNightEvent.Invoke();
 
-			if (today.yumeShower)
-				yumeShowerEvent.Invoke();
-
-			if (luckyNumberChance > 0)
+			if (dayNumberChance > 0)
 			{
-				if (today.luckyNumber % luckyNumberChance == 0)
+				if (today.dayNumbers[dayNumberIndex] % dayNumberChance == 0)
 					luckyNumberEvent.Invoke();
 			}
 
@@ -54,7 +50,6 @@ namespace Amy
 	    {
 			if (Input.GetKeyDown(KeyCode.F6))
 				executeEvents();
-
 		}
 	}
 }

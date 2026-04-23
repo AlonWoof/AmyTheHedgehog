@@ -11,7 +11,8 @@ namespace Amy
 
 	public class DayNightToggle : MonoBehaviour
 	{
-
+		//DEPRECATED
+		/*
 		public GameObject dayObject;
 		public GameObject nightObject;
 
@@ -49,6 +50,6 @@ namespace Amy
 				isNight = false;
 			}
 	    }
-
+		*/
 	}
 }
