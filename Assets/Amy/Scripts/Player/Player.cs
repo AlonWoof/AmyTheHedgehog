@@ -120,6 +120,7 @@ namespace Amy
 		public int framesAirborne = 0;
 		public int framesGrounded = 0;
 		public float lookTimeLeft = 0.0f;
+		public float fxSpawnTimeout = 0.1f;
 
 		public bool isAiControlled = false;
 
@@ -802,7 +803,6 @@ namespace Amy
 			mAnimator.SetFloat("mood", getStatus().getCondition());
 
 			updateWaterFX();
-
 			updateButtSlamReticule();
 
 			debugControls();
@@ -1015,6 +1015,9 @@ namespace Amy
 
 			doLeanAnimation();
 
+			if (fxSpawnTimeout > 0.0f)
+				fxSpawnTimeout -= Time.deltaTime;
+
 			//if (acceleration.z > 0.5f)
 			//	tpc.centerBehindPlayerSmooth(Time.deltaTime);
 		}
@@ -1046,10 +1049,16 @@ namespace Amy
 
 		public void updateEars()
         {
+
+			if (mChara != PlayableCharacter.Cream)
+				return;
+
 			//For creamy's floppy bunny ears~
 
-			if(currentMode == PlayerModes.FLY)
+			if (currentMode == PlayerModes.FLY)
 				mAnimator.CrossFade("Ears_Flying", 0.25f);
+			else if(acceleration.z > 5.5f)
+				mAnimator.CrossFade("Ears_Running", 0.25f);
 			else
 				mAnimator.CrossFade("Ears_Normal", 0.25f);
 
@@ -2024,7 +2033,6 @@ namespace Amy
 			if (mChara != PlayableCharacter.Cream)
 				return;
 
-
 		}
 		public virtual void checkForButtSlamAttack()
 		{
@@ -2323,6 +2331,16 @@ namespace Amy
 				footVolume = 1.0f;
 
 			fx_footsteps.globalVolume = footVolume;
+
+		}
+		public void earFlap()
+		{
+			if (fxSpawnTimeout > 0.0f)
+				return;
+
+			GameObject inst = GameObject.Instantiate(GameManager.Instance.systemData.RES_AmyPlayerFX.fx_creamEarFlap);
+			inst.transform.position = transform.position;
+			fxSpawnTimeout = 0.2f;
 
 		}
 

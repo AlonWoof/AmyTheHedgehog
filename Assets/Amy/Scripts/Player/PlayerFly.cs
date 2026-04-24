@@ -28,8 +28,6 @@ namespace Amy
 
 		Vector3 mDesiredMovement;
 		Vector3 mCurrentMovement;
-
-		float fxSpawnTimeout = 0.1f;
 		
 
 		// Start is called before the first frame update
@@ -65,6 +63,9 @@ namespace Amy
 			//mRigidBody.velocity = Vector3.Lerp(mRigidBody.velocity, 3.0f, 0.5f);
 			//mRigidBody.velocity = Vector3.up * 3.0f;
 
+			mPlayer.isOnGround = false;
+			mPlayer.framesAirborne += 10;
+			mPlayer.framesGrounded = 0;
 
 			fly_left = max_fly;
 			mAnimator.CrossFade("Fly_Basic", 0.25f);
@@ -124,8 +125,6 @@ namespace Amy
 
 			mPlayer.hipBoneTransform.position += hoverOffset * (Vector3.up * 0.1f);
 
-			if (fxSpawnTimeout > 0.0f)
-				fxSpawnTimeout -= Time.deltaTime;
 		}
 
 		private void FixedUpdate()
@@ -153,6 +152,11 @@ namespace Amy
 				mPlayer.changeCurrentMode(PlayerModes.NORMAL);
 				mPlayer.tpc.changeCameraMode(TPCMode.Normal);
 			}
+			else
+            {
+				//Fix for landing animation
+				mPlayer.framesAirborne++;
+            }
 		}
 
 		public void checkIfUnderwater()
@@ -251,15 +255,6 @@ namespace Amy
 			hoverOffset = Mathf.Sin(Time.time);
 		}
 
-		public void earFlap()
-        {
-			if (fxSpawnTimeout > 0.0f)
-				return;
 
-			GameObject inst = GameObject.Instantiate(GameManager.Instance.systemData.RES_AmyPlayerFX.fx_creamEarFlap);
-			inst.transform.position = transform.position;
-			fxSpawnTimeout = 0.2f;
-
-		}
 	}
 }

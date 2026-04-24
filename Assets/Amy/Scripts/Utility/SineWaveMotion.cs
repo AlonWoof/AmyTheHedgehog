@@ -7,6 +7,7 @@ public class SineWaveMotion : MonoBehaviour
 {
     public float waveStrength = 1.0f;
     public float waveSpeed = 1.0f;
+    public float waveOffset = 0.0f;
 
     Vector3 homePos;
 
@@ -22,7 +23,7 @@ public class SineWaveMotion : MonoBehaviour
         if (useFixedUpdate)
             return;
 
-        float motion = Mathf.Sin(Time.time * waveSpeed);
+        float motion = Mathf.Sin((Time.time + waveOffset) * waveSpeed);
 
         transform.localPosition = homePos + Vector3.up * (motion * waveStrength);
 

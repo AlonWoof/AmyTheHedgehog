@@ -18,6 +18,7 @@ namespace Amy
 		Yellow
     }
 
+	
 	public class WorldDoor : MonoBehaviour
 	{
 
@@ -27,6 +28,7 @@ namespace Amy
 		bool isWarping = false;
 
 		public DoorColor color;
+		public ExitLevelType exitLevelType = ExitLevelType.NORMAL;
 		public Animator mAnimator;
 
 		public string destinationScene = "default";
@@ -128,6 +130,7 @@ namespace Amy
 			if (nPlayer.currentMode != PlayerModes.NORMAL)
 				return;
 
+			PlayerManager.Instance.exitType = exitLevelType;
 			PlayerManager.Instance.lastExit = destinationExit;
 			GameManager.Instance.loadScene(destinationScene, true);
 

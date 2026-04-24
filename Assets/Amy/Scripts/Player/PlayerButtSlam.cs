@@ -99,7 +99,7 @@ namespace Amy
 					yield break;
 				}
 
-				if (mPlayer.framesGrounded > 3)
+				if (mPlayer.framesGrounded > 3  && mPlayer.slopeAmount < 0.2f)
 					done = true;
 
 				yield return 0f;

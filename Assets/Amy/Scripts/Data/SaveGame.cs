@@ -306,6 +306,7 @@ namespace Amy
 
 			if (!File.Exists(dataPath))
 			{
+				PlayerManager.Instance.setStoryFlag("TAILS_CUNNY", true);
 				return false;
 			}
 
@@ -324,12 +325,13 @@ namespace Amy
 			//Minor version
 			reader.ReadByte();
 
-			bool transTails = reader.ReadBoolean();
+			//inverted because cunny tails is default now
+			bool transTails = !reader.ReadBoolean();
 
 			reader.Close();
 
 			PlayerManager.Instance.setStoryFlag("TAILS_CUNNY", transTails);
-			Debug.Log("TAILS_CUNNY: " + Animator.StringToHash("TAILS_CUNNY"));
+			Debug.Log("TAILS_CUNNY: " + Animator.StringToHash("TAILS_CUNNY") + " VAL: " + transTails);
 
 			return true;
 		}
