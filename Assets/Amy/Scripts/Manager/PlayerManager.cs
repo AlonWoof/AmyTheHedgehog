@@ -246,6 +246,7 @@ namespace Amy
         public bool hasHammer = false;
         public bool hasCloth = false;
         public bool hasSlingshot = false;
+        public bool hasGlowBracelet = false;
         public List<StoryFlag> storyFlags;
         public System.DateTime lastSaveTime;
 
@@ -737,14 +738,16 @@ namespace Amy
 
                 if(pl.modeRubbing.karadaMesh)
                 {
-                    pl.modeRubbing.karadaMesh.SetBlendShapeWeight(0, 100);
+                    if(pl.modeRubbing.karadaMesh.sharedMesh.blendShapeCount > 0)
+                        pl.modeRubbing.karadaMesh.SetBlendShapeWeight(0, 100);
                 }
             }
             else
             {
                 if (pl.modeRubbing.karadaMesh)
                 {
-                    pl.modeRubbing.karadaMesh.SetBlendShapeWeight(0, 0);
+                    if (pl.modeRubbing.karadaMesh.sharedMesh.blendShapeCount > 0)
+                        pl.modeRubbing.karadaMesh.SetBlendShapeWeight(0, 0);
                 }
             }
 
@@ -789,7 +792,7 @@ namespace Amy
 
             if (pStats.checkVibe(VibeType.Dark) && !pStats.checkVibe(VibeType.Safe))
             {
-                if(pl.mChara == PlayableCharacter.Cream)
+                if (pl.mChara == PlayableCharacter.Cream && !hasGlowBracelet)
                 {
                     inflictScaredStatus(pl, 0.25f);
                 }

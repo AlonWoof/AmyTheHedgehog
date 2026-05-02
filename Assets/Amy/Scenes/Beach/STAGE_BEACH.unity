@@ -187,6 +187,51 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 12
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &204124259
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 204124260}
+  - component: {fileID: 204124261}
+  m_Layer: 0
+  m_Name: DarkVibes
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &204124260
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 204124259}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 1537977048}
+  m_RootOrder: 8
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &204124261
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 204124259}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6b950db2d665b934792ba431c2eec93a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  range: 10000
+  vibeFlags: 32
 --- !u!1001 &224354811
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1598,15 +1643,15 @@ PrefabInstance:
       propertyPath: globalMessage.messages.Array.data[1]
       value: 'The deep water with an infinite void underneath
 
-        combined
-        with bad collision terrifies me.'
+        combined with
+        bad collision terrifies me.'
       objectReference: {fileID: 0}
     - target: {fileID: 4680238853722287462, guid: 053124d1e88fbb64bb05cf4e94329496, type: 3}
       propertyPath: globalMessage.messages.Array.data[2]
       value: 'But, it''s also a very nostalgic level for me that
 
-        makes
-        me feel all warm and fuzzy.'
+        makes me
+        feel all warm and fuzzy.'
       objectReference: {fileID: 0}
     - target: {fileID: 4680238853722287462, guid: 053124d1e88fbb64bb05cf4e94329496, type: 3}
       propertyPath: globalMessage.messages.Array.data[3]
@@ -3748,6 +3793,7 @@ Transform:
   - {fileID: 2014352502}
   - {fileID: 1049087057}
   - {fileID: 488521139}
+  - {fileID: 204124260}
   m_Father: {fileID: 1752719298}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}

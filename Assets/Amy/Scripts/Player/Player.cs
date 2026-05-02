@@ -51,6 +51,7 @@ namespace Amy
 		LISTENING,
 		SLINGSHOT,
 		LADDER,
+		FLOATING,
 		CUTSCENE,
 		RUBBING,
 		HURT,
@@ -67,6 +68,8 @@ namespace Amy
 		const float hammerAttackStaminaCost = 0.025f;
 		const float moveStaminaCost = 0.002f;
 		const float flyStaminaCost = 0.004f;
+
+		const float maxAccel = 16.0f;
 
 		//Components
 		public Rigidbody mRigidBody;
@@ -108,6 +111,7 @@ namespace Amy
 		public bool isOnGround = false;
 		public bool isSliding = false;
 		public bool isBallMode = false;
+
 		public bool isHammerJumping = false;
 		public bool isAttacking = false;
 		public bool isHammerSpin = false;
@@ -149,6 +153,7 @@ namespace Amy
 		public PlayerRail modeRail;
 		public PlayerSlingshot modeSlingshot;
 		public PlayerClimb modeLadder;
+		public PlayerFloating modeFloating;
 		public PlayerRubbing modeRubbing;
 		public PlayerListening modeListening;
 		public PlayerHurt modeHurt;
@@ -386,6 +391,7 @@ namespace Amy
 			modeRail = gameObject.AddComponent<PlayerRail>();
 			modeSlingshot = gameObject.AddComponent<PlayerSlingshot>();
 			modeLadder = gameObject.AddComponent<PlayerClimb>();
+			modeFloating = gameObject.AddComponent<PlayerFloating>();
 			modeRubbing = gameObject.AddComponent<PlayerRubbing>();
 			modeListening = gameObject.AddComponent<PlayerListening>();
 			modeHurt = gameObject.AddComponent<PlayerHurt>();
@@ -404,6 +410,7 @@ namespace Amy
 			modeRail.enabled = false;
 			modeSlingshot.enabled = false;
 			modeLadder.enabled = false;
+			modeFloating.enabled = false;
 			modeRubbing.enabled = false;
 			modeListening.enabled = false;
 			modeHurt.enabled = false;
@@ -448,6 +455,10 @@ namespace Amy
 
 				case PlayerModes.LADDER:
 					modeLadder.enabled = true;
+					break;
+
+				case PlayerModes.FLOATING:
+					modeFloating.enabled = true;
 					break;
 
 				case PlayerModes.RUBBING:
@@ -972,6 +983,20 @@ namespace Amy
 			mRigidBody.isKinematic = false;
 		}
 
+		public void startFloating()
+        {
+
+			if (currentMode == PlayerModes.DEBUG_MOVE)
+				return;
+
+			jumpTimer = mParam.jump_hangTime;
+			acceleration.y = 16.0f;
+
+			changeCurrentMode(PlayerModes.FLOATING);
+		}
+
+		
+
         void damageRingScatter()
         {
 			if (isAiControlled)
@@ -1033,6 +1058,10 @@ namespace Amy
 				if(mChara != PlayableCharacter.YoungAmy)
 					mAnimator.Play("Face_Itai");
 			}
+			else if(currentMode == PlayerModes.FLOATING)
+            {
+				mAnimator.Play("Face_Floating");
+			}
 			else if (getStatus().checkStatusEffect(PlayerStatusFX.Scared) || currentMode == PlayerModes.KILLED)
 			{
 				mAnimator.Play("Face_Kowaii");
@@ -1057,8 +1086,6 @@ namespace Amy
 
 			if (currentMode == PlayerModes.FLY)
 				mAnimator.CrossFade("Ears_Flying", 0.25f);
-			else if(acceleration.z > 5.5f)
-				mAnimator.CrossFade("Ears_Running", 0.25f);
 			else
 				mAnimator.CrossFade("Ears_Normal", 0.25f);
 
@@ -1413,7 +1440,7 @@ namespace Amy
 						if(framesAirborne > 0)
 							framesAirborne--;
 
-						if (!isOnGround)
+						if (!isOnGround && currentMode != PlayerModes.FLOATING)
 						{
 							isHammerJumping = false;
 							isOnGround = true;
@@ -1467,8 +1494,10 @@ namespace Amy
 					{
 						isOnGround = false;
 
-						if(!isHammerJumping)
+						if (!isHammerJumping && currentMode != PlayerModes.FLOATING)
+						{
 							mAnimator.Play("Airborne");
+						}
 
 					}
 				}
@@ -1644,7 +1673,13 @@ namespace Amy
 			getStatus().clampValues();
 			attackTimer = 0.6f;
 			stickTimeout = 0.1f;
-			acceleration.z += 3.0f;
+
+			//hardcoded for now
+			if (acceleration.z < 6.5f)
+				acceleration.z += 3.0f;
+			else
+				acceleration.z *= 0.9f;
+			
 
 			mVoice.playVoiceDelayed(Random.Range(0.05f, 0.1f), mVoice.groundAttack, true);
 
@@ -2178,7 +2213,7 @@ namespace Amy
 
 			float friction = (mParam.groundFriction * speed.magnitude) * Time.fixedDeltaTime;
 
-			if (!isOnGround)
+			if (!isOnGround || currentMode == PlayerModes.FLOATING)
 				friction = (mParam.airResistance * speed.magnitude) * Time.fixedDeltaTime;
 
 			if (stickPower < 0.01f)
@@ -2241,6 +2276,11 @@ namespace Amy
 			mAccel.y -= (0.1f * mAccel.z) * Time.fixedDeltaTime;
 
 			//speed.y -= 0.5f * Time.deltaTime;
+				
+
+			mAccel.x = Mathf.Clamp(mAccel.x, -maxAccel, maxAccel);
+			mAccel.y = Mathf.Clamp(mAccel.y, -(maxAccel * 2.0f), (maxAccel * 2.0f));
+			mAccel.z = Mathf.Clamp(mAccel.z, -maxAccel, maxAccel);
 
 			acceleration = mAccel;
 

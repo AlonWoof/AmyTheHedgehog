@@ -224,6 +224,7 @@ namespace Amy
 			dbgstr += "mutekiTimer: " + player.mutekiTimer + "\n";
 			dbgstr += "attackTimer: " + player.attackTimer + "\n";
 			dbgstr += "framesAirborne: " + player.framesAirborne + "\n";
+			dbgstr += "framesGrounded: " + player.framesGrounded + "\n";
 			dbgstr += "hammerJumpCharge: " + player.hammerJumpCharge + "\n";
 			dbgstr += "canAirAttack: " + player.canAirAttack + "\n";
 			dbgstr += "waterDepth: " + player.getWaterDepth() + "\n";

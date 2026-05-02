@@ -174,12 +174,16 @@ namespace Amy
 
 		void calculateVerticalVelocity()
 		{
+
 			const float flyStaminaDrain = 0.05f;
+			const float flySpeed = 4.0f;
+			const float flySpeed_fast = 6.0f;
 
 			Vector3 cpos = transform.position;
 			Vector3 velo = mRigidBody.velocity;
 
-			desiredVelo = (mPlayer.transform.forward * (mDesiredMovement.magnitude * 4.0f));
+
+			desiredVelo = (mPlayer.transform.forward * (mDesiredMovement.magnitude * flySpeed));
 
 			if (mDesiredMovement.magnitude > 0.1f)
 			{
