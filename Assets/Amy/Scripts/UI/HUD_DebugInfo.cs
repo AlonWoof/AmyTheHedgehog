@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using MEC;
 
 //////////////////////////////////////
 //         2024 AlonWoof            //
@@ -28,16 +29,27 @@ namespace Amy
 		public Player player;
 		public AIPlayer aiplayer;
 
+
+		public int countedTriangles = 0;
+		public int maxTriangles = 0;
+
+		public CoroutineHandle countTriangleCoroutine;
+		public int maxAllowedTriangles = 100000;
+		public bool tooManyTris = false;
+
 		public DebugInfoPage currentPage;
+		
 
 		// Start is called before the first frame update
 		void Start()
 	    {
 	        
 	    }
-	
-	    // Update is called once per frame
-	    void Update()
+
+
+
+		// Update is called once per frame
+		void Update()
 	    {
 
 			if (!GameManager.Instance.debugMode)
@@ -99,6 +111,10 @@ namespace Amy
 
 				case DebugInfoPage.EventInfo:
 					dbgstr += getEventInfo();
+					break;
+
+				case DebugInfoPage.SceneInfo:
+					dbgstr += getSceneInfo();
 					break;
 
 				case DebugInfoPage.AIInfo:
@@ -272,6 +288,84 @@ namespace Amy
 				dbgstr += "\n\nCream Location: " + PlayerManager.getPlayerNPCLocationString(PlayerManager.Instance.CreamStatus.npcLocation);
 
 			return dbgstr;
+		}
+
+		string getSceneInfo()
+        {
+
+			if (!countTriangleCoroutine.IsRunning)
+				countTriangleCoroutine = Timing.RunCoroutine(countTriangles(), Segment.RealtimeUpdate, gameObject);
+
+			string dbgstr = "";
+
+			dbgstr += "SCENE INFO: \n";
+
+			dbgstr += "\nTriangle Budget: ";
+
+			if (tooManyTris)
+				dbgstr += "<color=#FF0000FF>";
+
+			dbgstr += countedTriangles;
+
+			if (tooManyTris)
+			{
+				dbgstr += "</color>";
+
+				//artificial lag to hammer the point home
+				countTriangles();
+			}
+
+
+			dbgstr += " / " + maxAllowedTriangles;
+
+			dbgstr += "\nMax Triangle: " + maxTriangles;
+
+			return dbgstr;
+		}
+
+
+		IEnumerator<float> countTriangles()
+        {
+			int tris = 0;
+
+			float dst = GameManager.Instance.mainCamera.farClipPlane;
+
+			int iter = 0;
+
+			foreach (MeshFilter r in FindObjectsOfType<MeshFilter>())
+			{
+				//if(Vector3.Distance(GameManager.Instance.mainCamera.transform.position, r.transform.position) < dst)
+
+				if (r.gameObject.GetComponent<Renderer>())
+				{
+					if (r.gameObject.GetComponent<Renderer>().isVisible)
+						tris += (r.sharedMesh.triangles.Length / 3);
+				}
+
+				iter++;
+
+				if (iter > 30)
+				{
+					iter = 0;
+					yield return 0f;
+				}
+			}
+
+			countedTriangles = tris;
+
+			if (countedTriangles > maxAllowedTriangles)
+			{
+				//Application.targetFrameRate = 31;
+				tooManyTris = true;
+			}
+			else
+			{
+				//Application.targetFrameRate = 61;
+				tooManyTris = false;
+			}
+
+			if (countedTriangles > maxTriangles)
+				maxTriangles = countedTriangles;
 		}
 
 

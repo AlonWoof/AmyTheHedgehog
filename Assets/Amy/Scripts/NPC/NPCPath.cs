@@ -30,6 +30,7 @@ namespace Amy
 		public float z_offset = 0.0f;
 		bool moveOverride = false;
 		public bool stopOnPlayer = true;
+		public bool pickRandomStartNode = false;
 
 		Vector3 currentDirection = Vector3.forward;
 
@@ -46,6 +47,12 @@ namespace Amy
 			mAnimator = GetComponentInChildren<Animator>();
 
 			buildWaypointList();
+
+			if(pickRandomStartNode)
+            {
+				transform.position = waypoints[Random.Range(0, waypoints.Count - 1)].transform.position;
+            }
+
 			currentRoutine = Timing.RunCoroutine(goToPointRoutine(findNextWaypoint()).CancelWith(gameObject));
 
 			mAgent.speed = moveSpeed;

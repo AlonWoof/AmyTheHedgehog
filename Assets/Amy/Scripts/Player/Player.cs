@@ -28,6 +28,7 @@ namespace Amy
 		public float groundFriction = 0.5f;
 		public float airResistance = 0.45f;
 		public float slopeResistance = 4.5f;
+		public float swimOffset = 0.57f;
 
 		public float railSpeed = 6.0f;
 
@@ -139,7 +140,7 @@ namespace Amy
 
 		public float leanAmount = 0.0f;
 
-		public float headOffsetFromGround;
+		public float swimOffset;
 
 		//Modes
 		public PlayerModes currentMode;
@@ -291,6 +292,7 @@ namespace Amy
 
 
 			newPlayer.fx_waterWadingFX = GameObject.Instantiate(GameManager.Instance.systemData.RES_WaterWadingFX);
+			newPlayer.swimOffset = cpar.swimOffset;
 
 			newPlayer.direction = dir;
 
@@ -508,7 +510,7 @@ namespace Amy
 			rThighBoneTransform = getBoneByName("thigh_r");
 			lThighBoneTransform = getBoneByName("thigh_l");
 
-			headOffsetFromGround = (headBoneTransform.position.y - 0.05f) - transform.position.y;
+			//headOffsetFromGround = (headBoneTransform.position.y - 0.05f) - transform.position.y;
 
 		}
 
@@ -1099,6 +1101,7 @@ namespace Amy
         protected virtual void debugControls()
         {
 
+
 			if (!GameManager.Instance.debugMode)
 				return;
 
@@ -1367,7 +1370,7 @@ namespace Amy
 			if (jumpTimer > mParam.jump_hangTime * 0.5f)
 				return;
 
-			if (getWaterDepth() >= headOffsetFromGround)
+			if (getWaterDepth() >= swimOffset)
 			{
 				changeCurrentMode(PlayerModes.SWIMMING);
 			}

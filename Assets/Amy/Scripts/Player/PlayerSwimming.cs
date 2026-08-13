@@ -18,8 +18,13 @@ namespace Amy
 
         float swimSpeed = 6.0f;
 
+        bool creamMode = false;
         bool isDiving = false;
         float depth = 0.0f;
+
+
+
+        public GameObject ukiwaModel;
 
         // Start is called before the first frame update
         void Start()
@@ -33,6 +38,7 @@ namespace Amy
             }
         }
 
+
         private void OnEnable()
         {
             getBaseComponents();
@@ -45,12 +51,12 @@ namespace Amy
             mPlayer.speed = Vector3.zero;
 
             swimSpeed = mPlayer.mParam.swimSpeed;
-
+            creamMode = (PlayerManager.Instance.currentCharacter == PlayableCharacter.Cream) ? true : false;
 
             //mRigidBody.velocity = Vector3.up * mPlayer.GetComponent<PlayerBasicMove>().verticalVelocity;
 
             Vector3 pos = transform.position;
-            pos.y = mPlayer.getWaterYPos() - mPlayer.headOffsetFromGround;
+            pos.y = mPlayer.getWaterYPos() - mPlayer.swimOffset;
 
             mPlayer.mAnimator.Play("Swimming");
 
@@ -64,7 +70,35 @@ namespace Amy
                 splish.transform.position = fxpos;
             }
 
+            if(creamMode)
+            {
+                if (!ukiwaModel)
+                    SpawnCreamUkiwa();
+
+                ukiwaModel.SetActive(true);
+            }
+
             // transform.position = pos;
+
+        }
+
+
+        void SpawnCreamUkiwa()
+        {
+            ukiwaModel = GameObject.Instantiate(GameManager.Instance.systemData.RES_AmyPlayerFX.prop_creamUkiwa);
+            ukiwaModel.transform.position = transform.position;
+            ukiwaModel.transform.rotation = transform.rotation;
+            ukiwaModel.transform.SetParent(transform);
+
+            if (mPlayer.currentMode != PlayerModes.SWIMMING)
+                ukiwaModel.SetActive(false);
+        }
+
+        private void OnDisable()
+        {
+
+            if (ukiwaModel)
+                ukiwaModel.SetActive(false);
 
         }
 
@@ -82,6 +116,10 @@ namespace Amy
             //y;
 
             speedMult = mPlayer.mAnimator.GetFloat("animProgress");
+
+            if (creamMode)
+                speedMult = 1.0f;
+
             mPlayer.mAnimator.SetFloat("swim_z", mCurrentMovement.magnitude);
             mPlayer.mAnimator.SetFloat("swim_y", mRigidBody.velocity.y);
         }
@@ -136,7 +174,7 @@ namespace Amy
 
         bool isAtSurface()
         {
-            depth = mPlayer.getWaterDepth() - mPlayer.headOffsetFromGround;
+            depth = mPlayer.getWaterDepth() - mPlayer.swimOffset;
 
             if (depth <= 0)
                 return true;
@@ -146,7 +184,7 @@ namespace Amy
 
         public void bindToWaterBounds()
         {
-            float y_limit = mPlayer.getWaterYPos() - mPlayer.headOffsetFromGround;
+            float y_limit = mPlayer.getWaterYPos() - mPlayer.swimOffset;
 
             if(transform.position.y > y_limit)
             {
@@ -161,18 +199,25 @@ namespace Amy
 
             Vector3 moveVec = ((mCurrentMovement * swimSpeed) * speedMult) + Vector3.up * (currentVerticalMovement * (swimSpeed * 1.5f));
 
-            if (transform.position.y < mPlayer.getWaterYPos() - mPlayer.headOffsetFromGround && currentVerticalMovement > -0.1f)// && diveTimer < 0.01f)
+
+            if (transform.position.y < mPlayer.getWaterYPos() - mPlayer.swimOffset && currentVerticalMovement > -0.1f)// && diveTimer < 0.01f)
             {
+                float floatSpeedMult = 1.0f;
+
+                if (creamMode)
+                    floatSpeedMult = 5.0f;
+
                 //float up
-                moveVec.y = Mathf.Clamp(moveVec.y + (Mathf.Clamp(Mathf.Abs(mPlayer.getWaterDepth()),0,1.0f) * 1.5f), moveVec.y + 0.5f, 8.0f);
+                moveVec.y = Mathf.Clamp(moveVec.y + (Mathf.Clamp(Mathf.Abs(mPlayer.getWaterDepth()),0,1.0f) * 1.5f), moveVec.y + 0.5f, 8.0f) * floatSpeedMult;
             }
 
-            if (transform.position.y > mPlayer.getWaterYPos() - (mPlayer.headOffsetFromGround - 0.02f))
+            if (transform.position.y > mPlayer.getWaterYPos() - (mPlayer.swimOffset - 0.02f))
             {
                 //fall down
                 moveVec.y -= (Mathf.Abs(mPlayer.getWaterDepth()) * 8.0f);
                 moveVec.y = Mathf.Clamp(moveVec.y, -32, -3);
             }
+
 
 
             if (depth > 1.0f)
@@ -186,7 +231,6 @@ namespace Amy
                     currentVerticalMovement += 0.5f;
                     mPlayer.tpc.shakeCamera(0.012f, 0.075f);
 
-
                 }
 
 
@@ -198,7 +242,6 @@ namespace Amy
                 isDiving = false;
             }
 
-            
 
             // mRigidBody.velocity = ((mPlayer.mCurrentMovement * swimSpeed) * speedMult) + (Vector3.up * 0.23f) + Vector3.up * (currentVerticalMovement * swimSpeed);// * mPlayer.mForwardVelocity;
             //mRigidBody.velocity = ;
@@ -279,11 +322,11 @@ namespace Amy
                 mPlayer.acceleration.y += (mPlayer.mParam.jumpSpeed * 0.5f);
             }
 
-            if (Input.GetButton("Jump") && !isAtSurface())
+            if (Input.GetButton("Jump") && !isAtSurface() && !creamMode)
                 desiredVerticalMovement = 1.0f;
 
 
-            if (Input.GetButton("Action"))
+            if (Input.GetButton("Action") && !creamMode)
                 desiredVerticalMovement = -1.0f;
 
             float h = InputFunctions.getLeftAnalogX();

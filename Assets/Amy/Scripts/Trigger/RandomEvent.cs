@@ -19,11 +19,16 @@ namespace Amy
 		public int universeNumberMod = -1;
 		public int universeNumberOfset = 0;
 
+		public float percentChance = -1;
+
 		public UnityEvent onDayNumber;
 		public UnityEvent onNotDayNumber;
 
 		public UnityEvent onUniverseNumber;
 		public UnityEvent onNotUniverseNumber;
+
+		public UnityEvent onPercentChance;
+		public UnityEvent onNotPercentChance;
 
 		// Start is called before the first frame update
 		public void Start()
@@ -56,6 +61,14 @@ namespace Amy
 					onUniverseNumber.Invoke();
 				else
 					onNotUniverseNumber.Invoke();
+            }
+
+			if (percentChance > 0.0f)
+            {
+				float rng = Random.Range(0.0f, 100.0f);
+
+				if (percentChance > rng)
+					onPercentChance.Invoke();
             }
 		}
 	}

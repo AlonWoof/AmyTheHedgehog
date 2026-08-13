@@ -33,7 +33,24 @@ namespace Amy
 	        
 	    }
 #if UNITY_EDITOR
-		private void OnDrawGizmosSelected()
+
+        private void OnValidate()
+        {
+			if (otherNodes == null)
+				otherNodes = new List<Waypoint>();
+
+			otherNodes.Clear();
+
+			foreach (Waypoint w in FindObjectsOfType<Waypoint>())
+			{
+				if (w.group == group)
+				{
+					otherNodes.Add(w);
+				}
+			}
+		}
+
+        private void OnDrawGizmosSelected()
         {
 			if (otherNodes == null)
 				otherNodes = new List<Waypoint>();

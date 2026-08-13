@@ -162,7 +162,7 @@ namespace Amy
 		public void checkIfUnderwater()
 		{
 
-			if (mPlayer.getWaterDepth() >= mPlayer.headOffsetFromGround)
+			if (mPlayer.getWaterDepth() >= mPlayer.swimOffset)
 			{
 				mPlayer.clearSpeed();
 				mPlayer.clearAccel();

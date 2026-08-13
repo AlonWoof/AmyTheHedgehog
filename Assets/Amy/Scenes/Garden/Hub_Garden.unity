@@ -26,7 +26,7 @@ RenderSettings:
   m_AmbientIntensity: 1
   m_AmbientMode: 1
   m_SubtractiveShadowColor: {r: 0.42, g: 0.478, b: 0.627, a: 1}
-  m_SkyboxMaterial: {fileID: 2100000, guid: 35198e2c6ff638c478b6d05bf2864198, type: 2}
+  m_SkyboxMaterial: {fileID: 2100000, guid: ecc1fd9cd78ad564280a712e7eff4578, type: 2}
   m_HaloStrength: 0.5
   m_FlareStrength: 1
   m_FlareFadeSpeed: 3
@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.28216448, g: 0.42432612, b: 0.61271966, a: 1}
+  m_IndirectSpecularColor: {r: 0.513651, g: 0.47563523, b: 0.68000895, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -173,6 +173,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   exitNumber: 0
   altCheckpoint: {fileID: 0}
+  amyMesh: {fileID: 0}
 --- !u!4 &257198185
 Transform:
   m_ObjectHideFlags: 0
@@ -349,8 +350,9 @@ GameObject:
   m_Component:
   - component: {fileID: 1268822788}
   - component: {fileID: 1268822787}
-  m_Layer: 0
-  m_Name: GameObject
+  - component: {fileID: 1268822789}
+  m_Layer: 20
+  m_Name: SceneInfo
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -370,17 +372,18 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   areaName: The Garden
   showTitleCard: 0
+  cameraClearColor: {r: 0, g: 0, b: 0, a: 1}
   titleCardStoryFlagHash: -1
+  isHubWorld: 0
+  isSmallRoom: 0
   isOutdoors: 1
-  freezeTime: 0
-  humanDisguise: 0
   dontSpawnPlayer: 0
-  forceHour: -1
-  forceMinute: -1
+  forceYoungAmy: 0
+  enforceBGM: 1
   bgmData: {fileID: 0}
-  currentFogColor: {r: 0, g: 0, b: 0, a: 0}
   preloadObjects: []
   shadow_dist: 64
+  postProcessProfile: {fileID: 0}
 --- !u!4 &1268822788
 Transform:
   m_ObjectHideFlags: 0
@@ -395,6 +398,23 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1268822789
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1268822786}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8b9a305e18de0c04dbd257a21cd47087, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  sharedProfile: {fileID: 0}
+  isGlobal: 1
+  blendDistance: 0
+  weight: 1
+  priority: 0
 --- !u!1 &1325257001 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: -8391222552659086748, guid: e1621cc9b3505fa4bad6e4d12125a62d, type: 3}

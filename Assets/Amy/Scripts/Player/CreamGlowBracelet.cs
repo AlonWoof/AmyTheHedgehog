@@ -13,6 +13,7 @@ namespace Amy
 	{
 		public GameObject braceletModel;
 		public Light braceletLight;
+		public Light charLight;
 
 	    // Start is called before the first frame update
 	    void Start()
