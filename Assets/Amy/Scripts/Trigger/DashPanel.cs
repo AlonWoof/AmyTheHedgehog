@@ -14,6 +14,8 @@ namespace Amy
 
 		public AudioSource mAudio;
 
+		public float acceleration = 30.0f;
+
 	    // Start is called before the first frame update
 	    void Start()
 	    {
@@ -35,7 +37,7 @@ namespace Amy
             {
 				pl.direction = transform.forward;
 				pl.setAngleInstantly(transform.forward);
-				pl.acceleration.z = 30.0f;
+				pl.acceleration.z = acceleration;
 				pl.stickTimeout = 1.0f;
 				pl.tpc.centerBehindPlayer();
 

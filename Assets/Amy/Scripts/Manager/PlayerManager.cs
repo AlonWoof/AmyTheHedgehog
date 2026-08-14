@@ -422,8 +422,8 @@ namespace Amy
 
         public void checkStoryFlags()
         {
-            if (isHubWorld && isPrologue())
-                setStoryFlag("PROLOGUE_DONE", true);
+            //if (isHubWorld && isPrologue())
+                //setStoryFlag("PROLOGUE_DONE", true);
 
             if (getStoryFlag("AMYDECAL_CLEAR"))
             {
@@ -1048,10 +1048,13 @@ namespace Amy
 
 
             mPlayerInstance = Player.Spawn(pos, playerCheckpoint.transform.forward, currentCharacter);
-            
+
 
             //saveGame.lastScene = SceneManager.GetActiveScene().name;
             // saveGame.lastExit = lastExit;
+
+            if (!getStoryFlag("PROLOGUE_DONE"))
+                exitType = ExitLevelType.NORMAL;
 
             if(exitType == ExitLevelType.WARP)
             {

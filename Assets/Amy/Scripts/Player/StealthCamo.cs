@@ -16,6 +16,7 @@ namespace Amy
 		//30 seconds of invisibility til it breaks
 		float timeLeft = 30.0f;
 		float veloFactor = 0.0f;
+		float noise = 0.0f;
 
 		List<Material> mats;
 		List<Shader> originalShaders;
@@ -96,25 +97,32 @@ namespace Amy
 			veloFactor = Mathf.Lerp(veloFactor, (mPlayer.acceleration.z / 4.0f), Time.deltaTime);
 
 			float distort = 0.1f * veloFactor;
+			
 
-			if (timeLeft < 5.0f)
+			if (timeLeft < 10.0f)
 			{
 
-				if (Time.frameCount % 4 == 0)
-					veloFactor = Random.Range(-8, 8);
+				if (Time.frameCount % 8 == 0 && Random.Range(0,100) < 10)
+					noise = 3.0f;
 
 
-				if (timeLeft < 3.0f)
+				if (timeLeft < 5.0f)
 				{
-					if (Time.frameCount % 2 == 0)
-						veloFactor = Random.Range(-8, 8);
+					if (Time.frameCount % 4 == 0 && Random.Range(0, 100) < 50)
+						noise = 8.0f;
 				}
 			}
 
 			foreach (Material m in mats)
 			{
 				m.SetFloat("_Distortion", distort);
+				m.SetFloat("_noiseBlend", noise);
 			}
+
+			noise = Mathf.Lerp(noise, 0.0f, 0.125f);
+
+			if (noise < 0.01f)
+				noise = 0.0f;
 		}
 
 		// Update is called once per frame

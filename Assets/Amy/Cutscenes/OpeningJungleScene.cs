@@ -74,11 +74,9 @@ namespace Amy
 			amyVoice.volume = 0.5f;
 			amyVoice.PlayOneShot(amy_are);
 			CoroutineHandle msg = UIManager.Instance.messageBox.showMessageBox("Huh...? Where am I...?", SpeakerProfile.Amy);
-
+			
 			while (msg.IsRunning)
-			{
 				yield return 0f;
-			}
 
 			cam2.SetActive(true);
 			cam1.SetActive(false);

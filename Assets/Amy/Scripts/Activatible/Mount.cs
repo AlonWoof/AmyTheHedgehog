@@ -18,6 +18,7 @@ namespace Amy
 		public float timeout = 0.0f;
 
 		public bool isMounted = false;
+		public bool canUseFirstPerson = true;
 
 		Player mPlayer;
 
@@ -35,11 +36,19 @@ namespace Amy
 				mPlayer.transform.position = mountPoint.transform.position;
 				mPlayer.transform.rotation = mountPoint.transform.rotation;
 
+				if (mPlayer.currentMode == PlayerModes.FIRSTPERSON)
+					return;
+
 				UIManager.Instance.contextButton.setActionText(quitText);
 
 				if (Input.GetButtonDown("Action"))
 				{
 					unmountPlayer();
+				}
+
+				if (Input.GetButtonDown("View"))
+				{
+					mPlayer.changeCurrentMode(PlayerModes.FIRSTPERSON);
 				}
 			}
 

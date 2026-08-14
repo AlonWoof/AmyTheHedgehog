@@ -22,6 +22,9 @@ namespace Amy
         public Vector2 camRot = Vector2.zero;
         public bool acceptInput = false;
 
+        public float currentFOVMult = 1.0f;
+        public float desiredFOVMult = 1.0f;
+
 		// Start is called before the first frame update
 		void Start()
 	    {
@@ -148,9 +151,9 @@ namespace Amy
             camRot.y -= camX * (Time.unscaledDeltaTime * sensitivity) * (GameManager.Instance.config.lookSensitivity * -1.0f);
 
             //if (Input.GetButton("Action"))
-            //     desiredFOVMult = 0.5f;
+             //    desiredFOVMult = 0.5f;
             //else
-            //   desiredFOVMult = 1.0f;
+              // desiredFOVMult = 1.0f;
 
             if (Mathf.Abs(camRot.y) > 69)
             {
@@ -170,6 +173,7 @@ namespace Amy
 
             camRot.x = Mathf.Clamp(camRot.x, -80, 65);
             camRot.y = Mathf.Clamp(camRot.y, -70, 70);
+
 
             if (Input.GetButtonDown("View"))
             {
@@ -196,7 +200,7 @@ namespace Amy
             mPlayer.tpc.disableCameraCollision();
             mPlayer.biped.fixTransforms = false;
 
-            if (mPlayer.lastMode != PlayerModes.SWIMMING)
+            if (mPlayer.lastMode != PlayerModes.SWIMMING && mPlayer.lastMode != PlayerModes.CUTSCENE)
                 mAnimator.CrossFade("Idle", 0.1f);
 
             mPlayer.tpc.centerBehindPlayer();
@@ -269,8 +273,12 @@ namespace Amy
 
             handleInput();
             UpdateRotation();
+
+            fpCam.m_Lens.FieldOfView = GameManager.Instance.config.desiredFOV * currentFOVMult;
+
+            currentFOVMult = Mathf.Lerp(currentFOVMult, desiredFOVMult, Time.deltaTime * 3.0f);
         }
 
 
-	}
+    }
 }

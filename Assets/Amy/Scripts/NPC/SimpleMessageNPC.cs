@@ -14,6 +14,7 @@ namespace Amy
 	{
 
 		public Message SimpleMessage;
+        public bool returnToNormalAfter = true;
 
         public void simpleTalk()
         {

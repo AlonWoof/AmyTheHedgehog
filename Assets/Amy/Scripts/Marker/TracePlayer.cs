@@ -19,6 +19,8 @@ namespace Amy
         public bool snapToWaterSurface = false;
         public bool onlyXZ = false;
 
+        public string playerBone = "";
+
     	// Start is called before the first frame update
     	void Start()
     	{

@@ -402,7 +402,9 @@ namespace Amy
             //ALL the things
             if (Input.GetKeyDown(KeyCode.F9))
             {
-                foreach(ItemData i in systemData.itemData)
+                PlayerManager.Instance.mPlayerInstance.getStatus().items.Clear();
+
+                foreach (ItemData i in systemData.itemData)
                 {
                     PlayerManager.Instance.mPlayerInstance.getStatus().addItem(i.getHash());
                 }

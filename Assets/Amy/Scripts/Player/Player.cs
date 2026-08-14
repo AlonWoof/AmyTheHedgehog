@@ -70,7 +70,7 @@ namespace Amy
 		const float moveStaminaCost = 0.002f;
 		const float flyStaminaCost = 0.004f;
 
-		const float maxAccel = 16.0f;
+		const float maxAccel = 32.0f;
 
 		//Components
 		public Rigidbody mRigidBody;

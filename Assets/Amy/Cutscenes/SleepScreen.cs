@@ -60,6 +60,7 @@ namespace Amy
 
 		IEnumerator<float> doSleepScene()
         {
+			PlayerManager.Instance.setStoryFlag("PROLOGUE_DONE", true);
 			nextDayText.text = "Day " + PlayerManager.Instance.days;
 			updateTextColor(0.01f);
 

@@ -102,6 +102,9 @@ namespace Amy
 
 		bool canOpenDoor()
         {
+			if (!PlayerManager.Instance.getStoryFlag("PROLOGUE_DONE"))
+				return false;
+
 			switch(color)
             {
 				case DoorColor.Pink:

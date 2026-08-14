@@ -50,8 +50,6 @@ namespace Amy
 
 		public void Activate(Player pl)
 		{
-			if (!canActivate(pl))
-				return;
 
 			onActivate.Invoke();
 		}
@@ -71,12 +69,16 @@ namespace Amy
 				mPlayer = other.GetComponentInChildren<Player>();
 			}
 
-
 			if (mPlayer)
 			{
 
-				if (mPlayer.interactTimeout <= 0.0f)
-					UIManager.Instance.contextButton.setActionText(interactionLabel);
+				if (mPlayer.interactTimeout > 0.0f)
+					return;
+
+				if (!canActivate(mPlayer))
+					return;
+
+				UIManager.Instance.contextButton.setActionText(interactionLabel);
 
 				if (Input.GetButtonDown("Action"))
 				{

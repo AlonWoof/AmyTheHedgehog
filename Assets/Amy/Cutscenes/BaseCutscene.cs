@@ -32,6 +32,8 @@ namespace Amy
 
         public Transform playerLocationMarker;
 
+        public float runTime = 0.0f;
+
         // Update is called once per frame
         void Update()
     	{
@@ -43,10 +45,21 @@ namespace Amy
                 if (cutsceneThread.IsRunning)
                 {
                     handleInput();
+                    runTime += Time.deltaTime;
                 }
             }
         }
 
+
+        private void OnGUI()
+        {
+            Vector2 screenPos = new Vector2(Screen.currentResolution.width * 0.025f, Screen.currentResolution.height * 0.8f);
+
+            string dbgText = "TIME: " + runTime;
+
+            Helper.drawDebugText(screenPos, dbgText);
+            
+        }
 
         Player getPlayerInstance()
         {
