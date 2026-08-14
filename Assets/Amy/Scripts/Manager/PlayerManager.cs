@@ -31,7 +31,8 @@ namespace Amy
         Horny = 16,
         Sick = 32,
         GoodFood = 64,
-        RecentOrgasm = 128
+        RecentOrgasm = 128,
+        Invisible = 256
     }
 
     public enum PlayerNPCLocation
@@ -247,6 +248,7 @@ namespace Amy
         public bool hasCloth = false;
         public bool hasSlingshot = false;
         public bool hasGlowBracelet = false;
+        public bool hasUkiwa = false;
         public List<StoryFlag> storyFlags;
         public System.DateTime lastSaveTime;
 
@@ -279,8 +281,6 @@ namespace Amy
         public float stealthIndex = 0.0f;
 
         public int saveFileSlot = -1;
-
-        public bool playerHasStealthCamo = false;
 
         //Scene flags
         public bool isHubWorld = false;
@@ -550,7 +550,7 @@ namespace Amy
 
         void handleStealthIndex()
         {
-            /*
+            
             if (!mPlayerInstance)
                 return;
 
@@ -563,19 +563,19 @@ namespace Amy
 
 
             //Jumping makes you more visible
-            if (basicMove.jumpTimer > 0.2f)
-                stealthIndex -= 0.25f;
+            //if (basicMove.jumpTimer > 0.2f)
+            //    stealthIndex -= 0.25f;
 
             //Crouching makes you have a lower profile
-            if (basicMove.isCrouching)
-                stealthIndex += 0.45f;
+            //if (basicMove.isCrouching)
+            //    stealthIndex += 0.45f;
 
             //Hide in the water
             if (mPlayerInstance.getWaterDepth() > 1.0f)
                 stealthIndex = 0.8f;
 
             //Invisibility, full stealth
-            if (playerHasStealthCamo)
+            if (getCurrentPlayerStatus().checkStatusEffect(PlayerStatusFX.Invisible))
                 stealthIndex = 1.0f;
 
             float oneMinus = 1.0f - stealthIndex;
@@ -588,22 +588,10 @@ namespace Amy
             if (stealthIndex < 0)
                 stealthColor = Color.red;
 
-            Circle.DrawEllipse(mPlayerInstance.transform.position + Vector3.up * 0.5f, Vector3.up, mPlayerInstance.transform.forward, oneMinus * 3.0f, oneMinus * 3.0f, 32, stealthColor);
-            */
+            Circle.DrawEllipse(mPlayerInstance.transform.position + Vector3.up * 0.5f, Vector3.up, mPlayerInstance.transform.forward, oneMinus * 1.5f, oneMinus * 1.5f, 32, stealthColor);
+            
         }
 
-        public void givePlayerStealthCamo()
-        {
-            /*
-            if (!mPlayerInstance)
-                return;
-
-            if (!mPlayerInstance.GetComponent<StealthCamo>())
-                mPlayerInstance.gameObject.AddComponent<StealthCamo>();
-
-            mPlayerInstance.GetComponent<StealthCamo>().enabled = true;
-            */
-        }
 
         public void updatePlayerStatus(Player pl)
         {
@@ -662,6 +650,7 @@ namespace Amy
                 }
              
             }
+
 
             if (pStats.checkStatusEffect(PlayerStatusFX.GoodFood))
             {
@@ -1205,6 +1194,23 @@ namespace Amy
             mPlayerInstance.changeCurrentMode(PlayerModes.KILLED);
         }
 
+        public void addStealthCamo(Player pl)
+        {
+            PlayerStatus pStats = pl.getStatus();
+
+            if(!pStats.checkStatusEffect(PlayerStatusFX.Invisible))
+            {
+                pStats.setStatusEffect(PlayerStatusFX.Invisible);
+
+                StealthCamo camo = pl.GetComponentInChildren<StealthCamo>();
+
+                if (!camo)
+                    camo = pl.gameObject.AddComponent<StealthCamo>();
+
+                camo.enabled = true;
+            }
+        }
+
         public void inflictScaredStatus(Player pl, float time = 5.0f)
         {
             PlayerStatus pStats = pl.getStatus();
@@ -1285,11 +1291,8 @@ namespace Amy
                     if (isPrologue())
                         getCurrentPlayerStatus().currentHealth = getCurrentPlayerStatus().maxHealth * 0.5f;
 
-
-
                     spawnPlayerAtCheckpoint();
                     yield return 0f;
-
 
                     yield return Timing.WaitForSeconds(0.5f);
 
@@ -1305,8 +1308,6 @@ namespace Amy
                     yield return Timing.WaitForSeconds(1.1f);
 
                     GameManager.Instance.enableInput();
-
-
                     yield break;
                 }
 

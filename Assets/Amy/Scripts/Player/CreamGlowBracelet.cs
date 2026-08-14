@@ -38,6 +38,9 @@ namespace Amy
             {
 				braceletModel.SetActive(true);
 
+				if (!mPlayer)
+					return;
+
 				if(mPlayer.getStatus().checkVibe(VibeType.Dark))
                 {
 					braceletLight.enabled = true;

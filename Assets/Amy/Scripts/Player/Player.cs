@@ -525,6 +525,11 @@ namespace Amy
 			return null;
 		}
 
+		public Vector3 getCenterPosition()
+        {
+			return transform.position + Vector3.up * (mParam.height * 0.5f);
+        }
+
 		public void lookAt(Vector3 lookPos, float time = 0.25f)
         {
 			if (!lookAtController)

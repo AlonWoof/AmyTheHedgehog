@@ -63,7 +63,14 @@ namespace Amy
                 //Replace with actual voice and animation
                 // mPlayer.mVoice.playVoice(mPlayer.mVoice.largePain, true);
                 mRigidBody.useGravity = false;
-                mAnimator.Play("Die_Start");
+
+                Vector3 velo = mRigidBody.velocity;
+                float yVel = velo.y;
+                velo *= 0.5f;
+                velo.y = Mathf.Clamp(yVel, -6.0f, -2.0f);
+                mRigidBody.velocity = velo;
+
+                mAnimator.Play("Drown_Start");
             }
 
             if(!mPlayer.isAiControlled)
@@ -107,6 +114,8 @@ namespace Amy
 
         }
 
+
+
         private void FixedUpdate()
         {
             if (deathType == DeathType.Drowned)
@@ -136,7 +145,7 @@ namespace Amy
                 {
                     hurt.knockPower *= 0.5f;
 
-                    Debug.DrawLine(start, end, Color.red, 10.0f);
+                    Debug.DrawLine(start, end, Color.red, 1.0f);
                 }
             }
         }

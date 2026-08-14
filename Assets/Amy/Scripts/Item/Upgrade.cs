@@ -12,7 +12,7 @@ namespace Amy
 	public class Upgrade : MonoBehaviour
 	{
 		protected Animator mAnimator;
-		protected const PlayableCharacter character = PlayableCharacter.Amy;
+		protected PlayableCharacter character = PlayableCharacter.Amy;
 
 		// Start is called before the first frame update
 		void Start()

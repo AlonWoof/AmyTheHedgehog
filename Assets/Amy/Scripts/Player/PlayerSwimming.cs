@@ -72,6 +72,14 @@ namespace Amy
 
             if(creamMode)
             {
+                if(!PlayerManager.Instance.hasUkiwa)
+                {
+                    mPlayer.modeKilled.deathType = PlayerKilled.DeathType.Drowned;
+                    mPlayer.changeCurrentMode(PlayerModes.KILLED);
+                    return;
+                }
+
+
                 if (!ukiwaModel)
                     SpawnCreamUkiwa();
 

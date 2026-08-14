@@ -10,42 +10,44 @@ using MEC;
 namespace Amy
 {
 
-	public class Upgrade_Hammer : Upgrade
+	public class Upgrade_Ukiwa : Upgrade
 	{
 
 		public Message itemGetMessage;
-		public GameObject hammerGetScene;
+		public GameObject ukiwaGetScene;
 
+		private void Awake()
+        {
+			character = PlayableCharacter.Cream;
+		}
 
-	    // Update is called once per frame
-	    void Update()
+        // Update is called once per frame
+        void Update()
 	    {
 	        
 	    }
 
 		protected override bool playerHasItem()
-        {
-			return PlayerManager.Instance.hasHammer;
-        }
+		{
+			return PlayerManager.Instance.hasUkiwa;
+		}
 
 
-        protected override void doItemGetScene()
-        {
+		protected override void doItemGetScene()
+		{
 			//Insert some fancy cutscene or something.
 			mAnimator.Play("Disappear");
 
 			Timing.RunCoroutine(itemGetSceneRoutine(), gameObject);
-
 		}
 
 		IEnumerator<float> itemGetSceneRoutine()
-        {
-			
+		{
+
 			GameManager.Instance.disableInput();
 			GameManager.Instance.cutsceneMode = true;
 
 			UIManager.Instance.fadeScreen(false, 0.25f, true);
-
 
 			Player pl = PlayerManager.Instance.getPlayer();
 
@@ -59,13 +61,11 @@ namespace Amy
 			pl.changeCurrentMode(PlayerModes.CUTSCENE);
 			pl.transform.position = transform.position + Vector3.up * 10000.0f;
 
-			GameObject cutsceneObject = GameObject.Instantiate(hammerGetScene);
-			PlayerManager.Instance.hasHammer = true;
+			GameObject cutsceneObject = GameObject.Instantiate(ukiwaGetScene);
+			PlayerManager.Instance.hasUkiwa = true;
 
 			cutsceneObject.transform.position = transform.position;
 			cutsceneObject.transform.rotation = transform.rotation;
-
-			
 
 			UIManager.Instance.fadeScreen(true, 1.0f, true);
 
@@ -74,13 +74,8 @@ namespace Amy
 
 			CoroutineHandle messageTask = UIManager.Instance.messageBox.showMessageBox(itemGetMessage);
 
-
 			while (messageTask.IsRunning)
-			{
-
 				yield return 0f;
-
-			}
 
 			UIManager.Instance.fadeScreen(false, 0.25f, true);
 
@@ -104,8 +99,6 @@ namespace Amy
 
 			GameManager.Instance.enableInput();
 			GameManager.Instance.cutsceneMode = false;
-
-
 
 			Invoke("Die", 5.0f);
 		}

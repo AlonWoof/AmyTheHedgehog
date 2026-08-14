@@ -392,6 +392,8 @@ namespace Amy
                 PlayerManager.Instance.hasHammer = true;
                 PlayerManager.Instance.hasSlingshot = true;
                 PlayerManager.Instance.hasCloth = true;
+                PlayerManager.Instance.hasGlowBracelet = true;
+                PlayerManager.Instance.hasUkiwa = true;
 
                 PlayerManager.Instance.setStoryFlag("PROLOGUE_DONE", true);
                 PlayerManager.Instance.setStoryFlag("DEVCOMMENT", true);

@@ -29,6 +29,9 @@ namespace Amy
 			if (Vector3.Angle(eye.forward, Helper.getDirectionTo(eye.position, pl.transform.position)) > fov)
 				return false;
 
+			//We're re-adding this thing. Yep.
+			dist -= dist * PlayerManager.Instance.stealthIndex;
+
 			Vector3 start = eye.transform.position;
 			Vector3 end = pl.transform.position + Vector3.up * 0.5f;
 
