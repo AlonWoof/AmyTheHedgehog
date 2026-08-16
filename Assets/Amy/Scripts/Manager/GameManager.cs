@@ -846,18 +846,28 @@ namespace Amy
             //Do with a fancy coroutine cutscene of rings being deposited.
             if (PlayerManager.Instance.isHubWorld && PlayerManager.Instance.getRings() > 0)
             {
-                GameObject inst = GameObject.Instantiate(systemData.RES_RingBankTransferScene);
 
-                BankTransferScene bankTransfer = inst.GetComponentInChildren<BankTransferScene>();
-
-                CoroutineHandle ch = bankTransfer.startRingBankTransfer();
-
-                while(ch.IsRunning)
+                if (PlayerManager.Instance.getStoryFlag("PROLOGUE_DONE"))
                 {
-                    yield return 0f;
-                }
 
-                Destroy(inst);
+                    GameObject inst = GameObject.Instantiate(systemData.RES_RingBankTransferScene);
+
+                    BankTransferScene bankTransfer = inst.GetComponentInChildren<BankTransferScene>();
+
+                    CoroutineHandle ch = bankTransfer.startRingBankTransfer();
+
+                    while (ch.IsRunning)
+                    {
+                        yield return 0f;
+                    }
+
+                    Destroy(inst);
+                }
+                else
+                {
+                    //Or don't, if we're in the prologue
+
+                }
             }
 
             

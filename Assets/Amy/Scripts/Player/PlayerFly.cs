@@ -103,9 +103,20 @@ namespace Amy
 
 			mDesiredMovement = (targetRotation * camAngle) * (targetDirection.magnitude);
 
+			Vector3 prev_direction = mPlayer.direction;
 			mPlayer.direction = mDesiredMovement.normalized;
 
+			float turningFactor = (1 - Vector3.Dot(mPlayer.direction.normalized, prev_direction.normalized)) * Helper.AngleDir(mPlayer.direction.normalized, prev_direction.normalized, transform.up);
+
+			turningFactor *= 16.0f;
+
+			if (Mathf.Abs(turningFactor) > 0.01f)
+				mPlayer.leanAmount += turningFactor * 1.5f;
+
+			mPlayer.leanAmount = Mathf.Clamp(mPlayer.leanAmount, -1.0f, 1.0f);
+
 		}
+
 
 		private void LateUpdate()
 		{
@@ -119,6 +130,10 @@ namespace Amy
 			//mAnimator.SetFloat("animSpeed", 1.0f + horizMovement.magnitude / 4.0f);
 			//mAnimator.SetFloat("y_accel", vertMovement);
 
+
+
+			//mAnimator.SetFloat("fly_z", Random.Range(float.NegativeInfinity, float.PositiveInfinity));
+			//mAnimator.SetFloat("fly_y", Random.Range(float.NegativeInfinity, float.PositiveInfinity));
 			mAnimator.SetFloat("fly_z", horizMovement.magnitude * 0.25f);
 			mAnimator.SetFloat("fly_y", vertMovement * 0.3f);
 			mAnimator.SetFloat("fly_speed", Mathf.Clamp(mRigidBody.velocity.magnitude * 0.5f, 1.0f, 4.0f));
@@ -237,6 +252,7 @@ namespace Amy
 
 
 			mPlayer.setVelocityDirectly(Vector3.Lerp(mRigidBody.velocity, desiredVelo, Time.deltaTime * 2.0f));
+			mPlayer.acceleration = transform.rotation * mRigidBody.velocity;
 			transform.rotation = Quaternion.Lerp(transform.rotation, Quaternion.LookRotation(mPlayer.direction, Vector3.up), Time.deltaTime * 3.0f);
 
 		}
@@ -257,6 +273,7 @@ namespace Amy
 			transform.rotation = Quaternion.Lerp(transform.rotation, newRot, Time.deltaTime * 4.0f);
 
 			hoverOffset = Mathf.Sin(Time.time);
+
 		}
 
 

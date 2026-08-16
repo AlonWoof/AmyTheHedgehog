@@ -61,7 +61,7 @@ namespace Amy
 		IEnumerator<float> doSleepScene()
         {
 			PlayerManager.Instance.setStoryFlag("PROLOGUE_DONE", true);
-			nextDayText.text = "Day " + PlayerManager.Instance.days;
+			nextDayText.text = PlayerManager.Instance.days.ToString();
 			updateTextColor(0.01f);
 
 			yield return Timing.WaitForSeconds(4.0f);
@@ -81,7 +81,7 @@ namespace Amy
 
 			}
 
-			nextDayText.text = "Day " + PlayerManager.Instance.days;
+			nextDayText.text = PlayerManager.Instance.days.ToString();
 			updateTextColor(1.0f);
 
 			if(PlayerManager.Instance.isBadDay())

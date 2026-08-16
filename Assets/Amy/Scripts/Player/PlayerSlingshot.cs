@@ -90,13 +90,17 @@ namespace Amy
 				return;
 			}
 
+			float camAngleSide = Vector3.Dot(transform.right, GameManager.Instance.mainCamera.transform.forward);
+			Debug.Log("camAngleSide: " + camAngleSide);
+
+			if(Mathf.Abs(camAngleSide) > 0.1f)
+				leftSide = (camAngleSide < 0.0f) ? false : true;
+
 			GameManager.Instance.changeCameraBlendMode(GameManager.blend_mode.fast);
 			mPlayer.clearAccel();
 			mPlayer.clearSpeed();
 
 			mAnimator.Play("Slingshot_Start");
-
-
 
 			aimer.slingshot_model.SetActive(true);
 
@@ -240,8 +244,28 @@ namespace Amy
 			aimer.target_node.transform.position = targetPos; // Vector3.Lerp(aimer.target_node.transform.position, targetPos, 0.25f);
 		}
 
+		void dryFire()
+        {
+			GameObject bullet = GameObject.Instantiate(GameManager.Instance.systemData.RES_AmyPlayerFX.fx_slingshotDryFire);
+			bullet.transform.position = weapon_node.transform.position + weapon_node.transform.up * 0.1f;
+			
+			timeOut = maxTimeOut;
+			ammoLoaded = false;
+			afterFireTimeout = 0.25f;
+		}
+
 		void fireBullet()
         {
+
+			if (mPlayer.getStatus().currentStamina < 0.5f)
+			{
+				dryFire();
+				return;
+			}
+
+			mPlayer.getStatus().currentStamina -= 0.5f;
+			mPlayer.getStatus().clampValues();
+
 			GameObject bullet = GameObject.Instantiate(GameManager.Instance.systemData.RES_AmyPlayerFX.basicSlingshotProjectile);
 
 			Collider c = bullet.GetComponentInChildren<Collider>();

@@ -381,6 +381,9 @@ namespace Amy
 			framesAirborne = 0;
 			framesGrounded = 10;
 			jumpTimer = 0.0f;
+
+			mAnimator.Rebind();
+			mAnimator.Update(0f);
 		}
 
 		public void addAllModes()
@@ -419,13 +422,15 @@ namespace Amy
 			modeKilled.enabled = false;
 			modeFirstPerson.enabled = false;
 			modeDebug.enabled = false;
+
         }
 
 		public void refreshMode()
         {
 			disableAllModes();
 
-			switch(currentMode)
+
+			switch (currentMode)
             {
 				case PlayerModes.NORMAL:
 					modeBasic.enabled = true;
@@ -553,7 +558,7 @@ namespace Amy
 			//lookAtController.eyeLook.look_x_left = 0.0f;
 		}
 
-		void doLeanAnimation()
+		public void doLeanAnimation()
         {
 			float angle = (20.0f * leanAmount) * Mathf.Clamp01(Mathf.Abs(acceleration.z) / 6.0f);
 
@@ -1556,10 +1561,6 @@ namespace Amy
 
 			float jumpPower = mParam.jumpSpeed * slopeMult;
 
-			if (getStatus().checkStatusEffect(PlayerStatusFX.Tired))
-				jumpPower *= 0.65f;
-
-
 			if (mChara == PlayableCharacter.YoungAmy)
 				isBallMode = true;
 
@@ -1753,9 +1754,6 @@ namespace Amy
 
 						float jumpPower = mParam.jumpSpeed * slopeMult;
 
-						if (getStatus().checkStatusEffect(PlayerStatusFX.Tired))
-							jumpPower *= 0.65f;
-
 						acceleration.y = jumpPower * 2;
 						jumpTimer = mParam.jump_hangTime;
 					}
@@ -1930,10 +1928,6 @@ namespace Amy
 			if (!PlayerManager.Instance.hasHammer)
 				return;
 
-			//Get this poor girl some rest jeez...
-			if (getStatus().checkStatusEffect(PlayerStatusFX.Tired))
-				return;
-
 			if(Input.GetButton("Attack") && hammerJumpCharge < 1.0f)
             {
 				hammerJumpCharge += Time.deltaTime * 3.0f;
@@ -1996,11 +1990,6 @@ namespace Amy
 			if (PlayerManager.Instance.isSmallRoom)
 				return;
 
-			//Get this poor girl some rest jeez...
-			if (getStatus().checkStatusEffect(PlayerStatusFX.Tired))
-				return;
-
-
 			if (Input.GetButtonDown("Attack"))
 			{
 				earSpinAttack();
@@ -2019,10 +2008,6 @@ namespace Amy
 				return;
 
 			if (!canAirAttack)
-				return;
-
-			//Get this poor girl some rest jeez...
-			if (getStatus().checkStatusEffect(PlayerStatusFX.Tired))
 				return;
 
 			//if (isAttacking && !isOnGround)
@@ -2089,11 +2074,6 @@ namespace Amy
 				return;
 
 			if (framesAirborne < 10)
-				return;
-
-
-			//Get this poor girl some rest jeez...
-			if (getStatus().checkStatusEffect(PlayerStatusFX.Tired))
 				return;
 
 			//if (isAttacking && !isOnGround)
@@ -2195,15 +2175,8 @@ namespace Amy
 
 			float dirChange = Mathf.Clamp01(Vector3.Dot(direction, prev_direction));
 
-			
-
 			float forward_accel = (targetDirection.magnitude * mParam.forwardAccel);
 			forward_accel += (slopeAmount * mParam.forwardAccel);
-
-			if (getStatus().checkStatusEffect(PlayerStatusFX.Tired))
-				forward_accel *= 0.48f;
-
-			//forward_accel *= dirChange;
 
 			if(isOnGround)
 				acceleration.z *= dirChange;

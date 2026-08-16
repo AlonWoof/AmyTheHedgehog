@@ -34,6 +34,7 @@ namespace Amy
         public GameObject fx_creamButtSlamReticule;
 
         public GameObject basicSlingshotProjectile;
+        public GameObject fx_slingshotDryFire;
     }
 
 

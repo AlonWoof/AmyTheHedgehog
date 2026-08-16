@@ -354,9 +354,6 @@ namespace Amy
 			float forward_accel = (targetDirection.magnitude * mParam.forwardAccel);
 			forward_accel += (slopeAmount * mParam.forwardAccel);
 
-			if (getStatus().checkStatusEffect(PlayerStatusFX.Tired))
-				forward_accel *= 0.48f;
-
 			//forward_accel *= dirChange;
 
 			if (isOnGround)
@@ -467,10 +464,6 @@ namespace Amy
 			if (PlayerManager.Instance.isSmallRoom)
 				return;
 
-			//Get this poor girl some rest jeez...
-			if (getStatus().checkStatusEffect(PlayerStatusFX.Tired))
-				return;
-
 
 			if (virtualAttackDown)
 			{
@@ -533,9 +526,6 @@ namespace Amy
 			if (!canAirAttack)
 				return;
 
-			//Get this poor girl some rest jeez...
-			if (getStatus().checkStatusEffect(PlayerStatusFX.Tired))
-				return;
 
 			//if (isAttacking && !isOnGround)
 			//updateHoming();

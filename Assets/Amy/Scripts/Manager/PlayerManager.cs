@@ -26,13 +26,12 @@ namespace Amy
         None = 0,
         Relaxed = 1,
         Scared = 2,
-        Tired = 4,
-        Dirty = 8,
-        Horny = 16,
-        Sick = 32,
-        GoodFood = 64,
-        RecentOrgasm = 128,
-        Invisible = 256
+        Dirty = 4,
+        Horny = 8,
+        Sick = 16,
+        GoodFood = 32,
+        RecentOrgasm = 64,
+        Invisible = 128
     }
 
     public enum PlayerNPCLocation
@@ -668,31 +667,6 @@ namespace Amy
 
             }
 
-            if (isPrologue())
-            {
-                if (pStats.checkStatusEffect(PlayerStatusFX.Tired))
-                {
-                    pStats.unSetStatusEffect(PlayerStatusFX.Tired);
-                }
-
-                pStats.currentStamina = Mathf.Clamp(pStats.currentStamina, pStats.maxStamina * 0.126f, pStats.maxStamina);
-            }
-
-            if ((pStats.currentStamina / pStats.maxStamina) < 0.125f)
-            {
-
-                if(!pStats.checkStatusEffect(PlayerStatusFX.Tired))
-                {
-                    pStats.setStatusEffect(PlayerStatusFX.Tired);
-                }
-            }
-            else if ((pStats.currentStamina / pStats.maxStamina) > 0.25f)
-            {
-                if (pStats.checkStatusEffect(PlayerStatusFX.Tired))
-                {
-                    pStats.unSetStatusEffect(PlayerStatusFX.Tired);
-                }
-            }
 
             if(pStats.checkStatusEffect(PlayerStatusFX.Sick))
             {
@@ -935,7 +909,6 @@ namespace Amy
 
             if(pStats.sleepTimeLeft < 0.0f)
             {
-                pStats.unSetStatusEffect(PlayerStatusFX.Tired);
                 pStats.currentHealth = pStats.maxHealth;
                 pStats.currentStamina = pStats.maxStamina;
                 pStats.clampValues();

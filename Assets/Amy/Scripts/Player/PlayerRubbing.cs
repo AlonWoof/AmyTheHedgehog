@@ -206,12 +206,6 @@ namespace Amy
 				return false;
 			}
 
-			if (pstats.checkStatusEffect(PlayerStatusFX.Tired))
-			{
-				showCantMasturbateMessage(cantMasturbateReason.Tired);
-				return false;
-			}
-
 
 			if (pstats.checkVibe(VibeType.Scary) || pstats.checkStatusEffect(PlayerStatusFX.Scared))
 			{

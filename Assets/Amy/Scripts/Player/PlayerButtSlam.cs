@@ -15,6 +15,7 @@ namespace Amy
 	{
 
 		public GameObject buttSlamAura;
+		public CoroutineHandle actionHandle;
 
 		void SpawnFX(GameObject fx)
         {
@@ -36,6 +37,9 @@ namespace Amy
 				return;
 			}
 
+			mAnimator.Rebind();
+			mAnimator.Update(0f);
+
 			if (!buttSlamAura)
 			{
 				buttSlamAura = GameObject.Instantiate(GameManager.Instance.systemData.RES_AmyPlayerFX.fx_creamButtSlamAura);
@@ -54,20 +58,29 @@ namespace Amy
 			if(mPlayer.tpc)
 				mPlayer.tpc.changeCameraMode(TPCMode.Normal);
 
-			Timing.RunCoroutine(startButtSlam());
+			actionHandle = Timing.RunCoroutine(startButtSlam(), gameObject);
 		}
 
+        private void OnDisable()
+        {
+            if(actionHandle.IsRunning)
+            {
+				Timing.KillCoroutines(actionHandle);
+				buttSlamAura.SetActive(false);
+            }
+        }
 
-
-		IEnumerator<float> startButtSlam()
+        IEnumerator<float> startButtSlam()
         {
 
 			//mPlayer.tpc.changeCameraMode(TPCMode.Normal);
+			mAnimator.Rebind();
+			mAnimator.Update(0f);
 			mAnimator.Play("ButtSlam_Start");
 
 			yield return Timing.WaitForSeconds(0.125f);
 
-			Timing.RunCoroutine(buttSlamLoop());
+			actionHandle = Timing.RunCoroutine(buttSlamLoop(), gameObject);
         }
 
 		IEnumerator<float> buttSlamLoop()

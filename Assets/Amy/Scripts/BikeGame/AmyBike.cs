@@ -11,253 +11,72 @@ namespace Amy
 
 	public class AmyBike : MonoBehaviour
 	{
-
-		public Vector3 direction = Vector3.forward;
-		public Vector3 groundNormal = Vector3.up;
-		public float accel = 0.0f;
-		public const float accelRate = 3.5f;
-		public const float maxAccel = 15.0f;
-
-		public Vector3 horizVelocity = Vector3.zero;
-		public Vector3 acceleration = Vector3.zero;
-		public Vector3 speed = Vector3.zero;
-		public float friction = 0.2f;
-		public float slopeAmount = 0.0f;
-		public float forwardAccel = 10.0f;
-
-		Vector3 stickAngle = Vector3.zero;
-		float stickPower = 0.0f;
-
-		public LayerMask mColMask;
-
+		float moveInput, steerInput;
+		public float maxSpeed, acceleration, steerStrength;
 		public Rigidbody mRigidBody;
-		public Animator mAnimator;
+        public Transform bikeModel;
+        public Animator bikeAnimator;
 
-		public bool isGrounded = false;
-		public int framesAirborne = 0;
+        private void Start()
+        {
+            mRigidBody.transform.SetParent(null);
+        }
 
-	    // Start is called before the first frame update
-	    void Start()
-	    {
-			mRigidBody = GetComponent<Rigidbody>();
-			mRigidBody.freezeRotation = true;
-
-			mAnimator = GetComponent<Animator>();
-
-			mColMask = LayerMask.GetMask("Collision");
-		}
-	
-	    // Update is called once per frame
-	    void Update()
-	    {
-			//snapToGround();
-			getFloorAverageNormal();
-			updateRotation();
-			handleInput();
-	    }
+        private void Update()
+        {
+            handleInput();
+            handleAnimation();
+            transform.position = mRigidBody.position;
+        }
 
         private void FixedUpdate()
         {
-			calculateVerticalVelocity();
-			applyFriction();
-			handleMovement();
+            handleMovement();
+            handleRotation();
 
         }
 
         void handleMovement()
         {
-			speed = Vector3.Lerp(speed, transform.rotation * acceleration, Time.deltaTime * 8.0f);
-			mRigidBody.velocity = speed;
+            mRigidBody.velocity = Vector3.Lerp(mRigidBody.velocity, maxSpeed * moveInput *transform.forward, Time.fixedDeltaTime * acceleration);
 
-		}
+        }
 
-        private void LateUpdate()
+        void handleRotation()
         {
-			
-		}
+            transform.Rotate(0, steerInput * moveInput * steerStrength * Time.fixedDeltaTime, 0, Space.World);
+            //bikeModel.transform.localRotation = Quaternion.Euler(0,0, steerInput * moveInput * -20.0f);
+        }
+
+        void handleAnimation()
+        {
+            bikeAnimator.SetFloat("accel", moveInput);
+            bikeAnimator.SetFloat("turn", steerInput);
+        }
 
         void handleInput()
         {
+            moveInput = 0.0f;
+            steerInput = 0.0f;
 
-			float h = InputFunctions.getLeftAnalogX();
-			float v = InputFunctions.getLeftAnalogY();
+            if (GameManager.Instance.playerInputDisabled)
+                return;
 
-			if (Mathf.Abs(h) < 0.1f && Mathf.Abs(v) < 0.1f)
-				return;
+            float h = InputFunctions.getLeftAnalogX();
+            float v = InputFunctions.getLeftAnalogY();
 
-			stickAngle = Vector3.ClampMagnitude(new Vector3(h, 0f, v), 1.0f);
+            if (Mathf.Abs(h) < 0.1f && Mathf.Abs(v) < 0.1f && !Input.GetButton("Action"))
+                return;
 
-			if (Input.GetButton("Jump"))
-				stickPower = Mathf.Lerp(stickPower, 1, Time.deltaTime * accelRate);
-			else
-				stickPower = Mathf.Lerp(stickPower, 0, Time.deltaTime * accelRate);
 
+            if (!GameManager.Instance.usingController)
+                moveInput = v;
+            else
+                moveInput = (Input.GetButton("Action")) ? 1.0f : 0.0f;
 
-			float slopePenalty = Mathf.Clamp(slopeAmount, 0, 2.0f);
 
-			float forward_accel = (stickPower * forwardAccel);
-			forward_accel += (slopeAmount * forwardAccel);
 
-			acceleration.z += forward_accel * Time.deltaTime;
-
-			mAnimator.SetFloat("turn", h);
-			mAnimator.SetFloat("accel", accel);
-
-			if (Mathf.Abs(h) < 0.1f && Mathf.Abs(v) < 0.1f)
-				return;
-
-			direction = Quaternion.Euler(0, h, 0) * direction;
-		}
-
-
-
-		void getFloorAverageNormal()
-        {
-			//Front wheel
-			Vector3 start = (transform.position + transform.forward * 0.35f) + transform.up;
-			Vector3 end = (transform.position + transform.forward * 0.35f) - (transform.up * Time.deltaTime);
-
-			Vector3 frontNorm = Vector3.up;
-			float frontYPos = transform.position.y;
-
-			RaycastHit hitInfo = new RaycastHit();
-
-			Debug.DrawLine(start, end, Color.green);
-
-			if (Physics.Linecast(start, end, out hitInfo, mColMask))
-			{
-				frontNorm = hitInfo.normal;
-				frontYPos = hitInfo.point.y;
-
-				framesAirborne = 0;
-				isGrounded = true;
-			}
-			else
-            {
-				framesAirborne++;
-			}
-
-
-			//Back wheel
-			start = (transform.position - transform.forward * 0.35f) + transform.up;
-			end = (transform.position - transform.forward * 0.35f) - (transform.up * Time.deltaTime);
-
-			Vector3 backNorm = Vector3.up;
-			float backYPos = transform.position.y;
-
-			hitInfo = new RaycastHit();
-
-			Debug.DrawLine(start, end, Color.red);
-
-			if (Physics.Linecast(start, end, out hitInfo, mColMask))
-			{
-				backNorm = hitInfo.normal;
-				backYPos = hitInfo.point.y;
-				framesAirborne = 0;
-				isGrounded = true;
-			}
-
-			groundNormal = Vector3.Lerp(frontNorm, backNorm, 0.5f);
-
-			Debug.DrawLine(transform.position, transform.position + groundNormal, Color.red, 10.0f);
-
-			//transform.rotation =Quaternion.Lerp(transform.rotation, Quaternion.LookRotation(Vector3.forward, groundNormal), 0.5f);
-
-			Vector3 pos = transform.position;
-			pos.y = Mathf.Lerp(frontYPos, backYPos, 0.25f);
-			transform.position = pos;
-
-
-			if (framesAirborne > 5)
-			{
-				isGrounded = false;
-			}
-
-			slopeAmount = Vector3.Dot(direction.normalized, groundNormal);
-
-			if (Mathf.Abs(slopeAmount) < 0.03f)
-				slopeAmount = 0.0f;
-		}
-
-		void updateRotation()
-        {
-
-			Quaternion dirRot = Quaternion.LookRotation(direction.normalized, Vector3.up);
-
-			Quaternion slopeRot = Quaternion.FromToRotation(Vector3.up, groundNormal) * dirRot;
-
-			transform.rotation = Quaternion.Lerp(transform.rotation, slopeRot, 0.15f);
-		}
-
-		void calculateVerticalVelocity()
-        {
-			float gravityMult = 1.0f;
-
-
-			float verticalVelocity = acceleration.y;
-
-			if (isGrounded)
-			{
-				verticalVelocity = Mathf.Lerp(verticalVelocity, 0, 0.25f);
-			}
-			else
-			{
-				verticalVelocity = Mathf.Lerp(verticalVelocity, Physics.gravity.y * gravityMult, Time.fixedDeltaTime * 1.5f);
-
-			}
-
-			acceleration.y = verticalVelocity;
-
-			if (Mathf.Abs(acceleration.y) < 0.01f)
-				acceleration.y = 0.0f;
-
-			//if (Mathf.Abs(speed.y) < 0.01f)
-			//	speed.y = 0.0f;
-		}
-
-		public void applyFriction()
-		{
-
-			Vector3 mAccel = acceleration;
-
-			//TODO: groundFriction and airResistance should be consts at the top
-			float groundFriction = 0.0f;
-			float airResistance = 0.0f;
-
-			float friction = (groundFriction * speed.magnitude) * Time.fixedDeltaTime;
-
-			if (isGrounded)
-				friction = (airResistance * speed.magnitude) * Time.fixedDeltaTime;
-
-			//if (stickPower < 0.01f)
-			//	friction *= 6.0f;
-
-			if (mAccel.z > friction)
-				mAccel.z -= friction;
-
-			if (mAccel.z < -friction)
-				mAccel.z += friction;
-
-			if (mAccel.x > friction)
-				mAccel.x -= friction;
-
-			if (mAccel.x < -friction)
-				mAccel.x += friction;
-
-
-			if (Mathf.Abs(mAccel.z) < 0.01f)
-				mAccel.z = 0.0f;
-
-			if (Mathf.Abs(mAccel.x) < 0.01f)
-				mAccel.x = 0.0f;
-
-
-			mAccel.y -= (0.1f * mAccel.z) * Time.fixedDeltaTime;
-
-			acceleration = mAccel;
-
-
-		}
-
-	}
+            steerInput = h;
+        }
+    }
 }

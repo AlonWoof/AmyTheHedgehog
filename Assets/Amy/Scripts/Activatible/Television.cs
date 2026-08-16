@@ -66,6 +66,7 @@ namespace Amy
             {
 				isOn = true;
 				powerSwitch.enabled = false;
+				lookTarget.SetActive(true);
 			}
 
 
@@ -73,6 +74,7 @@ namespace Amy
 			{
 				isOn = true;
 				powerSwitch.enabled = false;
+				lookTarget.SetActive(true);
 			}
 
 

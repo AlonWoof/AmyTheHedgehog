@@ -160,9 +160,6 @@ namespace Amy
 			if (pstats.checkStatusEffect(PlayerStatusFX.Scared))
 				dbgstr += "Scared ";
 
-			if (pstats.checkStatusEffect(PlayerStatusFX.Tired))
-				dbgstr += "Tired ";
-
 			if (pstats.checkStatusEffect(PlayerStatusFX.Dirty))
 				dbgstr += "Dirty ";
 

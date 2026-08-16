@@ -43,7 +43,7 @@ namespace Amy
 				return;
             }
 
-			float accelFac = mBike.accel / AmyBike.maxAccel;
+			float accelFac = 1.0f;//mBike.accel / AmyBike.maxAccel;
 			Vector3 calculatedPos = mBike.transform.position + (mBike.transform.rotation * currentOffset);
 
 			calculatedPos += transform.up * (Mathf.Sin(Time.time * Mathf.Lerp(30.0f, 75.0f, accelFac)) * 0.001f);

@@ -22,7 +22,9 @@ namespace Amy
         bool isDiving = false;
         float depth = 0.0f;
 
-
+        float creamSwimBoost = 0.0f;
+        const float creamSwimBoostPower = 6.0f;
+        float creamSwimBoostTimeout = 0.0f;
 
         public GameObject ukiwaModel;
 
@@ -58,7 +60,7 @@ namespace Amy
             Vector3 pos = transform.position;
             pos.y = mPlayer.getWaterYPos() - mPlayer.swimOffset;
 
-            mPlayer.mAnimator.Play("Swimming");
+            mPlayer.mAnimator.Play("Swimming", 0, 0.0f);
 
             mCurrentMovement = mPlayer.speed;
 
@@ -130,6 +132,11 @@ namespace Amy
 
             mPlayer.mAnimator.SetFloat("swim_z", mCurrentMovement.magnitude);
             mPlayer.mAnimator.SetFloat("swim_y", mRigidBody.velocity.y);
+            mAnimator.SetFloat("run_anim_speed", 1.0f + creamSwimBoost * creamSwimBoostPower);
+
+
+            if (creamSwimBoostTimeout > 0.0f)
+                creamSwimBoostTimeout -= Time.deltaTime;
         }
 
         private void FixedUpdate()
@@ -206,6 +213,12 @@ namespace Amy
         {
 
             Vector3 moveVec = ((mCurrentMovement * swimSpeed) * speedMult) + Vector3.up * (currentVerticalMovement * (swimSpeed * 1.5f));
+
+            if(creamSwimBoost > 0.0f)
+            {
+                moveVec *= (creamSwimBoostPower * creamSwimBoost);
+                creamSwimBoost -= Time.fixedDeltaTime;    
+            }
 
 
             if (transform.position.y < mPlayer.getWaterYPos() - mPlayer.swimOffset && currentVerticalMovement > -0.1f)// && diveTimer < 0.01f)
@@ -336,6 +349,18 @@ namespace Amy
 
             if (Input.GetButton("Action") && !creamMode)
                 desiredVerticalMovement = -1.0f;
+
+            if(creamMode)
+            {
+                if(Input.GetButtonDown("Action"))
+                {
+                    if(creamSwimBoost <= 0.0f && creamSwimBoostTimeout <= 0.0f)
+                    {
+                        creamSwimBoost = 1.0f;
+                        creamSwimBoostTimeout = creamSwimBoost + 0.25f;
+                    }
+                }
+            }
 
             float h = InputFunctions.getLeftAnalogX();
             float v = InputFunctions.getLeftAnalogY();

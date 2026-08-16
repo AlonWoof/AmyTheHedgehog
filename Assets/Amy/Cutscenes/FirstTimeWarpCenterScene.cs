@@ -19,34 +19,46 @@ namespace Amy
 		public GameObject cam2;
 		public GameObject cam3;
 
+
 		// Start is called before the first frame update
 		void Start()
 	    {
 			amyRoot.SetActive(false);
 			playCutscene();
 			mPlayer = PlayerManager.Instance.getPlayer();
+
+			if (!PlayerManager.Instance.getStoryFlag(getStoryHash()))
+				PlayerManager.Instance.lastExit = 999;
 		}
 
 		protected override IEnumerator<float> doCutscene()
 		{
-			GameManager.Instance.cutsceneMode = true;
-			GameManager.Instance.disableInput();
-
-			canSkipScene = true;
+			//if (mPlayer)
+			//	mPlayer.gameObject.SetActive(false);
 
 			cam0.SetActive(true);
 			cam1.SetActive(false);
 			cam2.SetActive(false);
 			cam3.SetActive(false);
 
+			while (GameManager.Instance.isLoading)
+				yield return 0f;
+
 			if (mPlayer)
 			{
+				mPlayer.changeCurrentMode(PlayerModes.CUTSCENE);
 				mPlayer.transform.position = Vector3.up * 1000000.0f;
 			}
 
-			yield return Timing.WaitForSeconds(1.0f);
+			GameManager.Instance.cutsceneMode = true;
+			GameManager.Instance.disableInput();
+
+			canSkipScene = true;
+
+
 
 			amyRoot.SetActive(true);
+
 			yield return Timing.WaitForSeconds(5.2f);
 
 			cam0.SetActive(false);
