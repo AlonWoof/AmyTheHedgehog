@@ -28,8 +28,8 @@ namespace Amy
 		// Start is called before the first frame update
 		void Start()
 	    {
-	        
-	    }
+			data = null;
+		}
 	
 	    // Update is called once per frame
 	    void Update()

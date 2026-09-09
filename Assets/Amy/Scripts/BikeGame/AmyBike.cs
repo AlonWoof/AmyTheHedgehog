@@ -44,7 +44,11 @@ namespace Amy
 
         void handleRotation()
         {
-            transform.Rotate(0, steerInput * moveInput * steerStrength * Time.fixedDeltaTime, 0, Space.World);
+            float steerFac = moveInput * steerStrength;
+            steerFac = Mathf.Clamp(steerFac, 50.0f, steerStrength);
+            
+
+            transform.Rotate(0, steerInput * steerFac * Time.fixedDeltaTime, 0, Space.World);
             //bikeModel.transform.localRotation = Quaternion.Euler(0,0, steerInput * moveInput * -20.0f);
         }
 

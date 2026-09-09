@@ -34,6 +34,7 @@ namespace Amy
         int maxListSize;
 
         int cursorPosition = 0;
+        public int cursorOffset = 0;
         MapSelectEntry currentItem;
 
         public Text exitNumberText;
@@ -80,37 +81,8 @@ namespace Amy
             maxListSize = entryTexts.Count - 1;
             loadingScreen.SetActive(false);
 
-            int i = 0;
+            updateList();
 
-            for (i = 0; i < mapList.Count; i++)
-            {
-                if (mapList[i].isForbidden)
-                {
-                    //75% chance of just not being there?
-
-                   // if (Random.Range(0, 100) > 25)
-                    //    mapList.RemoveAt(i);
-                }
-            }
-
-            i = 0;
-
-            foreach (Text t in entryTexts)
-            {
-                if (i < mapList.Count)
-                {
-                    if(mapList[i].isForbidden)
-                        t.text = (i + 1) + ": " + getCorruptedName();
-                    else
-                        t.text = (i + 1) + ": " + mapList[i].label;
-                }
-                else
-                {
-                    t.text = "";
-                }
-
-                i++;
-            }
 
             characterSelect = PlayerManager.Instance.currentCharacter;
 
@@ -141,10 +113,52 @@ namespace Amy
 
         }
 
+        void updateList()
+        {
+            int i = 0;
+
+            for (i = 0; i < mapList.Count; i++)
+            {
+                if (mapList[i].isForbidden)
+                {
+                    //75% chance of just not being there?
+
+                    // if (Random.Range(0, 100) > 25)
+                    //    mapList.RemoveAt(i);
+                }
+            }
+
+            i = 0;
+
+            for (i = 0; i < entryTexts.Count; i++)
+            {
+                if ((i + cursorOffset) < mapList.Count)
+                {
+                    if (mapList[(i + cursorOffset)].isForbidden)
+                        entryTexts[i].text = (i + cursorOffset + 1) + ": " + getCorruptedName();
+                    else
+                        entryTexts[i].text = (i + cursorOffset + 1) + ": " + mapList[(i + cursorOffset)].label;
+                }
+                else
+                {
+                    entryTexts[i].text = "";
+                }
+            }
+        }
+
         void updateSelection()
         {
+            
 
-            cursorPosition = Mathf.Clamp(cursorPosition, 0, maxListSize);
+            if (cursorPosition < 0 && cursorOffset > 0)
+                cursorOffset--;
+
+            if (cursorPosition > 19 && cursorOffset + cursorPosition < mapList.Count)
+                cursorOffset++;
+
+            updateList();
+
+            cursorPosition = Mathf.Clamp(cursorPosition, 0, 19);
 
             if(characterSelect >= PlayableCharacter.None)
             {
@@ -173,7 +187,7 @@ namespace Amy
                 }
 
                 entryTexts[cursorPosition].color = Color.white;
-                currentItem = mapList[cursorPosition];
+                currentItem = mapList[cursorPosition + cursorOffset];
             }
         }
 

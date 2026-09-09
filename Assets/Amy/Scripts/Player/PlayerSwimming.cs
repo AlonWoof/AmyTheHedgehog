@@ -48,6 +48,8 @@ namespace Amy
             if (mPlayer.currentMode != PlayerModes.SWIMMING)
                 return;
 
+            mAnimator.Rebind();
+            mAnimator.Update(0f);
 
             mPlayer.clearAccel();
             mPlayer.speed = Vector3.zero;
@@ -60,7 +62,7 @@ namespace Amy
             Vector3 pos = transform.position;
             pos.y = mPlayer.getWaterYPos() - mPlayer.swimOffset;
 
-            mPlayer.mAnimator.Play("Swimming", 0, 0.0f);
+            mPlayer.mAnimator.Play("Swimming");
 
             mCurrentMovement = mPlayer.speed;
 
@@ -155,7 +157,7 @@ namespace Amy
         void checkForSurfacing()
         {
 
-            if (mPlayer.getWaterDepth() < mPlayer.mParam.height * 0.5f)
+            if (mPlayer.getWaterDepth() < mPlayer.swimOffset * 0.5f)
             {
                 Vector3 start = mPlayer.headBoneTransform.position;
                 Vector3 end = transform.position - (Vector3.up * 0.2f);

@@ -382,8 +382,6 @@ namespace Amy
 			framesGrounded = 10;
 			jumpTimer = 0.0f;
 
-			mAnimator.Rebind();
-			mAnimator.Update(0f);
 		}
 
 		public void addAllModes()
@@ -595,6 +593,8 @@ namespace Amy
 
 		public void startWarp(string sceneName, int exitNum = 0)
         {
+			//Drains ALL magic.
+			getStatus().currentMagic = 0;
 			Timing.RunCoroutine(doWarp(sceneName, exitNum));
         }
 
@@ -886,7 +886,7 @@ namespace Amy
 			PlayerStatus pstats = getStatus();
 
 			int rings = PlayerManager.Instance.getRings();
-			float moodFac = pstats.currentStamina / pstats.maxStamina;
+			float moodFac = pstats.currentMagic / pstats.maxMagic;
 
 			//Rings protect you from ouchies.
 			if (rings > 0)
@@ -1281,7 +1281,7 @@ namespace Amy
 				if (airLeft < 0.0f)
 					airLeft = 0.0f;
 
-				getStatus().currentStamina -= (0.075f * Time.deltaTime);
+				getStatus().currentMagic -= (0.075f * Time.deltaTime);
 
 				if (airLeft <= 0.0f)
 				{
@@ -1303,9 +1303,11 @@ namespace Amy
 		public float calculateLungCapacity()
         {
 			PlayerStatus pStats = getStatus();
-			float staminaHealthAvg = (pStats.maxHealth + pStats.maxStamina) * 0.5f;
+			//float staminaHealthAvg = (pStats.maxHealth + pStats.maxMagic) * 0.5f;
 
-			return staminaHealthAvg * 0.5f;
+			//return staminaHealthAvg * 0.5f;
+
+			return pStats.lungCapacity;
 		}
 
 		public void CalcVerticalVelocity()
@@ -1568,7 +1570,7 @@ namespace Amy
 			acceleration.y = jumpPower;
 			mAnimator.Play("Jump");
 			mAnimator.Play("Mouth_Jump");
-			getStatus().currentStamina -= jumpStaimaCost;
+			getStatus().currentMagic -= jumpStaimaCost;
 			getStatus().clampValues();
 
 			if(mChara != PlayableCharacter.YoungAmy)
@@ -1601,7 +1603,7 @@ namespace Amy
 			acceleration.y = jumpPower * 1.9f;
 			mAnimator.Play("HammerJump");
 			isHammerJumping = true;
-			getStatus().currentStamina -= hammerJumpStaimaCost;
+			getStatus().currentMagic -= hammerJumpStaimaCost;
 			getStatus().clampValues();
 
 			if (!isAiControlled)
@@ -1634,7 +1636,7 @@ namespace Amy
 
 			mAnimator.Play("Attack");
 			isAttacking = true;
-			getStatus().currentStamina -= hammerAttackStaminaCost;
+			getStatus().currentMagic -= hammerAttackStaminaCost;
 			getStatus().clampValues();
 			attackTimer = 0.6f;
 
@@ -1678,7 +1680,7 @@ namespace Amy
 			isHammerSpin = true;
 			isAttacking = true;
 
-			getStatus().currentStamina -= hammerAttackStaminaCost;
+			getStatus().currentMagic -= hammerAttackStaminaCost;
 			getStatus().clampValues();
 			attackTimer = 0.6f;
 			stickTimeout = 0.1f;
@@ -1712,7 +1714,7 @@ namespace Amy
 			mAnimator.Play("RunningGroundAttack");
 			isHammerSpin = true;
 			isAttacking = true;
-			getStatus().currentStamina -= hammerAttackStaminaCost;
+			getStatus().currentMagic -= hammerAttackStaminaCost;
 			getStatus().clampValues();
 			attackTimer = 0.6f;
 

@@ -12,6 +12,8 @@ namespace Amy
 
 	public class DayFlagToggle : MonoBehaviour
 	{
+
+		/*
 		public UnityEvent yumeShowerEvent;
 		public UnityEvent stationCircleNightEvent;
 		public UnityEvent luckyNumberEvent;
@@ -51,5 +53,6 @@ namespace Amy
 			if (Input.GetKeyDown(KeyCode.F6))
 				executeEvents();
 		}
+		*/
 	}
 }

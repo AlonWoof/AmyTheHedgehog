@@ -88,7 +88,7 @@ namespace Amy
             {
 				PlayerManager.Instance.AmyStatus.setStatusEffect(PlayerStatusFX.Horny);
 				PlayerManager.Instance.AmyStatus.setStatusEffect(PlayerStatusFX.Sick);
-				PlayerManager.Instance.AmyStatus.currentStamina *= 0.5f;
+				PlayerManager.Instance.AmyStatus.currentMagic *= 0.5f;
 			}
 
 			PlayerManager.Instance.decidePlayerNPCLocation();

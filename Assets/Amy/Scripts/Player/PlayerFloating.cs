@@ -72,6 +72,9 @@ namespace Amy
 
 			if (floatingTimer > 0.0f)
 				floatingTimer -= Time.deltaTime;
+
+			if (mPlayer.acceleration.magnitude > 16.0f)
+				mPlayer.acceleration *= 0.9f;
 		}
 
 		void calcVerticalVelocity()

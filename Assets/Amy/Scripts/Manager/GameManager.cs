@@ -387,7 +387,7 @@ namespace Amy
             {
                 PlayerStatus pstats = PlayerManager.Instance.getCurrentPlayerStatus();
                 pstats.currentHealth = pstats.maxHealth;
-                pstats.currentStamina = pstats.maxStamina;
+                pstats.currentMagic = pstats.maxMagic;
 
                 PlayerManager.Instance.hasHammer = true;
                 PlayerManager.Instance.hasSlingshot = true;

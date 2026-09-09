@@ -32,7 +32,7 @@ namespace Amy
             healthBar.transform.localScale = new Vector3(1, targetScale, 1);
             healthBarBG.transform.localScale = Vector3.Lerp(healthBarBG.transform.localScale, new Vector3(1, targetScale, 1), Time.deltaTime * 4.0f);
 
-            targetScale = (pstats.currentStamina / pstats.maxStamina);
+            targetScale = (pstats.currentMagic / pstats.maxMagic);
 
             staminaBar.transform.localScale = new Vector3(1, targetScale, 1);
         }

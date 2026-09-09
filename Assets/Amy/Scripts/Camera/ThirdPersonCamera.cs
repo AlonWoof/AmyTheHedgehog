@@ -23,7 +23,6 @@ namespace Amy
 		public Vector2 currentAngle = Vector2.zero;
 
 		public Transform playerTransform;
-        public Transform lockedTargetTransform;
 
         public Player mPlayer;
         public TPCMode mode;
@@ -52,10 +51,7 @@ namespace Amy
 
         Vector3 desiredPosition;
 
-        public bool isLockedOn = false;
         public bool lockPosition = false;
-
-        public bool rightSide = false;
 
         public float playerVelocity = 0.0f;
         public bool playerIsCrouched = false;
@@ -102,7 +98,6 @@ namespace Amy
         private void Update()
         {
             handleInput();
-            interpolate();
             handlePlayerActions();
 
             if (GameManager.Instance.gamePaused || PlayerManager.Instance.itemMenuOpen)
@@ -112,6 +107,14 @@ namespace Amy
             {
                 dof.focusDist = Vector3.Distance(lookPosition, GameManager.Instance.mainCamera.transform.position);
             }
+
+            debugInput();
+        }
+
+        void debugInput()
+        {
+            if (Input.GetKeyDown(KeyCode.C))
+                lockPosition = !lockPosition;
         }
 
         void pausedUpdate()
@@ -170,7 +173,7 @@ namespace Amy
 
             float sensitivity = 256;
 
-            if (GameManager.Instance.cameraInputDisabled)
+            if (GameManager.Instance.cameraInputDisabled || lockPosition)
                 return;
 
             if (!GameManager.Instance.usingController)
@@ -353,7 +356,8 @@ namespace Amy
 
             transform.LookAt(lookPosition);
 
-            Occlusion();
+            if (!lockPosition)
+                Occlusion();
 
         }
 
@@ -395,7 +399,8 @@ namespace Amy
 
             transform.LookAt(lookPosition);
 
-            Occlusion();
+            if (!lockPosition)
+                Occlusion();
         }
 
 
@@ -419,10 +424,6 @@ namespace Amy
             currentAngle.y = Mathf.Lerp(currentAngle.y, (Quaternion.LookRotation(playerTransform.forward).eulerAngles.y), rate);
         }
 
-        void interpolate()
-        {
-
-		}
 
         public void handlePlayerActions()
         {
@@ -433,14 +434,9 @@ namespace Amy
 
             targetOffset = offset_near;
 
-
-
             //then, check if we have a player instance
             if (!mPlayer)
                 return;
-
-
-
 
             //The crouched state is part of the GroundMove component.
             // playerIsCrouched = mPlayer.GetComponent<PlayerBasicMove>().isCrouching;

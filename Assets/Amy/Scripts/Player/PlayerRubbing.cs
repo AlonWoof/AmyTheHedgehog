@@ -15,6 +15,7 @@ namespace Amy
 	{
 
 		float phaseTimeLeft = 10.0f;
+		public const float magicCost = 10.0f;
 
 		public GameObject cunnyDripFX;
 		public SkinnedMeshRenderer karadaMesh = null;
@@ -169,16 +170,16 @@ namespace Amy
 			//if (pstats.checkStatusEffect(PlayerStatusFX.RecentOrgasm))
 			//	return false;
 
-			if (pstats.checkStatusEffect(PlayerStatusFX.Horny))
-				return true;
+			//if (pstats.checkStatusEffect(PlayerStatusFX.Horny))
+			//	return true;
 
-			if (pstats.currentHealth < pstats.maxHealth * 0.75f)
-				return true;
+			//if (pstats.currentHealth < pstats.maxHealth * 0.75f)
+			//	return true;
 
-			if (PlayerManager.Instance.getStoryFlag(StoryFlag.SADX_NUDE))
-				return true;
+			//if (PlayerManager.Instance.getStoryFlag(StoryFlag.SADX_NUDE))
+			//	return true;
 
-			return false;
+			return true;
 		}
 
 		public bool shouldMasturbate()
@@ -219,6 +220,13 @@ namespace Amy
 				return false;
 			}
 
+			if(pstats.currentMagic < magicCost)
+            {
+				showCantMasturbateMessage(cantMasturbateReason.Tired);
+				return false;
+            }
+
+
 			return true;
 
         }
@@ -253,7 +261,6 @@ namespace Amy
 	    {
 
 			float healRate = 5.0f;
-			float stamDrainRate = 5.0f;
 			float animProgress = mAnimator.GetFloat("animProgress");
 			float rumbleStrength = 0.5f;
 
@@ -261,7 +268,6 @@ namespace Amy
             {
 				case MasturbationPhase.Main:
 					healRate = 2.0f;
-					stamDrainRate = 0.25f;
 					rumbleStrength = 0.25f;
 
 					if (phaseTimeLeft < 5.0f)
@@ -277,7 +283,6 @@ namespace Amy
 
 				case MasturbationPhase.Close:
 					healRate = 5.0f;
-					stamDrainRate = 0.5f;
 					rumbleStrength = 0.5f;
 
 					if (phaseTimeLeft < 5.0f)
@@ -293,18 +298,12 @@ namespace Amy
 
 				case MasturbationPhase.Cum:
 					healRate = 8.0f;
-					stamDrainRate = 1.25f;
 					rumbleStrength = 1.0f;
 					break;
             }
 
 
 			mPlayer.getStatus().currentHealth += healRate * (Time.deltaTime * animProgress);
-
-			if(mPlayer.getStatus().currentHealth < (mPlayer.getStatus().maxHealth * 0.95f))
-				mPlayer.getStatus().currentStamina -= stamDrainRate * (Time.deltaTime * animProgress);
-
-			
 
 			if (Gamepad.current != null)
 				Gamepad.current.SetMotorSpeeds(animProgress * rumbleStrength, animProgress * rumbleStrength);

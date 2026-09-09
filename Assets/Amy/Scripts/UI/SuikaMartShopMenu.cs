@@ -75,14 +75,16 @@ namespace Amy
 
 		void updateModelSelection()
         {
-			for (int i = 0; i < shopEntries.Count; i++)
+			for (int i = 0; i < shopEntries.Count-1; i++)
 			{
 				if (i == currentChoice)
 				{
 					if(shopEntries[i].getItemData().itemModelInst)
 						shopEntries[i].getItemData().itemModelInst.transform.localScale = Vector3.Lerp(shopEntries[i].getItemData().itemModelInst.transform.localScale, Vector3.one, 0.12f);
+
+					
 				}
-				else
+				else if (shopEntries[i].getItemData() != null)
 				{
 					if (shopEntries[i].getItemData().itemModelInst)
 						shopEntries[i].getItemData().itemModelInst.transform.localScale = Vector3.zero;
@@ -164,21 +166,23 @@ namespace Amy
 		void updateHighlighted()
 		{
 			clampValues();
-			
+			itemPreviewRoot.rotation = Quaternion.identity;
 
 			for (int i = 0; i < shopEntries.Count; i++)
             {
 				if(i == currentChoice)
                 {
 					shopEntries[i].isSelected = true;
-                }
+					
+				}
 				else
                 {
 					shopEntries[i].isSelected = false;
 				}
 
 				shopEntries[i].isAvailable = canPurchaseItem(shopEntries[i].getItemData());
-            }
+
+			}
 
 			
 		}

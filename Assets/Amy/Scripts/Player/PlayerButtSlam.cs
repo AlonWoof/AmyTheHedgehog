@@ -102,15 +102,11 @@ namespace Amy
 				{
 					mPlayer.acceleration.y = 0.0f;
 					mPlayer.changeCurrentMode(PlayerModes.SWIMMING);
-					mPlayer.setVelocityDirectly(mPlayer.mRigidBody.velocity * 0.5f);
+					mPlayer.setVelocityDirectly(mPlayer.mRigidBody.velocity * 0.25f);
 					mPlayer.resetGroundFlags();
-				}
-
-				if(mPlayer.currentMode != PlayerModes.BUTTSLAM)
-                {
-					buttSlamAura.SetActive(false);
 					yield break;
 				}
+
 
 				if (mPlayer.framesGrounded > 3  && mPlayer.slopeAmount < 0.2f)
 					done = true;
@@ -139,6 +135,10 @@ namespace Amy
 			yield return Timing.WaitForSeconds(0.5f);
 
 			mPlayer.resetGroundFlags();
+
+			mAnimator.Rebind();
+			mAnimator.Update(0f);
+
 			mPlayer.changeCurrentMode(PlayerModes.NORMAL);
         }
 

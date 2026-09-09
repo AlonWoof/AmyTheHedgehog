@@ -25,7 +25,7 @@ namespace Amy
 		[Range(0.01f,1.0f)]
 		public float testProgress = 0.01f;
 
-		[Range(-1.0f, 64.0f)]
+		[Range(-1.0f, 256.0f)]
 		public float testDistance = 0.0f;
 
 		public float checkForPlayerTimeout = 0.03f;

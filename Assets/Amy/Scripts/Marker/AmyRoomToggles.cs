@@ -15,12 +15,14 @@ namespace Amy
 		public GameObject hammer_PikoPiko;
 		public GameObject slingshot;
 		public GameObject magicCloth;
+		public GameObject ukiwa;
 
 		void disableAllProps()
 		{
 			hammer_PikoPiko.SetActive(false);
 			slingshot.SetActive(false);
 			magicCloth.SetActive(false);
+			ukiwa.SetActive(false);
 		}
 
 		void refreshProps()
@@ -35,7 +37,10 @@ namespace Amy
 
 			if (PlayerManager.Instance.hasCloth)
 				magicCloth.SetActive(true);
-        }
+
+			if (PlayerManager.Instance.hasUkiwa)
+				ukiwa.SetActive(true);
+		}
 
 		// Start is called before the first frame update
 		void Start()

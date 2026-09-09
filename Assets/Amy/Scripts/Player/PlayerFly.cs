@@ -203,7 +203,7 @@ namespace Amy
 			if (mDesiredMovement.magnitude > 0.1f)
 			{
 				fly_left -= Time.fixedDeltaTime * mDesiredMovement.magnitude;
-				mPlayer.getStatus().currentStamina -= (Time.fixedDeltaTime * mDesiredMovement.magnitude) * flyStaminaDrain;
+				mPlayer.getStatus().currentMagic -= (Time.fixedDeltaTime * mDesiredMovement.magnitude) * flyStaminaDrain;
 
 				if (fly_left < 0.0f)
 					fly_left = 0.0f;

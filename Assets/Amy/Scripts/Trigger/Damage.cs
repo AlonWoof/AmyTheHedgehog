@@ -14,9 +14,10 @@ namespace Amy
     {
 		None,
 		Neutral,
+		AmySlingshot,
+		CreamButt,
 		Fire,
 		Electric,
-		Water,
 		Poison,
 		Crush
     }

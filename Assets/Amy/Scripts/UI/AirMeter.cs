@@ -31,6 +31,13 @@ namespace Amy
                 return;
             }
 
+            //Hide it for Cream since she shouldn't be submerged too long anyways
+            if(PlayerManager.Instance.currentCharacter == PlayableCharacter.Cream)
+            {
+                mCanvas.alpha = Mathf.Lerp(mCanvas.alpha, 0.0f, Time.deltaTime * 16.0f);
+                transform.localScale = Vector3.Lerp(transform.localScale, Vector3.one * 2.0f, Time.deltaTime * 8.0f);
+                return;
+            }
 
             if(mPlayer.airLeft >= mPlayer.calculateLungCapacity())
             {

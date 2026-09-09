@@ -37,7 +37,7 @@ namespace Amy
 			}
 
 			pStats.currentHealth += healthHealAmount;
-			pStats.currentStamina += staminaHealAmount;
+			pStats.currentMagic += staminaHealAmount;
 
 	    }
 	

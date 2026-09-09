@@ -12,6 +12,7 @@ namespace Amy
 
 	public class PlayerSlingshot : PlayerMode
 	{
+		const float fireCost = 1.0f;
 
 		public enum state
 		{
@@ -236,9 +237,7 @@ namespace Amy
 			else
             {
 				targetPos = aimer.transform.position + aimer.transform.forward * 64.0f;
-
 			}
-
 
 			aimer.look_node.transform.position = aimer.transform.position + aimer.transform.forward * 64.0f;
 			aimer.target_node.transform.position = targetPos; // Vector3.Lerp(aimer.target_node.transform.position, targetPos, 0.25f);
@@ -257,13 +256,13 @@ namespace Amy
 		void fireBullet()
         {
 
-			if (mPlayer.getStatus().currentStamina < 0.5f)
+			if (mPlayer.getStatus().currentMagic < fireCost)
 			{
 				dryFire();
 				return;
 			}
 
-			mPlayer.getStatus().currentStamina -= 0.5f;
+			mPlayer.getStatus().currentMagic -= fireCost;
 			mPlayer.getStatus().clampValues();
 
 			GameObject bullet = GameObject.Instantiate(GameManager.Instance.systemData.RES_AmyPlayerFX.basicSlingshotProjectile);

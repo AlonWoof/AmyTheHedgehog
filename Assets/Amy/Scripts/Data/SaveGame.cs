@@ -32,8 +32,6 @@ namespace Amy
 
 		public const int SAVE_VERSION = 1;
 
-
-
 		public SaveGame()
 		{
 
@@ -183,16 +181,15 @@ namespace Amy
 
 			for(int i = 0; i < numFlags; i++)
             {
-
 				plman.storyFlags.Add(new StoryFlag(reader.ReadInt32(), reader.ReadBoolean()));
 			}
 
 			reader.Close();
 
-			float time = (float)(Application.targetFrameRate * (System.DateTime.Now - lastSaveTime).TotalSeconds);
+			//float time = (float)(Application.targetFrameRate * (System.DateTime.Now - lastSaveTime).TotalSeconds);
 
-			plman.processSleeping(plman.AmyStatus, time);
-			plman.processSleeping(plman.CreamStatus, time);
+			//plman.processSleeping(plman.AmyStatus, time);
+			//plman.processSleeping(plman.CreamStatus, time);
 
 			if(readSADXNudeModData())
             {
@@ -343,7 +340,7 @@ namespace Amy
 		public static void writePlayerStatus(PlayerStatus pStats,ref BinaryWriter writer)
         {
 			writer.Write(pStats.currentHealth);
-			writer.Write(pStats.currentStamina);
+			writer.Write(pStats.currentMagic);
 			writer.Write(pStats.statusFX);
 			writer.Write(pStats.sickTimeLeft);
 			writer.Write(pStats.recentOrgasmTimeLeft);
@@ -365,7 +362,7 @@ namespace Amy
 		public static void readPlayerStatus(PlayerStatus pStats, ref BinaryReader reader)
         {
 			pStats.currentHealth = reader.ReadSingle();
-			pStats.currentStamina = reader.ReadSingle();
+			pStats.currentMagic = reader.ReadSingle();
 			pStats.statusFX = reader.ReadInt32();
 			pStats.sickTimeLeft = reader.ReadSingle();
 			pStats.recentOrgasmTimeLeft = reader.ReadSingle();

@@ -73,7 +73,7 @@ namespace Amy
 			while (pl.getStatus().dirtiness > 0.0f)
             {
 				pl.getStatus().dirtiness -= (Time.deltaTime * cleanDirtRate);
-				pl.getStatus().currentStamina += (Time.deltaTime * staminaRegenRate);
+				pl.getStatus().currentMagic += (Time.deltaTime * staminaRegenRate);
 				wetfx.desiredWetness = 1.0f;
 				yield return 0f;
 			}

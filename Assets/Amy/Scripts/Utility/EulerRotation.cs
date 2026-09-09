@@ -14,7 +14,7 @@ public class EulerRotation : MonoBehaviour
 	// Use this for initialization
 	void Start ()
     {
-        myRotation = transform.localRotation.eulerAngles;
+       
     }
 	
 	// Update is called once per frame
@@ -27,6 +27,7 @@ public class EulerRotation : MonoBehaviour
 
     private void FixedUpdate()
     {
+        myRotation = transform.localRotation.eulerAngles;
         myRotation += rotation * (Time.fixedDeltaTime * speed);
 
         transform.localRotation = Quaternion.Euler(myRotation);

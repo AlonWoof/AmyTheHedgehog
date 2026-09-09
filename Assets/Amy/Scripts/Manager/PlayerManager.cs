@@ -64,8 +64,8 @@ namespace Amy
         public float maxHealth = 25.0f;
         //public float currentMood = 25.0f;
         //public float maxMood = 25.0f;
-        public float maxStamina = 25.0f;
-        public float currentStamina = 25.0f;
+        public float maxMagic = 25.0f;
+        public float currentMagic = 25.0f;
 
         public float speedBonus = 0.0f;
 
@@ -134,11 +134,11 @@ namespace Amy
             if (currentHealth != currentHealth)
                 currentHealth = 0;
 
-            if (currentStamina != currentStamina)
-                currentStamina = 0;
+            if (currentMagic != currentMagic)
+                currentMagic = 0;
 
             currentHealth = Mathf.Clamp(currentHealth, 0, maxHealth);
-            currentStamina = Mathf.Clamp(currentStamina, 0, maxStamina);
+            currentMagic = Mathf.Clamp(currentMagic, 0, maxMagic);
             //currentMood = Mathf.Clamp(currentMood, 0, maxMood);
             dirtiness = Mathf.Clamp01(dirtiness);
         }
@@ -212,7 +212,7 @@ namespace Amy
         public float getCondition()
         {
             float healthFac = currentHealth / maxHealth;
-            float staminaFac = currentStamina / maxStamina;
+            float staminaFac = currentMagic / maxMagic;
 
             //Average of health and stamina.
             return (healthFac + staminaFac) * 0.5f;
@@ -657,7 +657,7 @@ namespace Amy
                 {
                     pStats.goodFoodTimeLeft -= Time.deltaTime;
 
-                    pStats.currentStamina += goodFoodStaminaHeal * Time.deltaTime;
+                    pStats.currentMagic += goodFoodStaminaHeal * Time.deltaTime;
                     pl.updateHealth();
                 }
                 else
@@ -673,9 +673,9 @@ namespace Amy
                 //Shouldn't be out and about while sick, young lady....
                 if (pl.acceleration.magnitude > 2.0f && !pStats.checkVibe(VibeType.Safe))
                 {
-                    if (pStats.currentStamina > 0.02f)
+                    if (pStats.currentMagic > 0.02f)
                     {
-                        pStats.currentStamina -= (sickStaminaDrain * Time.deltaTime);
+                        pStats.currentMagic -= (sickStaminaDrain * Time.deltaTime);
                     }
                     else if (pStats.currentHealth > 0.0f)
                     {
@@ -733,7 +733,7 @@ namespace Amy
 
                 if(currentCharacter == PlayableCharacter.Amy)
                 {
-                    pStats.currentStamina -= (dirtyAmyStaminaDrain * Time.deltaTime);
+                    pStats.currentMagic -= (dirtyAmyStaminaDrain * Time.deltaTime);
                 }
             }
             else
@@ -798,7 +798,7 @@ namespace Amy
 
             float moodFac = pStats.currentMood / pStats.maxMood;
             float healthFac = pStats.currentHealth / pStats.maxHealth;
-            float staminaFac = pStats.currentStamina / pStats.maxStamina;
+            float staminaFac = pStats.currentMagic / pStats.maxMagic;
 
             float genkiAverage = (staminaFac + healthFac) * 0.5f;
             
@@ -882,10 +882,10 @@ namespace Amy
 
             if (healthFac < 0.99999f)
             {
-                if (pStats.currentStamina > 0.01f)
+                if (pStats.currentMagic > 0.01f)
                 {
                    // pStats.currentHealth += (Time.deltaTime * baseHealFac) * moodFac;
-                   //pStats.currentStamina -= (Time.deltaTime * baseHealFac);
+                   //pStats.currentMagic -= (Time.deltaTime * baseHealFac);
                 }
             }
             else
@@ -910,7 +910,7 @@ namespace Amy
             if(pStats.sleepTimeLeft < 0.0f)
             {
                 pStats.currentHealth = pStats.maxHealth;
-                pStats.currentStamina = pStats.maxStamina;
+                pStats.currentMagic = pStats.maxMagic;
                 pStats.clampValues();
             }
 
@@ -1291,7 +1291,7 @@ namespace Amy
 
 
             getCurrentPlayerStatus().currentHealth = getCurrentPlayerStatus().maxHealth * 0.1f;
-            getCurrentPlayerStatus().currentStamina = getCurrentPlayerStatus().maxStamina * 0.1f;
+            getCurrentPlayerStatus().currentMagic = getCurrentPlayerStatus().maxMagic * 0.1f;
             getCurrentPlayerStatus().sleepTimeLeft = Helper.minutesToSeconds(15.0f);
 
             if (type == PlayerKilled.DeathType.Corrupted)

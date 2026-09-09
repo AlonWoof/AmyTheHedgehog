@@ -68,7 +68,7 @@ namespace Amy
 		public void updateStatusScreen()
         {
 			healthText.text = Mathf.RoundToInt(pstats.currentHealth) + " / " + Mathf.RoundToInt(pstats.maxHealth);
-			staminaText.text = Mathf.RoundToInt(pstats.currentStamina) + " / " + Mathf.RoundToInt(pstats.maxStamina);
+			staminaText.text = Mathf.RoundToInt(pstats.currentMagic) + " / " + Mathf.RoundToInt(pstats.maxMagic);
 			moodText.text = PlayerManager.Instance.getMoodLabel();
 
         }

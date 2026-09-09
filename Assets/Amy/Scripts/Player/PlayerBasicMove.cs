@@ -138,7 +138,7 @@ namespace Amy
 				}
 			}
 
-			float masturbateTime = 180.0f;
+			float masturbateTime = 60.0f;
 
 			//if (mPlayer.getStatus().checkStatusEffect(PlayerStatusFX.Horny))
 			//	masturbateTime = 8.0f;
@@ -153,8 +153,11 @@ namespace Amy
 					UIManager.Instance.contextButton.setActionText("Rub It?");
 					if (Input.GetButtonDown("Action"))
 					{
-						if(mPlayer.modeRubbing.shouldMasturbate())
+						if (mPlayer.modeRubbing.shouldMasturbate())
+						{
+							mPlayer.getStatus().currentMagic -= PlayerRubbing.magicCost;
 							mPlayer.changeCurrentMode(PlayerModes.RUBBING);
+						}
 					}
 				}
             }
